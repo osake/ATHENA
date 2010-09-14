@@ -1,3 +1,4 @@
 target/
 generated/
 logs/
+.DS_Store

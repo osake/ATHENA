@@ -1,0 +1,31 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+    <context:component-scan base-package="org.fracturedatlas.athena.tix"/>
+
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="test"/>
+    </bean>
+
+    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.JpaApaAdapter">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+    <!--
+    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.MongoApaAdapter"/>
+    -->
+<!-- JPA -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+</beans>

@@ -11,11 +11,4 @@ holder above.
 
 ======
 
-ATHENA is a modular service-oriented application.  The first component in development is Parakeet, a schemaless key-value store that ATHENA uses to store data.  Parakeet is available here: http://www.github.com/fracturedatlas/parakeet.  
-
-This repository will contain:
-* An ATHENA installer
-* A walkthrough
-* ATHENA documentation
-* Examples
-* Contributions from the community
+ATHENA is a modular service-oriented application.  The modules in ATHENA can be used to be arts-infrascturcure software applications.  A generic example is Parakeet, found here: http://www.github.com/fracturedatlas/parakeet

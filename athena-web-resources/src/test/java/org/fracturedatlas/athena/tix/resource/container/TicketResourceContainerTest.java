@@ -1,0 +1,488 @@
+/*
+
+ATHENA Project: Management Tools for the Cultural Sector
+Copyright (C) 2010, Fractured Atlas
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/
+
+ */
+package org.fracturedatlas.athena.tix.resource.container;
+
+import com.google.gson.Gson;
+import com.sun.jersey.api.client.ClientResponse;
+import java.text.ParseException;
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
+import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
+import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
+import org.fracturedatlas.athena.apa.model.PropField;
+import org.fracturedatlas.athena.apa.model.StringTicketProp;
+import org.fracturedatlas.athena.apa.model.Ticket;
+import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.tix.util.BaseTixContainerTest;
+import org.fracturedatlas.athena.tix.util.JsonUtil;
+import org.fracturedatlas.athena.util.date.DateUtil;
+import org.junit.After;
+import org.junit.Test;
+
+
+public class TicketResourceContainerTest extends BaseTixContainerTest {
+
+    Ticket testTicket = new Ticket();
+    Logger logger = Logger.getLogger(TicketResourceContainerTest.class);
+    String testTicketJson = "";
+    ObjectMapper mapper = JsonUtil.getMapper();
+    Gson gson = JsonUtil.getGson();
+
+    public TicketResourceContainerTest() throws Exception {
+        super();
+    }
+
+    @After
+    public void teardownTickets() {
+        for (Ticket t : ticketsToDelete) {
+            try {
+                apa.deleteTicket(t);
+            } catch (Exception ignored) {
+                ignored.printStackTrace();
+            }
+        }
+
+        for (PropField pf : propFieldsToDelete) {
+            try {
+                apa.deletePropField(pf);
+            } catch (Exception ignored) {
+                ignored.printStackTrace();
+            }
+        }
+    }
+
+    @Test
+    public void testGetTicketJson() {
+        Ticket t = new Ticket();
+        t.setName("ticket");
+
+        PropField field = new PropField();
+        field.setValueType(ValueType.STRING);
+        field.setName("SEAT_NUMBER");
+        field.setStrict(Boolean.FALSE);
+        PropField pf = apa.savePropField(field);
+
+        field = new PropField();
+        field.setValueType(ValueType.STRING);
+        field.setName("SECTION");
+        field.setStrict(Boolean.FALSE);
+        PropField pf2 = apa.savePropField(field);
+
+        StringTicketProp prop = new StringTicketProp();
+        prop.setPropField(pf);
+        prop.setValue("3D");
+        t.addTicketProp(prop);
+
+        StringTicketProp prop2 = new StringTicketProp();
+        prop2.setPropField(pf2);
+        prop2.setValue("ORCHESTRA");
+        t.addTicketProp(prop2);
+
+        t = apa.saveTicket(t);
+
+        ticketsToDelete.add(t);
+        propFieldsToDelete.add(pf);
+        propFieldsToDelete.add(pf2);
+
+        String path = "tickets/" + t.getId() + ".json";
+
+        String ticketString = tix.path(path).get(String.class);
+        assertNotNull(ticketString);
+        String expectedString = "{\"id\":\"" + t.getId() + "\",\"name\":\"" + t.getName() + "\",\"props\":{\"SECTION\":\"ORCHESTRA\",\"SEAT_NUMBER\":\"3D\"}}";
+        assertEquals(expectedString, ticketString);
+        PTicket pTicket = gson.fromJson(ticketString, PTicket.class);
+        assertTicketsEqual(t, pTicket);
+    }
+
+    @Test
+    public void testGetTicketBooleanProp() {
+        Ticket t = new Ticket();
+        t.setName("ticket");
+
+        PropField pf = apa.savePropField(new PropField(ValueType.STRING, "SEAT_NUMBER", Boolean.FALSE));
+        PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
+
+        StringTicketProp prop = new StringTicketProp();
+        prop.setPropField(pf);
+        prop.setValue("3D");
+        t.addTicketProp(prop);
+
+        BooleanTicketProp prop2 = new BooleanTicketProp();
+        prop2.setPropField(pf2);
+        prop2.setValue(true);
+        t.addTicketProp(prop2);
+
+        t = apa.saveTicket(t);
+
+        ticketsToDelete.add(t);
+        propFieldsToDelete.add(pf);
+        propFieldsToDelete.add(pf2);
+
+        String path = "tickets/" + t.getId() + ".json";
+
+        String ticketString = tix.path(path).get(String.class);
+        assertNotNull(ticketString);
+        String expectedString = "{\"id\":\"" + t.getId() + "\",\"name\":\"" + t.getName() + "\",\"props\":{\"SECTION\":\"true\",\"SEAT_NUMBER\":\"3D\"}}";
+        assertEquals(expectedString, ticketString);
+        PTicket pTicket = gson.fromJson(ticketString, PTicket.class);
+        assertTicketsEqual(t, pTicket);
+    }
+
+    @Test
+    public void testGetTicketDateTimeProp() throws Exception {
+        Ticket t = new Ticket();
+        t.setName("ticket");
+
+        PropField pf = apa.savePropField(new PropField(ValueType.DATETIME, "PERFORMANCE", Boolean.FALSE));
+        PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
+
+        DateTimeTicketProp prop = new DateTimeTicketProp();
+        prop.setPropField(pf);
+        prop.setValue(DateUtil.parseDate("2010-09-19 08:00"));
+        t.addTicketProp(prop);
+
+        BooleanTicketProp prop2 = new BooleanTicketProp();
+        prop2.setPropField(pf2);
+        prop2.setValue(true);
+        t.addTicketProp(prop2);
+
+        t = apa.saveTicket(t);
+
+        ticketsToDelete.add(t);
+        propFieldsToDelete.add(pf);
+        propFieldsToDelete.add(pf2);
+
+        String path = "tickets/" + t.getId() + ".json";
+
+        String ticketString = tix.path(path).get(String.class);
+        assertNotNull(ticketString);
+        String expectedString = "{\"id\":\"" + t.getId() + "\",\"name\":\"" + t.getName() + "\",\"props\":{\"SECTION\":\"true\",\"PERFORMANCE\":\"2010-09-19 08:00\"}}";
+        assertEquals(expectedString, ticketString);
+        PTicket pTicket = gson.fromJson(ticketString, PTicket.class);
+        assertTicketsEqual(t, pTicket);
+    }
+
+    @Test
+    public void testGetTicketIntegerProp() {
+        Ticket t = new Ticket();
+        t.setName("ticket");
+        PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", Boolean.FALSE));
+        PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
+
+        IntegerTicketProp prop = new IntegerTicketProp();
+        prop.setPropField(pf);
+        prop.setValue(490);
+        t.addTicketProp(prop);
+
+        BooleanTicketProp prop2 = new BooleanTicketProp();
+        prop2.setPropField(pf2);
+        prop2.setValue(true);
+        t.addTicketProp(prop2);
+
+        t = apa.saveTicket(t);
+
+        ticketsToDelete.add(t);
+        propFieldsToDelete.add(pf);
+        propFieldsToDelete.add(pf2);
+
+        String path = "tickets/" + t.getId() + ".json";
+
+        String ticketString = tix.path(path).get(String.class);
+        assertNotNull(ticketString);
+        String expectedString = "{\"id\":\"" + t.getId() + "\",\"name\":\"" + t.getName() + "\",\"props\":{\"SECTION\":\"true\",\"SEAT_NUMBER\":\"490\"}}";
+        assertEquals(expectedString, ticketString);
+        PTicket pTicket = gson.fromJson(ticketString, PTicket.class);
+        assertTicketsEqual(t, pTicket);
+    }
+
+    @Test
+    public void testGetTicketProps() {
+        Ticket t = new Ticket();
+        t.setName("ticket");
+        PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", Boolean.FALSE));
+        propFieldsToDelete.add(pf);
+        PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
+        propFieldsToDelete.add(pf2);
+
+        IntegerTicketProp prop = new IntegerTicketProp();
+        prop.setPropField(pf);
+        prop.setValue(490);
+        t.addTicketProp(prop);
+
+        BooleanTicketProp prop2 = new BooleanTicketProp();
+        prop2.setPropField(pf2);
+        prop2.setValue(true);
+        t.addTicketProp(prop2);
+
+        t = apa.saveTicket(t);
+        ticketsToDelete.add(t);
+
+        String path = "tickets/" + t.getId() + "/props";
+
+        String ticketString = tix.path(path).get(String.class);
+        assertNotNull(ticketString);
+        String expectedString = "{\"SECTION\":\"true\",\"SEAT_NUMBER\":\"490\"}";
+        assertEquals(expectedString, ticketString);
+    }
+
+    @Test
+    public void testGetTicketPropsDoesntExist() {
+        String path = "tickets/0/props";
+        ClientResponse response = tix.path(path).get(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
+    @Test
+    public void testGetTicketPropsNoProps() {
+        Ticket t = new Ticket();
+        t.setName("ticket");
+        PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", Boolean.FALSE));
+        propFieldsToDelete.add(pf);
+        PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
+        propFieldsToDelete.add(pf2);
+
+        t = apa.saveTicket(t);
+        ticketsToDelete.add(t);
+
+        String path = "tickets/" + t.getId() + "/props";
+
+        String ticketString = tix.path(path).get(String.class);
+        assertNotNull(ticketString);
+        String expectedString = "{}";
+        assertEquals(expectedString, ticketString);
+    }
+
+    @Test
+    public void testGetTicketWithNoProps() {
+        Ticket t = new Ticket();
+        t.setName("ticket");
+
+        t = apa.saveTicket(t);
+
+        ticketsToDelete.add(t);
+
+        String path = "tickets/" + t.getId() + ".json";
+
+        String ticketString = tix.path(path).get(String.class);
+        assertNotNull(ticketString);
+        String expectedString = "{\"id\":\"" + t.getId() + "\",\"name\":\"" + t.getName() + "\",\"props\":{}}";
+        assertEquals(expectedString, ticketString);
+        PTicket pTicket = gson.fromJson(ticketString, PTicket.class);
+        assertTicketsEqual(t, pTicket);
+    }
+
+    @Test
+    public void testGetTicketThatDoesntExist() {
+        String path = "tickets/0.json";
+        ClientResponse response = tix.path(path).get(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
+    @Test
+    public void testSearchWithNoParams() {
+        String path = "tickets.json";
+        ClientResponse response = tix.path(path).get(ClientResponse.class);
+        assertEquals(ClientResponse.Status.FORBIDDEN,
+                     ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
+    @Test
+    public void testDeleteTicket() {
+        Ticket t = new Ticket();
+
+        PropField field = new PropField();
+        field.setValueType(ValueType.STRING);
+        field.setName("WXYZ");
+        field.setStrict(Boolean.FALSE);
+        PropField pf = apa.savePropField(field);
+
+        StringTicketProp prop = new StringTicketProp();
+        prop.setPropField(pf);
+        prop.setValue("WXYZ");
+        t.addTicketProp(prop);
+        t = apa.saveTicket(t);
+
+        ticketsToDelete.add(t);
+        propFieldsToDelete.add(pf);
+
+        String path = "tickets/" + t.getId() + ".json";
+        ClientResponse response = tix.path(path).delete(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NO_CONTENT,
+                ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+        Ticket shouldBeDeleted = apa.getTicket(t.getId());
+        assertNull(shouldBeDeleted);
+
+        path = "tickets/" + t.getId() + ".json";
+        response = tix.path(path).get(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
+    @Test
+    public void testDeleteTicket2() throws ParseException {
+
+
+        Ticket t = new Ticket();
+        Ticket t2 = new Ticket();
+        Ticket t3 = new Ticket();
+        Ticket t4 = new Ticket();
+
+        PropField field = new PropField();
+        field = new PropField();
+        field.setValueType(ValueType.DATETIME);
+        field.setName("Artist");
+        field.setStrict(Boolean.FALSE);
+        PropField pf3 = apa.savePropField(field);
+
+        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t = apa.saveTicket(t);
+
+        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t2 = apa.saveTicket(t2);
+
+        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t3 = apa.saveTicket(t3);
+
+        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t4 = apa.saveTicket(t4);
+
+
+        ticketsToDelete.add(t);
+        ticketsToDelete.add(t2);
+        ticketsToDelete.add(t3);
+        ticketsToDelete.add(t4);
+        propFieldsToDelete.add(pf3);
+
+        String path = "tickets/" + t3.getId() + ".json";
+        ClientResponse response = tix.path(path).delete(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NO_CONTENT,
+                ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+        Ticket shouldBeDeleted = apa.getTicket(t3.getId());
+        assertNull(shouldBeDeleted);
+        Ticket expected = apa.getTicket(t.getId());
+        assertEquals(expected, t);
+        expected = apa.getTicket(t2.getId());
+        assertEquals(expected, t2);
+        expected = apa.getTicket(t4.getId());
+        assertEquals(expected, t4);
+
+        path = "tickets/" + t3.getId() + ".json";
+        response = tix.path(path).get(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
+    @Test
+    public void testDeleteAFewTickets() throws ParseException {
+
+
+        Ticket t = new Ticket();
+        Ticket t2 = new Ticket();
+        Ticket t3 = new Ticket();
+        Ticket t4 = new Ticket();
+
+        PropField field = new PropField();
+        field = new PropField();
+        field.setValueType(ValueType.DATETIME);
+        field.setName("Artist");
+        field.setStrict(Boolean.FALSE);
+        PropField pf3 = apa.savePropField(field);
+
+        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t = apa.saveTicket(t);
+
+        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t2 = apa.saveTicket(t2);
+
+        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t3 = apa.saveTicket(t3);
+
+        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t4 = apa.saveTicket(t4);
+
+
+        ticketsToDelete.add(t);
+        ticketsToDelete.add(t2);
+        ticketsToDelete.add(t3);
+        ticketsToDelete.add(t4);
+        propFieldsToDelete.add(pf3);
+
+        String path = "tickets/" + t3.getId() + ".json";
+        ClientResponse response = tix.path(path).delete(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NO_CONTENT,
+                ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+        path = "tickets/" + t4.getId() + ".json";
+        response = tix.path(path).delete(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NO_CONTENT,
+                ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+        Ticket shouldBeDeleted = apa.getTicket(t3.getId());
+        assertNull(shouldBeDeleted);
+        Ticket expected = apa.getTicket(t.getId());
+        assertEquals(expected, t);
+        expected = apa.getTicket(t2.getId());
+        assertEquals(expected, t2);
+
+        path = "tickets/" + t3.getId() + ".json";
+        response = tix.path(path).get(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+        path = "tickets/" + t4.getId() + ".json";
+        response = tix.path(path).get(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
+    @Test
+    public void testDeleteTicketDoesntExist() {
+        Ticket t = new Ticket();
+
+        PropField field = new PropField();
+        field.setValueType(ValueType.STRING);
+        field.setName("WXYZ");
+        field.setStrict(Boolean.FALSE);
+        PropField pf = apa.savePropField(field);
+
+        StringTicketProp prop = new StringTicketProp();
+        prop.setPropField(pf);
+        prop.setValue("WXYZ");
+        t.addTicketProp(prop);
+        t = apa.saveTicket(t);
+
+        ticketsToDelete.add(t);
+        propFieldsToDelete.add(pf);
+
+        String path = "tickets/0.json";
+        ClientResponse response = tix.path(path).delete(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NOT_FOUND,
+                ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+        Ticket shouldStillExist = apa.getTicket(t.getId());
+        assertEquals(t, shouldStillExist);
+    }
+}
