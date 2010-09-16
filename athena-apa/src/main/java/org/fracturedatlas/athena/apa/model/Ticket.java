@@ -115,9 +115,11 @@ public class Ticket extends TixEntity implements Serializable {
         ToStringBuilder builder = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
         builder.append(id).append(name);
 
+        
         if (ticketProps != null) {
             for (TicketProp prop : ticketProps) {
-                builder.append(prop.getId()).append(prop.getPropField().getName());
+                String propAndValue = "(" + prop.getPropField().getId() + ") " + prop.getPropField().getName() + ": [" + prop.getValueAsString() + "]";
+                builder.append(propAndValue);
             }
         }
         return builder.toString();

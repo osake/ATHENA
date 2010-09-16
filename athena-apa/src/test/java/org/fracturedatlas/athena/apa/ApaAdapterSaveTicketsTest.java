@@ -38,7 +38,7 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
         super();
     }
 
-    @After
+    //@After
     public void teardownTickets() {
         for (Ticket t : ticketsToDelete) {
             try {
@@ -72,8 +72,11 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
         ticket.addTicketProp(new StringTicketProp(field2, "23"));
 
-        ticket = apa.saveTicket(ticket);
+        apa.saveTicket(ticket);
         ticketsToDelete.add(ticket);
+        assertNotNull(ticket.getId());
+
+        ticket = apa.getTicket(ticket.getId());
 
         PTicket pTicket = ticket.toClientTicket();
         assertNotNull(pTicket.getId());

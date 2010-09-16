@@ -9,5 +9,7 @@
        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
     <context:component-scan base-package="org.fracturedatlas.athena.tix"/>
 
-    <import resource="testApplicationContext-jpa.xml"/>
+    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.MongoApaAdapter">
+        <!-- <property name="entityManagerFactory" ref="entityManagerFactory"/> -->
+    </bean>
 </beans>

@@ -109,6 +109,9 @@ public abstract class TicketProp extends TixEntity implements Serializable, Comp
     public abstract String getValueAsString();
 
     @Transient
+    public abstract Object getValue();
+
+    @Transient
     public abstract void setValue(String s) throws Exception;
 
     public abstract int compareTo(Object o) throws ClassCastException,
