@@ -100,12 +100,12 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public boolean deletePropField(Object id) {
+    public Boolean deletePropField(Object id) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
     @Override
-    public boolean deletePropField(PropField propField) {
+    public Boolean deletePropField(PropField propField) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
     

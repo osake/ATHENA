@@ -154,7 +154,7 @@ public interface ApaAdapter {
      * @return the saved propField
       * @return true if propField is deleted. False if propField does not exist
      */
-    public boolean deletePropField(PropField propField);
+    public Boolean deletePropField(PropField propField);
 
     /**
      * Delete a PropField
@@ -162,7 +162,7 @@ public interface ApaAdapter {
      * @return the saved propField
       * @return true if propField is deleted. False if propField does not exist
      */
-    public boolean deletePropField(Object id);
+    public Boolean deletePropField(Object id);
 
     /*
      * This may need to be refactored to (Ticket t, TicketProp ticketProp)

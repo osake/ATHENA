@@ -56,6 +56,10 @@ public class DateTimeTicketProp extends TicketProp implements Serializable {
         return value;
     }
 
+    public void setValue(Object o) {
+        setValue((Date)o);
+    }
+
     public void setValue(Date value) {
         this.value = value;
     }

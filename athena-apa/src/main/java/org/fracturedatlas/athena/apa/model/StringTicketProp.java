@@ -46,6 +46,10 @@ public class StringTicketProp extends TicketProp implements Serializable {
         return value;
     }
 
+    public void setValue(Object o) {
+        setValue((String)o);
+    }
+
     public void setValue(String value) {
         this.value = value;
     }

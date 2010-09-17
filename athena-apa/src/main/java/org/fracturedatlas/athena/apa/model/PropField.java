@@ -147,7 +147,7 @@ public class PropField extends TixEntity implements Serializable {
         if (this.strict != other.strict && (this.strict == null || !this.strict.equals(other.strict))) {
             return false;
         }
-        if (this.propValues.equals(other.getPropValues())) {
+        if (!this.propValues.equals(other.getPropValues())) {
             return false;
         }
         return IdAdapter.isEqual(this.getId(), other.getId());

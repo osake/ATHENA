@@ -69,6 +69,7 @@ public class ApaAdapterSavePropFieldTest extends BaseApaAdapterTest {
         PropField field = apa.savePropField(new PropField(ValueType.STRING, "TEST", StrictType.NOT_STRICT));
         propFieldsToDelete.add(field);
         PropField savedField = apa.getPropField(field.getId());
+        System.out.println("HEY: " + savedField.getPropValues());
         assertEquals(field, savedField);
     }
 

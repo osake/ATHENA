@@ -476,7 +476,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public boolean deletePropField(Object id) {
+    public Boolean deletePropField(Object id) {
         EntityManager em = this.emf.createEntityManager();
         try {
             Long longId = LongUserType.massageToLong(id);
@@ -495,7 +495,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public boolean deletePropField(PropField propField) {
+    public Boolean deletePropField(PropField propField) {
         return deletePropField(propField.getId());
     }
 

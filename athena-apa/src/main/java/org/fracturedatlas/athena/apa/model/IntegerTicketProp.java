@@ -47,6 +47,10 @@ public class IntegerTicketProp extends TicketProp implements Serializable {
         return value;
     }
 
+    public void setValue(Object o) {
+        setValue((Integer)o);
+    }
+
     public void setValue(String s) {
         setValue(Integer.parseInt(s));
     }

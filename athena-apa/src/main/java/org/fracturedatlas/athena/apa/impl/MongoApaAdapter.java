@@ -34,18 +34,17 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.fracturedatlas.athena.apa.exception.ApaException;
+import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.apa.model.ValueType;
-import org.fracturedatlas.athena.util.date.DateUtil;
 
 public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
@@ -83,16 +82,12 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         
         BasicDBObject props = new BasicDBObject();
         for(TicketProp prop : t.getTicketProps()) {
-            if(prop.getPropField().getValueType().equals(ValueType.DATETIME)) {
-                props.put(prop.getPropField().getName(), "2010");
-            } else {
-                props.put(prop.getPropField().getName(), prop.getValue());
-            }
+            props.put(prop.getPropField().getName(), prop.getValue());
         }
         
         doc.put("props", props);
         
-        records.insert(doc);
+        records.save(doc);
 
         return t;
     }
@@ -105,24 +100,26 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         for(Entry<String, String> entry : searchParams.entrySet()) {
             PropField field = getPropField(entry.getKey());
             if(field != null) {
-                if(field.getValueType().equals(ValueType.DATETIME)) {
-//                    try{
-                        query.put(PROPS_STRING + "." + entry.getKey(), "2010");
-//                    } catch (ParseException e) {
-//                        logger.info("Searching for a date field ["+ entry.getKey() +"] with an invalid date [" + entry.getValue());
-//                        e.printStackTrace();
-//                    }
-                } else {
-                    query.put(PROPS_STRING + "." + entry.getKey(), entry.getValue());
+                //load the field's value type so we can search for it with proper typing
+                TicketProp searchProp = field.getValueType().newTicketProp();
+
+                try{
+                    searchProp.setValue(entry.getValue());
+                } catch (Exception e) {
+                    //searching on a param with a bad type (like search a boolean field for "4"
+                    //TODO: Handle it
                 }
+
+                query.put(PROPS_STRING + "." + entry.getKey(), searchProp.getValue());
             } else {
                 //TODO: Serching for field that doesn't exist, ignore?
             }
         }
 
-        System.out.println(query);
+        System.out.println("SEARCHING: " + query);
         DBCursor recordsCursor = records.find(query);
         for(DBObject recordObject : recordsCursor) {
+            System.out.println("FOUND: " + recordObject);
             tickets.add(toRecord(recordObject));
         }
         return tickets;
@@ -135,15 +132,16 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
      * @return
      */
     @Override
-    public PropField getPropField(String idOrName) {
+    public PropField getPropField(Object idOrName) {
         BasicDBObject query = new BasicDBObject();
         
         ObjectId objectId = ObjectId.massageToObjectId(idOrName);
         if (objectId != null) {
             query.put("_id", objectId);
         } else {
-            query.put("name", idOrName);
+            query.put("name", (String)idOrName);
         }
+
         DBObject doc = fields.findOne(query);
 
         if(doc == null) {
@@ -154,23 +152,44 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             propField.setName((String)doc.get("name"));
             propField.setStrict((Boolean)doc.get("strict"));
             propField.setValueType(ValueType.valueOf((String)doc.get("type")));
+
+            //TODO: this
+            propField.setPropValues(new ArrayList());
+
             return propField;
         }
     }
 
     @Override
-    public PropField getPropField(Object idOrName) {
-        return getPropField((String)idOrName);
+    public PropField getPropField(String name) {
+        return getPropField((Object)name);
     }
 
     @Override
     public PropField savePropField(PropField propField) {
 
-        //TODO: This really should be a stricter check.  Otherwise, caller
-        //specify an id in the request and we'll think that their
-        //object will have already been persisted to the DB.
-        if(propField.getId() == null) {
+        //strict must be set
+        if (propField.getValueType() == null) {
+            throw new ApaException("Please specify a value type");
+        }
+
+        //strict must be set
+        if (propField.getStrict() == null) {
+            throw new ApaException("Please specify strict as true or false");
+        }
+
+        if (propField.getStrict() && propField.getValueType().equals(ValueType.BOOLEAN)) {
+            throw new ApaException("Boolean fields cannot be marked as strict");
+        }
+
+        PropField existingField = getPropField(propField.getId());
+
+        if(existingField == null) {
             propField.setId(new ObjectId());
+            checkForDuplicatePropField(propField.getName());
+        } else {
+            checkExists(existingField);
+            checkImmutability(propField, existingField);
         }
 
         BasicDBObject doc = new BasicDBObject();
@@ -180,7 +199,8 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         doc.put("type", propField.getValueType().toString());
         fields.save(doc);
 
-        return propField;
+        //TODO: This is loading the prop field tqice for each 1 save
+        return getPropField(propField.getId());
     }
 
     @Override
@@ -200,7 +220,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public boolean deletePropField(Object id) {
+    public Boolean deletePropField(Object id) {
         BasicDBObject query = new BasicDBObject();
         ObjectId oid = ObjectId.massageToObjectId(id);
         query.put("_id", oid);
@@ -211,7 +231,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public boolean deletePropField(PropField propField) {
+    public Boolean deletePropField(PropField propField) {
         return deletePropField(propField.getId());
     }
 
@@ -248,7 +268,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             t.setName((String)recordObject.get("name"));
             DBObject propsObj = (DBObject)recordObject.get("props");
             for(String key : propsObj.keySet()) {
-                String val = (String)propsObj.get(key);
+                Object val = propsObj.get(key);
                 PropField field = getPropField(key);
 
                 TicketProp ticketProp = field.getValueType().newTicketProp();
@@ -268,5 +288,26 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
         
         return t;
+    }
+
+    private void checkForDuplicatePropField(String name) throws ApaException {
+        PropField duplicate = getPropField(name);
+        if (duplicate != null) {
+            throw new ApaException("Field [" + name + "] already exists.");
+        }
+    }
+
+    private void checkExists(PropField propField) throws ApaException {
+        if (propField == null) {
+            throw new ApaException("Cannot update field with Id [" + propField.getId() + "] because the propField was not found");
+        }
+    }
+
+    private void checkImmutability(PropField newPropField, PropField oldPropField) throws ImmutableObjectException {
+        if (!newPropField.getStrict().equals(oldPropField.getStrict())) {
+            throw new ImmutableObjectException("You cannot change the strictness of a field after is has been saved");
+        } else if (!newPropField.getValueType().equals(oldPropField.getValueType())) {
+            throw new ImmutableObjectException("You cannot change the type of a field after is has been saved");
+        }
     }
 }

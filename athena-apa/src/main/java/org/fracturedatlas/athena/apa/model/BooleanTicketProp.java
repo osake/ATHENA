@@ -47,7 +47,11 @@ public class BooleanTicketProp extends TicketProp implements Serializable {
     }
     
     public void setValue(String s) {
-        setValue(Boolean.parseBoolean((String)s));
+        setValue(Boolean.parseBoolean(s));
+    }
+
+    public void setValue(Object o) {
+        setValue((Boolean)o);
     }
 
     public void setValue(Boolean value) {
