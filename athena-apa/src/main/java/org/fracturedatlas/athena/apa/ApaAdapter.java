@@ -101,7 +101,7 @@ public interface ApaAdapter {
      * Save the ticketProp
      * @param prop the ticketProp to save
      * @return the saved ticketProp
-     * @throws InvalidValueException if one of the props int he list has been amrked strict and its value is not valid
+     * @throws InvalidValueException if one of the props in the list has been amrked strict and its value is not valid
      */
     public TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException;
 
