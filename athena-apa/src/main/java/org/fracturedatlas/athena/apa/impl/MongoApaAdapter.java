@@ -35,6 +35,7 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -43,6 +44,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
+import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.apa.model.ValueType;
 
@@ -75,8 +77,14 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     public Ticket saveTicket(Ticket t) {
         BasicDBObject doc = new BasicDBObject();
 
-        ObjectId oid = new ObjectId();
-        t.setId(oid);
+        Ticket savedTicket = getTicket(t.getId());
+
+        if(savedTicket == null) {
+            ObjectId oid = new ObjectId();
+            t.setId(oid);
+            doc.put("_id", t.getId());
+        }
+
         doc.put("_id", t.getId());
         doc.put("name", t.getName());  
         
@@ -116,10 +124,8 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             }
         }
 
-        System.out.println("SEARCHING: " + query);
         DBCursor recordsCursor = records.find(query);
         for(DBObject recordObject : recordsCursor) {
-            System.out.println("FOUND: " + recordObject);
             tickets.add(toRecord(recordObject));
         }
         return tickets;
@@ -201,6 +207,16 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
         //TODO: This is loading the prop field tqice for each 1 save
         return getPropField(propField.getId());
+    }
+
+    @Override
+    public TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException {
+        enforceStrict(prop.getPropField(), prop.getValueAsString());
+        enforceCorrectValueType(prop.getPropField(), prop);
+        Ticket t = getTicket(prop.getTicket().getId());
+        t.addTicketProp(prop);
+        saveTicket(t);
+        return null;
     }
 
     @Override
@@ -308,6 +324,35 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             throw new ImmutableObjectException("You cannot change the strictness of a field after is has been saved");
         } else if (!newPropField.getValueType().equals(oldPropField.getValueType())) {
             throw new ImmutableObjectException("You cannot change the type of a field after is has been saved");
+        }
+    }
+
+    private void enforceCorrectValueType(PropField propField, TicketProp prop) throws InvalidValueException {
+
+        propField = getPropField(propField.getId());
+        if (!propField.getValueType().newTicketProp().getClass().getName().equals(prop.getClass().getName())) {
+            String err = "Value [" + prop.getValueAsString() + "] is not a valid value for the field [" + propField.getName() + "].  ";
+            err += "Field is of type [" + propField.getValueType().name() + "].";
+            throw new InvalidValueException(err);
+        }
+    }
+
+    private void enforceStrict(PropField propField, String value) throws InvalidValueException {
+
+        if (propField.getStrict()) {
+
+            //Reload the propField because we <3 Hibernate
+            propField = getPropField(propField.getId());
+            Collection<PropValue> propValues = propField.getPropValues();
+            PropValue targetValue = new PropValue(propField, value);
+
+            //TODO: Should be using a .contains method here or something
+            for (PropValue propValue : propValues) {
+                if (propValue.getPropValue().equals(value)) {
+                    return;
+                }
+            }
+            throw new InvalidValueException("Value [" + value + "] is not a valid value for the strict field [" + propField.getName() + "]");
         }
     }
 }
