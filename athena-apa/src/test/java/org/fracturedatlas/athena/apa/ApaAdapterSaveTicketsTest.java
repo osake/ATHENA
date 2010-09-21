@@ -38,21 +38,22 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
         super();
     }
 
-    //@After
+    @After
     public void teardownTickets() {
         for (Ticket t : ticketsToDelete) {
             try {
                 apa.deleteTicket(t);
             } catch (Exception ignored) {
-                    ignored.printStackTrace();
+                ignored.printStackTrace();
             }
         }
 
         for (PropField pf : propFieldsToDelete) {
             try {
-                    apa.deletePropField(pf);
+                System.out.println("DELETING: " + pf);
+                apa.deletePropField(pf);
             } catch (Exception ignored) {
-                    ignored.printStackTrace();
+                ignored.printStackTrace();
             }
         }
     }
@@ -60,20 +61,20 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testSaveTicket() {
         PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(field);
         PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(field1);
         PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
         ticket.setName("hockey");
         ticket.addTicketProp(new StringTicketProp(field, "03"));
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
         ticket.addTicketProp(new StringTicketProp(field2, "23"));
-
-        apa.saveTicket(ticket);
         ticketsToDelete.add(ticket);
+        propFieldsToDelete.add(field);
+        propFieldsToDelete.add(field1);
+        propFieldsToDelete.add(field2);
+
+        ticket = apa.saveTicket(ticket);
         assertNotNull(ticket.getId());
 
         ticket = apa.getTicket(ticket.getId());
@@ -85,72 +86,6 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
         assertEquals("03", pTicket.get("SEAT"));
         assertEquals("13", pTicket.get("SEAT1"));
         assertEquals("23", pTicket.get("SEAT2"));
-
-    }
-
-    //This functionality was taken out.
-    //@Test
-    public void testSaveTicketWithDuplicateField() {
-        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(field);
-        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(field1);
-        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(field2);
-        
-        Ticket ticket = new Ticket();
-        ticket.addTicketProp(new StringTicketProp(field, "03"));
-        ticket.addTicketProp(new StringTicketProp(field1, "13"));
-        ticket.addTicketProp(new StringTicketProp(field2, "23"));
-        ticket.addTicketProp(new StringTicketProp(field, "23"));
-
-        try {
-            ticket = apa.saveTicket(ticket);
-            fail("Not allowed!");
-        } catch (ApaException ae) {
-            //pass!
-        }
-    }
-
-    //This functionality was taken out.
-    //@Test
-    public void testUpdateTicketWithDuplicateField() {
-        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(field);
-        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(field1);
-        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(field2);
-
-        Ticket ticket = new Ticket();
-        ticket.setName("hockey");
-        ticket.addTicketProp(new StringTicketProp(field, "03"));
-        ticket.addTicketProp(new StringTicketProp(field1, "13"));
-        ticket.addTicketProp(new StringTicketProp(field2, "23"));
-
-        ticket = apa.saveTicket(ticket);
-        Object id = ticket.getId();
-        ticketsToDelete.add(ticket);
-
-        ticket.addTicketProp(new StringTicketProp(field, "23"));
-
-        try {
-            ticket = apa.saveTicket(ticket);
-            fail("Not allowed!");
-        } catch (ApaException ae) {
-            //pass!
-        }
-
-        ticket = apa.getTicket(id);
-
-        PTicket pTicket = ticket.toClientTicket();
-        assertNotNull(pTicket.getId());
-        assertEquals("hockey", pTicket.getName());
-        assertEquals(3, pTicket.getProps().size());
-        assertEquals("03", pTicket.get("SEAT"));
-        assertEquals("13", pTicket.get("SEAT1"));
-        assertEquals("23", pTicket.get("SEAT2"));
-
 
     }
 }

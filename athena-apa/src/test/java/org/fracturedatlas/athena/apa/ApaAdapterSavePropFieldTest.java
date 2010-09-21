@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
@@ -32,6 +33,7 @@ import org.fracturedatlas.athena.apa.model.PropValue;
 import org.fracturedatlas.athena.apa.model.StrictType;
 import org.fracturedatlas.athena.apa.model.StringTicketProp;
 import org.fracturedatlas.athena.apa.model.Ticket;
+import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.apa.model.ValueType;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.junit.After;
@@ -69,7 +71,6 @@ public class ApaAdapterSavePropFieldTest extends BaseApaAdapterTest {
         PropField field = apa.savePropField(new PropField(ValueType.STRING, "TEST", StrictType.NOT_STRICT));
         propFieldsToDelete.add(field);
         PropField savedField = apa.getPropField(field.getId());
-        System.out.println("HEY: " + savedField.getPropValues());
         assertEquals(field, savedField);
     }
 
@@ -78,8 +79,6 @@ public class ApaAdapterSavePropFieldTest extends BaseApaAdapterTest {
         PropField field = apa.savePropField(new PropField(ValueType.STRING, "TEST", StrictType.STRICT));
         propFieldsToDelete.add(field);
         PropField savedField = apa.getPropField(field.getId());
-        System.out.println(field.getPropValues());
-        System.out.println(savedField.getPropValues());
         assertEquals(field, savedField);
     }
 
