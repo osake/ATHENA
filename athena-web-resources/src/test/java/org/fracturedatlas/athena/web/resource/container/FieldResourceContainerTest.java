@@ -1,4 +1,4 @@
-package org.fracturedatlas.athena.tix.resource.container;
+package org.fracturedatlas.athena.web.resource.container;
 /*
 
 ATHENA Project: Management Tools for the Cultural Sector
@@ -29,8 +29,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.PropValue;
 import org.fracturedatlas.athena.apa.model.ValueType;
-import org.fracturedatlas.athena.tix.util.BaseTixContainerTest;
-import org.fracturedatlas.athena.tix.util.JsonUtil;
+import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
+import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.junit.Before;
 import org.junit.Test;
 

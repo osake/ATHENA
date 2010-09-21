@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
-package org.fracturedatlas.athena.tix.util;
+package org.fracturedatlas.athena.web.util;
 
  
 import com.sun.jersey.api.client.*;
@@ -52,12 +52,12 @@ public abstract class BaseTixContainerTest extends JerseyTest {
 
     public BaseTixContainerTest() {
 
-      super(new WebAppDescriptor.Builder("org.fracturedatlas.athena.tix.resource")
+      super(new WebAppDescriptor.Builder("org.fracturedatlas.athena.web.resource")
         .contextPath("parakeet")
         .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
         .servletClass(SpringServlet.class)
         .contextListenerClass(ContextLoaderListener.class)
-        .contextParam("javax.ws.rs.Application", "org.fracturedatlas.athena.tix.config.ParakeetConfig")
+        .contextParam("javax.ws.rs.Application", "org.fracturedatlas.athena.web.config.ParakeetConfig")
         .build());
 
         ClientConfig cc = new DefaultClientConfig();

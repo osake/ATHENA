@@ -18,8 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
 
-package org.fracturedatlas.athena.tix.manager;
+package org.fracturedatlas.athena.web.manager;
 
+import org.fracturedatlas.athena.web.manager.TicketManager;
 import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -33,8 +34,8 @@ import org.fracturedatlas.athena.apa.model.StrictType;
 import org.fracturedatlas.athena.apa.model.StringTicketProp;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.ValueType;
-import org.fracturedatlas.athena.tix.util.BaseManagerTest;
-import org.fracturedatlas.athena.tix.util.JsonUtil;
+import org.fracturedatlas.athena.web.util.BaseManagerTest;
+import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;

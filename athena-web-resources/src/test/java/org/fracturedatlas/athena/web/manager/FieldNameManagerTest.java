@@ -18,16 +18,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
 
-package org.fracturedatlas.athena.tix.manager;
+package org.fracturedatlas.athena.web.manager;
 
+import org.fracturedatlas.athena.web.manager.PropFieldManager;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.fracturedatlas.athena.tix.exception.InvalidFieldNameException;
+import org.fracturedatlas.athena.web.exception.InvalidFieldNameException;
 import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.PropValue;
 import org.fracturedatlas.athena.apa.model.ValueType;
-import org.fracturedatlas.athena.tix.util.BaseManagerTest;
-import org.fracturedatlas.athena.tix.util.JsonUtil;
+import org.fracturedatlas.athena.web.util.BaseManagerTest;
+import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;

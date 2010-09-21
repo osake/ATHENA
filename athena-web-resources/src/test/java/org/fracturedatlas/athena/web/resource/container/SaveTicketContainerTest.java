@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
  */
-package org.fracturedatlas.athena.tix.resource.container;
+package org.fracturedatlas.athena.web.resource.container;
 
 import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
@@ -36,8 +36,8 @@ import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.StringTicketProp;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.ValueType;
-import org.fracturedatlas.athena.tix.util.BaseTixContainerTest;
-import org.fracturedatlas.athena.tix.util.JsonUtil;
+import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
+import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.junit.After;
 import org.junit.Test;
