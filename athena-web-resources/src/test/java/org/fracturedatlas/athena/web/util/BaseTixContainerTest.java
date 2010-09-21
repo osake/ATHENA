@@ -46,6 +46,8 @@ public abstract class BaseTixContainerTest extends JerseyTest {
     protected EntityManagerFactory emf;
     protected ApaAdapter apa;
     protected final static String TIX_URI = "http://localhost:9998/parakeet";
+    protected final static String RECORDS_PATH = "/";
+    protected final static String FIELDS_PATH = "/fields";
 
     protected List<Ticket> ticketsToDelete = new ArrayList<Ticket>();
     protected List<PropField> propFieldsToDelete = new ArrayList<PropField>();

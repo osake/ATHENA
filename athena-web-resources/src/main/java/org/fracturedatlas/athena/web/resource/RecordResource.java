@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
  */
-package org.fracturedatlas.athena.tix.resource;
+package org.fracturedatlas.athena.web.resource;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -27,9 +27,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.apache.log4j.Logger;
-import org.fracturedatlas.athena.tix.manager.TicketManager;
+import org.fracturedatlas.athena.web.manager.TicketManager;
 import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.tix.util.JsonUtil;
+import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sun.jersey.api.NotFoundException;
@@ -39,17 +39,17 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.tix.exception.ForbiddenException;
-import org.fracturedatlas.athena.tix.exception.ObjectNotFoundException;
-import org.fracturedatlas.athena.tix.exception.ParakeetException;
+import org.fracturedatlas.athena.web.exception.ForbiddenException;
+import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
+import org.fracturedatlas.athena.web.exception.ParakeetException;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 
-@Path("/tickets")
+@Path("/")
 @Consumes({"application/json"})
 @Produces({"application/json"})
-public class TicketResource {
+public class RecordResource {
 
-    Logger logger = Logger.getLogger(TicketResource.class);
+    Logger logger = Logger.getLogger(RecordResource.class);
     @Autowired
     TicketManager ticketManager;
 

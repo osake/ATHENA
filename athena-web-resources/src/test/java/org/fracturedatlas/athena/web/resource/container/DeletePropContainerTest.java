@@ -65,7 +65,7 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
     @Test
     public void testDeletePropDoesntExist() throws Exception {
         Ticket t = createSampleTicket(true);
-        String path = "tickets/"+ t.getId() +"/props/FAKE_PROP.json";
+        String path = RECORDS_PATH + t.getId() +"/props/FAKE_PROP.json";
 
         ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
         assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
@@ -74,7 +74,7 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
     @Test
     public void testDeletePropTicketDoesntExist() throws Exception {
         Ticket t = createSampleTicket(true);
-        String path = "tickets/949483/props/SEAT_NUMBER.json";
+        String path = RECORDS_PATH + "0/props/SEAT_NUMBER.json";
 
         ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
         assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
@@ -83,7 +83,7 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
     @Test
     public void testDeleteProp() throws Exception {
         Ticket t = createSampleTicket(true);
-        String path = "tickets/"+ t.getId() +"/props/SEAT_NUMBER.json";
+        String path = RECORDS_PATH + t.getId() +"/props/SEAT_NUMBER.json";
 
         ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
         assertEquals(ClientResponse.Status.NO_CONTENT, ClientResponse.Status.fromStatusCode(response.getStatus()));
@@ -98,12 +98,12 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
     @Test
     public void testDeleteTwoProps() throws Exception {
         Ticket t = createSampleTicket(true);
-        String path = "tickets/"+ t.getId() +"/props/SEAT_NUMBER.json";
+        String path = RECORDS_PATH + t.getId() +"/props/SEAT_NUMBER.json";
 
         ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
         assertEquals(ClientResponse.Status.NO_CONTENT, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
-        path = "tickets/"+ t.getId() +"/props/SECTION.json";
+        path = RECORDS_PATH + t.getId() +"/props/SECTION.json";
 
         response = tix.path(path).type("application/json").delete(ClientResponse.class);
         assertEquals(ClientResponse.Status.NO_CONTENT, ClientResponse.Status.fromStatusCode(response.getStatus()));

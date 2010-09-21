@@ -109,7 +109,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         propFieldsToDelete.add(pf);
         propFieldsToDelete.add(pf2);
 
-        String path = "tickets/" + t.getId() + ".json";
+        String path = RECORDS_PATH + t.getId() + ".json";
 
         String ticketString = tix.path(path).get(String.class);
         assertNotNull(ticketString);
@@ -143,7 +143,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         propFieldsToDelete.add(pf);
         propFieldsToDelete.add(pf2);
 
-        String path = "tickets/" + t.getId() + ".json";
+        String path = RECORDS_PATH + t.getId() + ".json";
 
         String ticketString = tix.path(path).get(String.class);
         assertNotNull(ticketString);
@@ -177,7 +177,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         propFieldsToDelete.add(pf);
         propFieldsToDelete.add(pf2);
 
-        String path = "tickets/" + t.getId() + ".json";
+        String path = RECORDS_PATH + t.getId() + ".json";
 
         String ticketString = tix.path(path).get(String.class);
         assertNotNull(ticketString);
@@ -210,7 +210,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         propFieldsToDelete.add(pf);
         propFieldsToDelete.add(pf2);
 
-        String path = "tickets/" + t.getId() + ".json";
+        String path = RECORDS_PATH + t.getId() + ".json";
 
         String ticketString = tix.path(path).get(String.class);
         assertNotNull(ticketString);
@@ -242,7 +242,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
-        String path = "tickets/" + t.getId() + "/props";
+        String path = RECORDS_PATH + t.getId() + "/props";
 
         String ticketString = tix.path(path).get(String.class);
         assertNotNull(ticketString);
@@ -269,7 +269,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
-        String path = "tickets/" + t.getId() + "/props";
+        String path = RECORDS_PATH + t.getId() + "/props";
 
         String ticketString = tix.path(path).get(String.class);
         assertNotNull(ticketString);
@@ -286,7 +286,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
         ticketsToDelete.add(t);
 
-        String path = "tickets/" + t.getId() + ".json";
+        String path = RECORDS_PATH + t.getId() + ".json";
 
         String ticketString = tix.path(path).get(String.class);
         assertNotNull(ticketString);
@@ -298,14 +298,14 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testGetTicketThatDoesntExist() {
-        String path = "tickets/0.json";
+        String path = RECORDS_PATH + "0.json";
         ClientResponse response = tix.path(path).get(ClientResponse.class);
         assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
     }
 
     @Test
     public void testSearchWithNoParams() {
-        String path = "tickets.json";
+        String path = RECORDS_PATH;
         ClientResponse response = tix.path(path).get(ClientResponse.class);
         assertEquals(ClientResponse.Status.FORBIDDEN,
                      ClientResponse.Status.fromStatusCode(response.getStatus()));
@@ -330,7 +330,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         ticketsToDelete.add(t);
         propFieldsToDelete.add(pf);
 
-        String path = "tickets/" + t.getId() + ".json";
+        String path = RECORDS_PATH + t.getId() + ".json";
         ClientResponse response = tix.path(path).delete(ClientResponse.class);
         assertEquals(ClientResponse.Status.NO_CONTENT,
                 ClientResponse.Status.fromStatusCode(response.getStatus()));
@@ -378,7 +378,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         ticketsToDelete.add(t4);
         propFieldsToDelete.add(pf3);
 
-        String path = "tickets/" + t3.getId() + ".json";
+        String path = RECORDS_PATH + t3.getId() + ".json";
         ClientResponse response = tix.path(path).delete(ClientResponse.class);
         assertEquals(ClientResponse.Status.NO_CONTENT,
                 ClientResponse.Status.fromStatusCode(response.getStatus()));
@@ -432,12 +432,12 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         ticketsToDelete.add(t4);
         propFieldsToDelete.add(pf3);
 
-        String path = "tickets/" + t3.getId() + ".json";
+        String path = RECORDS_PATH + t3.getId() + ".json";
         ClientResponse response = tix.path(path).delete(ClientResponse.class);
         assertEquals(ClientResponse.Status.NO_CONTENT,
                 ClientResponse.Status.fromStatusCode(response.getStatus()));
 
-        path = "tickets/" + t4.getId() + ".json";
+        path = RECORDS_PATH + t4.getId() + ".json";
         response = tix.path(path).delete(ClientResponse.class);
         assertEquals(ClientResponse.Status.NO_CONTENT,
                 ClientResponse.Status.fromStatusCode(response.getStatus()));
@@ -449,11 +449,11 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         expected = apa.getTicket(t2.getId());
         assertEquals(expected, t2);
 
-        path = "tickets/" + t3.getId() + ".json";
+        path = RECORDS_PATH + t3.getId() + ".json";
         response = tix.path(path).get(ClientResponse.class);
         assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
-        path = "tickets/" + t4.getId() + ".json";
+        path = RECORDS_PATH + t4.getId() + ".json";
         response = tix.path(path).get(ClientResponse.class);
         assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
     }
@@ -477,7 +477,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         ticketsToDelete.add(t);
         propFieldsToDelete.add(pf);
 
-        String path = "tickets/0.json";
+        String path = RECORDS_PATH + "0.json";
         ClientResponse response = tix.path(path).delete(ClientResponse.class);
         assertEquals(ClientResponse.Status.NOT_FOUND,
                 ClientResponse.Status.fromStatusCode(response.getStatus()));

@@ -46,6 +46,7 @@ import static org.junit.Assert.*;
 public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     Gson gson = JsonUtil.getGson();
+    String path = "/";
 
     public SaveTicketContainerTest() throws Exception {
         super();
@@ -72,7 +73,6 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketWithNoProps() {
-        String path = "tickets.json";
         Ticket t = new Ticket();
         t.setName("ticket");
         PTicket pTicket = t.toClientTicket();
@@ -87,7 +87,6 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateThenUpdateNoPropsNoChange() {
-        String path = "tickets.json";
         Ticket t = new Ticket();
         t.setName("ticket");
         PTicket pTicket = t.toClientTicket();
@@ -108,7 +107,6 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateThenUpdate2NoPropsNoChange() {
-        String path = "tickets.json";
         Ticket t = new Ticket();
         t.setName("ticket");
         PTicket pTicket = t.toClientTicket();
@@ -138,7 +136,6 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateThenUpdateName() {
-        String path = "tickets.json";
         Ticket t = createSampleTicket(true);
         ticketsToDelete.add(t);
         t.setName("updated ticket");
@@ -158,7 +155,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateAddNewProp() {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(true);
         ticketsToDelete.add(t);
 
@@ -190,7 +187,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
     //We're updating a ticket but only sending one property.  Other properties should remain
     @Test
     public void testUpdateAddNewPropButDontSendOtherProps() {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(true);
         ticketsToDelete.add(t);
 
@@ -225,7 +222,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateProp() {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(true);
         ticketsToDelete.add(t);
 
@@ -247,7 +244,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateAllProps() {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(true);
         ticketsToDelete.add(t);
 
@@ -270,7 +267,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateTicketBlankRequest() {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(false);
         ticketsToDelete.add(t);
 
@@ -282,7 +279,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateTicketBadJson() {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(false);
         ticketsToDelete.add(t);
 
@@ -294,7 +291,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateTicketNotExist() {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(false);
         ticketsToDelete.add(t);
 
@@ -310,7 +307,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateDateTimeProp() throws Exception {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(false);
 
         PropField field = new PropField(ValueType.DATETIME, "PERFORMANCE", Boolean.FALSE);
@@ -340,7 +337,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateDateTimePropNotADate() throws Exception {
-        String path = "tickets.json";
+            
         Ticket t = createSampleTicket(false);
 
         PropField field = new PropField(ValueType.DATETIME, "PERFORMANCE", Boolean.FALSE);
@@ -364,7 +361,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateIntegerPropNotAnInteger() {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(false);
 
         PropField field = new PropField(ValueType.INTEGER, "PERFORMANCE", Boolean.FALSE);
@@ -387,7 +384,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketBadIntegerValue() {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
@@ -403,7 +400,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketBadDateTimeValue() {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
@@ -419,7 +416,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketBadBooleanValue() {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
@@ -437,7 +434,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicket() {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
@@ -456,7 +453,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateTicketUnknownField() {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(true);
         PTicket pTicket = t.toClientTicket();
         pTicket.put("BAD_FIELD", "BAD_FISH");
@@ -472,7 +469,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketUnknownField() {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
         pTicket.put("BAD_FIELD", "BAD_FISH");
@@ -517,7 +514,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         prop2.setValue(true);
         t.addTicketProp(prop2);
 
-        String path = "tickets.json";
+        
         PTicket pTicket = t.toClientTicket();
 
         String ticketJson = gson.toJson(pTicket);
@@ -562,7 +559,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         prop2.setValue(true);
         t.addTicketProp(prop2);
 
-        String path = "tickets.json";
+        
         PTicket pTicket = t.toClientTicket();
 
         String ticketJson = gson.toJson(pTicket);
@@ -605,7 +602,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         propFieldsToDelete.add(lockedField);
         propFieldsToDelete.add(redeemedField);
 
-        String path = "tickets.json";
+        
         PTicket pTicket = new PTicket();
 
         pTicket.setName("ticket10");
@@ -643,7 +640,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
         List<PropField> propFields = new ArrayList<PropField>();
 
-        String path = "tickets.json";
+        
         PTicket pTicket = new PTicket();
 
         pTicket.setName("ticket " + UUID.randomUUID().toString().substring(3, 8));
@@ -714,7 +711,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateThenUpdateDupeProp() {
-        String path = "tickets.json";
+        
         Ticket t = createSampleTicket(true);
         ticketsToDelete.add(t);
         PTicket pTicket = t.toClientTicket();
