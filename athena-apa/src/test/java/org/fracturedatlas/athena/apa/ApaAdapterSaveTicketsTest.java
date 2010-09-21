@@ -50,7 +50,6 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
 
         for (PropField pf : propFieldsToDelete) {
             try {
-                System.out.println("DELETING: " + pf);
                 apa.deletePropField(pf);
             } catch (Exception ignored) {
                 ignored.printStackTrace();
