@@ -142,6 +142,9 @@ public interface ApaAdapter {
      *
      * Boolean PropFields cannot be marked as strict.
      *
+     * This method should prevent a PropField from having duplicate PropValues.  If duplicates are detected,
+     * implementors should throw an ApaException and fail to save the object.
+     *
      * @param propField
      * @return the saved PropField
      * @throws ImmutableObjectException Once saved, a propField cannot change its ValueType or Strictness

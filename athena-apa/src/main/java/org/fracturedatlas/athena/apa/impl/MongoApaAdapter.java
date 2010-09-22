@@ -77,8 +77,14 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     public Ticket saveTicket(Ticket t) {
         BasicDBObject doc = new BasicDBObject();
 
-        ObjectId oid = new ObjectId();
-        t.setId(oid);
+        Ticket savedTicket = getTicket(t.getId());
+
+        if(savedTicket == null) {
+            ObjectId oid = new ObjectId();
+            t.setId(oid);
+            doc.put("_id", t.getId());
+        }
+
         doc.put("_id", t.getId());
         doc.put("name", t.getName());  
         
@@ -118,17 +124,17 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             }
         }
 
-        System.out.println("SEARCHING: " + query);
         DBCursor recordsCursor = records.find(query);
         for(DBObject recordObject : recordsCursor) {
-            System.out.println("FOUND: " + recordObject);
             tickets.add(toRecord(recordObject));
         }
         return tickets;
     }
 
     /**
-     * Find a prop field
+     * Because of the method of storage in MongoDB, this method WILL NEVER
+     * POPULATE propField.getTicketProps().  IT WILL ALWAYS BE NULL.
+     *
      * @param idOrName if the parameter can be massaged to a Mongo id (using ObjectId.massageToObjectId)
      * then it will be used as an id lookup, otherwise it will be used as a name lookup
      * @return
@@ -155,8 +161,12 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             propField.setStrict((Boolean)doc.get("strict"));
             propField.setValueType(ValueType.valueOf((String)doc.get("type")));
 
-            //TODO: this
-            propField.setPropValues(new ArrayList());
+            List<String> propValues = (List<String>)doc.get("values");
+            for(String val : propValues) {
+                PropValue propValue = new PropValue();
+                propValue.setPropValue(val);
+                propField.addPropValue(propValue);
+            }
 
             return propField;
         }
@@ -167,10 +177,16 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return getPropField((Object)name);
     }
 
+    /**
+     * propField.getTicketProps WILL NOT BE SAVED via this method.
+     *
+     * @param propField
+     * @return
+     */
     @Override
     public PropField savePropField(PropField propField) {
 
-        //strict must be set
+        //type must be set
         if (propField.getValueType() == null) {
             throw new ApaException("Please specify a value type");
         }
@@ -199,21 +215,48 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         doc.put("name", propField.getName());
         doc.put("strict", propField.getStrict());
         doc.put("type", propField.getValueType().toString());
+
+        Set<String> propValues = new HashSet<String>();
+        
+        if(propField.getPropValues() != null) {
+            for (PropValue propValue : propField.getPropValues()) {
+                if(!propValues.add(propValue.getPropValue())) {
+                    throw new ApaException("Cannot save Field [" + propField.getId() + "] because it contains duplicate values of [" + propValue.getPropValue() + "]");
+                }
+            }
+        }
+
+        doc.put("values", propValues);
         fields.save(doc);
 
-        //TODO: This is loading the prop field tqice for each 1 save
+        //TODO: This is loading the prop field twice for each 1 save
         return getPropField(propField.getId());
     }
 
     @Override
-    public Boolean deleteTicket(Object id) {
-        BasicDBObject query = new BasicDBObject();
-        ObjectId oid = ObjectId.massageToObjectId(id);
-        query.put("_id", oid);
-        records.remove(query);
+    public TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException {
+        enforceStrict(prop.getPropField(), prop.getValueAsString());
+        enforceCorrectValueType(prop.getPropField(), prop);
+        Ticket t = getTicket(prop.getTicket().getId());
+        t.addTicketProp(prop);
+        saveTicket(t);
+        return null;
+    }
 
-        //TODO: Return something sensible
-        return true;
+    @Override
+    public Boolean deleteTicket(Object id) {
+        Ticket t = getTicket(id);
+
+        if(t == null) {
+            return false;
+        } else{
+
+            BasicDBObject query = new BasicDBObject();
+            ObjectId oid = ObjectId.massageToObjectId(id);
+            query.put("_id", oid);
+            records.remove(query);
+            return true;
+        }
     }
 
     @Override

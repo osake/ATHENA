@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa.model;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -81,6 +82,13 @@ public class PropValue extends TixEntity implements Serializable {
         this.propValue = propValue;
     }
 
+    /**
+     * Note that this does not compare PropValue.propField.  This is to avoid
+     * stack overflows when checking Propfield.equals()  Some implementations
+     * don't even set the propField.
+     * @param obj
+     * @return
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -90,20 +98,6 @@ public class PropValue extends TixEntity implements Serializable {
             return false;
         }
         PropValue other = (PropValue) obj;
-        if (id == null) {
-            if (other.id != null) {
-                return false;
-            }
-        } else if (!id.equals(other.id)) {
-            return false;
-        }
-        if (propField == null) {
-            if (other.propField != null) {
-                return false;
-            }
-        } else if (!propField.equals(other.propField)) {
-            return false;
-        }
         if (propValue == null) {
             if (other.propValue != null) {
                 return false;
@@ -123,5 +117,11 @@ public class PropValue extends TixEntity implements Serializable {
         result = prime * result
                 + ((propValue == null) ? 0 : propValue.hashCode());
         return result;
+    }
+
+    public static class PropValueComparator implements Comparator<PropValue> {
+        public int compare(PropValue value1, PropValue value2) {
+            return value1.getPropValue().compareTo(value2.getPropValue());
+        }
     }
 }

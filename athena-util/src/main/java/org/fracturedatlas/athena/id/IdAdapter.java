@@ -38,12 +38,18 @@ public class IdAdapter extends XmlAdapter<String, Object> {
         }
     }
 
-    //convenience to test equality between two Athena Ids
+    /**
+     * Test equality between two Athena Ids
+     *
+     * TODO: This should use the .equals method of the underlying class
+     */
     public static boolean isEqual(Object id1, Object id2) {
         if (id1 == null && id2 != null) {
             return false;
         } else if (id1 != null && id2 == null) {
             return false;
+        } else if (id1 == null && id2 == null) {
+            return true;
         }
 
         String id1Str;

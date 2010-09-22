@@ -416,18 +416,12 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
     }
 
-    private class PropValueComparator implements Comparator<PropValue> {
-        public int compare(PropValue value1, PropValue value2) {
-            return value1.getPropValue().compareTo(value2.getPropValue());
-        }
-    }
-
     private void checkForDuplicatePropValue(PropField propField) throws ApaException {
         if(propField.getPropValues() == null) {
             return;
         }
 
-        Set<PropValue> duplicates = new TreeSet<PropValue>(new PropValueComparator());
+        Set<PropValue> duplicates = new TreeSet<PropValue>(new PropValue.PropValueComparator());
         for (PropValue value : propField.getPropValues()) {
             if(!duplicates.add(value)) {
                 throw new ApaException("Cannot save Field [" + propField.getId() + "] because it contains duplicate values of [" + value.getPropValue() + "]");

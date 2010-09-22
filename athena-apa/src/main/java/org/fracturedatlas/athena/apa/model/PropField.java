@@ -35,6 +35,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.apache.commons.collections.ListUtils;
 
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.hibernate.annotations.Type;
@@ -64,12 +65,14 @@ public class PropField extends TixEntity implements Serializable {
     String name;
 
     public PropField() {
+        this.propValues = new ArrayList<PropValue>();
     }
 
     public PropField(ValueType valueType, String name, Boolean strict) {
         this.valueType = valueType;
         this.name = name;
         this.strict = strict;
+        this.propValues = new ArrayList<PropValue>();
     }
 
     public Object getId() {
@@ -134,22 +137,28 @@ public class PropField extends TixEntity implements Serializable {
     }
 
     public boolean equals(Object obj) {
+        
         if (obj == null) {
             return false;
         }
+
         if (getClass() != obj.getClass()) {
             return false;
         }
+
         final PropField other = (PropField) obj;
         if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
             return false;
         }
+
         if (this.strict != other.strict && (this.strict == null || !this.strict.equals(other.strict))) {
             return false;
         }
-        if (!this.propValues.equals(other.getPropValues())) {
+
+        if (!ListUtils.isEqualList(this.propValues, other.getPropValues())) {
             return false;
         }
+
         return IdAdapter.isEqual(this.getId(), other.getId());
     }
 
