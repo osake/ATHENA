@@ -30,6 +30,7 @@ import org.junit.runners.Suite;
   ApaAdapterFindTicketsTest.class,
   ApaAdapterSavePropFieldTest.class,
   ApaAdapterSavePropTest.class,
+  ApaAdapterGetPropTest.class,
   ApaAdapterSaveTicketsTest.class
 })
 public class ApaSuite {

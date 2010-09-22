@@ -47,7 +47,10 @@ import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.apa.model.ValueType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     Logger logger = Logger.getLogger(this.getClass().getName());
@@ -58,19 +61,24 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     //This is the mongo name for the props object within a record
     public static final String PROPS_STRING = "props";
 
-    public MongoApaAdapter() throws UnknownHostException {
-        Mongo m = new Mongo( "localhost" , 27017 );
-        db = m.getDB( "tix" );
-        records = db.getCollection("records");
-        fields = db.getCollection("fields");
+    public MongoApaAdapter(String host,
+                           Integer port,
+                           String dbName,
+                           String recordsCollectionName,
+                           String fieldsCollectionName) throws UnknownHostException {
+        Mongo m = new Mongo(host, port);
+        db = m.getDB(dbName);
+        records = db.getCollection(recordsCollectionName);
+        fields = db.getCollection(fieldsCollectionName);
     }
 
     @Override
     public Ticket getTicket(Object id) {
-        BasicDBObject query = new BasicDBObject();
-        ObjectId oid = ObjectId.massageToObjectId(id);
-        query.put("_id", oid);
-        return toRecord(records.findOne(query));
+        return toRecord(getRecordDocument(new BasicDBObject(), ObjectId.massageToObjectId(id)), true);
+    }
+
+    public Ticket getTicket(Object id, Boolean includeProps) {
+        return toRecord(getRecordDocument(new BasicDBObject(), ObjectId.massageToObjectId(id)), includeProps);
     }
 
     @Override
@@ -304,31 +312,95 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return fields;
     }
 
+    @Override
+    public TicketProp getTicketProp(String fieldName, Object ticketId) {
+        TicketProp ticketProp = null;
+        DBObject recordDoc = getRecordDocument(new BasicDBObject(), ObjectId.massageToObjectId(ticketId));
+
+        if(recordDoc != null) {
+            DBObject propsObj = (DBObject)recordDoc.get("props");
+            if(propsObj.containsField(fieldName)) {
+                PropField field = getPropField(fieldName);
+
+                ticketProp = field.getValueType().newTicketProp();
+                ticketProp.setId(null);
+                ticketProp.setPropField(field);
+
+                try {
+                    ticketProp.setValue(propsObj.get(fieldName));
+                } catch (Exception e) {
+                    //TODO: This should throw something besides Exception
+                    e.printStackTrace();
+                }
+
+                ticketProp.setTicket(getTicket(ticketId, false));
+            }
+        }
+
+        return ticketProp;
+    }
+
+    @Override
+    public void deleteTicketProp(TicketProp prop) {
+        TicketProp ticketProp = null;
+        if(prop.getTicket() != null) {
+            DBObject recordDoc = getRecordDocument(new BasicDBObject(), ObjectId.massageToObjectId(prop.getTicket().getId()));
+            String fieldName = prop.getPropField().getName();
+
+            if(recordDoc != null) {
+                DBObject propsObj = (DBObject)recordDoc.get("props");
+                if(propsObj.containsField(fieldName)) {
+                    propsObj.removeField(fieldName);
+                }
+                recordDoc.put("props", propsObj);
+                records.save(recordDoc);
+            }
+        }
+    }
+
+    private BasicDBObject buildTicketQuery(ObjectId oid) {
+        BasicDBObject query = new BasicDBObject();
+        query.put("_id", oid);
+        return query;
+    }
+
+    private DBObject getRecordDocument(BasicDBObject query, ObjectId oid) {
+        query.put("_id", oid);
+        return records.findOne(query);
+    }
+
     private Ticket toRecord(DBObject recordObject) {
+        return toRecord(recordObject, true);
+    }
+
+    private Ticket toRecord(DBObject recordObject, Boolean includeProps) {
         Ticket t = null;
 
         if(recordObject != null) {
             t = new Ticket();
             t.setId(recordObject.get("_id"));
             t.setName((String)recordObject.get("name"));
-            DBObject propsObj = (DBObject)recordObject.get("props");
-            for(String key : propsObj.keySet()) {
-                Object val = propsObj.get(key);
-                PropField field = getPropField(key);
+            
+            if(includeProps) {
+                DBObject propsObj = (DBObject)recordObject.get("props");
+                for(String key : propsObj.keySet()) {
+                    Object val = propsObj.get(key);
+                    PropField field = getPropField(key);
 
-                TicketProp ticketProp = field.getValueType().newTicketProp();
-                ticketProp.setId(null);
-                ticketProp.setPropField(field);
+                    TicketProp ticketProp = field.getValueType().newTicketProp();
+                    ticketProp.setId(null);
+                    ticketProp.setPropField(field);
 
-                try {
-                    ticketProp.setValue(val);
-                } catch (Exception e) {
-                    //TODO: This should throw something besides Exception
-                    e.printStackTrace();
+                    try {
+                        ticketProp.setValue(val);
+                    } catch (Exception e) {
+                        //TODO: This should throw something besides Exception
+                        e.printStackTrace();
+                    }
+
+                    ticketProp.setTicket(t);
+                    t.addTicketProp(ticketProp);
                 }
-
-                ticketProp.setTicket(t);
-                t.addTicketProp(ticketProp);
             }
         }
 
