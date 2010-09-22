@@ -127,11 +127,6 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         assertTicketsEqual(t, updatedPTicket, false);
 
         apa.deleteTicket(savedPTicket.getId());
-
-        for (PropField f : propFieldsToDelete) {
-            f = apa.getPropField(f.getId());
-            assertEquals(1, f.getTicketProps().size());
-        }
     }
 
     @Test
@@ -146,16 +141,11 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
         assertNotNull(savedPTicket.getId());
         assertTicketsEqual(t, savedPTicket, true);
-
-        for (PropField f : propFieldsToDelete) {
-            f = apa.getPropField(f.getId());
-            assertEquals(1, f.getTicketProps().size());
-        }
     }
 
     @Test
     public void testUpdateAddNewProp() {
-        
+
         Ticket t = createSampleTicket(true);
         ticketsToDelete.add(t);
 
@@ -176,18 +166,12 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
         assertNotNull(savedPTicket.getId());
         assertEquals(pTicket, savedPTicket);
-
-        for (PropField f : propFieldsToDelete) {
-            f = apa.getPropField(f.getId());
-            assertEquals(1, f.getTicketProps().size());
-        }
-
     }
 
     //We're updating a ticket but only sending one property.  Other properties should remain
     @Test
     public void testUpdateAddNewPropButDontSendOtherProps() {
-        
+
         Ticket t = createSampleTicket(true);
         ticketsToDelete.add(t);
 
@@ -212,17 +196,11 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
         assertNotNull(savedPTicket.getId());
         assertEquals(pTicket, savedPTicket);
-
-        for (PropField f : propFieldsToDelete) {
-            f = apa.getPropField(f.getId());
-            assertEquals(1, f.getTicketProps().size());
-        }
-
     }
 
     @Test
     public void testUpdateProp() {
-        
+
         Ticket t = createSampleTicket(true);
         ticketsToDelete.add(t);
 
@@ -235,16 +213,11 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
         assertNotNull(savedPTicket.getId());
         assertEquals(pTicket, savedPTicket);
-
-        for (PropField field : propFieldsToDelete) {
-            field = apa.getPropField(field.getId());
-            assertEquals(1, field.getTicketProps().size());
-        }
     }
 
     @Test
     public void testUpdateAllProps() {
-        
+
         Ticket t = createSampleTicket(true);
         ticketsToDelete.add(t);
 
@@ -258,16 +231,11 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
         assertNotNull(savedPTicket.getId());
         assertEquals(pTicket, savedPTicket);
-
-        for (PropField field : propFieldsToDelete) {
-            field = apa.getPropField(field.getId());
-            assertEquals(1, field.getTicketProps().size());
-        }
     }
 
     @Test
     public void testUpdateTicketBlankRequest() {
-        
+
         Ticket t = createSampleTicket(false);
         ticketsToDelete.add(t);
 
@@ -279,7 +247,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateTicketBadJson() {
-        
+
         Ticket t = createSampleTicket(false);
         ticketsToDelete.add(t);
 
@@ -291,7 +259,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateTicketNotExist() {
-        
+
         Ticket t = createSampleTicket(false);
         ticketsToDelete.add(t);
 
@@ -307,7 +275,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateDateTimeProp() throws Exception {
-        
+
         Ticket t = createSampleTicket(false);
 
         PropField field = new PropField(ValueType.DATETIME, "PERFORMANCE", Boolean.FALSE);
@@ -328,16 +296,11 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
         assertNotNull(savedPTicket.getId());
         assertEquals(pTicket, savedPTicket);
-
-        for (PropField f : propFieldsToDelete) {
-            f = apa.getPropField(f.getId());
-            assertEquals(1, f.getTicketProps().size());
-        }
     }
 
     @Test
     public void testUpdateDateTimePropNotADate() throws Exception {
-            
+
         Ticket t = createSampleTicket(false);
 
         PropField field = new PropField(ValueType.DATETIME, "PERFORMANCE", Boolean.FALSE);
@@ -361,7 +324,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateIntegerPropNotAnInteger() {
-        
+
         Ticket t = createSampleTicket(false);
 
         PropField field = new PropField(ValueType.INTEGER, "PERFORMANCE", Boolean.FALSE);
@@ -384,7 +347,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketBadIntegerValue() {
-        
+
         Ticket t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
@@ -400,7 +363,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketBadDateTimeValue() {
-        
+
         Ticket t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
@@ -416,7 +379,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketBadBooleanValue() {
-        
+
         Ticket t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
@@ -434,7 +397,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicket() {
-        
+
         Ticket t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
@@ -453,7 +416,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateTicketUnknownField() {
-        
+
         Ticket t = createSampleTicket(true);
         PTicket pTicket = t.toClientTicket();
         pTicket.put("BAD_FIELD", "BAD_FISH");
@@ -469,7 +432,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketUnknownField() {
-        
+
         Ticket t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
         pTicket.put("BAD_FIELD", "BAD_FISH");
@@ -514,7 +477,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         prop2.setValue(true);
         t.addTicketProp(prop2);
 
-        
+
         PTicket pTicket = t.toClientTicket();
 
         String ticketJson = gson.toJson(pTicket);
@@ -559,7 +522,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         prop2.setValue(true);
         t.addTicketProp(prop2);
 
-        
+
         PTicket pTicket = t.toClientTicket();
 
         String ticketJson = gson.toJson(pTicket);
@@ -602,7 +565,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         propFieldsToDelete.add(lockedField);
         propFieldsToDelete.add(redeemedField);
 
-        
+
         PTicket pTicket = new PTicket();
 
         pTicket.setName("ticket10");
@@ -640,7 +603,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
         List<PropField> propFields = new ArrayList<PropField>();
 
-        
+
         PTicket pTicket = new PTicket();
 
         pTicket.setName("ticket " + UUID.randomUUID().toString().substring(3, 8));
@@ -711,7 +674,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateThenUpdateDupeProp() {
-        
+
         Ticket t = createSampleTicket(true);
         ticketsToDelete.add(t);
         PTicket pTicket = t.toClientTicket();

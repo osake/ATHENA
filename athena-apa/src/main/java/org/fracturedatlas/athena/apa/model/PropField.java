@@ -175,7 +175,13 @@ public class PropField extends TixEntity implements Serializable {
         PField pField = new PField();
 
         pField.setPropValues(new ArrayList<String>());
-        pField.setId(this.getId());
+
+        if(this.getId() != null) {
+            pField.setId(this.getId().toString());
+        } else {
+            pField.setId(null);
+        }
+
         pField.setName(this.getName());
         pField.setStrict(this.getStrict());
 

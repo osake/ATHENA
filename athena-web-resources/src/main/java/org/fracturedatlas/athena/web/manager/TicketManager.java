@@ -178,6 +178,7 @@ public class TicketManager {
      * createAndSaveTicketFromClientTicket will create a new ticket using magic and wizardry
      */
     private Ticket createAndSaveTicketFromClientTicket(PTicket clientTicket) throws Exception {
+
         Ticket ticket = new Ticket();
         
         //for all props on this pTicket, create new props with apa

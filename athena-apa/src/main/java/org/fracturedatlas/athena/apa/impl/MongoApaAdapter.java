@@ -228,7 +228,9 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
         if(propField.getPropValues() != null) {
             for (PropValue propValue : propField.getPropValues()) {
-                if(!propValues.add(propValue.getPropValue())) {
+                //TODO: There's a weird case here with propField.getPropValues is a lit with null in it.  Check for that here
+                //Someday, fix this conditios
+                if(propValue != null && !propValues.add(propValue.getPropValue())) {
                     throw new ApaException("Cannot save Field [" + propField.getId() + "] because it contains duplicate values of [" + propValue.getPropValue() + "]");
                 }
             }
@@ -279,7 +281,6 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         query.put("_id", oid);
         fields.remove(query);
 
-        //TODO: Return something sensible
         return true;
     }
 
@@ -290,8 +291,11 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     @Override
     public PropValue savePropValue(PropValue propValue) {
-            // TODO Auto-generated method stub
-            return null;
+        PropField field = getPropField(propValue.getPropField().getId());
+        field.addPropValue(propValue);
+        savePropField(field);
+        propValue.setId(propValue.getPropValue());
+        return propValue;
     }
 
     @Override
@@ -356,6 +360,20 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 records.save(recordDoc);
             }
         }
+    }
+
+    @Override
+    public Collection<PropValue> getPropValues(Object propFieldId) {
+        Collection<PropValue> propValues = null; 
+        
+        PropField field = getPropField(propFieldId);
+        if(field != null) {
+            propValues = field.getPropValues();
+        } else {
+            propValues = new ArrayList<PropValue>();
+        }
+        
+        return propValues;
     }
 
     private BasicDBObject buildTicketQuery(ObjectId oid) {
