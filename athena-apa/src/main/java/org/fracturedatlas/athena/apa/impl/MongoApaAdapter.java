@@ -57,7 +57,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     //This is the mongo name for the props object within a record
     public static final String PROPS_STRING = "props";
-    
+
     public MongoApaAdapter() throws UnknownHostException {
         Mongo m = new Mongo( "localhost" , 27017 );
         db = m.getDB( "tix" );
@@ -86,15 +86,15 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
 
         doc.put("_id", t.getId());
-        doc.put("name", t.getName());  
-        
+        doc.put("name", t.getName());
+
         BasicDBObject props = new BasicDBObject();
         for(TicketProp prop : t.getTicketProps()) {
             props.put(prop.getPropField().getName(), prop.getValue());
         }
-        
+
         doc.put("props", props);
-        
+
         records.save(doc);
 
         return t;
@@ -142,7 +142,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     @Override
     public PropField getPropField(Object idOrName) {
         BasicDBObject query = new BasicDBObject();
-        
+
         ObjectId objectId = ObjectId.massageToObjectId(idOrName);
         if (objectId != null) {
             query.put("_id", objectId);
@@ -217,7 +217,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         doc.put("type", propField.getValueType().toString());
 
         Set<String> propValues = new HashSet<String>();
-        
+
         if(propField.getPropValues() != null) {
             for (PropValue propValue : propField.getPropValues()) {
                 if(!propValues.add(propValue.getPropValue())) {
@@ -331,15 +331,8 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 t.addTicketProp(ticketProp);
             }
         }
-        
-        return t;
-    }
 
-    @Override
-    public TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException {
-        enforceStrict(prop.getPropField(), prop.getValueAsString());
-        enforceCorrectValueType(prop.getPropField(), prop);
-        return prop;
+        return t;
     }
 
     private void checkForDuplicatePropField(String name) throws ApaException {

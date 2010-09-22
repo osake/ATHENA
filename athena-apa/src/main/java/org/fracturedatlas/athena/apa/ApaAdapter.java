@@ -101,7 +101,7 @@ public interface ApaAdapter {
      * Save the ticketProp
      * @param prop the ticketProp to save
      * @return the saved ticketProp
-     * @throws InvalidValueException if one of the props in the list has been amrked strict and its value is not valid
+     * @throws InvalidValueException if one of the props int he list has been amrked strict and its value is not valid
      */
     public TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException;
 
@@ -112,7 +112,7 @@ public interface ApaAdapter {
      */
     public TicketProp getTicketProp(Object id);
 
-    
+
     /**
      * get the ticketProp for the given ticket and field name
      * @param id the id
@@ -200,7 +200,7 @@ public interface ApaAdapter {
      * @return the full List of PropFields
      */
     public Collection<PropValue> getPropValues(Object propFieldId);
-    
+
     /**
      * Delete a PropValue
      * @param propValue
