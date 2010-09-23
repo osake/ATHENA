@@ -44,7 +44,7 @@ import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.web.exception.ParakeetException;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 
-@Path("/")
+@Path("")
 @Consumes({"application/json"})
 @Produces({"application/json"})
 public class RecordResource {
