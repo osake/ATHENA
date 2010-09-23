@@ -46,18 +46,18 @@ public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
         PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
         PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
         PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
+        propFieldsToDelete.add(field);
+        propFieldsToDelete.add(field1);
+        propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
         ticket.setName("hockey");
         ticket.addTicketProp(new StringTicketProp(field, "03"));
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
         ticket.addTicketProp(new StringTicketProp(field2, "23"));
-        ticketsToDelete.add(ticket);
-        propFieldsToDelete.add(field);
-        propFieldsToDelete.add(field1);
-        propFieldsToDelete.add(field2);
 
         ticket = apa.saveTicket(ticket);
+        ticketsToDelete.add(ticket);
 
         TicketProp prop = apa.getTicketProp(field.getName(), ticket.getId());
         assertNotNull(prop);
@@ -87,18 +87,18 @@ public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
         PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
         PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
         PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
+        propFieldsToDelete.add(field);
+        propFieldsToDelete.add(field1);
+        propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
         ticket.setName("hockey");
         ticket.addTicketProp(new StringTicketProp(field, "03"));
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
         ticket.addTicketProp(new StringTicketProp(field2, "23"));
-        ticketsToDelete.add(ticket);
-        propFieldsToDelete.add(field);
-        propFieldsToDelete.add(field1);
-        propFieldsToDelete.add(field2);
 
         ticket = apa.saveTicket(ticket);
+        ticketsToDelete.add(ticket);
 
         TicketProp prop = apa.getTicketProp("NO_CHANCE", ticket.getId());
         assertNull(prop);
@@ -109,18 +109,18 @@ public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
         PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
         PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
         PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
+        propFieldsToDelete.add(field);
+        propFieldsToDelete.add(field1);
+        propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
         ticket.setName("hockey");
         ticket.addTicketProp(new StringTicketProp(field, "03"));
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
         ticket.addTicketProp(new StringTicketProp(field2, "23"));
-        ticketsToDelete.add(ticket);
-        propFieldsToDelete.add(field);
-        propFieldsToDelete.add(field1);
-        propFieldsToDelete.add(field2);
 
         ticket = apa.saveTicket(ticket);
+        ticketsToDelete.add(ticket);
 
         TicketProp prop = apa.getTicketProp("SEAT", null);
         assertNull(prop);
