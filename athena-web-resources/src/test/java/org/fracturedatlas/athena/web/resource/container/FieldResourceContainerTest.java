@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 
 import com.google.gson.Gson;
+import com.sun.jersey.api.client.ClientResponse;
 import static org.junit.Assert.*;
 
 import org.apache.log4j.Logger;
@@ -32,6 +33,7 @@ import org.fracturedatlas.athena.web.util.JsonUtil;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.fracturedatlas.athena.client.PField;
@@ -116,209 +118,209 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
         assertEquals(testValue.getPropValue(), actualValue.getPropValue());
     }
 
-//    @Test
-//    public void testGetAllValuesJson() {
-//        String path = "fields/" + testField.getId() + "/values";
-//        ClientResponse response = tix.path(path).type("application/json").get(ClientResponse.class);
-//        String jsonResponse = response.getEntity(String.class);
-//        assertNotNull(jsonResponse);
-//        assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
-//    }
-//
-//    @Test
-//    public void testGetAllFieldsJson() throws Exception {
-//        PropField f1 = apa.savePropField(new PropField(ValueType.STRING, "TEMP1", StrictType.NOT_STRICT));
-//        propFieldsToDelete.add(f1);
-//        PropField f2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "TEMP2", StrictType.NOT_STRICT));
-//        propFieldsToDelete.add(f2);
-//        PropField f3 = apa.savePropField(new PropField(ValueType.INTEGER, "TEMP3", StrictType.NOT_STRICT));
-//        propFieldsToDelete.add(f3);
-//        PropField f4 = apa.savePropField(new PropField(ValueType.DATETIME, "TEMP4", StrictType.STRICT));
-//        propFieldsToDelete.add(f4);
-//
-//        String path = "fields.json";
-//        ClientResponse response = tix.path(path).type("application/json").get(ClientResponse.class);
-//        String jsonResponse = response.getEntity(String.class);
-//        assertNotNull(jsonResponse);
-//        assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
-//        Gson gson = JsonUtil.getGson();
-//        PField[] pFieldArray = gson.fromJson(jsonResponse, PField[].class);
-//        List<PField> pFields = Arrays.asList(pFieldArray);
-//        assertEquals(5, pFields.size());
-//        for(PField pField : pFields) {
-//            if(pField.getName().equals("TEMP1")) {
-//               assertFieldsEqual(f1, pField);
-//            }
-//            if(pField.getName().equals("TEMP2")) {
-//               assertFieldsEqual(f2, pField);
-//            }
-//            if(pField.getName().equals("TEMP3")) {
-//               assertFieldsEqual(f3, pField);
-//            }
-//            if(pField.getName().equals("TEMP4")) {
-//               assertFieldsEqual(f4, pField);
-//            }
-//            if(pField.getName().equals("SECTION")) {
-//               assertFieldsEqual(testField, pField);
-//            }
-//        }
-//    }
-//
-//    @Test
-//    public void testGetFieldThatDoesntExist() {
-//        String path = "fields/0.json";
-//        ClientResponse response = tix.path(path).get(ClientResponse.class);
-//        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
-//    }
-//
-//    @Test
-//    public void testCreateFieldBoolean() throws Exception {
-//        String path = "fields/";
-//        PropField propField = null;
-//        testFieldJson = "{\"valueType\":\"BOOLEAN\",\"strict\":\"false\",\"name\":\"BOOL\"}";
-//
-//        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
-//        String jsonResponse = response.getEntity(String.class);
-//
-//        propField = mapper.readValue(jsonResponse, PropField.class);
-//        assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
-//        assertEquals(propField.getName(), "BOOL");
-//        assertEquals(propField.getValueType(), ValueType.BOOLEAN);
-//        assertEquals(propField.getStrict(), false);
-//        assertNotNull(propField.getId());
-//
-//        propFieldsToDelete.add(propField);
-//
-//    }
-//
-//    @Test
-//    public void testCreateFieldDatetime() throws Exception {
-//        String path = "fields/";
-//        PropField propField = null;
-//        testFieldJson = "{\"valueType\":\"DATETIME\",\"strict\":\"false\",\"name\":\"BOOL\"}";
-//        logger.debug("Asking for creation of " + testFieldJson);
-//
-//        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
-//        String jsonResponse = response.getEntity(String.class);
-//
-//        logger.debug("Response is " + jsonResponse);
-//        propField = mapper.readValue(jsonResponse, PropField.class);
-//        logger.debug("json of propField is " + mapper.writeValueAsString(propField));
-//        assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
-//        assertEquals(propField.getName(), "BOOL");
-//        assertEquals(propField.getValueType(), ValueType.DATETIME);
-//        assertEquals(propField.getStrict(), false);
-//        assertNotNull(propField.getId());
-//
-//        propFieldsToDelete.add(propField);
-//    }
-//
-//    @Test
-//    public void testCreateFieldInvalidValueType() throws Exception {
-//        String path = "fields/";
-//        PropField propField = null;
-//        testFieldJson = "{\"valueType\":\"FAKE!\",\"strict\":\"false\",\"name\":\"BOOL\"}";
-//
-//        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
-//        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
-//
-//    }
-//
-//    @Test
-//    public void testCreateField() throws Exception {
-//        String path = "fields/";
-//        PropField propField = null;
-//        testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"false\",\"name\":\"ARTIST\"}";
-//        logger.debug("Asking for creation of " + testFieldJson);
-//
-//        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
-//        String jsonResponse = response.getEntity(String.class);
-//
-//        logger.debug("Response is " + jsonResponse);
-//        propField = mapper.readValue(jsonResponse, PropField.class);
-//        logger.debug("json of propField is " + mapper.writeValueAsString(propField));
-//        assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
-//        assertEquals(propField.getName(), "ARTIST");
-//        assertEquals(propField.getValueType(), ValueType.STRING);
-//        assertEquals(propField.getStrict(), false);
-//        assertNotNull(propField.getId());
-//
-//        propFieldsToDelete.add(propField);
-//
-//    }
-//
-//    @Test
-//    public void testCreateFieldStrict() throws Exception {
-//        String path = "fields/";
-//        PropField propField = null;
-//        testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"true\",\"name\":\"TIRES\"}";
-//
-//        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
-//        String jsonResponse = response.getEntity(String.class);
-//
-//        logger.debug("Response is " + jsonResponse);
-//        propField = mapper.readValue(jsonResponse, PropField.class);
-//        propFieldsToDelete.add(propField);
-//        assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
-//        assertEquals(propField.getName(), "TIRES");
-//        assertEquals(propField.getValueType(), ValueType.STRING);
-//        assertEquals(propField.getStrict(), true);
-//        assertNotNull(propField.getId());
-//
-//
-//    }
-//
-//    @Test
-//    public void testCreateFieldStrictIsEmpty() {
-//        String path = "fields/";
-//        testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"\",\"name\":\"TIRES\"}";
-//
-//        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
-//        String jsonResponse = response.getEntity(String.class);
-//
-//        logger.debug("Response is " + jsonResponse);
-//        assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
-//
-//        PropField field = gson.fromJson(jsonResponse, PropField.class);
-//        propFieldsToDelete.add(field);
-//        assertEquals(ValueType.STRING, field.getValueType());
-//        assertEquals("TIRES", field.getName());
-//        assertEquals(StrictType.NOT_STRICT, field.getStrict());
-//
-//    }
-//
-//    @Test
-//    public void testCreateFieldWithForbiddenCharacters() throws Exception {
-//        String path = "fields/";
-//        testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"true\",\"name\":\"Seat Number\"}";
-//
-//        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
-//        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
-//
-//    }
-//
-//    @Test
-//    public void testDeleteField() throws Exception {
-//        String path = "fields/";
-//        testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"true\",\"name\":\"Promoter\"}";
-//        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
-//        String jsonResponse = response.getEntity(String.class);
-//
-//        PropField propField = mapper.readValue(jsonResponse, PropField.class);
-//
-//        path = "fields/" + propField.getId().toString();
-//
-//        response = tix.path(path).type("application/json").delete(ClientResponse.class);
-//        assertEquals(ClientResponse.Status.NO_CONTENT, ClientResponse.Status.fromStatusCode(response.getStatus()));
-//
-//    }
-//
-//    @Test
-//    public void testDeleteFieldDoesntExist() throws Exception {
-//        String path = "fields/204040404440.json";
-//
-//        ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
-//        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
-//
-//    }
+    @Test
+    public void testGetAllValuesJson() {
+        String path = "fields/" + testField.getId() + "/values";
+        ClientResponse response = tix.path(path).type("application/json").get(ClientResponse.class);
+        String jsonResponse = response.getEntity(String.class);
+        assertNotNull(jsonResponse);
+        assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
+    @Test
+    public void testGetAllFieldsJson() throws Exception {
+        PropField f1 = apa.savePropField(new PropField(ValueType.STRING, "TEMP1", StrictType.NOT_STRICT));
+        propFieldsToDelete.add(f1);
+        PropField f2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "TEMP2", StrictType.NOT_STRICT));
+        propFieldsToDelete.add(f2);
+        PropField f3 = apa.savePropField(new PropField(ValueType.INTEGER, "TEMP3", StrictType.NOT_STRICT));
+        propFieldsToDelete.add(f3);
+        PropField f4 = apa.savePropField(new PropField(ValueType.DATETIME, "TEMP4", StrictType.STRICT));
+        propFieldsToDelete.add(f4);
+
+        String path = "fields.json";
+        ClientResponse response = tix.path(path).type("application/json").get(ClientResponse.class);
+        String jsonResponse = response.getEntity(String.class);
+        assertNotNull(jsonResponse);
+        assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
+        Gson gson = JsonUtil.getGson();
+        PField[] pFieldArray = gson.fromJson(jsonResponse, PField[].class);
+        List<PField> pFields = Arrays.asList(pFieldArray);
+        assertEquals(5, pFields.size());
+        for(PField pField : pFields) {
+            if(pField.getName().equals("TEMP1")) {
+               assertFieldsEqual(f1, pField);
+            }
+            if(pField.getName().equals("TEMP2")) {
+               assertFieldsEqual(f2, pField);
+            }
+            if(pField.getName().equals("TEMP3")) {
+               assertFieldsEqual(f3, pField);
+            }
+            if(pField.getName().equals("TEMP4")) {
+               assertFieldsEqual(f4, pField);
+            }
+            if(pField.getName().equals("SECTION")) {
+               assertFieldsEqual(testField, pField);
+            }
+        }
+    }
+
+    @Test
+    public void testGetFieldThatDoesntExist() {
+        String path = "fields/0.json";
+        ClientResponse response = tix.path(path).get(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
+    @Test
+    public void testCreateFieldBoolean() throws Exception {
+        String path = "fields/";
+        PropField propField = null;
+        testFieldJson = "{\"valueType\":\"BOOLEAN\",\"strict\":\"false\",\"name\":\"BOOL\"}";
+
+        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
+        String jsonResponse = response.getEntity(String.class);
+
+        propField = mapper.readValue(jsonResponse, PropField.class);
+        assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
+        assertEquals(propField.getName(), "BOOL");
+        assertEquals(propField.getValueType(), ValueType.BOOLEAN);
+        assertEquals(propField.getStrict(), false);
+        assertNotNull(propField.getId());
+
+        propFieldsToDelete.add(propField);
+
+    }
+
+    @Test
+    public void testCreateFieldDatetime() throws Exception {
+        String path = "fields/";
+        PropField propField = null;
+        testFieldJson = "{\"valueType\":\"DATETIME\",\"strict\":\"false\",\"name\":\"BOOL\"}";
+        logger.debug("Asking for creation of " + testFieldJson);
+
+        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
+        String jsonResponse = response.getEntity(String.class);
+
+        logger.debug("Response is " + jsonResponse);
+        propField = mapper.readValue(jsonResponse, PropField.class);
+        logger.debug("json of propField is " + mapper.writeValueAsString(propField));
+        assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
+        assertEquals(propField.getName(), "BOOL");
+        assertEquals(propField.getValueType(), ValueType.DATETIME);
+        assertEquals(propField.getStrict(), false);
+        assertNotNull(propField.getId());
+
+        propFieldsToDelete.add(propField);
+    }
+
+    @Test
+    public void testCreateFieldInvalidValueType() throws Exception {
+        String path = "fields/";
+        PropField propField = null;
+        testFieldJson = "{\"valueType\":\"FAKE!\",\"strict\":\"false\",\"name\":\"BOOL\"}";
+
+        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+    }
+
+    @Test
+    public void testCreateField() throws Exception {
+        String path = "fields/";
+        PropField propField = null;
+        testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"false\",\"name\":\"ARTIST\"}";
+        logger.debug("Asking for creation of " + testFieldJson);
+
+        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
+        String jsonResponse = response.getEntity(String.class);
+
+        logger.debug("Response is " + jsonResponse);
+        propField = mapper.readValue(jsonResponse, PropField.class);
+        logger.debug("json of propField is " + mapper.writeValueAsString(propField));
+        assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
+        assertEquals(propField.getName(), "ARTIST");
+        assertEquals(propField.getValueType(), ValueType.STRING);
+        assertEquals(propField.getStrict(), false);
+        assertNotNull(propField.getId());
+
+        propFieldsToDelete.add(propField);
+
+    }
+
+    @Test
+    public void testCreateFieldStrict() throws Exception {
+        String path = "fields/";
+        PropField propField = null;
+        testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"true\",\"name\":\"TIRES\"}";
+
+        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
+        String jsonResponse = response.getEntity(String.class);
+
+        logger.debug("Response is " + jsonResponse);
+        propField = mapper.readValue(jsonResponse, PropField.class);
+        propFieldsToDelete.add(propField);
+        assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
+        assertEquals(propField.getName(), "TIRES");
+        assertEquals(propField.getValueType(), ValueType.STRING);
+        assertEquals(propField.getStrict(), true);
+        assertNotNull(propField.getId());
+
+
+    }
+
+    @Test
+    public void testCreateFieldStrictIsEmpty() {
+        String path = "fields/";
+        testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"\",\"name\":\"TIRES\"}";
+
+        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
+        String jsonResponse = response.getEntity(String.class);
+
+        logger.debug("Response is " + jsonResponse);
+        assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+        PropField field = gson.fromJson(jsonResponse, PropField.class);
+        propFieldsToDelete.add(field);
+        assertEquals(ValueType.STRING, field.getValueType());
+        assertEquals("TIRES", field.getName());
+        assertEquals(StrictType.NOT_STRICT, field.getStrict());
+
+    }
+
+    @Test
+    public void testCreateFieldWithForbiddenCharacters() throws Exception {
+        String path = "fields/";
+        testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"true\",\"name\":\"Seat Number\"}";
+
+        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+    }
+
+    @Test
+    public void testDeleteField() throws Exception {
+        String path = "fields/";
+        testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"true\",\"name\":\"Promoter\"}";
+        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
+        String jsonResponse = response.getEntity(String.class);
+
+        PropField propField = mapper.readValue(jsonResponse, PropField.class);
+
+        path = "fields/" + propField.getId().toString();
+
+        response = tix.path(path).type("application/json").delete(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NO_CONTENT, ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+    }
+
+    @Test
+    public void testDeleteFieldDoesntExist() throws Exception {
+        String path = "fields/204040404440.json";
+
+        ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NO_CONTENT, ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+    }
 }

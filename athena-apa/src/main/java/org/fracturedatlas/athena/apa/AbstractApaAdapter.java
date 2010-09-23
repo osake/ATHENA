@@ -108,11 +108,6 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     public Boolean deletePropField(PropField propField) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
-    
-    @Override
-    public PropValue getPropValue(Object propValueId) {
-        throw new UnsupportedOperationException("Unsupported operation");
-    }
 
     @Override
     public Collection<PropValue> getPropValues(Object propFieldId) {

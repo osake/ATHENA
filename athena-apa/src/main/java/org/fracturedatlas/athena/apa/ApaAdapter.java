@@ -188,13 +188,6 @@ public interface ApaAdapter {
     public PropValue savePropValue(PropValue propValue);
 
     /**
-     * get a PropValue
-     * @param propValue
-     * @return the PropValue with this id, null otherwise
-     */
-    public PropValue getPropValue(Object propValueId);
-
-    /**
      * get a List of propFields
      * @param propField
      * @return the full List of PropFields

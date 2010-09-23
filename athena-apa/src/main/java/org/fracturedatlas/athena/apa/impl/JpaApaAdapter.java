@@ -505,17 +505,6 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public PropValue getPropValue(Object propValueId) {
-        EntityManager em = this.emf.createEntityManager();
-        try {
-            PropValue propValue = em.find(PropValue.class, LongUserType.massageToLong(propValueId));
-            return propValue;
-        } finally {
-            cleanup(em);
-        }
-    }
-
-    @Override
     public Collection<PropValue> getPropValues(Object propFieldId) {
         EntityManager em = this.emf.createEntityManager();
         try {

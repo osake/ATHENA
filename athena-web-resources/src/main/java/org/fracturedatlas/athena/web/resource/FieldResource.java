@@ -51,6 +51,7 @@ public class FieldResource {
     @Path("{id}")
     public Object get(@PathParam("id") String id) throws Exception {
         PropField propField = propFieldManager.getPropField(id);
+        System.out.println(propField);
         if (propField == null) {
             throw new NotFoundException("Field with id [" + id + "] was not found");
         } else {
@@ -67,9 +68,13 @@ public class FieldResource {
     @GET
     @Path("/{propFieldId}/values/{propValueId}")
     public PropValue getValue(@PathParam("propFieldId") String propFieldId,
-            @PathParam("propValueId") String propValueId) {
-        PropValue propValue = propFieldManager.getPropValue(propValueId);
-        return propValue;
+                              @PathParam("propValueId") String propValueId) {
+        PropValue propValue = propFieldManager.getPropValue(propFieldId, propValueId);
+        if (propValue == null) {
+            throw new NotFoundException("Value with id [" + propValueId + "] was not found");
+        } else {
+            return propValue;
+        }
     }
 
     @GET

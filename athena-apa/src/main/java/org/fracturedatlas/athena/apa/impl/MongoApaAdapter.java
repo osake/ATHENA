@@ -163,19 +163,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         if(doc == null) {
             return null;
         } else {
-            PropField propField = new PropField();
-            propField.setId(doc.get("_id"));
-            propField.setName((String)doc.get("name"));
-            propField.setStrict((Boolean)doc.get("strict"));
-            propField.setValueType(ValueType.valueOf((String)doc.get("type")));
-
-            List<String> propValues = (List<String>)doc.get("values");
-            for(String val : propValues) {
-                PropValue propValue = new PropValue();
-                propValue.setPropValue(val);
-                propField.addPropValue(propValue);
-            }
-
+            PropField propField = toField(doc);
             return propField;
         }
     }
@@ -304,13 +292,8 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         List<PropField> fields = new ArrayList<PropField>();
 
         while(cur.hasNext()) {
-            PropField field = new PropField();
             DBObject doc = (DBObject)cur.next();
-            field.setId(doc.get("_id"));
-            field.setName((String)doc.get("name"));
-            field.setStrict((Boolean)doc.get("strict"));
-            field.setValueType(ValueType.valueOf((String)doc.get("type")));
-            fields.add(field);
+            fields.add(toField(doc));
         }
 
         return fields;
@@ -423,6 +406,24 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
 
         return t;
+    }
+
+    private PropField toField(DBObject fieldObject) {
+        PropField propField = new PropField();
+        propField.setId(fieldObject.get("_id"));
+        propField.setName((String)fieldObject.get("name"));
+        propField.setStrict((Boolean)fieldObject.get("strict"));
+        propField.setValueType(ValueType.valueOf((String)fieldObject.get("type")));
+
+        List<String> propValues = (List<String>)fieldObject.get("values");
+        for(String val : propValues) {
+            PropValue propValue = new PropValue();
+            propValue.setId(val);
+            propValue.setPropValue(val);
+            propField.addPropValue(propValue);
+        }
+
+        return propField;
     }
 
     private void checkForDuplicatePropField(String name) throws ApaException {

@@ -19,14 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 */
 package org.fracturedatlas.athena.web.manager;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Collection;
 
 import org.fracturedatlas.athena.apa.ApaAdapter;
-import org.fracturedatlas.athena.web.exception.ForbiddenException;
 import org.fracturedatlas.athena.web.exception.InvalidFieldNameException;
 import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.PropValue;
+import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.util.AllowedCharacterCheck;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -53,8 +52,21 @@ public class PropFieldManager {
         return apa.savePropField(pf);
     }
 
-    public PropValue getPropValue(Object propValueId) {
-            return apa.getPropValue(propValueId);
+    public PropValue getPropValue(Object propFieldId, Object propValueId) {
+        PropValue propValue = null;
+        
+        Collection<PropValue> propValues = apa.getPropValues(propFieldId);
+        System.out.println("HEY: " + propValues);
+        if(propValues != null) {
+            for(PropValue v : propValues) {
+                if(IdAdapter.isEqual(propValueId, v.getId())) {
+                    propValue = v;
+                    break;
+                }
+            }
+        }
+
+        return propValue;
     }
 
     public PropValue[] getPropValueList(Object propFieldId) {
