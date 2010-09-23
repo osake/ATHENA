@@ -109,13 +109,20 @@ public class FieldResource {
     }
 
     /**
-     * Add a new value to this propField
+     * Add a new value to this propField.
+     *
+     * You cannot update a sepcific propValue from this endpoint.  You must first delete the value then add the new one.
      */
     @POST
     @Path("/{propFieldId}/values")
     public PropValue saveValue(String json, @PathParam("propFieldId") String propFieldId) throws Exception {
         try {
             PropValue propValue = gson.fromJson(json, PropValue.class);
+            
+            if(propValue.getId() != null) {
+                throw new ParakeetException("Cannot update values on a field.  First delete the value then add a new value.");
+            }
+
             propValue = propFieldManager.savePropValue(propFieldId, propValue);
             return propValue;
         } catch (Exception ex) {
@@ -127,7 +134,7 @@ public class FieldResource {
     @DELETE
     @Path("/{propFieldId}/values/{propValueId}")
     public Object deleteValue(@PathParam("propFieldId") String propFieldId, @PathParam("propValueId") String propValueId) throws Exception {
-        if (propFieldManager.deletePropValue(propValueId)) {
+        if (propFieldManager.deletePropValue(propFieldId, propValueId)) {
             return Response.noContent().build();
         } else {
             return Response.status(404).build();

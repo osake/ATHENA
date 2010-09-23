@@ -181,7 +181,8 @@ public interface ApaAdapter {
     public List<PropField> getPropFields();
 
     /**
-     * Save a PropValue
+     * Save a PropValue.  PropValue.propField must be set before calling this method
+     * 
      * @param propValue
      * @return the saved PropValue
      */
@@ -199,7 +200,7 @@ public interface ApaAdapter {
      * @param propValue
       * @return true if propValue is deleted. False if propValue does not exist
     */
-    public boolean deletePropValue(PropValue propValue);
+    public void deletePropValue(PropValue propValue);
 
     /**
      * Delete a PropValue
@@ -207,6 +208,6 @@ public interface ApaAdapter {
      * @return the saved PropValue
       * @return true if propValue is deleted. False if propValue does not exist
      */
-    public boolean deletePropValue(Object id);
+    public void deletePropValue(Object propFieldId, Object propValueId);
 
 }

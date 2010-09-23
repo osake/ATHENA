@@ -85,17 +85,17 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
+    public TicketProp getTicketProp(String fieldName, Object ticketId) {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+
+    @Override
     public PropField getPropField(Object id) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
     @Override
     public PropField getPropField(String name) {
-        throw new UnsupportedOperationException("Unsupported operation");
-    }
-
-    @Override
-    public TicketProp getTicketProp(String fieldName, Object ticketId) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
@@ -110,21 +110,6 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Collection<PropValue> getPropValues(Object propFieldId) {
-        throw new UnsupportedOperationException("Unsupported operation");
-    }
-    
-    @Override
-    public boolean deletePropValue(Object id) {
-        throw new UnsupportedOperationException("Unsupported operation");
-    }
-
-    @Override
-    public boolean deletePropValue(PropValue propValue) {
-        throw new UnsupportedOperationException("Unsupported operation");
-    }
-
-    @Override
     public List<PropField> getPropFields() {
         throw new UnsupportedOperationException("Unsupported operation");
     }
@@ -134,5 +119,23 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
- 
+    @Override
+    public Collection<PropValue> getPropValues(Object propFieldId) {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+
+    @Override
+    public void deletePropValue(PropValue propValue) {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+    
+    @Override
+    public void deletePropValue(Object propFieldId, Object propValueId) {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+    
+    @Override
+    public PropValue savePropValue(PropValue propValue) {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
 }

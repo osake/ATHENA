@@ -320,7 +320,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
         String path = "fields/204040404440.json";
 
         ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
-        assertEquals(ClientResponse.Status.NO_CONTENT, ClientResponse.Status.fromStatusCode(response.getStatus()));
+        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
     }
 }

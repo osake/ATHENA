@@ -16,7 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
-*/
+ */
 package org.fracturedatlas.athena.web.manager;
 
 import java.util.Collection;
@@ -35,31 +35,31 @@ public class PropFieldManager {
     ApaAdapter apa;
 
     public PropField[] findPropFields() {
-      return apa.getPropFields().toArray(new PropField[0]);
+        return apa.getPropFields().toArray(new PropField[0]);
     }
 
     public PropField getPropField(Object id) {
         return apa.getPropField(id);
     }
-    
+
     public PropField savePropField(PropField pf) throws Exception {
-        if(!AllowedCharacterCheck.confirm(pf.getName())) {
-                //TODO: if AllowedCharacterCheck throws this exception, we can be more specific with this message
-        	throw new InvalidFieldNameException("Field name [" +
-        				pf.getName() + "] is invalid.  Either it contains invalid characters, no characters, or it is too long.");
-       }
+        if (!AllowedCharacterCheck.confirm(pf.getName())) {
+            //TODO: if AllowedCharacterCheck throws this exception, we can be more specific with this message
+            throw new InvalidFieldNameException("Field name ["
+                    + pf.getName() + "] is invalid.  Either it contains invalid characters, no characters, or it is too long.");
+        }
 
         return apa.savePropField(pf);
     }
 
     public PropValue getPropValue(Object propFieldId, Object propValueId) {
         PropValue propValue = null;
-        
+
         Collection<PropValue> propValues = apa.getPropValues(propFieldId);
         System.out.println("HEY: " + propValues);
-        if(propValues != null) {
-            for(PropValue v : propValues) {
-                if(IdAdapter.isEqual(propValueId, v.getId())) {
+        if (propValues != null) {
+            for (PropValue v : propValues) {
+                if (IdAdapter.isEqual(propValueId, v.getId())) {
                     propValue = v;
                     break;
                 }
@@ -70,7 +70,7 @@ public class PropFieldManager {
     }
 
     public PropValue[] getPropValueList(Object propFieldId) {
-            return apa.getPropValues(propFieldId).toArray(new PropValue[0]);
+        return apa.getPropValues(propFieldId).toArray(new PropValue[0]);
     }
 
     public PropValue savePropValue(PropValue propValue) {
@@ -88,13 +88,24 @@ public class PropFieldManager {
         propValue.setPropField(propField);
         return apa.savePropValue(propValue);
     }
-    
-	public boolean deletePropField(Object id) {
-		return apa.deletePropField(id);		
-	}
-	
-	public boolean deletePropValue(Object id) {
-		return apa.deletePropValue(id);		
-	}
+
+    public Boolean deletePropField(Object id) {
+        PropField propField = getPropField(id);
+        if(propField == null) {
+            return false;
+        } else {
+            return apa.deletePropField(id);
+        }
+    }
+
+    public Boolean deletePropValue(Object propFieldId, Object propValueId) {
+        PropField propField = getPropField(propFieldId);
+        if(propField == null) {
+            return false;
+        } else {
+            apa.deletePropValue(propFieldId, propValueId);
+            return true;
+        }
+    }
 }
 

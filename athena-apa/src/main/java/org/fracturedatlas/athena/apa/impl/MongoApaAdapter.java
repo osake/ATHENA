@@ -47,7 +47,7 @@ import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.apa.model.ValueType;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.fracturedatlas.athena.id.IdAdapter;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -216,7 +216,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
         if(propField.getPropValues() != null) {
             for (PropValue propValue : propField.getPropValues()) {
-                //TODO: There's a weird case here with propField.getPropValues is a lit with null in it.  Check for that here
+                //TODO: There's a weird case here with propField.getPropValues is a list with null in it.  Check for that here
                 //Someday, fix this conditios
                 if(propValue != null && !propValues.add(propValue.getPropValue())) {
                     throw new ApaException("Cannot save Field [" + propField.getId() + "] because it contains duplicate values of [" + propValue.getPropValue() + "]");
@@ -284,6 +284,25 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         savePropField(field);
         propValue.setId(propValue.getPropValue());
         return propValue;
+    }
+
+    @Override
+    public void deletePropValue(Object propFieldId, Object propValueId) {
+        PropField propField = getPropField(propFieldId);
+        if(propField != null) {
+            Collection<PropValue> propValues = propField.getPropValues();
+            Collection<PropValue> outValues = new ArrayList<PropValue>();
+            for(PropValue value : propValues) {
+                //remember in the Mongo adapter, valueId=valueValue
+                if(IdAdapter.isEqual(propValueId, value.getPropValue())) {
+                    propField.getPropValues().remove(value);
+                    break;
+                }
+            }
+
+            propField.setPropValues(outValues);
+            savePropField(propField);
+        }
     }
 
     @Override
