@@ -50,7 +50,6 @@ import org.fracturedatlas.athena.apa.model.ValueType;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.springframework.stereotype.Component;
 
-@Component
 public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     Logger logger = Logger.getLogger(this.getClass().getName());
