@@ -59,21 +59,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
     @After
     public void teardownTickets() {
-        for (Ticket t : ticketsToDelete) {
-            try {
-                apa.deleteTicket(t);
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
-        }
-
-        for (PropField pf : propFieldsToDelete) {
-            try {
-                apa.deletePropField(pf);
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
-        }
+        super.teardownTickets();
     }
 
     @Test

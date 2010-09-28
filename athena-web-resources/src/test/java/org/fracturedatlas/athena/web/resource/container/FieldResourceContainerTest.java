@@ -52,7 +52,6 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
     PropValue testValue;
     Logger logger = Logger.getLogger(FieldResourceContainerTest.class);
     Gson gson = JsonUtil.getGson();
-    List<PropField> propFieldsToDelete = new ArrayList<PropField>();
 
     public FieldResourceContainerTest() throws Exception {
         super();
@@ -77,21 +76,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
 
     @After
     public void teardownTickets() {
-        for (Ticket t : ticketsToDelete) {
-            try {
-                apa.deleteTicket(t);
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
-        }
-
-        for (PropField pf : propFieldsToDelete) {
-            try {
-                apa.deletePropField(pf);
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
-        }
+        super.teardownTickets();
     }
 
     @Test
