@@ -459,7 +459,17 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         try {
             em.getTransaction().begin();
             prop = em.merge(prop);
+
+            if(prop == null) {
+                throw new ApaException("Cannot delete prop.  Prop was not found.");
+            }
+
             Ticket t = prop.getTicket();
+
+            if(t == null) {
+                throw new ApaException("Cannot delete prop.  This prop has not been assigned to a ticket.");
+            }
+
             t.getTicketProps().remove(prop);
             em.remove(prop);
             t = em.merge(t);

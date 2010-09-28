@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.apa;
 
+import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.StrictType;
 import org.fracturedatlas.athena.apa.model.StringTicketProp;
@@ -45,6 +46,9 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
         PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
         PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
+        propFieldsToDelete.add(field);
+        propFieldsToDelete.add(field1);
+        propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
         ticket.setName("hockey");
@@ -54,13 +58,11 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         ticket.addTicketProp(seatProp);
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
         ticket.addTicketProp(new StringTicketProp(field2, "23"));
-        ticketsToDelete.add(ticket);
-        propFieldsToDelete.add(field);
-        propFieldsToDelete.add(field1);
-        propFieldsToDelete.add(field2);
 
         ticket = apa.saveTicket(ticket);
+        ticketsToDelete.add(ticket);
 
+        seatProp = apa.getTicketProp("SEAT", ticket.getId());
         apa.deleteTicketProp(seatProp);
 
         ticket = apa.getTicket(ticket.getId());
@@ -99,7 +101,6 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         ticket.addTicketProp(seatProp);
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
         ticket.addTicketProp(new StringTicketProp(field2, "23"));
-        ticketsToDelete.add(ticket);
         propFieldsToDelete.add(field);
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
@@ -112,11 +113,13 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         ticket2.addTicketProp(new StringTicketProp(field, "ddd"));
         ticket2.addTicketProp(new StringTicketProp(field1, "fff"));
         ticket2.addTicketProp(new StringTicketProp(field2, "ggg"));
-        ticketsToDelete.add(ticket2);
 
         ticket = apa.saveTicket(ticket);
+        ticketsToDelete.add(ticket);
         ticket2 = apa.saveTicket(ticket2);
+        ticketsToDelete.add(ticket2);
 
+        seatProp = apa.getTicketProp("SEAT", ticket.getId());
         apa.deleteTicketProp(seatProp);
 
         ticket = apa.getTicket(ticket.getId());
@@ -177,16 +180,20 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         ticket.addTicketProp(seatProp);
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
         ticket.addTicketProp(new StringTicketProp(field2, "23"));
-        ticketsToDelete.add(ticket);
         propFieldsToDelete.add(field);
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
 
         ticket = apa.saveTicket(ticket);
+        ticketsToDelete.add(ticket);
 
         TicketProp fakeProp = new StringTicketProp(field, "49949");
 
-        apa.deleteTicketProp(fakeProp);
+        try{
+            apa.deleteTicketProp(fakeProp);
+        } catch (ApaException toe) {
+            //this is cool.  Hibernate is complaining that we're deleting an unsaved transient blah blah blah...
+        }
 
         ticket = apa.getTicket(ticket.getId());
         assertEquals(3, ticket.getTicketProps().size());
