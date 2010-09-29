@@ -13,32 +13,24 @@
         <artifactId>athena</artifactId>
         <version>0.2-SNAPSHOT</version>
     </parent>
-    
-    <properties>
-        <athena-version>0.2-SNAPSHOT</athena-version>
-    </properties>
 
     <dependencies>
         <!-- ATHENA -->
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>athena-util</artifactId>
-            <version>${athena-version}</version>
         </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>athena-client</artifactId>
-            <version>${athena-version}</version>
         </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>athena-apa</artifactId>
-            <version>${athena-version}</version>
         </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>athena-web-resources</artifactId>
-            <version>${athena-version}</version>
         </dependency>
     </dependencies>
 </project>
