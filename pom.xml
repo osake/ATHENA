@@ -68,7 +68,7 @@
                 <version>2.0</version>
                 <configuration>
                   <preparationGoals>clean</preparationGoals>
-                  <goals>deploy -DskipTests=true</goals>
+                  <goals>instsll -DskipTests=true</goals>
                 </configuration>
             </plugin>
         </plugins>
