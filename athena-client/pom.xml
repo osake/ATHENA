@@ -3,13 +3,13 @@
     <groupId>org.fracturedatlas.athena</groupId>
     <artifactId>athena-client</artifactId>
     <name>athena-client</name>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.3</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
         <artifactId>athena</artifactId>
-        <version>0.3-SNAPSHOT</version>
+        <version>0.3</version>
     </parent>
 
     <dependencies>
