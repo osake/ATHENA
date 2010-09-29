@@ -78,7 +78,7 @@
             <dependency>
                 <groupId>org.fracturedatlas.athena</groupId>
                 <artifactId>athena-util</artifactId>
-                <version>${athena-version}</version>
+                <version>0.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.fracturedatlas.athena</groupId>
