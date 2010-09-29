@@ -152,7 +152,7 @@
         </dependency>
     </dependencies>
     <scm>
-        <connection>scm:git:git://github.com/fracturedatlas/ATHENA.git/</connection>
-        <developerConnection>scm:git:git://github.com/fracturedatlas/ATHENA.git/</developerConnection>
+        <connection>scm:git:git@github.com:fracturedatlas/ATHENA.git</connection>
+        <developerConnection>scm:git:git@github.com:fracturedatlas/ATHENA.git</developerConnection>
     </scm>
 </project>
