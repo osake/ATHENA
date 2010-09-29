@@ -15,7 +15,7 @@
     </parent>
     
     <properties>
-        <athena-version>0.2-SNAPSHOT</athena-version>
+        <athena-version>${pom.version}</athena-version>
     </properties>
 
     <dependencies>

@@ -25,12 +25,12 @@
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>athena-util</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <version>${pom.version}</version>
         </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>athena-client</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <version>${pom.version}</version>
         </dependency>
 
         <dependency>
