@@ -1,0 +1,132 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.fracturedatlas.athena</groupId>
+    <artifactId>athena</artifactId>
+    <name>athena</name>
+    <version>0.2-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>athena-util</module>
+        <module>athena-client</module>
+        <module>athena-apa</module>
+        <module>athena-web-resources</module>
+        <module>athena-sdk</module>
+    </modules>
+
+    <properties>
+        <spring-version>3.0.3.RELEASE</spring-version>
+        <hibernate-version>3.3.2.GA</hibernate-version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <distributionManagement>
+        <repository>
+            <id>snapshots</id>
+            <name>Fractured Atlas Snapshots</name>
+            <url>http://maven2.fracturedatlas.org:8081/nexus/content/repositories/snapshots/</url>
+        </repository>
+    </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sql-maven-plugin</artifactId>
+                <version>1.4</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>5.1.6</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <driver>com.mysql.jdbc.Driver</driver>
+                    <url>jdbc:mysql://localhost/ATHENA-Tix</url>
+                    <username>parakeetdb</username>
+                    <password>parakeetdb</password>
+                    <srcFiles>
+                        <srcFile>../ddl/parakeet-ddl.sql</srcFile>
+                    </srcFiles>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.0</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <!-- APACHE COMMONS -->
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
+        </dependency>
+
+        <!-- SPRING -->
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-taglibs</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <scm>
+        <connection>scm:git:git://github.com/fracturedatlas/ATHENA.git/</connection>
+        <developerConnection>scm:git:git://github.com/fracturedatlas/ATHENA.git/</developerConnection>
+    </scm>
+</project>

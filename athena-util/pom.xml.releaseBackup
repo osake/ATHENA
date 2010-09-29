@@ -4,8 +4,8 @@
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.fracturedatlas.athena</groupId>
-    <artifactId>athena-client</artifactId>
-    <name>athena-client</name>
+    <artifactId>athena-util</artifactId>
+    <name>athena-util</name>
     <version>0.2-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -14,13 +14,11 @@
         <artifactId>athena</artifactId>
         <version>0.2-SNAPSHOT</version>
     </parent>
-
     <dependencies>
         <dependency>
-            <groupId>org.fracturedatlas.athena</groupId>
-            <artifactId>athena-util</artifactId>
-            <version>0.2-SNAPSHOT</version>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>1.4</version>
         </dependency>
     </dependencies>
-
 </project>
