@@ -3,12 +3,12 @@
     <groupId>org.fracturedatlas.athena</groupId>
     <artifactId>athena-sdk</artifactId>
     <name>athena-sdk</name>
-    <version>0.3</version>
+    <version>0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
         <artifactId>athena</artifactId>
-        <version>0.3</version>
+        <version>0.3-SNAPSHOT</version>
     </parent>
 
     <dependencies>
