@@ -21,23 +21,21 @@ package org.fracturedatlas.athena.web.manager;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.ws.rs.core.MultivaluedMap;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.PropValue;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.TicketProp;
-import org.fracturedatlas.athena.web.util.JsonUtil;
+import org.fracturedatlas.athena.id.IdAdapter;
+import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class TicketManager {
@@ -101,7 +99,7 @@ public class TicketManager {
     public Ticket saveTicketFromClientRequest(PTicket pTicket) throws Exception {
         //if this ticket has an id
         if(pTicket.getId() != null) {
-            return updateTicketFromClientTicket(pTicket);
+            return updateTicketFromClientTicket(pTicket, pTicket.getId());
         } else {
             return createAndSaveTicketFromClientTicket(pTicket);
         }
@@ -111,15 +109,19 @@ public class TicketManager {
      * updateTicketFromClientTicket assumes that PTicket has been sent with an ID.
      * updateTicketFromClientTicket will load a ticket with that ID.
      */
-    private Ticket updateTicketFromClientTicket(PTicket clientTicket) throws Exception {
-        Ticket ticket = apa.getTicket(clientTicket.getId());
+    public Ticket updateTicketFromClientTicket(PTicket clientTicket, Object idToUpdate) throws Exception {
+        Ticket ticket = apa.getTicket(idToUpdate);
 
         /*
-         * If the client sent a ticket with an ID but we didn't fidn the ticket, toss back
+         * If the client sent a ticket with an ID but we didn't find the ticket, toss back
          * a ticket not found exception
          */
         if(ticket == null) {
             throw new ObjectNotFoundException("Cannot update ticket with id [" + clientTicket.getId() + "].  The ticket was not found.");
+        }
+
+        if(!IdAdapter.isEqual(ticket.getId(), clientTicket.getId())) {
+            throw new AthenaException("Requested update to [" + idToUpdate + "] but sent record with id [" + ticket.getId() + "]");
         }
 
         /*

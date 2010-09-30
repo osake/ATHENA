@@ -30,7 +30,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
-import org.fracturedatlas.athena.web.exception.ParakeetException;
+import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.fracturedatlas.athena.web.manager.PropFieldManager;
 import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.PropValue;
@@ -101,7 +101,7 @@ public class FieldResource {
         PropField propField = gson.fromJson(json, PropField.class);
 
         if(propField == null) {
-            throw new ParakeetException("Sent a blank or malformed request body.  Could not make a field out of it.");
+            throw new AthenaException("Sent a blank or malformed request body.  Could not make a field out of it.");
         }
 
         propField = propFieldManager.savePropField(propField);
@@ -120,7 +120,7 @@ public class FieldResource {
             PropValue propValue = gson.fromJson(json, PropValue.class);
             
             if(propValue.getId() != null) {
-                throw new ParakeetException("Cannot update values on a field.  First delete the value then add a new value.");
+                throw new AthenaException("Cannot update values on a field.  First delete the value then add a new value.");
             }
 
             propValue = propFieldManager.savePropValue(propFieldId, propValue);
