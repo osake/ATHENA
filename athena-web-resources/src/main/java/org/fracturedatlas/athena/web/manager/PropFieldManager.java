@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.web.manager;
 
+import com.sun.jersey.api.NotFoundException;
 import java.util.Collection;
 
 import org.fracturedatlas.athena.apa.ApaAdapter;
@@ -27,6 +28,7 @@ import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.PropValue;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.util.AllowedCharacterCheck;
+import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class PropFieldManager {
@@ -50,6 +52,21 @@ public class PropFieldManager {
         }
 
         return apa.savePropField(pf);
+    }
+
+    public PropField updatePropField(PropField pf, Object idToUpdate) throws Exception {
+        
+        if(pf.getId() == null) {
+            throw new AthenaException("Cannot");
+        } 
+        PropField existingPropField = apa.getPropField(idToUpdate);
+        if(existingPropField == null) {
+            throw new NotFoundException();
+        } else if (!IdAdapter.isEqual(pf.getId(), idToUpdate)) {
+            throw new AthenaException("Requested update to [" + idToUpdate + "] but sent field with id [" + pf.getId() + "]");
+        }      
+
+        return savePropField(pf);
     }
 
     public PropValue getPropValue(Object propFieldId, Object propValueId) {

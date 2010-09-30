@@ -86,7 +86,7 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
 
     }
 
-    //For now, this should pass.  Eventually we should turn this support off
+    //For now, this should pass.  Eventually we should turn this support off, return a 409 or maybe a OMFG
     @Test
     public void testUpdateTicketWithPost() {
         Ticket t = createSampleTicket();
@@ -115,6 +115,38 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
         propFieldsToDelete.add(pf2);
         ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, gson.toJson(t.toClientTicket()));
         assertEquals(ClientResponse.Status.METHOD_NOT_ALLOWED, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
+    @Test
+    public void testUpdateTicketWithPutNoIdInBody() {
+        Ticket t = createSampleTicket();
+
+        String path = RECORDS_PATH + t.getId() + ".json";
+
+        PTicket savedPTicket = t.toClientTicket();
+        String json = "{\"name\":\"ticket\",\"props\":{\"PRICE\":\"4\",\"SECTION\":\"true\"}}";
+        ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, gson.toJson(json));
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+    }
+
+    @Test
+    public void testCreateTicketWithPutAndBadId() {
+
+        String path = RECORDS_PATH + "0.json";
+
+        Ticket t = new Ticket();
+        t.setName("ticket");
+        PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "PRICE", Boolean.FALSE));
+        PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
+        IntegerTicketProp prop = new IntegerTicketProp(pf, 4);
+        t.addTicketProp(prop);
+        BooleanTicketProp prop2 = new BooleanTicketProp(pf2, Boolean.TRUE);
+        t.addTicketProp(prop2);
+        propFieldsToDelete.add(pf);
+        propFieldsToDelete.add(pf2);
+        ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, gson.toJson(t.toClientTicket()));
+        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
     }
 
     //this is not allowed

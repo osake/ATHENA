@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 */
 package org.fracturedatlas.athena.web.manager;
 
+import com.sun.jersey.api.NotFoundException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -113,11 +114,11 @@ public class TicketManager {
         Ticket ticket = apa.getTicket(idToUpdate);
 
         /*
-         * If the client sent a ticket with an ID but we didn't find the ticket, toss back
+         * If the client ID on the url but we didn't find the ticket, toss back
          * a ticket not found exception
          */
         if(ticket == null) {
-            throw new ObjectNotFoundException("Cannot update ticket with id [" + clientTicket.getId() + "].  The ticket was not found.");
+            throw new NotFoundException();
         }
 
         if(!IdAdapter.isEqual(ticket.getId(), clientTicket.getId())) {

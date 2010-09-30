@@ -25,6 +25,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -105,6 +106,30 @@ public class FieldResource {
         }
 
         propField = propFieldManager.savePropField(propField);
+        return propField;
+    }
+
+    /**
+     * Save or update the propField contained in this JSON string
+     *
+     * Note that values cannot be updated from this endpoint.  Instead, post new values
+     * to /{fieldId}/values
+     *
+     * Clients are required to pass valueType, name, and strict
+     * strict must be wither "false" or "true"
+     * valueType must be: STRING, INTEGER, DATETIME, BOOLEAN
+     *
+     */
+    @PUT
+    @Path("/{id}")
+    public Object updateField(String json, @PathParam("id") String idToUpdate) throws Exception {
+        PropField propField = gson.fromJson(json, PropField.class);
+
+        if(propField == null) {
+            throw new AthenaException("Sent a blank or malformed request body.  Could not make a field out of it.");
+        }
+
+        propField = propFieldManager.updatePropField(propField, idToUpdate);
         return propField;
     }
 
