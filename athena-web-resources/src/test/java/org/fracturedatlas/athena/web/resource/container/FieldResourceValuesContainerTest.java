@@ -58,21 +58,7 @@ public class FieldResourceValuesContainerTest extends BaseTixContainerTest {
 
     @After
     public void teardownTickets() {
-        for (Ticket t : ticketsToDelete) {
-            try {
-                apa.deleteTicket(t);
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
-        }
-
-        for (PropField pf : propFieldsToDelete) {
-            try {
-                apa.deletePropField(pf);
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
-        }
+        super.teardownTickets();
     }
 
     @Test
@@ -105,10 +91,6 @@ public class FieldResourceValuesContainerTest extends BaseTixContainerTest {
         assertEquals(testValue.getPropValue(), actualValue.getPropValue());
     }
 
-    /*
-     * TODO: This should return something other than INTERNAL_SERVER_ERROR
-     * Hard to do because JAckson barfs up in the Resource layer
-     */
     @Test
     public void testCreateFieldNoData() {
         String path = "fields/";
@@ -120,29 +102,13 @@ public class FieldResourceValuesContainerTest extends BaseTixContainerTest {
     }
 
     @Test
+    //You cannot update a value
     public void testUpdateValue() throws Exception {
         String path = "fields/" + testField.getId() + "/values.json";
         testValue.setPropValue("DD");
         String testValueJson = "{\"id\":\""+testValue.getId()+"\",\"propValue\":\""+testValue.getPropValue()+"\"}";
         ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testValueJson);
-        String jsonResponse = response.getEntity(String.class);
-
-        PropField pf = apa.getPropField(testField.getId());
-
-        PropValue propValue = mapper.readValue(jsonResponse, PropValue.class);
-        PropField propField = propValue.getPropField();
-
-        assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
-        assertEquals("DD", propValue.getPropValue());
-        assertEquals(propValue.getId().toString(), testValue.getId().toString());
-        assertEquals(2, pf.getPropValues().size());
-
-        response = tix.path("fields/" + testField.getId()).type("application/json").get(ClientResponse.class);
-        jsonResponse = response.getEntity(String.class);
-        assertEquals(jsonResponse,
-                "{\"id\":\""+testField.getId()+"\",\"name\":\"SECTION\",\"strict\":true,\"valueType\":\"STRING\",\"propValues\":[\"DD\",\"BB\"]}");
-
-
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
     }
 
     @Test

@@ -42,23 +42,8 @@ public class ApaAdapterSavePropTest extends BaseApaAdapterTest {
 
     @After
     public void teardownTickets() {
-        for (Ticket t : ticketsToDelete) {
-            try {
-                apa.deleteTicket(t);
-            } catch (Exception ignored) {
-                    ignored.printStackTrace();
-            }
-        }
-
-        for (PropField pf : propFieldsToDelete) {
-            try {
-                    apa.deletePropField(pf);
-            } catch (Exception ignored) {
-                    ignored.printStackTrace();
-            }
-        }
+        super.teardownTickets();
     }
-
 
     @Test
     public void testSaveProp() throws ParseException {
@@ -81,7 +66,6 @@ public class ApaAdapterSavePropTest extends BaseApaAdapterTest {
 
         Ticket saveTicket = apa.getTicket(t.getId());
         PTicket savedPTicket = saveTicket.toClientTicket();
-        System.out.println(savedPTicket);
         assertEquals("103", savedPTicket.get("TESTINT2"));
         assertEquals("3", savedPTicket.get("TESTINT"));
         assertEquals("TEST", savedPTicket.getName());

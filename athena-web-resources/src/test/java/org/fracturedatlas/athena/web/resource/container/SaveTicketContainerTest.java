@@ -54,21 +54,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @After
     public void teardownTickets() {
-        for (Ticket t : ticketsToDelete) {
-            try {
-                apa.deleteTicket(t);
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
-        }
-
-        for (PropField pf : propFieldsToDelete) {
-            try {
-                apa.deletePropField(pf);
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
-        }
+        super.teardownTickets();
     }
 
     @Test
@@ -86,305 +72,8 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
     }
 
     @Test
-    public void testCreateThenUpdateNoPropsNoChange() {
-        Ticket t = new Ticket();
-        t.setName("ticket");
-        PTicket pTicket = t.toClientTicket();
-
-        String ticketJson = gson.toJson(pTicket);
-        String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
-        PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
-        assertNotNull(savedPTicket.getId());
-        assertTicketsEqual(t, savedPTicket, false);
-
-        String updatedTicketJson = tix.path(path).type("application/json").post(String.class, gson.toJson(savedPTicket));
-        PTicket updatedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
-        assertTrue(savedPTicket.equals(updatedPTicket));
-        assertTicketsEqual(t, updatedPTicket, false);
-
-        apa.deleteTicket(savedPTicket.getId());
-    }
-
-    @Test
-    public void testCreateThenUpdate2NoPropsNoChange() {
-        Ticket t = new Ticket();
-        t.setName("ticket");
-        PTicket pTicket = t.toClientTicket();
-
-        String ticketJson = gson.toJson(pTicket);
-        String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
-        PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
-        assertNotNull(savedPTicket.getId());
-        assertTicketsEqual(t, savedPTicket, false);
-
-        tix.path(path).type("application/json").post(String.class, gson.toJson(savedPTicket));
-        tix.path(path).type("application/json").post(String.class, gson.toJson(savedPTicket));
-        tix.path(path).type("application/json").post(String.class, gson.toJson(savedPTicket));
-
-        String updatedTicketJson = tix.path(path).type("application/json").post(String.class, gson.toJson(savedPTicket));
-        PTicket updatedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
-        assertTrue(savedPTicket.equals(updatedPTicket));
-        assertTicketsEqual(t, updatedPTicket, false);
-
-        apa.deleteTicket(savedPTicket.getId());
-
-        for (PropField f : propFieldsToDelete) {
-            f = apa.getPropField(f.getId());
-            assertEquals(1, apa.getTicketProps(f.getName()).size());
-        }
-    }
-
-    @Test
-    public void testCreateThenUpdateName() {
-        Ticket t = createSampleTicket(true);
-        ticketsToDelete.add(t);
-        t.setName("updated ticket");
-        PTicket pTicket = t.toClientTicket();
-
-        String ticketJson = gson.toJson(pTicket);
-        String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
-        PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
-        assertNotNull(savedPTicket.getId());
-        assertTicketsEqual(t, savedPTicket, true);
-
-        for (PropField f : propFieldsToDelete) {
-            f = apa.getPropField(f.getId());
-            assertEquals(1, apa.getTicketProps(f.getName()).size());
-        }
-    }
-
-    @Test
-    public void testUpdateAddNewProp() {
-        
-        Ticket t = createSampleTicket(true);
-        ticketsToDelete.add(t);
-
-        PropField field = new PropField();
-        field.setValueType(ValueType.STRING);
-        field.setName("FOO");
-        field.setStrict(Boolean.FALSE);
-        PropField pf = apa.savePropField(field);
-        propFieldsToDelete.add(pf);
-
-        t.setName("updated ticket");
-        PTicket pTicket = t.toClientTicket();
-        pTicket.put("FOO", "FIGHTERS");
-
-        String ticketJson = gson.toJson(pTicket);
-
-        String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
-        PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
-        assertNotNull(savedPTicket.getId());
-        assertEquals(pTicket, savedPTicket);
-
-        for (PropField f : propFieldsToDelete) {
-            f = apa.getPropField(f.getId());
-            assertEquals(1, apa.getTicketProps(f.getName()).size());
-        }
-
-    }
-
-    //We're updating a ticket but only sending one property.  Other properties should remain
-    @Test
-    public void testUpdateAddNewPropButDontSendOtherProps() {
-        
-        Ticket t = createSampleTicket(true);
-        ticketsToDelete.add(t);
-
-        PropField field = new PropField();
-        field.setValueType(ValueType.STRING);
-        field.setName("FOO");
-        field.setStrict(Boolean.FALSE);
-        PropField pf = apa.savePropField(field);
-        propFieldsToDelete.add(pf);
-
-        t.setName("updated ticket");
-        PTicket pTicket = t.toClientTicket();
-        pTicket.put("FOO", "FIGHTERS");
-
-        PTicket testPTicket = new PTicket();
-        testPTicket.setName(pTicket.getName());
-        testPTicket.setId(pTicket.getId());
-        testPTicket.put("FOO", "FIGHTERS");
-        String ticketJson = gson.toJson(testPTicket);
-
-        String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
-        PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
-        assertNotNull(savedPTicket.getId());
-        assertEquals(pTicket, savedPTicket);
-
-        for (PropField f : propFieldsToDelete) {
-            f = apa.getPropField(f.getId());
-            assertEquals(1, apa.getTicketProps(f.getName()).size());
-        }
-
-    }
-
-    @Test
-    public void testUpdateProp() {
-        
-        Ticket t = createSampleTicket(true);
-        ticketsToDelete.add(t);
-
-        t.setName("updated ticket");
-        PTicket pTicket = t.toClientTicket();
-        pTicket.put("SEAT_NUMBER", "3009");
-        String ticketJson = gson.toJson(pTicket);
-
-        String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
-        PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
-        assertNotNull(savedPTicket.getId());
-        assertEquals(pTicket, savedPTicket);
-
-        for (PropField field : propFieldsToDelete) {
-            field = apa.getPropField(field.getId());
-            assertEquals(1, apa.getTicketProps(field.getName()).size());
-        }
-    }
-
-    @Test
-    public void testUpdateAllProps() {
-        
-        Ticket t = createSampleTicket(true);
-        ticketsToDelete.add(t);
-
-        t.setName("updated ticket");
-        PTicket pTicket = t.toClientTicket();
-        pTicket.put("SEAT_NUMBER", "3009");
-        pTicket.put("SECTION", "JIMMY");
-        String ticketJson = gson.toJson(pTicket);
-
-        String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
-        PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
-        assertNotNull(savedPTicket.getId());
-        assertEquals(pTicket, savedPTicket);
-
-        for (PropField field : propFieldsToDelete) {
-            field = apa.getPropField(field.getId());
-            assertEquals(1, apa.getTicketProps(field.getName()).size());
-        }
-    }
-
-    @Test
-    public void testUpdateTicketBlankRequest() {
-        
-        Ticket t = createSampleTicket(false);
-        ticketsToDelete.add(t);
-
-        String ticketJson = "";
-
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, ticketJson);
-        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
-    }
-
-    @Test
-    public void testUpdateTicketBadJson() {
-        
-        Ticket t = createSampleTicket(false);
-        ticketsToDelete.add(t);
-
-        String ticketJson = "{BAD_JSON:BAD}";
-
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, ticketJson);
-        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
-    }
-
-    @Test
-    public void testUpdateTicketNotExist() {
-        
-        Ticket t = createSampleTicket(false);
-        ticketsToDelete.add(t);
-
-        t.setName("updated ticket");
-        PTicket pTicket = t.toClientTicket();
-        pTicket.setId(40000L);
-
-        String ticketJson = gson.toJson(pTicket);
-
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, ticketJson);
-        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
-    }
-
-    @Test
-    public void testUpdateDateTimeProp() throws Exception {
-        
-        Ticket t = createSampleTicket(false);
-
-        PropField field = new PropField(ValueType.DATETIME, "PERFORMANCE", Boolean.FALSE);
-        PropField pf = apa.savePropField(field);
-        propFieldsToDelete.add(pf);
-
-        DateTimeTicketProp prop = new DateTimeTicketProp(pf, DateUtil.parseDate("2010-09-19 08:00"));
-        t.addTicketProp(prop);
-
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        PTicket pTicket = t.toClientTicket();
-        pTicket.put("PERFORMANCE", "2010-09-30 09:33");
-        String ticketJson = gson.toJson(pTicket);
-
-        String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
-        PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
-        assertNotNull(savedPTicket.getId());
-        assertEquals(pTicket, savedPTicket);
-
-        for (PropField f : propFieldsToDelete) {
-            f = apa.getPropField(f.getId());
-            assertEquals(1, apa.getTicketProps(f.getName()).size());
-        }
-    }
-
-    @Test
-    public void testUpdateDateTimePropNotADate() throws Exception {
-            
-        Ticket t = createSampleTicket(false);
-
-        PropField field = new PropField(ValueType.DATETIME, "PERFORMANCE", Boolean.FALSE);
-        PropField pf = apa.savePropField(field);
-        propFieldsToDelete.add(pf);
-
-        DateTimeTicketProp prop = new DateTimeTicketProp(pf, DateUtil.parseDate("2010-09-19 08:00"));
-        t.addTicketProp(prop);
-
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        PTicket pTicket = t.toClientTicket();
-        pTicket.put("PERFORMANCE", "NOT_A_DATE");
-        String ticketJson = gson.toJson(pTicket);
-
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, ticketJson);
-        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
-    }
-
-
-    @Test
-    public void testUpdateIntegerPropNotAnInteger() {
-        
-        Ticket t = createSampleTicket(false);
-
-        PropField field = new PropField(ValueType.INTEGER, "PERFORMANCE", Boolean.FALSE);
-        PropField pf = apa.savePropField(field);
-        propFieldsToDelete.add(pf);
-
-        IntegerTicketProp prop = new IntegerTicketProp(pf, 9);
-        t.addTicketProp(prop);
-
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        PTicket pTicket = t.toClientTicket();
-        pTicket.put("PERFORMANCE", "NaN");
-        String ticketJson = gson.toJson(pTicket);
-
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, ticketJson);
-        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
-    }
-
-    @Test
     public void testCreateTicketBadIntegerValue() {
-        
+
         Ticket t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
@@ -400,7 +89,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketBadDateTimeValue() {
-        
+
         Ticket t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
@@ -416,7 +105,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketBadBooleanValue() {
-        
+
         Ticket t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
@@ -434,7 +123,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicket() {
-        
+
         Ticket t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
@@ -453,7 +142,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateTicketUnknownField() {
-        
+
         Ticket t = createSampleTicket(true);
         PTicket pTicket = t.toClientTicket();
         pTicket.put("BAD_FIELD", "BAD_FISH");
@@ -469,7 +158,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketUnknownField() {
-        
+
         Ticket t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
         pTicket.put("BAD_FIELD", "BAD_FISH");
@@ -518,7 +207,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         prop2.setValue(true);
         t.addTicketProp(prop2);
 
-        
+
         PTicket pTicket = t.toClientTicket();
 
         String ticketJson = gson.toJson(pTicket);
@@ -563,7 +252,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         prop2.setValue(true);
         t.addTicketProp(prop2);
 
-        
+
         PTicket pTicket = t.toClientTicket();
 
         String ticketJson = gson.toJson(pTicket);
@@ -581,7 +270,9 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         propFieldsToDelete.add(pf2);
     }
 
-    @Test
+    //@Test
+    //Disabling this so that it doesn't run during the normal "mvn test" cycle
+    //It does indeed work, though.
     public void testCreateTicketTenProps() throws Exception {
 
         PropField seatNumberField = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", Boolean.FALSE));
@@ -606,7 +297,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         propFieldsToDelete.add(lockedField);
         propFieldsToDelete.add(redeemedField);
 
-        
+
         PTicket pTicket = new PTicket();
 
         pTicket.setName("ticket10");
@@ -644,7 +335,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
         List<PropField> propFields = new ArrayList<PropField>();
 
-        
+
         PTicket pTicket = new PTicket();
 
         pTicket.setName("ticket " + UUID.randomUUID().toString().substring(3, 8));
@@ -713,9 +404,9 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         ticketsToDelete.add(savedTicket);
     }
 
-    @Test
+    //@Test
     public void testCreateThenUpdateDupeProp() {
-        
+
         Ticket t = createSampleTicket(true);
         ticketsToDelete.add(t);
         PTicket pTicket = t.toClientTicket();

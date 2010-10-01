@@ -22,10 +22,6 @@ package org.fracturedatlas.athena.web.config;
 import com.sun.jersey.api.core.PackagesResourceConfig;
 import javax.ws.rs.core.MediaType;
 
-/**
- *
- * @author gary
- */
 public class ParakeetConfig extends PackagesResourceConfig {
 
     public ParakeetConfig() {

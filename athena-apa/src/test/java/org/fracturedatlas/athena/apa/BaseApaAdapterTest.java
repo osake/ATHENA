@@ -36,4 +36,22 @@ public abstract class BaseApaAdapterTest {
         ApplicationContext context = new ClassPathXmlApplicationContext("testApplicationContext.xml");
         apa = (ApaAdapter) context.getBean("apa");
     }
+
+    public void teardownTickets() {
+        for (Ticket t : ticketsToDelete) {
+            try {
+                apa.deleteTicket(t);
+            } catch (Exception ignored) {
+                    ignored.printStackTrace();
+            }
+        }
+
+        for (PropField pf : propFieldsToDelete) {
+            try {
+                    apa.deletePropField(pf);
+            } catch (Exception ignored) {
+                    ignored.printStackTrace();
+            }
+        }
+    }
 }

@@ -47,6 +47,8 @@ import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.id.IdAdapter;
+import org.springframework.stereotype.Component;
 
 public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
@@ -57,20 +59,25 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     //This is the mongo name for the props object within a record
     public static final String PROPS_STRING = "props";
-    
-    public MongoApaAdapter() throws UnknownHostException {
-        Mongo m = new Mongo( "localhost" , 27017 );
-        db = m.getDB( "tix" );
-        records = db.getCollection("records");
-        fields = db.getCollection("fields");
+
+    public MongoApaAdapter(String host,
+                           Integer port,
+                           String dbName,
+                           String recordsCollectionName,
+                           String fieldsCollectionName) throws UnknownHostException {
+        Mongo m = new Mongo(host, port);
+        db = m.getDB(dbName);
+        records = db.getCollection(recordsCollectionName);
+        fields = db.getCollection(fieldsCollectionName);
     }
 
     @Override
     public Ticket getTicket(Object id) {
-        BasicDBObject query = new BasicDBObject();
-        ObjectId oid = ObjectId.massageToObjectId(id);
-        query.put("_id", oid);
-        return toRecord(records.findOne(query));
+        return toRecord(getRecordDocument(new BasicDBObject(), ObjectId.massageToObjectId(id)), true);
+    }
+
+    public Ticket getTicket(Object id, Boolean includeProps) {
+        return toRecord(getRecordDocument(new BasicDBObject(), ObjectId.massageToObjectId(id)), includeProps);
     }
 
     @Override
@@ -86,15 +93,15 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
 
         doc.put("_id", t.getId());
-        doc.put("name", t.getName());  
-        
+        doc.put("name", t.getName());
+
         BasicDBObject props = new BasicDBObject();
         for(TicketProp prop : t.getTicketProps()) {
             props.put(prop.getPropField().getName(), prop.getValue());
         }
-        
+
         doc.put("props", props);
-        
+
         records.save(doc);
 
         return t;
@@ -142,7 +149,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     @Override
     public PropField getPropField(Object idOrName) {
         BasicDBObject query = new BasicDBObject();
-        
+
         ObjectId objectId = ObjectId.massageToObjectId(idOrName);
         if (objectId != null) {
             query.put("_id", objectId);
@@ -155,19 +162,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         if(doc == null) {
             return null;
         } else {
-            PropField propField = new PropField();
-            propField.setId(doc.get("_id"));
-            propField.setName((String)doc.get("name"));
-            propField.setStrict((Boolean)doc.get("strict"));
-            propField.setValueType(ValueType.valueOf((String)doc.get("type")));
-
-            List<String> propValues = (List<String>)doc.get("values");
-            for(String val : propValues) {
-                PropValue propValue = new PropValue();
-                propValue.setPropValue(val);
-                propField.addPropValue(propValue);
-            }
-
+            PropField propField = toField(doc);
             return propField;
         }
     }
@@ -217,10 +212,12 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         doc.put("type", propField.getValueType().toString());
 
         Set<String> propValues = new HashSet<String>();
-        
+
         if(propField.getPropValues() != null) {
             for (PropValue propValue : propField.getPropValues()) {
-                if(!propValues.add(propValue.getPropValue())) {
+                //TODO: There's a weird case here with propField.getPropValues is a list with null in it.  Check for that here
+                //Someday, fix this conditios
+                if(propValue != null && !propValues.add(propValue.getPropValue())) {
                     throw new ApaException("Cannot save Field [" + propField.getId() + "] because it contains duplicate values of [" + propValue.getPropValue() + "]");
                 }
             }
@@ -271,7 +268,6 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         query.put("_id", oid);
         fields.remove(query);
 
-        //TODO: Return something sensible
         return true;
     }
 
@@ -282,8 +278,30 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     @Override
     public PropValue savePropValue(PropValue propValue) {
-            // TODO Auto-generated method stub
-            return null;
+        PropField field = getPropField(propValue.getPropField().getId());
+        field.addPropValue(propValue);
+        savePropField(field);
+        propValue.setId(propValue.getPropValue());
+        return propValue;
+    }
+
+    @Override
+    public void deletePropValue(Object propFieldId, Object propValueId) {
+        PropField propField = getPropField(propFieldId);
+        if(propField != null) {
+            Collection<PropValue> propValues = propField.getPropValues();
+            Collection<PropValue> outValues = new ArrayList<PropValue>();
+            for(PropValue value : propValues) {
+                //remember in the Mongo adapter, valueId=valueValue
+                if(IdAdapter.isEqual(propValueId, value.getPropValue())) {
+                    propField.getPropValues().remove(value);
+                    break;
+                }
+            }
+
+            propField.setPropValues(outValues);
+            savePropField(propField);
+        }
     }
 
     @Override
@@ -292,47 +310,138 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         List<PropField> fields = new ArrayList<PropField>();
 
         while(cur.hasNext()) {
-            PropField field = new PropField();
             DBObject doc = (DBObject)cur.next();
-            field.setId(doc.get("_id"));
-            field.setName((String)doc.get("name"));
-            field.setStrict((Boolean)doc.get("strict"));
-            field.setValueType(ValueType.valueOf((String)doc.get("type")));
-            fields.add(field);
+            fields.add(toField(doc));
         }
 
         return fields;
     }
 
+    @Override
+    public TicketProp getTicketProp(String fieldName, Object ticketId) {
+        TicketProp ticketProp = null;
+        DBObject recordDoc = getRecordDocument(new BasicDBObject(), ObjectId.massageToObjectId(ticketId));
+
+        if(recordDoc != null) {
+            DBObject propsObj = (DBObject)recordDoc.get("props");
+            if(propsObj.containsField(fieldName)) {
+                PropField field = getPropField(fieldName);
+
+                ticketProp = field.getValueType().newTicketProp();
+                ticketProp.setId(null);
+                ticketProp.setPropField(field);
+
+                try {
+                    ticketProp.setValue(propsObj.get(fieldName));
+                } catch (Exception e) {
+                    //TODO: This should throw something besides Exception
+                    e.printStackTrace();
+                }
+
+                ticketProp.setTicket(getTicket(ticketId, false));
+            }
+        }
+
+        return ticketProp;
+    }
+
+    @Override
+    public void deleteTicketProp(TicketProp prop) {
+        TicketProp ticketProp = null;
+        if(prop.getTicket() != null) {
+            DBObject recordDoc = getRecordDocument(new BasicDBObject(), ObjectId.massageToObjectId(prop.getTicket().getId()));
+            String fieldName = prop.getPropField().getName();
+
+            if(recordDoc != null) {
+                DBObject propsObj = (DBObject)recordDoc.get("props");
+                if(propsObj.containsField(fieldName)) {
+                    propsObj.removeField(fieldName);
+                }
+                recordDoc.put("props", propsObj);
+                records.save(recordDoc);
+            }
+        }
+    }
+
+    @Override
+    public Collection<PropValue> getPropValues(Object propFieldId) {
+        Collection<PropValue> propValues = null; 
+        
+        PropField field = getPropField(propFieldId);
+        if(field != null) {
+            propValues = field.getPropValues();
+        } else {
+            propValues = new ArrayList<PropValue>();
+        }
+        
+        return propValues;
+    }
+
+    private BasicDBObject buildTicketQuery(ObjectId oid) {
+        BasicDBObject query = new BasicDBObject();
+        query.put("_id", oid);
+        return query;
+    }
+
+    private DBObject getRecordDocument(BasicDBObject query, ObjectId oid) {
+        query.put("_id", oid);
+        return records.findOne(query);
+    }
+
     private Ticket toRecord(DBObject recordObject) {
+        return toRecord(recordObject, true);
+    }
+
+    private Ticket toRecord(DBObject recordObject, Boolean includeProps) {
         Ticket t = null;
 
         if(recordObject != null) {
             t = new Ticket();
             t.setId(recordObject.get("_id"));
             t.setName((String)recordObject.get("name"));
-            DBObject propsObj = (DBObject)recordObject.get("props");
-            for(String key : propsObj.keySet()) {
-                Object val = propsObj.get(key);
-                PropField field = getPropField(key);
+            
+            if(includeProps) {
+                DBObject propsObj = (DBObject)recordObject.get("props");
+                for(String key : propsObj.keySet()) {
+                    Object val = propsObj.get(key);
+                    PropField field = getPropField(key);
 
-                TicketProp ticketProp = field.getValueType().newTicketProp();
-                ticketProp.setId(null);
-                ticketProp.setPropField(field);
+                    TicketProp ticketProp = field.getValueType().newTicketProp();
+                    ticketProp.setId(null);
+                    ticketProp.setPropField(field);
 
-                try {
-                    ticketProp.setValue(val);
-                } catch (Exception e) {
-                    //TODO: This should throw something besides Exception
-                    e.printStackTrace();
+                    try {
+                        ticketProp.setValue(val);
+                    } catch (Exception e) {
+                        //TODO: This should throw something besides Exception
+                        e.printStackTrace();
+                    }
+
+                    ticketProp.setTicket(t);
+                    t.addTicketProp(ticketProp);
                 }
-
-                ticketProp.setTicket(t);
-                t.addTicketProp(ticketProp);
             }
         }
-        
+
         return t;
+    }
+
+    private PropField toField(DBObject fieldObject) {
+        PropField propField = new PropField();
+        propField.setId(fieldObject.get("_id"));
+        propField.setName((String)fieldObject.get("name"));
+        propField.setStrict((Boolean)fieldObject.get("strict"));
+        propField.setValueType(ValueType.valueOf((String)fieldObject.get("type")));
+
+        List<String> propValues = (List<String>)fieldObject.get("values");
+        for(String val : propValues) {
+            PropValue propValue = new PropValue();
+            propValue.setId(val);
+            propValue.setPropValue(val);
+            propField.addPropValue(propValue);
+        }
+
+        return propField;
     }
 
     private void checkForDuplicatePropField(String name) throws ApaException {

@@ -37,16 +37,17 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.web.exception.ForbiddenException;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
-import org.fracturedatlas.athena.web.exception.ParakeetException;
+import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 
-@Path("/")
+@Path("")
 @Consumes({"application/json"})
 @Produces({"application/json"})
 public class RecordResource {
@@ -137,20 +138,43 @@ public class RecordResource {
      */
     @POST
     public Object save(String json) throws Exception {
+        PTicket pTicket = stringToPTicket(json);
+        Ticket ticket = ticketManager.saveTicketFromClientRequest(pTicket);
+        return ticket;
+    }
+
+    /**
+     * Save a ticket.  If a property is specified twice, the latter value will be used.
+     *
+     * @param json the json representation of a client ticket (PTicket
+     * @return the saved ticket
+     * @throws Exception if the json was malformed
+     */
+    @PUT
+    @Path("{id}")
+    public Object update(@PathParam("id") String id, String json) throws Exception {
+        PTicket pTicket = stringToPTicket(json);
+        Ticket ticket = ticketManager.updateTicketFromClientTicket(pTicket, id);
+        return ticket;
+    }
+
+    /*
+     * This will reutrn a not-null pTicket.  If null, then will throw AthenaException
+     */
+    private PTicket stringToPTicket(String json) {
         PTicket pTicket = null;
 
         try {
             pTicket = JsonUtil.getGson().fromJson(json, PTicket.class);
         } catch (com.google.gson.JsonParseException pe) {
             pe.printStackTrace();
-            throw new ParakeetException("Sent a blank or malformed request body.  Could not make a ticket out of it.");
+            throw new AthenaException("Sent a blank or malformed request body.  Could not make a ticket out of it.");
         }
 
         if(pTicket == null) {
-            throw new ParakeetException("Sent a blank or malformed request body.  Could not make a ticket out of it.");
+            throw new AthenaException("Sent a blank or malformed request body.  Could not make a ticket out of it.");
         }
 
-        Ticket ticket = ticketManager.saveTicketFromClientRequest(pTicket);
-        return ticket;
+        return pTicket;
     }
 }

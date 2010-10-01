@@ -21,8 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -31,20 +30,19 @@ import org.fracturedatlas.athena.apa.model.PropValue;
 import org.fracturedatlas.athena.apa.model.ValueType;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
-import org.junit.Before;
-import org.junit.Test;
 
-import com.sun.jersey.core.util.Base64;
-import java.nio.charset.Charset;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.ws.rs.core.HttpHeaders;
 import org.fracturedatlas.athena.client.PField;
 import org.fracturedatlas.athena.apa.model.StrictType;
 import org.fracturedatlas.athena.apa.model.Ticket;
+import org.fracturedatlas.athena.id.IdAdapter;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class FieldResourceContainerTest extends BaseTixContainerTest {
 
@@ -54,7 +52,6 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
     PropValue testValue;
     Logger logger = Logger.getLogger(FieldResourceContainerTest.class);
     Gson gson = JsonUtil.getGson();
-    List<PropField> propFieldsToDelete = new ArrayList<PropField>();
 
     public FieldResourceContainerTest() throws Exception {
         super();
@@ -79,38 +76,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
 
     @After
     public void teardownTickets() {
-        for (Ticket t : ticketsToDelete) {
-            try {
-                apa.deleteTicket(t);
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
-        }
-
-        for (PropField pf : propFieldsToDelete) {
-            try {
-                apa.deletePropField(pf);
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
-        }
-    }
-
-    //@Test
-    public void testGetFieldJsonWithAuthorization() throws Exception {
-
-        String path = "fields/" + testField.getId() + ".json";
-        PropField actualField = null;
-        String propFieldString = tix.path(path).header(HttpHeaders.AUTHORIZATION, "Basic "
-                + new String(Base64.encode("rod:koala"),
-                Charset.forName("ASCII"))).get(String.class);
-        assertNotNull(propFieldString);
-        logger.debug("Json String returned for id:" + testField.getId() + " is " + propFieldString);
-        actualField = mapper.readValue(propFieldString, PropField.class);
-        assertEquals(testField.getName(), actualField.getName());
-        assertEquals(testField.getValueType(), actualField.getValueType());
-        assertEquals(testField.getStrict(), actualField.getStrict());
-        assertEquals(testField.getId().toString(), actualField.getId().toString());
+        super.teardownTickets();
     }
 
     @Test
@@ -123,7 +89,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
         assertEquals(testField.getName(), actualField.getName());
         assertEquals(testField.getValueType().toString(), actualField.getValueType());
         assertEquals(testField.getStrict(), actualField.getStrict());
-        assertEquals(testField.getId().toString(), actualField.getId().toString());
+        assertTrue(IdAdapter.isEqual(testField.getId(), actualField.getId()));
     }
 
     @Test

@@ -25,12 +25,13 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
-import org.fracturedatlas.athena.web.exception.ParakeetException;
+import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.fracturedatlas.athena.web.manager.PropFieldManager;
 import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.PropValue;
@@ -51,6 +52,7 @@ public class FieldResource {
     @Path("{id}")
     public Object get(@PathParam("id") String id) throws Exception {
         PropField propField = propFieldManager.getPropField(id);
+        System.out.println(propField);
         if (propField == null) {
             throw new NotFoundException("Field with id [" + id + "] was not found");
         } else {
@@ -67,9 +69,13 @@ public class FieldResource {
     @GET
     @Path("/{propFieldId}/values/{propValueId}")
     public PropValue getValue(@PathParam("propFieldId") String propFieldId,
-            @PathParam("propValueId") String propValueId) {
-        PropValue propValue = propFieldManager.getPropValue(propValueId);
-        return propValue;
+                              @PathParam("propValueId") String propValueId) {
+        PropValue propValue = propFieldManager.getPropValue(propFieldId, propValueId);
+        if (propValue == null) {
+            throw new NotFoundException("Value with id [" + propValueId + "] was not found");
+        } else {
+            return propValue;
+        }
     }
 
     @GET
@@ -96,7 +102,7 @@ public class FieldResource {
         PropField propField = gson.fromJson(json, PropField.class);
 
         if(propField == null) {
-            throw new ParakeetException("Sent a blank or malformed request body.  Could not make a field out of it.");
+            throw new AthenaException("Sent a blank or malformed request body.  Could not make a field out of it.");
         }
 
         propField = propFieldManager.savePropField(propField);
@@ -104,13 +110,44 @@ public class FieldResource {
     }
 
     /**
-     * Add a new value to this propField
+     * Save or update the propField contained in this JSON string
+     *
+     * Note that values cannot be updated from this endpoint.  Instead, post new values
+     * to /{fieldId}/values
+     *
+     * Clients are required to pass valueType, name, and strict
+     * strict must be wither "false" or "true"
+     * valueType must be: STRING, INTEGER, DATETIME, BOOLEAN
+     *
+     */
+    @PUT
+    @Path("/{id}")
+    public Object updateField(String json, @PathParam("id") String idToUpdate) throws Exception {
+        PropField propField = gson.fromJson(json, PropField.class);
+
+        if(propField == null) {
+            throw new AthenaException("Sent a blank or malformed request body.  Could not make a field out of it.");
+        }
+
+        propField = propFieldManager.updatePropField(propField, idToUpdate);
+        return propField;
+    }
+
+    /**
+     * Add a new value to this propField.
+     *
+     * You cannot update a sepcific propValue from this endpoint.  You must first delete the value then add the new one.
      */
     @POST
     @Path("/{propFieldId}/values")
     public PropValue saveValue(String json, @PathParam("propFieldId") String propFieldId) throws Exception {
         try {
             PropValue propValue = gson.fromJson(json, PropValue.class);
+            
+            if(propValue.getId() != null) {
+                throw new AthenaException("Cannot update values on a field.  First delete the value then add a new value.");
+            }
+
             propValue = propFieldManager.savePropValue(propFieldId, propValue);
             return propValue;
         } catch (Exception ex) {
@@ -122,7 +159,7 @@ public class FieldResource {
     @DELETE
     @Path("/{propFieldId}/values/{propValueId}")
     public Object deleteValue(@PathParam("propFieldId") String propFieldId, @PathParam("propValueId") String propValueId) throws Exception {
-        if (propFieldManager.deletePropValue(propValueId)) {
+        if (propFieldManager.deletePropValue(propFieldId, propValueId)) {
             return Response.noContent().build();
         } else {
             return Response.status(404).build();

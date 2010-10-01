@@ -33,6 +33,10 @@ import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+
+/*
+ * This tests immutability at both the POST and the PUT endpoints
+ */
 public class FieldResourceImmutableContainerTest extends BaseTixContainerTest {
 
     public FieldResourceImmutableContainerTest() throws Exception {
@@ -41,21 +45,7 @@ public class FieldResourceImmutableContainerTest extends BaseTixContainerTest {
 
     @After
     public void teardownTickets() {
-        for (Ticket t : ticketsToDelete) {
-            try {
-                apa.deleteTicket(t);
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
-        }
-
-        for (PropField pf : propFieldsToDelete) {
-            try {
-                apa.deletePropField(pf);
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
-        }
+        super.teardownTickets();
     }
 
     @Test
@@ -69,6 +59,8 @@ public class FieldResourceImmutableContainerTest extends BaseTixContainerTest {
         pField.setValueType(ValueType.STRING.toString());
         pField.setStrict(StrictType.NOT_STRICT);
         ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, gson.toJson(pField));
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+        response = tix.path(path + "/" + field.getId()).type("application/json").put(ClientResponse.class, gson.toJson(pField));
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
     }
@@ -84,6 +76,8 @@ public class FieldResourceImmutableContainerTest extends BaseTixContainerTest {
         pField.setStrict(StrictType.NOT_STRICT);
         ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, gson.toJson(pField));
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+        response = tix.path(path + "/" + field.getId()).type("application/json").put(ClientResponse.class, gson.toJson(pField));
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
     }
 
@@ -97,6 +91,8 @@ public class FieldResourceImmutableContainerTest extends BaseTixContainerTest {
         PField pField = field.toClientField();
         pField.setValueType(ValueType.INTEGER.toString());
         ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, gson.toJson(pField));
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+        response = tix.path(path + "/" + field.getId()).type("application/json").put(ClientResponse.class, gson.toJson(pField));
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
     }
@@ -112,6 +108,8 @@ public class FieldResourceImmutableContainerTest extends BaseTixContainerTest {
         pField.setValueType(ValueType.STRING.toString());
         pField.setStrict(StrictType.NOT_STRICT);
         ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, gson.toJson(pField));
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+        response = tix.path(path + "/" + field.getId()).type("application/json").put(ClientResponse.class, gson.toJson(pField));
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
     }

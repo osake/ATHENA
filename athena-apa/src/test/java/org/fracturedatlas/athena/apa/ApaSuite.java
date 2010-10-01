@@ -18,9 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
 
-package org.fracturedatlas.athena.tix;
+package org.fracturedatlas.athena.apa;
 
-import org.fracturedatlas.athena.apa.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -30,6 +29,7 @@ import org.junit.runners.Suite;
   ApaAdapterFindTicketsTest.class,
   ApaAdapterSavePropFieldTest.class,
   ApaAdapterSavePropTest.class,
+  ApaAdapterGetPropTest.class,
   ApaAdapterSaveTicketsTest.class
 })
 public class ApaSuite {

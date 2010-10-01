@@ -129,7 +129,12 @@ public class Ticket extends TixEntity implements Serializable {
         PTicket pTicket = new PTicket();
 
         pTicket.setName(this.getName());
-        pTicket.setId(this.getId());
+        if(this.getId() != null) {
+            pTicket.setId(this.getId().toString());
+        } else {
+            pTicket.setId(null);
+        }
+
 
         for(TicketProp prop : this.getTicketProps()) {
             pTicket.getProps().put(prop.getPropField().getName(), prop.getValueAsString());

@@ -1,16 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
         <artifactId>athena</artifactId>
-        <version>0.2-SNAPSHOT</version>
+        <version>0.4-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.fracturedatlas.athena</groupId>
     <artifactId>athena-web-resources</artifactId>
     <packaging>jar</packaging>
-    <version>0.2-SNAPSHOT</version>
+    <version>0.4-SNAPSHOT</version>
     <name>athena-web-resources</name>
     <build>
         <finalName>athena-web-resources</finalName>
@@ -52,17 +51,14 @@
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>athena-util</artifactId>
-            <version>0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>athena-client</artifactId>
-            <version>0.2-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>athena-apa</artifactId>
-            <version>0.2-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -117,9 +113,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-test-framework</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <groupId>com.sun.jersey.jersey-test-framework</groupId>
+            <artifactId>jersey-test-framework-grizzly</artifactId>
+            <version>1.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>

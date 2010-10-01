@@ -2,3 +2,6 @@ target/
 generated/
 logs/
 .DS_Store
+.swp
+release.properties
+*.releaseBackup

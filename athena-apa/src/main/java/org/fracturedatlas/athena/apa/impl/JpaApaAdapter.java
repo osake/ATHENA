@@ -491,7 +491,17 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         try {
             em.getTransaction().begin();
             prop = em.merge(prop);
+
+            if(prop == null) {
+                throw new ApaException("Cannot delete prop.  Prop was not found.");
+            }
+
             Ticket t = prop.getTicket();
+
+            if(t == null) {
+                throw new ApaException("Cannot delete prop.  This prop has not been assigned to a ticket.");
+            }
+
             t.getTicketProps().remove(prop);
             em.remove(prop);
             t = em.merge(t);
@@ -537,17 +547,6 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public PropValue getPropValue(Object propValueId) {
-        EntityManager em = this.emf.createEntityManager();
-        try {
-            PropValue propValue = em.find(PropValue.class, LongUserType.massageToLong(propValueId));
-            return propValue;
-        } finally {
-            cleanup(em);
-        }
-    }
-
-    @Override
     public Collection<PropValue> getPropValues(Object propFieldId) {
         EntityManager em = this.emf.createEntityManager();
         try {
@@ -564,10 +563,10 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public boolean deletePropValue(Object id) {
+    public void deletePropValue(Object propFieldId, Object propValueId) {
         EntityManager em = this.emf.createEntityManager();
         try {
-            Long longId = LongUserType.massageToLong(id);
+            Long longId = LongUserType.massageToLong(propValueId);
             PropValue pv = em.find(PropValue.class, longId);
             if (pv != null) {
                 PropField propField = getPropField(pv.getPropField().getId());
@@ -576,9 +575,6 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 em.remove(pv);
                 propField = em.merge(propField);
                 em.getTransaction().commit();
-                return true;
-            } else {
-                return false;
             }
         } finally {
             cleanup(em);
@@ -586,8 +582,10 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public boolean deletePropValue(PropValue propValue) {
-        return deletePropValue(propValue.getId());
+    public void deletePropValue(PropValue propValue) {
+        if(propValue != null) {
+            deletePropValue(propValue.getPropField(), propValue.getId());
+        }
     }
 
     private void cleanup(EntityManager em) {

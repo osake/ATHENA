@@ -136,4 +136,32 @@ public abstract class TicketProp extends TixEntity implements Serializable, Comp
         }
         return isSame;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TicketProp other = (TicketProp) obj;
+        if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
+            return false;
+        }
+        if (this.propField != other.propField && (this.propField == null || !this.propField.equals(other.propField))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 71 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 71 * hash + (this.propField != null ? this.propField.hashCode() : 0);
+        return hash;
+    }
+
+
 }

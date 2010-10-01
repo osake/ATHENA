@@ -114,7 +114,7 @@ public interface ApaAdapter {
      */
     public TicketProp getTicketProp(Object id);
 
-    
+
     /**
      * get the ticketProp for the given ticket and field name
      * @param id the id
@@ -190,18 +190,12 @@ public interface ApaAdapter {
     public Collection<PropField> getPropFields();
 
     /**
-     * Save a PropValue
+     * Save a PropValue.  PropValue.propField must be set before calling this method
+     * 
      * @param propValue
      * @return the saved PropValue
      */
     public PropValue savePropValue(PropValue propValue);
-
-    /**
-     * get a PropValue
-     * @param propValue
-     * @return the PropValue with this id, null otherwise
-     */
-    public PropValue getPropValue(Object propValueId);
 
     /**
      * get a List of propFields
@@ -209,13 +203,13 @@ public interface ApaAdapter {
      * @return the full List of PropFields
      */
     public Collection<PropValue> getPropValues(Object propFieldId);
-    
+
     /**
      * Delete a PropValue
      * @param propValue
       * @return true if propValue is deleted. False if propValue does not exist
     */
-    public boolean deletePropValue(PropValue propValue);
+    public void deletePropValue(PropValue propValue);
 
     /**
      * Delete a PropValue
@@ -223,6 +217,6 @@ public interface ApaAdapter {
      * @return the saved PropValue
       * @return true if propValue is deleted. False if propValue does not exist
      */
-    public boolean deletePropValue(Object id);
+    public void deletePropValue(Object propFieldId, Object propValueId);
 
 }

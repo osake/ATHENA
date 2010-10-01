@@ -25,17 +25,17 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class ParakeetException extends RuntimeException
-                                       implements ExceptionMapper<ParakeetException> {
-    public ParakeetException(String message) {
+public class AthenaException extends RuntimeException
+                                       implements ExceptionMapper<AthenaException> {
+    public AthenaException(String message) {
         super(message);
     }
 
-    public ParakeetException(String message, Throwable cause) {
+    public AthenaException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public Response toResponse(ParakeetException ex) {
+    public Response toResponse(AthenaException ex) {
         return Response.status(Response.Status.BAD_REQUEST).
             entity(ex.getMessage()).
             type("text/plain").

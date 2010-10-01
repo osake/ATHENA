@@ -30,6 +30,7 @@ import org.junit.runners.Suite;
   DeletePropContainerTest.class,
   FieldResourceImmutableContainerTest.class,
   FieldResourceValuesContainerTest.class,
+  //UpdateTicketContainerTest.class,
   //SaveTicketContainerTest.class,
   TicketResourceContainerTest.class
 })
