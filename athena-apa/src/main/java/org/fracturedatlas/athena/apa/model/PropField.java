@@ -22,6 +22,8 @@ package org.fracturedatlas.athena.apa.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Vector;
 import javax.persistence.CascadeType;
 
 import javax.persistence.Entity;
@@ -51,8 +53,8 @@ public class PropField extends TixEntity implements Serializable {
     @XmlJavaTypeAdapter(IdAdapter.class)
     Object id;
 
-    @OneToMany(mappedBy = "propField", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    Collection<TicketProp> ticketProps;
+//    @OneToMany(mappedBy = "propField", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+//    Collection<TicketProp> ticketProps;
 
     @OneToMany(mappedBy = "propField", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     Collection<PropValue> propValues;
@@ -120,13 +122,13 @@ public class PropField extends TixEntity implements Serializable {
         this.propValues.add(propValue);
     }
 
-    public Collection<TicketProp> getTicketProps() {
-        return ticketProps;
-    }
+//    public Collection<TicketProp> getTicketProps() {
+//        return ticketProps;
+//    }
 
-    public void setTicketProps(Collection<TicketProp> ticketProps) {
-        this.ticketProps = ticketProps;
-    }
+//    public void setTicketProps(Collection<TicketProp> ticketProps) {
+//        this.ticketProps = ticketProps;
+//    }
 
     public ValueType getValueType() {
         return valueType;
@@ -189,6 +191,13 @@ public class PropField extends TixEntity implements Serializable {
 
         return pField;
     }
+
+//    public synchronized void addTicketProp(TicketProp tp) {
+//        if (ticketProps == null) {
+//            ticketProps = new Vector<TicketProp>();
+//        }
+//        ticketProps.add(tp);
+//    }
 }
 
 
