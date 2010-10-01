@@ -14,19 +14,24 @@ along with this program. If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.apa.impl;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.SetUtils;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.log4j.Logger;
 import org.fracturedatlas.athena.apa.AbstractApaAdapter;
 import org.fracturedatlas.athena.apa.ApaAdapter;
@@ -39,6 +44,8 @@ import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.apa.model.ValueType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang.StringUtils;
+import org.fracturedatlas.athena.util.date.DateUtil;
 
 public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
@@ -90,8 +97,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             e.printStackTrace();
             em.getTransaction().rollback();
             throw e;
-        }
-        finally {
+        } finally {
             cleanup(em);
         }
     }
@@ -158,71 +164,77 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
      * @return Set of tickets whose Props match the searchParams
      */
     @Override
-    public Set<Ticket> findTickets(HashMap<String, String> searchParams) {
+    public Collection<Ticket> findTickets(HashMap<String, List<String>> searchParams) {
         logger.debug("Searching for tickets matching [" + searchParams + "]");
-        Set<String> keys = searchParams.keySet();
-        Object[] keyArray = keys.toArray();
         EntityManager em = this.emf.createEntityManager();
+        char[] charArray = {'<', '>', '='};
+        List<TicketProp> props = null;
+        List<String> values = null;
+        int sIndex = 0;
+        String value = null;
+        String condition = null;
+        Query query = null;
+        Ticket tempTicket = null;
+        Collection<Ticket> tickets = null;
+        Long tID = null;
+        Collection<Ticket> finishedTicketsList = null;
+        Collection<Ticket> ticketsList = null;
+        PropField pf = null;
+        ValueType vt = null;
+        String queryString = null;
         try {
-            // find all fields with given name
-            Query query = em.createQuery("FROM PropField propField WHERE propField.name IN (:names)");
-            query.setParameter("names", keys);
-            List<PropField> fields = query.getResultList();
-            // the tickets that have this property set
-            Set<Ticket> propTickets = new HashSet<Ticket>();
-            // a temporary list of tickets
-            Collection<Ticket> tempTickets = new ArrayList<Ticket>();
-            // is this the first field we've inspected?
-            boolean firstField = true;
-            // for each field
-            for (PropField field : fields) {
-                String searchValue = searchParams.get(field.getName());
+            for (String fieldName : searchParams.keySet()) {
 
-                //TODO: If searchValue is null, punch out.  It's likely a mismatched case
-                // like they seatched for "Artist" when the actual key name is "artist"
+                values = searchParams.get(fieldName);
+                pf = getPropField(fieldName);
+                vt = pf.getValueType();
+                for (String conditionPrefixedValue : values) {
+                    condition = conditionPrefixedValue.substring(0, 1);
+                    value = conditionPrefixedValue.substring(1, conditionPrefixedValue.length());
 
-                logger.debug("Checking field [" + field.getName()
-                        + "] for tickets with prop ["
-                        + searchValue + "]");
-                logger.debug(field.getTicketProps().size()
-                        + " properties on this field to check");
-                // for each property that has this field name
-                for (TicketProp prop : field.getTicketProps()) {
-                    // if the value equals the value we're looking for, add it to
-                    // the propTickets list
-                    if (prop.valueEquals(searchValue)) {
-                        propTickets.add(prop.getTicket());
+                    switch (vt) {
+                        case STRING:
+                            queryString = "FROM StringTicketProp ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value" + condition + ":value";
+                            query = em.createQuery(queryString);
+                            query.setParameter("value", value);
+                            break;
+                        case INTEGER:
+                            queryString = "FROM IntegerTicketProp ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value" + condition + ":value";
+                            query = em.createQuery(queryString);
+                            Integer i = Integer.valueOf(value);
+                            query.setParameter("value", i);
+                            break;
+                        case DATETIME:
+                            queryString = "FROM DateTimeTicketProp ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value" + condition + ":value";
+                            query = em.createQuery(queryString);
+                            query.setParameter("value", DateUtil.parseDate(value));
+
+                            break;
+                        case BOOLEAN:
+                            queryString = "FROM BooleanTicketProp ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value" + condition + ":value";
+                            query = em.createQuery(queryString);
+                            query.setParameter("value", Boolean.parseBoolean(value));
+                            break;
+                    }
+                    query.setParameter("fieldName", fieldName);
+                    props = query.getResultList();
+                    ticketsList = new HashSet<Ticket>();
+                    for (TicketProp tp : props) {
+                        tempTicket = tp.getTicket();
+                        ticketsList.add(tempTicket);
+                    }
+                    if (finishedTicketsList == null) {
+                        finishedTicketsList = ticketsList;
+                    } else {
+                        finishedTicketsList = CollectionUtils.intersection(finishedTicketsList, ticketsList);
                     }
                 }
-                logger.debug("Found " + propTickets.size() + " tickets");
-                // if we didn't find any tickets for this property, then we're done.
-                // Punch out and return an empty set
-                if (propTickets.size() == 0) {
-                    logger.debug("No tickets found for this property, exiting and returning empty set");
-                    tempTickets = new ArrayList<Ticket>();
-                    break;
-                }
-                // if this is the first time through, just put all the tickets we
-                // found in our temp list
-                if (firstField) {
-                    tempTickets.addAll(propTickets);
-                    firstField = false;
-                } else {
-                    // otherwise, find the intersection of our temp tickets list and
-                    // the list of tix attached to this property
-                    // NOTE: this will get expensive for very large lists
-                    tempTickets = CollectionUtils.intersection(tempTickets,
-                            propTickets);
-                    logger.debug(tempTickets.size()
-                            + " tickets remain after intersecting");
-                }
-                propTickets = new HashSet<Ticket>();
             }
-            // the tickets that we'll be returning to the user
-            Set<Ticket> tickets = new HashSet<Ticket>();
-            tickets.addAll(tempTickets);
-            logger.debug("Returning " + tickets.size() + " tickets");
-            return tickets;
+            logger.debug("Returning " + finishedTicketsList.size() + " tickets");
+            return finishedTicketsList;
+        } catch (Exception ex) {
+            logger.error("Error While searching [" + searchParams + "]: Threw the follwoing error " + ex.getLocalizedMessage());
+            return new HashSet<Ticket>();
         } finally {
             cleanup(em);
         }
@@ -306,15 +318,35 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
     }
 
+        @Override
+    public List getTicketProps(String fieldName) {
+        EntityManager em = this.emf.createEntityManager();
+
+        try {
+            //TODO: Would this be faster to first select propFields with fieldName, then use that id to
+            //search ticketProp?
+            Query query = em.createQuery("FROM TicketProp ticketProp WHERE ticketProp.propField.name=:fieldName");
+            query.setParameter("fieldName", fieldName);
+
+            //TODO: There must be a better way of getting asingle result in JPA.
+            //Using exceptions as flow control is kinda lame
+            try {
+                List ticketProp = query.getResultList();
+                return ticketProp;
+            } catch (javax.persistence.NoResultException nre) {
+                return null;
+            }
+        } finally {
+            cleanup(em);
+        }
+    }
+
     @Override
     public PropField getPropField(Object id) {
         EntityManager em = this.emf.createEntityManager();
         try {
             Long longId = LongUserType.massageToLong(id);
             PropField pf = em.find(PropField.class, longId);
-            if (pf != null) {
-                pf.getTicketProps().size();
-            }
             return pf;
         } finally {
             cleanup(em);
@@ -355,7 +387,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         if (propField.getStrict() && propField.getValueType().equals(ValueType.BOOLEAN)) {
             throw new ApaException("Boolean fields cannot be marked as strict");
         }
-        
+
         //check for immutability
         if (propField.getId() != null) {
             PropField oldPropField = getPropField(propField.getId());
@@ -417,13 +449,13 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     private void checkForDuplicatePropValue(PropField propField) throws ApaException {
-        if(propField.getPropValues() == null) {
+        if (propField.getPropValues() == null) {
             return;
         }
 
         Set<PropValue> duplicates = new TreeSet<PropValue>(new PropValue.PropValueComparator());
         for (PropValue value : propField.getPropValues()) {
-            if(!duplicates.add(value)) {
+            if (!duplicates.add(value)) {
                 throw new ApaException("Cannot save Field [" + propField.getId() + "] because it contains duplicate values of [" + value.getPropValue() + "]");
             }
         }
@@ -494,7 +526,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public List<PropField> getPropFields() {
+    public Collection<PropField> getPropFields() {
         EntityManager em = this.emf.createEntityManager();
         try {
             Query query = em.createQuery("FROM PropField pf");
