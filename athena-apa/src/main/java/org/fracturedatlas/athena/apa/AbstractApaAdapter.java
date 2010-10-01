@@ -65,7 +65,7 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Set<Ticket> findTickets(HashMap<String, String> searchParams) {
+    public Collection<Ticket> findTickets(HashMap<String, List<String>> searchParams) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
@@ -100,6 +100,11 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
+    public List<TicketProp> getTicketProps(String fieldName) {
+      throw new UnsupportedOperationException("Unsupported operation");
+    }
+
+    @Override
     public Boolean deletePropField(Object id) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
@@ -130,7 +135,7 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public List<PropField> getPropFields() {
+    public Collection<PropField> getPropFields() {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
@@ -139,5 +144,9 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
- 
+    @Override
+    public PropValue savePropValue(PropValue propValue) {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+
 }
