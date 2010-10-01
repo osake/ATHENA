@@ -87,7 +87,7 @@ public interface ApaAdapter {
      * @param searchParams the search criteria.  Criteria should be in the format: key = prop, value = prop value
      * @return matching tickets, empty List if no tickets found
      */
-    public Set<Ticket> findTickets(HashMap<String, String> searchParams);
+    public Collection<Ticket> findTickets(HashMap<String, List<String>> searchParams);
 
     /**
      * Save the ticketProps contained in this list
@@ -96,6 +96,8 @@ public interface ApaAdapter {
      * @throws InvalidValueException if one of the props int he list has been amrked strict and its value is not valid
      */
     public List<TicketProp> saveTicketProps(List<TicketProp> prop) throws InvalidValueException;
+
+
 
     /**
      * Save the ticketProp
@@ -119,6 +121,13 @@ public interface ApaAdapter {
      * @return the ticket prop if found, null otherwise
      */
     public TicketProp getTicketProp(String fieldName, Object ticketId);
+
+    /**
+     * get the ticketProps for the given field name
+     * @param id the id
+     * @return List of the ticket prop if found, null otherwise
+     */
+    public List<TicketProp> getTicketProps(String fieldName);
 
     /**
      * Get a PropField
@@ -178,7 +187,7 @@ public interface ApaAdapter {
      * @param propField
      * @return the full List of PropFields
      */
-    public List<PropField> getPropFields();
+    public Collection<PropField> getPropFields();
 
     /**
      * Save a PropValue
