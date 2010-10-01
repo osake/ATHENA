@@ -100,12 +100,12 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return t;
     }
 
-    @Override
-    public Set<Ticket> findTickets(HashMap<String, String> searchParams) {
+//    @Override
+    public Collection<Ticket> findTickets(HashMap<String, List<String>> searchParams) {
         Set<Ticket> tickets = new HashSet<Ticket>();
         BasicDBObject query = new BasicDBObject();
 
-        for(Entry<String, String> entry : searchParams.entrySet()) {
+        for(Entry<String, List<String>> entry : searchParams.entrySet()) {
             PropField field = getPropField(entry.getKey());
             if(field != null) {
                 //load the field's value type so we can search for it with proper typing

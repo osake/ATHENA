@@ -130,7 +130,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
         for (PropField f : propFieldsToDelete) {
             f = apa.getPropField(f.getId());
-            assertEquals(1, f.getTicketProps().size());
+            assertEquals(1, apa.getTicketProps(f.getName()).size());
         }
     }
 
@@ -149,7 +149,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
         for (PropField f : propFieldsToDelete) {
             f = apa.getPropField(f.getId());
-            assertEquals(1, f.getTicketProps().size());
+            assertEquals(1, apa.getTicketProps(f.getName()).size());
         }
     }
 
@@ -179,7 +179,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
         for (PropField f : propFieldsToDelete) {
             f = apa.getPropField(f.getId());
-            assertEquals(1, f.getTicketProps().size());
+            assertEquals(1, apa.getTicketProps(f.getName()).size());
         }
 
     }
@@ -215,7 +215,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
         for (PropField f : propFieldsToDelete) {
             f = apa.getPropField(f.getId());
-            assertEquals(1, f.getTicketProps().size());
+            assertEquals(1, apa.getTicketProps(f.getName()).size());
         }
 
     }
@@ -238,7 +238,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
         for (PropField field : propFieldsToDelete) {
             field = apa.getPropField(field.getId());
-            assertEquals(1, field.getTicketProps().size());
+            assertEquals(1, apa.getTicketProps(field.getName()).size());
         }
     }
 
@@ -261,7 +261,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
         for (PropField field : propFieldsToDelete) {
             field = apa.getPropField(field.getId());
-            assertEquals(1, field.getTicketProps().size());
+            assertEquals(1, apa.getTicketProps(field.getName()).size());
         }
     }
 
@@ -331,7 +331,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
         for (PropField f : propFieldsToDelete) {
             f = apa.getPropField(f.getId());
-            assertEquals(1, f.getTicketProps().size());
+            assertEquals(1, apa.getTicketProps(f.getName()).size());
         }
     }
 
@@ -479,11 +479,15 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
         //make sure nothing got saved
-        HashMap<String, String> map = new HashMap<String, String>();
-        map.put("SECTION", "ORCHESTRA");
+        HashMap<String, List<String>> map = new HashMap<String, List<String>>();
+        List<String> valueList = new ArrayList<String>();
+        valueList.add("=ORCHESTRA");
+        map.put("SECTION", valueList);
         assertEquals(0, apa.findTickets(map).size());
-        map = new HashMap<String, String>();
-        map.put("SEAT_NUMBER", "3D");
+        map = new HashMap<String, List<String>>();
+        valueList = new ArrayList<String>();
+        valueList.add("=3D");
+        map.put("SEAT_NUMBER", valueList);
         assertEquals(0, apa.findTickets(map).size());
     }
 

@@ -87,12 +87,12 @@ public class TicketManager {
      * @param queryParams
      * @return
      */
-    public Set<Ticket> findTickets(MultivaluedMap<String, String> queryParams) {
-        HashMap<String, String> searchParams = new HashMap<String, String>();
+    public Collection<Ticket> findTickets(MultivaluedMap<String, String> queryParams) {
+        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
 
         for(String kee : queryParams.keySet()) {
             List<String> valList = queryParams.get(kee);
-            searchParams.put(kee, valList.get(0));
+            searchParams.put(kee, valList);
         }
 
         return apa.findTickets(searchParams);

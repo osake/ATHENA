@@ -33,6 +33,8 @@ import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sun.jersey.api.NotFoundException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import javax.ws.rs.POST;
 import javax.ws.rs.core.Context;
@@ -116,12 +118,12 @@ public class RecordResource {
      */
     @GET
     @Path("")
-    public Set<Ticket> search(@Context UriInfo ui) {
+    public Collection<Ticket> search(@Context UriInfo ui) {
         MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
 
         if (queryParams.isEmpty()) {
             throw new ForbiddenException("You must specify at least one query parameter when searching for tickets");
-        }
+        } 
 
         return ticketManager.findTickets(queryParams);
     }
