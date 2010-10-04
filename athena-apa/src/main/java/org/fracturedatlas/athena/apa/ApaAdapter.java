@@ -23,11 +23,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.PropValue;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.TicketProp;
+import org.fracturedatlas.athena.search.ApaSearch;
 
 /**
  * The interface from Parakeet to a data store.
@@ -88,6 +90,14 @@ public interface ApaAdapter {
      * @return matching tickets, empty List if no tickets found
      */
     public Collection<Ticket> findTickets(HashMap<String, List<String>> searchParams);
+
+    /**
+     * Search for tickets that match all criteria in search.
+     *
+     * @param searchParams the search criteria.  Criteria should be in the format: key = prop, value = prop value
+     * @return matching tickets, empty List if no tickets found
+     */
+    public Collection<Ticket> findTickets(ApaSearch search);
 
     /**
      * Save the ticketProps contained in this list

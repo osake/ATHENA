@@ -28,6 +28,7 @@ import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.PropValue;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.TicketProp;
+import org.fracturedatlas.athena.search.ApaSearch;
 
 /**
  * Abstract implementation of ApaAdapter as a convenience for developers seeking
@@ -67,6 +68,11 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     @Override
     public Collection<Ticket> findTickets(HashMap<String, List<String>> searchParams) {
         throw new UnsupportedOperationException("Unsupported operation");
+    }
+
+    @Override
+    public Collection<Ticket> findTickets(ApaSearch search) {
+        return findTickets(search.asMap());
     }
 
     @Override

@@ -18,21 +18,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
 
-package org.fracturedatlas.athena.apa;
+package org.fracturedatlas.athena.search;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+public enum Operator {
+    LESS_THAN ("<"),
+    GREATER_THAN (">"),
+    EQUALS ("=");
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-  ApaAdapterDeleteTicketsTest.class,
-  ApaAdapterFindTicketsTest.class,
-  ApaAdapterSavePropFieldTest.class,
-  ApaAdapterSavePropTest.class,
-  ApaAdapterGetPropTest.class,
-  ApaAdapterSavePropTest.class,
-  ApaAdapterComplexSearchTest.class,
-  ApaAdapterSaveTicketsTest.class
-})
-public class ApaSuite {
+    private String operatorString;
+
+    private Operator(String operatorString) {
+        this.operatorString = operatorString;
+    };
+
+    public String getOperatorString() {
+        return operatorString;
+    }
 }

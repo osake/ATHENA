@@ -77,13 +77,6 @@ public class TicketManager {
     }
 
     /**
-     * Converts the MultivaluedMap to a HashMap and only allows searching on the first
-     * value for a given paramater
-     *
-     * Example.  For this string: ?foo=bar&foo=baz
-     *
-     * Only foo=bar would be searched on.
-     *
      * @param queryParams
      * @return
      */
