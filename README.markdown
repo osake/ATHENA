@@ -21,10 +21,10 @@ You'll need a MySQL database stood up to run the tests.  DB name: "ATHENA-Tix", 
 
 Once MySQL is set up and listening, do this:
 
-  git clone git@github.com:fracturedatlas/ATHENA.git
-  cd ATHENA
-  cd athena-apa
-  mvn test
-  cd ../athena-web-resources
-  mvn test -Dtest=ContainerSuite
-  mvn install -DskipTests=true
+	git clone git@github.com:fracturedatlas/ATHENA.git
+	cd ATHENA
+	cd athena-apa
+	mvn test
+	cd ../athena-web-resources
+	mvn test -Dtest=ContainerSuite
+	mvn install -DskipTests=true
