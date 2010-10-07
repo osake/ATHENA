@@ -118,6 +118,62 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     }
 
     @Test
+    public void testFindTicketsGreaterThanDate() {
+
+        search.addTerm("PERFORMANCE", Operator.GREATER_THAN, "2010-09-05");
+        Collection<Ticket> tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(6, tickets.size());
+
+        search = new ApaSearch();
+        search.addTerm("PERFORMANCE", Operator.GREATER_THAN, "2010-09-06");
+        tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(5, tickets.size());
+
+        search = new ApaSearch();
+        search.addTerm("PERFORMANCE", Operator.GREATER_THAN, "2010-09-07");
+        tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(4, tickets.size());
+
+    }
+
+    @Test
+    public void testFindTicketsLessThanDate() {
+
+        search.addTerm("PERFORMANCE", Operator.LESS_THAN, "2010-09-05");
+        Collection<Ticket> tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(4, tickets.size());
+
+        search = new ApaSearch();
+        search.addTerm("PERFORMANCE", Operator.LESS_THAN, "2010-09-06");
+        tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(5, tickets.size());
+
+        search = new ApaSearch();
+        search.addTerm("PERFORMANCE", Operator.LESS_THAN, "2010-09-07");
+        tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(6, tickets.size());
+
+    }
+
+    @Test
+    public void testFindTicketsDateRange() {
+
+        search = new ApaSearch();
+        search.addTerm("PERFORMANCE", Operator.GREATER_THAN, "2010-09-05");
+        search.addTerm("PERFORMANCE", Operator.LESS_THAN, "2010-09-07");
+        Collection<Ticket> tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(2, tickets.size());
+
+    }
+
+    @Test
     public void testFindTicketsBadRange() {
 
         search.addConstraint("PRICE", Operator.GREATER_THAN, "0");
@@ -250,89 +306,89 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
         t1.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
         t1.addTicketProp(new StringTicketProp(sectionProp, "A"));
-        t1.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t1.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-01 04:04")));
         t1.addTicketProp(new StringTicketProp(tierProp, "SILVER"));
         t1.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
         t1.addTicketProp(new BooleanTicketProp(soldProp, Boolean.TRUE));
         t1.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t1.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t1.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-01 04:04")));
         t1.addTicketProp(new IntegerTicketProp(priceProp, 50));
         t1.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
 
         t2.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
         t2.addTicketProp(new StringTicketProp(sectionProp, "A"));
-        t2.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t2.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-02 04:04")));
         t2.addTicketProp(new StringTicketProp(tierProp, "SILVER"));
         t2.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.TRUE));
         t2.addTicketProp(new BooleanTicketProp(soldProp, Boolean.TRUE));
         t2.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t2.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t2.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-02 04:04")));
         t2.addTicketProp(new IntegerTicketProp(priceProp, 50));
         t2.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
 
         t3.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
         t3.addTicketProp(new StringTicketProp(sectionProp, "A"));
-        t3.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t3.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-03 04:04")));
         t3.addTicketProp(new StringTicketProp(tierProp, "BRONZE"));
         t3.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.TRUE));
         t3.addTicketProp(new BooleanTicketProp(soldProp, Boolean.TRUE));
         t3.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t3.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t3.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-03 04:04")));
         t3.addTicketProp(new IntegerTicketProp(priceProp, 50));
         t3.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
 
         t4.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
         t4.addTicketProp(new StringTicketProp(sectionProp, "A"));
-        t4.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t4.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-04 04:04")));
         t4.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
         t4.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
         t4.addTicketProp(new BooleanTicketProp(soldProp, Boolean.TRUE));
         t4.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t4.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t4.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-04 04:04")));
         t4.addTicketProp(new IntegerTicketProp(priceProp, 50));
         t4.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
 
         t5.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
         t5.addTicketProp(new StringTicketProp(sectionProp, "A"));
-        t5.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t5.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-05 04:04")));
         t5.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
         t5.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
         t5.addTicketProp(new BooleanTicketProp(soldProp, Boolean.TRUE));
         t5.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t5.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t5.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-05 04:04")));
         t5.addTicketProp(new IntegerTicketProp(priceProp, 50));
         t5.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
 
         t6.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
         t6.addTicketProp(new StringTicketProp(sectionProp, "B"));
-        t6.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t6.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-06 04:04")));
         t6.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
         t6.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.TRUE));
         t6.addTicketProp(new BooleanTicketProp(soldProp, Boolean.FALSE));
         t6.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t6.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t6.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-06 04:04")));
         t6.addTicketProp(new IntegerTicketProp(priceProp, 50));
         t6.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
 
         t7.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
         t7.addTicketProp(new StringTicketProp(sectionProp, "B"));
-        t7.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t7.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-07 04:04")));
         t7.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
         t7.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
         t7.addTicketProp(new BooleanTicketProp(soldProp, Boolean.FALSE));
         t7.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t7.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t7.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-07 04:04")));
         t7.addTicketProp(new IntegerTicketProp(priceProp, 250));
         t7.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
 
         t8.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
         t8.addTicketProp(new StringTicketProp(sectionProp, "B"));
-        t8.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t8.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-08 04:04")));
         t8.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
         t8.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
         t8.addTicketProp(new BooleanTicketProp(soldProp, Boolean.FALSE));
         t8.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t8.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t8.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-08 04:04")));
         t8.addTicketProp(new IntegerTicketProp(priceProp, 150));
         t8.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
 
@@ -349,12 +405,12 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
         t10.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
         t10.addTicketProp(new StringTicketProp(sectionProp, "C"));
-        t10.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t10.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-09-10 04:04")));
         t10.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
         t10.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
         t10.addTicketProp(new BooleanTicketProp(soldProp, Boolean.FALSE));
         t10.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t10.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-09 04:04")));
+        t10.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-09-10 04:04")));
         t10.addTicketProp(new IntegerTicketProp(priceProp, 25));
         t10.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
 

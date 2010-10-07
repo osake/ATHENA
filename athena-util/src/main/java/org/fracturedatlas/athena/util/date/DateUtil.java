@@ -31,6 +31,10 @@ public class DateUtil {
     private static SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
 
     public static Date parseDate(String date) throws ParseException {
+        if(date == null) {
+            return null;
+        }
+
         try {
             return iso8061Formatter.parse(date);
         } catch (ParseException pe) {
@@ -39,10 +43,18 @@ public class DateUtil {
     } 
 
     public static String formatDate(Date date) {
+        if(date == null) {
+            return null;
+        } else {
             return iso8061Formatter.format(date);
+        }
     }
 
     public static String formatTime(Date date) {
-            return timeFormatter.format(date);
+        if(date == null) {
+            return null;
+        } else {
+            return iso8061Formatter.format(date);
+        }
     }
 }
