@@ -14,24 +14,18 @@ along with this program. If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.apa.impl;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.SetUtils;
-import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.log4j.Logger;
 import org.fracturedatlas.athena.apa.AbstractApaAdapter;
 import org.fracturedatlas.athena.apa.ApaAdapter;
@@ -43,15 +37,17 @@ import org.fracturedatlas.athena.apa.model.PropValue;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.search.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.apache.commons.lang.StringUtils;
-import org.fracturedatlas.athena.util.date.DateUtil;
+import org.fracturedatlas.athena.search.ApaSearch;
+import org.fracturedatlas.athena.search.ApaSearchConstraint;
 
 public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     @Autowired
     private EntityManagerFactory emf;
     Logger logger = Logger.getLogger(this.getClass().getName());
+    final String LIMIT = "_limit";
 
     @PersistenceUnit
     public void setEntityManagerFactory(EntityManagerFactory emf) {
@@ -164,20 +160,99 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
      * @return Set of tickets whose Props match the searchParams
      */
     @Override
-    public Collection<Ticket> findTickets(HashMap<String, List<String>> searchParams) {
+    public Set<Ticket> findTickets(ApaSearch apaSearch) {
+        logger.debug("Searching for tickets matching [" + apaSearch + "]");
+        EntityManager em = this.emf.createEntityManager();
+        String value = null;
+        Query query = null;
+        Ticket tempTicket = null;
+        int limit = -1;
+        try {
+            limit = Integer.parseInt(apaSearch.getSearchModifier(LIMIT));
+        } catch (NumberFormatException ex) {
+           logger.error("Error While searching [" + apaSearch.asList() + "]: Threw the follwoing error " + ex.getLocalizedMessage());
+           limit = -1;
+        }
+        Collection<Ticket> finishedTicketsList = null;
+        Set<Ticket> finishedTicketsSet = null;
+        Collection<Ticket> ticketsList = null;
+        PropField pf = null;
+        ValueType vt = null;
+        String queryString = null;
+        Operator operator = null;
+        String fieldName = null;
+        List<TicketProp> props = null;
+        try {
+            for (ApaSearchConstraint apc : apaSearch.asList()) {
+                fieldName = apc.getParameter();
+                pf = getPropField(fieldName);
+                vt = pf.getValueType();
+                operator = apc.getOper();
+                value = apc.getValue();
+                TicketProp prop = vt.newTicketProp();
+                prop.setValue(value);
+
+                queryString = "FROM " + prop.getClass().getName()
+                        + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value"
+                        + operator.getOperatorString() + ":value";
+                query = em.createQuery(queryString);
+                query.setParameter("value", prop.getValue());
+
+                query.setParameter("fieldName", fieldName);
+                props = query.getResultList();
+                ticketsList = new ArrayList<Ticket>();
+                for (TicketProp tp : props) {
+                    tempTicket = tp.getTicket();
+                    ticketsList.add(tempTicket);
+                }
+                if (finishedTicketsList == null) {
+                    finishedTicketsList = ticketsList;
+                } else {
+                    finishedTicketsList = CollectionUtils.intersection(finishedTicketsList, ticketsList);
+                }
+            }
+            logger.debug("Returning " + finishedTicketsList.size() + " tickets");
+            finishedTicketsSet = new HashSet<Ticket>();
+            if ((limit >= 0) && (finishedTicketsList.size() > limit)) {
+                int counter = 0;
+                for (Ticket t : finishedTicketsList) {
+                    finishedTicketsSet.add(t);
+                    counter++;
+                    if (counter == limit) {
+                        break;
+                    }
+                }
+            } else {
+                finishedTicketsSet.addAll(finishedTicketsList);
+            }
+            return finishedTicketsSet;
+        } catch (Exception ex) {
+            logger.error("Error While searching [" + apaSearch.asList() + "]: Threw the follwoing error " + ex.getLocalizedMessage());
+            return new HashSet<Ticket>();
+        } finally {
+            cleanup(em);
+        }
+    }
+
+    /**
+     * @param searchParams a key/value list of parameters to search for tickets on
+     * @param sortParams a map of sort options.  For a given entry, set the key equal to a ticket property name and the value
+     *        to ASC or DESC
+     * @return Set of tickets whose Props match the searchParams
+     */
+    @Override
+    public Set<Ticket> findTickets(HashMap<String, List<String>> searchParams) {
         logger.debug("Searching for tickets matching [" + searchParams + "]");
         EntityManager em = this.emf.createEntityManager();
-        char[] charArray = {'<', '>', '='};
         List<TicketProp> props = null;
         List<String> values = null;
-        int sIndex = 0;
         String value = null;
         String condition = null;
         Query query = null;
         Ticket tempTicket = null;
-        Collection<Ticket> tickets = null;
-        Long tID = null;
+        int limit = -1;
         Collection<Ticket> finishedTicketsList = null;
+        Set<Ticket> finishedTicketsSet = null;
         Collection<Ticket> ticketsList = null;
         PropField pf = null;
         ValueType vt = null;
@@ -191,34 +266,18 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 for (String conditionPrefixedValue : values) {
                     condition = conditionPrefixedValue.substring(0, 1);
                     value = conditionPrefixedValue.substring(1, conditionPrefixedValue.length());
+                    TicketProp prop = vt.newTicketProp();
+                    prop.setValue(value);
 
-                    switch (vt) {
-                        case STRING:
-                            queryString = "FROM StringTicketProp ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value" + condition + ":value";
-                            query = em.createQuery(queryString);
-                            query.setParameter("value", value);
-                            break;
-                        case INTEGER:
-                            queryString = "FROM IntegerTicketProp ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value" + condition + ":value";
-                            query = em.createQuery(queryString);
-                            Integer i = Integer.valueOf(value);
-                            query.setParameter("value", i);
-                            break;
-                        case DATETIME:
-                            queryString = "FROM DateTimeTicketProp ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value" + condition + ":value";
-                            query = em.createQuery(queryString);
-                            query.setParameter("value", DateUtil.parseDate(value));
+                    queryString = "FROM " + prop.getClass().getName()
+                            + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value"
+                            + condition + ":value";
+                    query = em.createQuery(queryString);
+                    query.setParameter("value", prop.getValue());
 
-                            break;
-                        case BOOLEAN:
-                            queryString = "FROM BooleanTicketProp ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value" + condition + ":value";
-                            query = em.createQuery(queryString);
-                            query.setParameter("value", Boolean.parseBoolean(value));
-                            break;
-                    }
                     query.setParameter("fieldName", fieldName);
                     props = query.getResultList();
-                    ticketsList = new HashSet<Ticket>();
+                    ticketsList = new ArrayList<Ticket>();
                     for (TicketProp tp : props) {
                         tempTicket = tp.getTicket();
                         ticketsList.add(tempTicket);
@@ -231,7 +290,20 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 }
             }
             logger.debug("Returning " + finishedTicketsList.size() + " tickets");
-            return finishedTicketsList;
+            finishedTicketsSet = new HashSet<Ticket>();
+            if ((limit >= 0) && (finishedTicketsList.size() > limit)) {
+                int counter = 0;
+                for (Ticket t : finishedTicketsList) {
+                    finishedTicketsSet.add(t);
+                    counter++;
+                    if (counter == limit) {
+                        break;
+                    }
+                }
+            } else {
+                finishedTicketsSet.addAll(finishedTicketsList);
+            }
+            return finishedTicketsSet;
         } catch (Exception ex) {
             logger.error("Error While searching [" + searchParams + "]: Threw the follwoing error " + ex.getLocalizedMessage());
             return new HashSet<Ticket>();
@@ -318,7 +390,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
     }
 
-        @Override
+    @Override
     public List getTicketProps(String fieldName) {
         EntityManager em = this.emf.createEntityManager();
 
@@ -492,13 +564,13 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             em.getTransaction().begin();
             prop = em.merge(prop);
 
-            if(prop == null) {
+            if (prop == null) {
                 throw new ApaException("Cannot delete prop.  Prop was not found.");
             }
 
             Ticket t = prop.getTicket();
 
-            if(t == null) {
+            if (t == null) {
                 throw new ApaException("Cannot delete prop.  This prop has not been assigned to a ticket.");
             }
 
@@ -583,7 +655,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     @Override
     public void deletePropValue(PropValue propValue) {
-        if(propValue != null) {
+        if (propValue != null) {
             deletePropValue(propValue.getPropField(), propValue.getId());
         }
     }

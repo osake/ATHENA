@@ -89,7 +89,7 @@ public interface ApaAdapter {
      * @param searchParams the search criteria.  Criteria should be in the format: key = prop, value = prop value
      * @return matching tickets, empty List if no tickets found
      */
-    public Collection<Ticket> findTickets(HashMap<String, List<String>> searchParams);
+    public Set<Ticket> findTickets(HashMap<String, List<String>> searchParams);
 
     /**
      * Search for tickets that match all criteria in search.
@@ -97,7 +97,7 @@ public interface ApaAdapter {
      * @param searchParams the search criteria.  Criteria should be in the format: key = prop, value = prop value
      * @return matching tickets, empty List if no tickets found
      */
-    public Collection<Ticket> findTickets(ApaSearch search);
+    public Set<Ticket> findTickets(ApaSearch search);
 
     /**
      * Save the ticketProps contained in this list

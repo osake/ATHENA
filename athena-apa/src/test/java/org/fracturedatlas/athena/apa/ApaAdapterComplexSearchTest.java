@@ -60,19 +60,19 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsOneStringProp() {
 
-        search.addTerm("SECTION", Operator.EQUALS, "A");
+        search.addConstraint("SECTION", Operator.EQUALS, "A");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(5, tickets.size());
 
         search = new ApaSearch();
-        search.addTerm("SECTION", Operator.EQUALS, "B");
+        search.addConstraint("SECTION", Operator.EQUALS, "B");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(4, tickets.size());
 
         search = new ApaSearch();
-        search.addTerm("SECTION", Operator.EQUALS, "C");
+        search.addConstraint("SECTION", Operator.EQUALS, "C");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(1, tickets.size());
@@ -82,19 +82,19 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsGreaterThan() {
 
-        search.addTerm("PRICE", Operator.GREATER_THAN, "0");
+        search.addConstraint("PRICE", Operator.GREATER_THAN, "0");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(10, tickets.size());
 
         search = new ApaSearch();
-        search.addTerm("PRICE", Operator.GREATER_THAN, "25");
+        search.addConstraint("PRICE", Operator.GREATER_THAN, "25");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(8, tickets.size());
 
         search = new ApaSearch();
-        search.addTerm("PRICE", Operator.GREATER_THAN, "100");
+        search.addConstraint("PRICE", Operator.GREATER_THAN, "100");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(2, tickets.size());
@@ -104,13 +104,13 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsRange() {
 
-        search.addTerm("PRICE", Operator.GREATER_THAN, "0");
+        search.addConstraint("PRICE", Operator.GREATER_THAN, "0");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(10, tickets.size());
 
         search = new ApaSearch();
-        search.addTerm("PRICE", Operator.LESS_THAN, "100");
+        search.addConstraint("PRICE", Operator.LESS_THAN, "100");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(8, tickets.size());
@@ -120,13 +120,13 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsBadRange() {
 
-        search.addTerm("PRICE", Operator.GREATER_THAN, "0");
+        search.addConstraint("PRICE", Operator.GREATER_THAN, "0");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(10, tickets.size());
 
         search = new ApaSearch();
-        search.addTerm("PRICE", Operator.LESS_THAN, "1");
+        search.addConstraint("PRICE", Operator.LESS_THAN, "1");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(0, tickets.size());
@@ -136,7 +136,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsGreaterThanNegativeValue() {
 
-        search.addTerm("PRICE", Operator.GREATER_THAN, "-40");
+        search.addConstraint("PRICE", Operator.GREATER_THAN, "-40");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(10, tickets.size());
@@ -146,7 +146,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsGreaterThanString() {
 
-        search.addTerm("PRICE", Operator.GREATER_THAN, "OHNOES");
+        search.addConstraint("PRICE", Operator.GREATER_THAN, "OHNOES");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(0, tickets.size());
@@ -156,25 +156,25 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsBoolean() {
 
-        search.addTerm("LOCKED", Operator.EQUALS, "false");
+        search.addConstraint("LOCKED", Operator.EQUALS, "false");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(7, tickets.size());
 
         search = new ApaSearch();
-        search.addTerm("LOCKED", Operator.EQUALS, "true");
+        search.addConstraint("LOCKED", Operator.EQUALS, "true");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(3, tickets.size());
 
         search = new ApaSearch();
-        search.addTerm("LOCKED", Operator.EQUALS, "FALSE");
+        search.addConstraint("LOCKED", Operator.EQUALS, "FALSE");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(7, tickets.size());
 
         search = new ApaSearch();
-        search.addTerm("LOCKED", Operator.EQUALS, "TRUE");
+        search.addConstraint("LOCKED", Operator.EQUALS, "TRUE");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(3, tickets.size());
@@ -184,8 +184,8 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsRangeWithBoolean() {
 
-        search.addTerm("PRICE", Operator.GREATER_THAN, "26");
-        search.addTerm("SOLD", Operator.EQUALS, "FALSE");
+        search.addConstraint("PRICE", Operator.GREATER_THAN, "26");
+        search.addConstraint("SOLD", Operator.EQUALS, "FALSE");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(3, tickets.size());
@@ -195,7 +195,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsString() {
 
-        search.addTerm("TIER", Operator.EQUALS, "SILVER");
+        search.addConstraint("TIER", Operator.EQUALS, "SILVER");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(2, tickets.size());

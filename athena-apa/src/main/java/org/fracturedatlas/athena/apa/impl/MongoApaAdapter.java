@@ -108,7 +108,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
 //    @Override
-    public Collection<Ticket> findTickets(HashMap<String, List<String>> searchParams) {
+    public Set<Ticket> findTickets(HashMap<String, List<String>> searchParams) {
         Set<Ticket> tickets = new HashSet<Ticket>();
         BasicDBObject query = new BasicDBObject();
 

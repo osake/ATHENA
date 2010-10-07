@@ -21,6 +21,7 @@ package org.fracturedatlas.athena.apa;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
@@ -66,13 +67,13 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Collection<Ticket> findTickets(HashMap<String, List<String>> searchParams) {
+    public Set<Ticket> findTickets(HashMap<String, List<String>> searchParams) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
     @Override
-    public Collection<Ticket> findTickets(ApaSearch search) {
-        return findTickets(search.asMap());
+    public Set<Ticket> findTickets(ApaSearch search) {
+        return new HashSet<Ticket>();
     }
 
     @Override

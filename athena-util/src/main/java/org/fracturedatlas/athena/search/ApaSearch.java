@@ -16,36 +16,44 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
-*/
-
+ */
 package org.fracturedatlas.athena.search;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /*
  *
  */
 public class ApaSearch {
 
-    HashMap<String, List<String>> map = null;
+    ArrayList<ApaSearchConstraint> asc = null;
+    Map<String, String> searchModifiers = new HashMap<String, String>();
 
     public ApaSearch() {
-        map = new HashMap<String, List<String>>();
+        asc = new ArrayList<ApaSearchConstraint>();
     }
 
-    public void addTerm(String fieldName, Operator operator, String searchTerm) {
-        List<String> termList = map.get(fieldName);
-        if(termList == null) {
-            termList = new ArrayList<String>();
-        }
-        termList.add(operator.getOperatorString() + searchTerm);
-        map.put(fieldName, termList);
-        System.out.println("MAP: " + map);
+    public void addConstraint(String fieldName, Operator operator, String searchValue) {
+        asc.add(new ApaSearchConstraint(fieldName, operator, searchValue));
+        System.out.println(asc.toString());
     }
 
-    public HashMap<String, List<String>> asMap() {
-        return map;
+    public void addConstraint(ApaSearchConstraint searchConstraint) {
+        asc.add(searchConstraint);
+    }
+
+    public List<ApaSearchConstraint> asList() {
+        return asc;
+    }
+
+    public void setSearchModifier(String modifierName, String modifierValue) {
+        searchModifiers.put(modifierName, modifierValue);
+    }
+
+    public String getSearchModifier(String modifierName) {
+        return searchModifiers.get(modifierName);
     }
 }

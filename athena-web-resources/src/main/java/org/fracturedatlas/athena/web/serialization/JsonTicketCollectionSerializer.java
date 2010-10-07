@@ -37,10 +37,10 @@ import org.fracturedatlas.athena.web.util.JsonUtil;
 
 @Provider
 @Produces({"application/json"})
-public class JsonTicketSetSerializer implements MessageBodyWriter<Set<Ticket>> {
+public class JsonTicketCollectionSerializer implements MessageBodyWriter<Collection<Ticket>> {
 
     @Override
-    public long getSize(Set<Ticket> t, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType) {
+    public long getSize(Collection<Ticket> t, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType) {
         //TODO: Do this
         return -1L;
     }
@@ -51,7 +51,7 @@ public class JsonTicketSetSerializer implements MessageBodyWriter<Set<Ticket>> {
     }
 
     @Override
-    public void writeTo(Set<Ticket> tickets, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream out) throws IOException, WebApplicationException {
+    public void writeTo(Collection<Ticket> tickets, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream out) throws IOException, WebApplicationException {
         List<PTicket> pTickets = new ArrayList<PTicket>();
         for (Ticket t : tickets) {
             pTickets.add(t.toClientTicket());

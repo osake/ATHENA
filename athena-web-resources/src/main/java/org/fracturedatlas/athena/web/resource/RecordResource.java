@@ -110,8 +110,8 @@ public class RecordResource {
     }
 
     /**
-     * Get tickets based on crieteria specified in ui.getQueryParameters()
-     * All search paramteres will be bundled together as AND queries
+     * Get tickets based on criteria specified in ui.getQueryParameters()
+     * All search parameters will be bundled together as AND queries
      * Calls to this method with blank query parameters (trying to get a list of all tix)
      * will be returned a 405 (Method not allowed)
      * @param ui

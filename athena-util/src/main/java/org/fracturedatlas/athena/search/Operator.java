@@ -16,22 +16,33 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
-*/
-
+ */
 package org.fracturedatlas.athena.search;
 
 public enum Operator {
-    LESS_THAN ("<"),
-    GREATER_THAN (">"),
-    EQUALS ("=");
 
+    LESS_THAN("<"),
+    GREATER_THAN(">"),
+    EQUALS("=");
     private String operatorString;
 
     private Operator(String operatorString) {
         this.operatorString = operatorString;
-    };
+    }
+
 
     public String getOperatorString() {
         return operatorString;
+    }
+
+    public static Operator fromString(String text) {
+        if (text != null) {
+            for (Operator op : Operator.values()) {
+                if (text.equalsIgnoreCase(op.operatorString)) {
+                    return op;
+                }
+            }
+        }
+        return null;
     }
 }
