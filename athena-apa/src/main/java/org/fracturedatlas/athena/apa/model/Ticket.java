@@ -89,6 +89,15 @@ public class Ticket extends TixEntity implements Serializable {
         this.ticketProps.add(prop);
     }
 
+    public TicketProp getTicketProp(String propName) {
+        for(TicketProp prop : this.ticketProps) {
+            if(propName.equals(prop.getPropField().getName())) {
+                return prop;
+            }
+        }
+        return null;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -98,7 +107,7 @@ public class Ticket extends TixEntity implements Serializable {
         if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
             return false;
         }
-        
+
         return IdAdapter.isEqual(this.getId(), other.getId());
     }
 
@@ -115,7 +124,7 @@ public class Ticket extends TixEntity implements Serializable {
         ToStringBuilder builder = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
         builder.append(id).append(name);
 
-        
+
         if (ticketProps != null) {
             for (TicketProp prop : ticketProps) {
                 String propAndValue = "(" + prop.getPropField().getId() + ") " + prop.getPropField().getName() + ": [" + prop.getValueAsString() + "]";
