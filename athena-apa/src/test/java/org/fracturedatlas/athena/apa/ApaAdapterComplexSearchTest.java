@@ -120,19 +120,19 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsGreaterThanDate() {
 
-        search.addTerm("PERFORMANCE", Operator.GREATER_THAN, "2010-09-05");
+        search.addConstraint("PERFORMANCE", Operator.GREATER_THAN, "2010-09-05");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(6, tickets.size());
 
         search = new ApaSearch();
-        search.addTerm("PERFORMANCE", Operator.GREATER_THAN, "2010-09-06");
+        search.addConstraint("PERFORMANCE", Operator.GREATER_THAN, "2010-09-06");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(5, tickets.size());
 
         search = new ApaSearch();
-        search.addTerm("PERFORMANCE", Operator.GREATER_THAN, "2010-09-07");
+        search.addConstraint("PERFORMANCE", Operator.GREATER_THAN, "2010-09-07");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(4, tickets.size());
@@ -142,19 +142,19 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsLessThanDate() {
 
-        search.addTerm("PERFORMANCE", Operator.LESS_THAN, "2010-09-05");
+        search.addConstraint("PERFORMANCE", Operator.LESS_THAN, "2010-09-05");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(4, tickets.size());
 
         search = new ApaSearch();
-        search.addTerm("PERFORMANCE", Operator.LESS_THAN, "2010-09-06");
+        search.addConstraint("PERFORMANCE", Operator.LESS_THAN, "2010-09-06");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(5, tickets.size());
 
         search = new ApaSearch();
-        search.addTerm("PERFORMANCE", Operator.LESS_THAN, "2010-09-07");
+        search.addConstraint("PERFORMANCE", Operator.LESS_THAN, "2010-09-07");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(6, tickets.size());
@@ -165,8 +165,8 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     public void testFindTicketsDateRange() {
 
         search = new ApaSearch();
-        search.addTerm("PERFORMANCE", Operator.GREATER_THAN, "2010-09-05");
-        search.addTerm("PERFORMANCE", Operator.LESS_THAN, "2010-09-07");
+        search.addConstraint("PERFORMANCE", Operator.GREATER_THAN, "2010-09-05");
+        search.addConstraint("PERFORMANCE", Operator.LESS_THAN, "2010-09-07");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(2, tickets.size());
