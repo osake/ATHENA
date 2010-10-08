@@ -237,6 +237,47 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
     }
 
+        @Test
+    public void testFindTicketsWithLimit() {
+        search.addConstraint("LOCKED", Operator.EQUALS, "false");
+        search.setSearchModifier("_limit", "6");
+        Collection<Ticket> tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(6, tickets.size());
+
+        search.addConstraint("LOCKED", Operator.EQUALS, "false");
+        search.setSearchModifier("_limit", "7");
+        tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(7, tickets.size());
+
+        search.addConstraint("LOCKED", Operator.EQUALS, "false");
+        search.setSearchModifier("_limit", "8");
+        tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(7, tickets.size());
+
+        search.addConstraint("LOCKED", Operator.EQUALS, "false");
+        search.setSearchModifier("_limit", "0");
+        tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(0, tickets.size());
+
+
+        search.addConstraint("LOCKED", Operator.EQUALS, "false");
+        search.setSearchModifier("_limit", "1");
+        tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(1, tickets.size());
+
+        search.addConstraint("LOCKED", Operator.EQUALS, "false");
+        search.setSearchModifier("_limit", "dog");
+        tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(7, tickets.size());
+
+    }
+
     @Test
     public void testFindTicketsRangeWithBoolean() {
 

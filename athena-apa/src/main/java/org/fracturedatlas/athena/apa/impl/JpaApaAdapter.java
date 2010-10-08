@@ -173,6 +173,9 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
            logger.error("Error While searching [" + apaSearch.asList() + "]: Threw the follwoing error " + ex.getLocalizedMessage());
            limit = -1;
         }
+        if (limit==0) {
+            return new HashSet<Ticket>();
+        }
         Collection<Ticket> finishedTicketsList = null;
         Set<Ticket> finishedTicketsSet = null;
         Collection<Ticket> ticketsList = null;
@@ -213,7 +216,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             }
             logger.debug("Returning " + finishedTicketsList.size() + " tickets");
             finishedTicketsSet = new HashSet<Ticket>();
-            if ((limit >= 0) && (finishedTicketsList.size() > limit)) {
+            if ((limit > 0) && (finishedTicketsList.size() > limit)) {
                 int counter = 0;
                 for (Ticket t : finishedTicketsList) {
                     finishedTicketsSet.add(t);
