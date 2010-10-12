@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.apa;
 
+import org.fracturedatlas.athena.search.Operator;
+import org.fracturedatlas.athena.search.ApaSearch;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,32 +60,26 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
     @Test
     public void testFindTicketsEmptyValue() {
-        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
-        List valueList = new ArrayList<String>();
-        valueList.add("=");
-        searchParams.put("SEAT NUMBER", valueList);
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("SEAT NUMBER", Operator.EQUALS, "");
 
-        Collection<Ticket> tickets = apa.findTickets(searchParams);
+        Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
     }
 
     @Test
     public void testFindTicketsUnknownPropName() {
-        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
-        List valueList = new ArrayList<String>();
-        valueList.add("=ABCDEFG");
-        searchParams.put("UNKNOWN_PROP_NAME15", valueList);
-        Collection<Ticket> tickets = apa.findTickets(searchParams);
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("UNKNOWN_PROP_NAME15", Operator.EQUALS, "ABCDEFG");
+        Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
     }
 
     @Test
     public void testFindTicketsInvalidValue() {
-        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
-        List valueList = new ArrayList<String>();
-        valueList.add("=ABCDEFG");
-        searchParams.put("Seat Number", valueList);
-        Collection<Ticket> tickets = apa.findTickets(searchParams);
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("Seat Number", Operator.EQUALS, "ABCDEFG");
+        Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
     }
 
@@ -106,11 +102,9 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t);
         propFieldsToDelete.add(pf);
 
-        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
-        List valueList = new ArrayList<String>();
-        valueList.add("=true");
-        searchParams.put("BOOLEAN_PROP", valueList);
-        Collection<Ticket> tickets = apa.findTickets(searchParams);
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("BOOLEAN_PROP", Operator.EQUALS, "true");
+        Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(1, tickets.size());
     }
 
@@ -133,11 +127,9 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t);
         propFieldsToDelete.add(pf);
 
-        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
-        List valueList = new ArrayList<String>();
-        valueList.add("=2");
-        searchParams.put("INTEGER_PROP", valueList);
-        Collection<Ticket> tickets = apa.findTickets(searchParams);
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("INTEGER_PROP", Operator.EQUALS, "2");
+        Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(1, tickets.size());
 
         for (Ticket ticket : tickets) {
@@ -165,15 +157,10 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf);
         propFieldsToDelete.add(pf2);
 
-
-        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
-        List valueList = new ArrayList<String>();
-        valueList.add("=3");
-        searchParams.put("SEAT_NUMBER", valueList);
-        valueList = new ArrayList<String>();
-        valueList.add("=true");
-        searchParams.put("LOCKED", valueList);
-        Collection<Ticket> tickets = apa.findTickets(searchParams);
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("SEAT_NUMBER", Operator.EQUALS, "3");
+        as.addConstraint("LOCKED", Operator.EQUALS, "true");
+        Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(1, tickets.size());
     }
 
@@ -216,20 +203,12 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf4);
 
 
-        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
-        List valueList = new ArrayList<String>();
-        valueList.add("=4");
-        searchParams.put("Seat Number", valueList);
-        valueList = new ArrayList<String>();
-        valueList.add("=false");
-        searchParams.put("locked", valueList);
-        valueList = new ArrayList<String>();
-        valueList.add("==\'ACDC\'");
-        searchParams.put("Artist", valueList);
-        valueList = new ArrayList<String>();
-        valueList.add("=\'2010-10-09 16:00:00\'");
-        searchParams.put("Date", valueList);
-        Collection<Ticket> tickets = apa.findTickets(searchParams);
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("Seat Number", Operator.EQUALS, "4");
+        as.addConstraint("locked", Operator.EQUALS, "false");
+        as.addConstraint("Artist", Operator.EQUALS, "ACDC");
+        as.addConstraint("Date", Operator.EQUALS, "\'2010-10-09 16:00:00\'");
+        Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(1, tickets.size());
     }
 
@@ -272,17 +251,11 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf3);
         propFieldsToDelete.add(pf4);
 
-        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
-        List valueList = new ArrayList<String>();
-        valueList.add("=3");
-        searchParams.put("Seat Number", valueList);
-        valueList = new ArrayList<String>();
-        valueList.add("=true");
-        searchParams.put("locked", valueList);
-        valueList = new ArrayList<String>();
-        valueList.add("=Foo");
-        searchParams.put("Artist", valueList);
-        Collection<Ticket> tickets = apa.findTickets(searchParams);
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("Seat Number", Operator.EQUALS, "3");
+        as.addConstraint("locked", Operator.EQUALS, "true");
+        as.addConstraint("Artist", Operator.EQUALS, "Foo");
+        Collection<Ticket> tickets = apa.findTickets(as);
 
         assertEquals(0, tickets.size());
     }
@@ -320,12 +293,9 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t4);
         propFieldsToDelete.add(pf3);
 
-
-        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
-        List valueList = new ArrayList<String>();
-        valueList.add("=ACDC");
-        searchParams.put("Artist", valueList);
-        Collection<Ticket> tickets = apa.findTickets(searchParams);
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("Artist", Operator.EQUALS, "ACDC");
+        Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(4, tickets.size());
 
         Set<Integer> intNamesFound = new HashSet<Integer>();
@@ -405,11 +375,9 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf3);
 
 
-        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
-        List valueList = new ArrayList<String>();
-        valueList.add("=ACDC");
-        searchParams.put("Artist", valueList);
-        Collection<Ticket> tickets = apa.findTickets(searchParams);
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("Artist", Operator.EQUALS, "ACDC");
+        Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(4, tickets.size());
 
         Set<Integer> intNamesFound = new HashSet<Integer>();
@@ -496,14 +464,10 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf4);
 
 
-        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
-        List valueList = new ArrayList<String>();
-        valueList.add("=ACDC");
-        searchParams.put("Artist", valueList);
-        valueList = new ArrayList<String>();
-        valueList.add("=50");
-        searchParams.put("PRICE", valueList);
-        Collection<Ticket> tickets = apa.findTickets(searchParams);
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("Artist", Operator.EQUALS, "ACDC");
+        as.addConstraint("PRICE", Operator.EQUALS, "50");
+        Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(3, tickets.size());
 
         Set<Integer> intNamesFound = new HashSet<Integer>();
@@ -587,14 +551,10 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf4);
 
 
-        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
-        List valueList = new ArrayList<String>();
-        valueList.add("=Warrant");
-        searchParams.put("Artist", valueList);
-        valueList = new ArrayList<String>();
-        valueList.add("=100");
-        searchParams.put("PRICE", valueList);
-        Collection<Ticket> tickets = apa.findTickets(searchParams);
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("Artist", Operator.EQUALS, "Warrant");
+        as.addConstraint("PRICE", Operator.EQUALS, "100");
+        Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
 
     }
@@ -655,11 +615,9 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf4);
 
 
-        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
-        List valueList = new ArrayList<String>();
-        valueList.add("=50");
-        searchParams.put("PRICE", valueList);
-        Collection<Ticket> tickets = apa.findTickets(searchParams);
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("PRICE", Operator.EQUALS, "50");
+        Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(4, tickets.size());
 
         Set<Integer> intNamesFound = new HashSet<Integer>();
@@ -692,8 +650,6 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
     @Test
     public void testFindTicketsWithoutTime() throws ParseException {
-
-
         Ticket t = new Ticket();
         Ticket t2 = new Ticket();
         Ticket t3 = new Ticket();
@@ -725,11 +681,9 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t4);
         propFieldsToDelete.add(pf3);
 
-        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
-        List valueList = new ArrayList<String>();
-        valueList.add("=2010-10-09");
-        searchParams.put("Date", valueList);
-        Collection<Ticket> tickets = apa.findTickets(searchParams);
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("Date", Operator.EQUALS, "2010-10-09");
+        Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
     }
 
@@ -768,11 +722,9 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t4);
         propFieldsToDelete.add(pf3);
 
-        HashMap<String, List<String>> searchParams = new HashMap<String, List<String>>();
-        List valueList = new ArrayList<String>();
-        valueList.add("=16:00:00");
-        searchParams.put("Date", valueList);
-        Collection<Ticket> tickets = apa.findTickets(searchParams);
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("Date", Operator.EQUALS, "16:00:00");
+        Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
     }
 }
