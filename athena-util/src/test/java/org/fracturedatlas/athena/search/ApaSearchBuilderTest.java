@@ -29,19 +29,9 @@ import static org.junit.Assert.*;
 public class ApaSearchBuilderTest {
 
     @Test
-    public void testBuilderNoTerms() {
-        ApaSearch search = new ApaSearch.Builder().build();
-        assertEquals(0, search.getConstraints().size());
-        Map<String, String> mods = search.getSearchModifiers();
-        assertTrue(mods.keySet().isEmpty());
-    }
-
-    @Test
     public void testBuilderOneTerm() {
         ApaSearchConstraint con = new ApaSearchConstraint("FOO", Operator.EQUALS, "BAR");
-        ApaSearch search = new ApaSearch.Builder()
-                               .and(con)
-                               .build();
+        ApaSearch search = new ApaSearch.Builder(con).build();
         assertEquals(1, search.getConstraints().size());
         assertEquals(con, search.getConstraints().get(0));
 
@@ -57,8 +47,7 @@ public class ApaSearchBuilderTest {
         cons.add(con1);
         cons.add(con2);
 
-        ApaSearch search = new ApaSearch.Builder()
-                               .find(con1)
+        ApaSearch search = new ApaSearch.Builder(con1)
                                .and(con2)
                                .build();
 
@@ -77,8 +66,7 @@ public class ApaSearchBuilderTest {
         cons.add(con1);
         cons.add(con2);
 
-        ApaSearch search = new ApaSearch.Builder()
-                               .and(con1)
+        ApaSearch search = new ApaSearch.Builder(con1)
                                .and(con2)
                                .limit(3)
                                .build();

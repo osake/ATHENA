@@ -67,17 +67,13 @@ public class ApaSearch {
     public static class Builder {
         ApaSearch search;
 
-        public Builder() {
+        public Builder(ApaSearchConstraint sc) {
             this.search = new ApaSearch();
+            this.search.addConstraint(sc);
         }
 
         public ApaSearch build() {
             return search;
-        }
-
-        public ApaSearch.Builder find(ApaSearchConstraint sc) {
-            search.addConstraint(sc);
-            return this;
         }
 
         public ApaSearch.Builder and(ApaSearchConstraint sc) {
