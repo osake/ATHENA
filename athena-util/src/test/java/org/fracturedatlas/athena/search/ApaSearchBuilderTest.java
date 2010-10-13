@@ -58,7 +58,7 @@ public class ApaSearchBuilderTest {
         cons.add(con2);
 
         ApaSearch search = new ApaSearch.Builder()
-                               .and(con1)
+                               .find(con1)
                                .and(con2)
                                .build();
 

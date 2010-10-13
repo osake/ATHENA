@@ -75,6 +75,11 @@ public class ApaSearch {
             return search;
         }
 
+        public ApaSearch.Builder find(ApaSearchConstraint sc) {
+            search.addConstraint(sc);
+            return this;
+        }
+
         public ApaSearch.Builder and(ApaSearchConstraint sc) {
             search.addConstraint(sc);
             return this;
