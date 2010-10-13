@@ -60,4 +60,36 @@ public class ApaSearchConstraint {
     public String toString() {
         return parameter + " " + oper + " " + value;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ApaSearchConstraint other = (ApaSearchConstraint) obj;
+        if (this.oper != other.oper && (this.oper == null || !this.oper.equals(other.oper))) {
+            return false;
+        }
+        if ((this.parameter == null) ? (other.parameter != null) : !this.parameter.equals(other.parameter)) {
+            return false;
+        }
+        if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 61 * hash + (this.oper != null ? this.oper.hashCode() : 0);
+        hash = 61 * hash + (this.parameter != null ? this.parameter.hashCode() : 0);
+        hash = 61 * hash + (this.value != null ? this.value.hashCode() : 0);
+        return hash;
+    }
+
+    
 }
