@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.web.resource.container;
 
+import org.fracturedatlas.athena.search.ApaSearch;
 import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.StringTicketProp;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.fracturedatlas.athena.util.date.DateUtil;
@@ -168,16 +170,13 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
         //make sure nothing got saved
-        HashMap<String, List<String>> map = new HashMap<String, List<String>>();
-        List<String> valueList = new ArrayList<String>();
-        valueList.add("=ORCHESTRA");
-        map.put("SECTION", valueList);
-        assertEquals(0, apa.findTickets(map).size());
-        map = new HashMap<String, List<String>>();
-        valueList = new ArrayList<String>();
-        valueList.add("=3D");
-        map.put("SEAT_NUMBER", valueList);
-        assertEquals(0, apa.findTickets(map).size());
+        ApaSearch as = new ApaSearch();
+        as.addConstraint("SECTION", Operator.EQUALS, "ORCHESTRA");
+        assertEquals(0, apa.findTickets(as).size());
+
+        as = new ApaSearch();
+        as.addConstraint("SEAT_NUMBER", Operator.EQUALS, "3D");
+        assertEquals(0, apa.findTickets(as).size());
     }
 
     @Test

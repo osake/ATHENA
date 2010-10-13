@@ -16,18 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
-*/
-
+ */
 package org.fracturedatlas.athena.apa;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.Set;
 import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
 import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
 import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
@@ -35,10 +27,7 @@ import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.StrictType;
 import org.fracturedatlas.athena.apa.model.StringTicketProp;
 import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.ValueType;
-import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.ApaSearch;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.util.date.DateUtil;
@@ -237,56 +226,68 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
     }
 
-        @Test
+    @Test
     public void testFindTicketsWithLimit() {
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier("_limit", "6");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(6, tickets.size());
+    }
 
+    @Test
+    public void testFindTicketsWithLimitEqualToResult() {
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier("_limit", "7");
-        tickets = apa.findTickets(search);
+        Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(7, tickets.size());
+    }
 
+    @Test
+    public void testFindTicketsWithLimitHigherThanResult() {
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier("_limit", "8");
-        tickets = apa.findTickets(search);
+        Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(7, tickets.size());
+    }
 
+    @Test
+    public void testFindTicketsWithLimitofZero() {
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier("_limit", "0");
-        tickets = apa.findTickets(search);
+        Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(0, tickets.size());
+    }
 
-
+    @Test
+    public void testFindTicketsWithLimitOfOne() {
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier("_limit", "1");
-        tickets = apa.findTickets(search);
+        Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(1, tickets.size());
-
-        search.addConstraint("LOCKED", Operator.EQUALS, "false");
-        search.setSearchModifier("_limit", "dog");
-        tickets = apa.findTickets(search);
-        assertNotNull(tickets);
-        assertEquals(7, tickets.size());
 
     }
 
     @Test
-    public void testFindTicketsRangeWithBoolean() {
+    public void testFindTicketsWithInvalidLimit() {
+        search.addConstraint("LOCKED", Operator.EQUALS, "false");
+        search.setSearchModifier("_limit", "dog");
+        Collection<Ticket> tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(7, tickets.size());
+    }
 
+    @Test
+    public void testFindTicketsRangeWithBoolean() {
         search.addConstraint("PRICE", Operator.GREATER_THAN, "26");
         search.addConstraint("SOLD", Operator.EQUALS, "FALSE");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(3, tickets.size());
-
     }
 
     @Test
@@ -298,7 +299,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
         assertEquals(2, tickets.size());
 
     }
-    
+
     @Before
     public void addTickets() throws Exception {
         Ticket t1 = new Ticket();
@@ -482,6 +483,4 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     public void teardownTickets() {
         super.teardownTickets();
     }
-    
-    
 }
