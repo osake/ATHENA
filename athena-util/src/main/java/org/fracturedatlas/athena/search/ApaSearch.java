@@ -85,6 +85,12 @@ public class ApaSearch {
             search.setSearchModifier("_limit", limit.toString());
             return this;
         }
+
+         public ApaSearch.Builder start(Integer start) {
+            search.setSearchModifier("_start", start.toString());
+            return this;
+        }
+
     }
 
 

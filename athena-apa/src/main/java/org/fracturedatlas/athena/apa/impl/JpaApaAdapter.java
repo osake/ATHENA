@@ -48,6 +48,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     private EntityManagerFactory emf;
     Logger logger = Logger.getLogger(this.getClass().getName());
     final String LIMIT = "_limit";
+    final String START = "_start";
 
     @PersistenceUnit
     public void setEntityManagerFactory(EntityManagerFactory emf) {
@@ -154,10 +155,8 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     /**
-     * @param searchParams a key/value list of parameters to search for tickets on
-     * @param sortParams a map of sort options.  For a given entry, set the key equal to a ticket property name and the value
-     *        to ASC or DESC
-     * @return Set of tickets whose Props match the searchParams
+     * @param apaSearch a set of search constraints and search modifiers
+     * @return Set of tickets whose Props match the apaSearch
      */
     @Override
     public Set<Ticket> findTickets(ApaSearch apaSearch) {
@@ -167,16 +166,23 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         Query query = null;
         Ticket tempTicket = null;
         int limit = -1;
+        int start = -1;
         try {
             limit = Integer.parseInt(apaSearch.getSearchModifier(LIMIT));
         } catch (NumberFormatException ex) {
-           logger.error("Error While searching [" + apaSearch.asList() + "]: Threw the follwoing error " + ex.getLocalizedMessage());
-           limit = -1;
+            logger.error("Error While searching [" + apaSearch.asList() + "]: Threw the follwoing error " + ex.getLocalizedMessage());
+            limit = -1;
         }
-        if (limit==0) {
+        if (limit == 0) {
             return new HashSet<Ticket>();
         }
-        Collection<Ticket> finishedTicketsList = null;
+        try {
+            start = Integer.parseInt(apaSearch.getSearchModifier(START));
+        } catch (NumberFormatException ex) {
+            logger.error("Error While searching [" + apaSearch.asList() + "]: Threw the follwoing error " + ex.getLocalizedMessage());
+            start = -1;
+        }
+         Collection<Ticket> finishedTicketsList = null;
         Set<Ticket> finishedTicketsSet = null;
         Collection<Ticket> ticketsList = null;
         PropField pf = null;
@@ -216,99 +222,38 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             }
             logger.debug("Returning " + finishedTicketsList.size() + " tickets");
             finishedTicketsSet = new HashSet<Ticket>();
+
+            int startCounter = 0;
+            int limitCounter = 0;
+
             if ((limit > 0) && (finishedTicketsList.size() > limit)) {
-                int counter = 0;
                 for (Ticket t : finishedTicketsList) {
-                    finishedTicketsSet.add(t);
-                    counter++;
-                    if (counter == limit) {
-                        break;
+                    if (startCounter < start) {
+                        startCounter++;
+                    } else {
+                        finishedTicketsSet.add(t);
+                        limitCounter++;
+                        if (limitCounter == limit) {
+                            break;
+                        }
                     }
                 }
             } else {
-                finishedTicketsSet.addAll(finishedTicketsList);
+                if (start > 0) {
+                    for (Ticket t : finishedTicketsList) {
+                        if (startCounter < start) {
+                            startCounter++;
+                        } else {
+                            finishedTicketsSet.add(t);
+                        }
+                    }
+                } else {
+                    finishedTicketsSet.addAll(finishedTicketsList);
+                }
             }
             return finishedTicketsSet;
         } catch (Exception ex) {
             logger.error("Error While searching [" + apaSearch.asList() + "]: Threw the follwoing error " + ex.getLocalizedMessage());
-            return new HashSet<Ticket>();
-        } finally {
-            cleanup(em);
-        }
-    }
-
-    /**
-     * @param searchParams a key/value list of parameters to search for tickets on
-     * @param sortParams a map of sort options.  For a given entry, set the key equal to a ticket property name and the value
-     *        to ASC or DESC
-     * @return Set of tickets whose Props match the searchParams
-     */
-    @Override
-    public Set<Ticket> findTickets(HashMap<String, List<String>> searchParams) {
-        logger.debug("Searching for tickets matching [" + searchParams + "]");
-        EntityManager em = this.emf.createEntityManager();
-        List<TicketProp> props = null;
-        List<String> values = null;
-        String value = null;
-        String condition = null;
-        Query query = null;
-        Ticket tempTicket = null;
-        int limit = -1;
-        Collection<Ticket> finishedTicketsList = null;
-        Set<Ticket> finishedTicketsSet = null;
-        Collection<Ticket> ticketsList = null;
-        PropField pf = null;
-        ValueType vt = null;
-        String queryString = null;
-        try {
-            for (String fieldName : searchParams.keySet()) {
-
-                values = searchParams.get(fieldName);
-                pf = getPropField(fieldName);
-                vt = pf.getValueType();
-                for (String conditionPrefixedValue : values) {
-                    condition = conditionPrefixedValue.substring(0, 1);
-                    value = conditionPrefixedValue.substring(1, conditionPrefixedValue.length());
-                    TicketProp prop = vt.newTicketProp();
-                    prop.setValue(value);
-
-                    queryString = "FROM " + prop.getClass().getName()
-                            + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value"
-                            + condition + ":value";
-                    query = em.createQuery(queryString);
-                    query.setParameter("value", prop.getValue());
-
-                    query.setParameter("fieldName", fieldName);
-                    props = query.getResultList();
-                    ticketsList = new ArrayList<Ticket>();
-                    for (TicketProp tp : props) {
-                        tempTicket = tp.getTicket();
-                        ticketsList.add(tempTicket);
-                    }
-                    if (finishedTicketsList == null) {
-                        finishedTicketsList = ticketsList;
-                    } else {
-                        finishedTicketsList = CollectionUtils.intersection(finishedTicketsList, ticketsList);
-                    }
-                }
-            }
-            logger.debug("Returning " + finishedTicketsList.size() + " tickets");
-            finishedTicketsSet = new HashSet<Ticket>();
-            if ((limit >= 0) && (finishedTicketsList.size() > limit)) {
-                int counter = 0;
-                for (Ticket t : finishedTicketsList) {
-                    finishedTicketsSet.add(t);
-                    counter++;
-                    if (counter == limit) {
-                        break;
-                    }
-                }
-            } else {
-                finishedTicketsSet.addAll(finishedTicketsList);
-            }
-            return finishedTicketsSet;
-        } catch (Exception ex) {
-            logger.error("Error While searching [" + searchParams + "]: Threw the follwoing error " + ex.getLocalizedMessage());
             return new HashSet<Ticket>();
         } finally {
             cleanup(em);
