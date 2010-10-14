@@ -149,7 +149,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
         DateTimeTicketProp prop = new DateTimeTicketProp();
         prop.setPropField(pf);
-        prop.setValue(DateUtil.parseDate("2010-09-19 08:00"));
+        prop.setValue(DateUtil.parseDate("2010-10-14T13:33:50-04:00"));
         t.addTicketProp(prop);
 
         BooleanTicketProp prop2 = new BooleanTicketProp();
@@ -167,7 +167,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
         String ticketString = tix.path(path).get(String.class);
         assertNotNull(ticketString);
-        String expectedString = "{\"id\":\"" + t.getId() + "\",\"name\":\"" + t.getName() + "\",\"props\":{\"SECTION\":\"true\",\"PERFORMANCE\":\"2010-09-19 08:00\"}}";
+        String expectedString = "{\"id\":\"" + t.getId() + "\",\"name\":\"" + t.getName() + "\",\"props\":{\"SECTION\":\"true\",\"PERFORMANCE\":\"2010-10-14T13:33:50-04:00\"}}";
         assertEquals(expectedString, ticketString);
         PTicket pTicket = gson.fromJson(ticketString, PTicket.class);
         assertTicketsEqual(t, pTicket);
@@ -345,16 +345,16 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         field.setStrict(Boolean.FALSE);
         PropField pf3 = apa.savePropField(field);
 
-        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t = apa.saveTicket(t);
 
-        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t2 = apa.saveTicket(t2);
 
-        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t3 = apa.saveTicket(t3);
 
-        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t4 = apa.saveTicket(t4);
 
 
@@ -399,16 +399,16 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         field.setStrict(Boolean.FALSE);
         PropField pf3 = apa.savePropField(field);
 
-        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t = apa.saveTicket(t);
 
-        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t2 = apa.saveTicket(t2);
 
-        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t3 = apa.saveTicket(t3);
 
-        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t4 = apa.saveTicket(t4);
 
 

@@ -193,7 +193,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         t.addTicketProp(new IntegerTicketProp(pf, 4));
         t.addTicketProp(new BooleanTicketProp(pf2, Boolean.FALSE));
         t.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t.addTicketProp(new DateTimeTicketProp(pf4, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t.addTicketProp(new DateTimeTicketProp(pf4, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t = apa.saveTicket(t);
 
         ticketsToDelete.add(t);
@@ -207,7 +207,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         as.addConstraint("Seat Number", Operator.EQUALS, "4");
         as.addConstraint("locked", Operator.EQUALS, "false");
         as.addConstraint("Artist", Operator.EQUALS, "ACDC");
-        as.addConstraint("Date", Operator.EQUALS, "\'2010-10-09 16:00:00\'");
+        as.addConstraint("Date", Operator.EQUALS, "\'2010-10-14T13:33:50-04:00\'");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(1, tickets.size());
     }
@@ -242,7 +242,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         t.addTicketProp(new IntegerTicketProp(pf, 3));
         t.addTicketProp(new BooleanTicketProp(pf2, Boolean.FALSE));
         t.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t.addTicketProp(new DateTimeTicketProp(pf4, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t.addTicketProp(new DateTimeTicketProp(pf4, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t = apa.saveTicket(t);
 
         ticketsToDelete.add(t);
@@ -662,16 +662,16 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         field.setStrict(Boolean.FALSE);
         PropField pf3 = apa.savePropField(field);
 
-        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t = apa.saveTicket(t);
 
-        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t2 = apa.saveTicket(t2);
 
-        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t3 = apa.saveTicket(t3);
 
-        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t4 = apa.saveTicket(t4);
 
 
@@ -703,16 +703,16 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         field.setStrict(Boolean.FALSE);
         PropField pf3 = apa.savePropField(field);
 
-        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t = apa.saveTicket(t);
 
-        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t2 = apa.saveTicket(t2);
 
-        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t3 = apa.saveTicket(t3);
 
-        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t4 = apa.saveTicket(t4);
 
 

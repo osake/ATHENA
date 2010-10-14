@@ -243,7 +243,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
         DateTimeTicketProp prop = new DateTimeTicketProp();
         prop.setPropField(pf);
-        prop.setValue(DateUtil.parseDate("2010-09-19 08:00"));
+        prop.setValue(DateUtil.parseDate("2010-10-14T13:33:50-04:00"));
         t.addTicketProp(prop);
 
         BooleanTicketProp prop2 = new BooleanTicketProp();
@@ -305,7 +305,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         pTicket.getProps().put(soldField.getName(), "false");
         pTicket.getProps().put(tierField.getName(), "GOLD");
         pTicket.getProps().put(priceField.getName(), "3000");
-        pTicket.getProps().put(performanceField.getName(), "2010-12-12 04:00");
+        pTicket.getProps().put(performanceField.getName(), "2010-10-14T13:33:50-04:00");
         pTicket.getProps().put(venueField.getName(), "Everyman Theater");
         pTicket.getProps().put(eventField.getName(), "World Tour 2004");
         pTicket.getProps().put(lockedField.getName(), "false");
@@ -401,24 +401,6 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         assertTicketsEqual(savedTicket, savedPTicket);
 
         ticketsToDelete.add(savedTicket);
-    }
-
-    //@Test
-    public void testCreateThenUpdateDupeProp() {
-
-        Ticket t = createSampleTicket(true);
-        ticketsToDelete.add(t);
-        PTicket pTicket = t.toClientTicket();
-
-        String ticketJson = "{'id':'"+pTicket.getId()+"','name':'updated ticket','props':{'SECTION':'ORCHESTRA','SEAT_NUMBER':'3D','SEAT_NUMBER':'34F'}}";
-
-        String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
-        PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
-        assertNotNull(savedPTicket.getId());
-
-        assertEquals(2, savedPTicket.getProps().size());
-        assertEquals("34F", savedPTicket.get("SEAT_NUMBER"));
-        assertEquals("ORCHESTRA", savedPTicket.get("SECTION"));
     }
 
     public Ticket createSampleTicket(Boolean saveItToo) {
