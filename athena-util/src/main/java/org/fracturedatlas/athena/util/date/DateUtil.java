@@ -28,15 +28,29 @@ import org.joda.time.format.ISODateTimeFormat;
 
 public class DateUtil {
     static DateTimeFormatter fmt = ISODateTimeFormat.dateTimeNoMillis();
+    static DateTimeFormatter fmtDateOnly = ISODateTimeFormat.date();
 
     DateTime datetime;
 
+    /**
+     * Will parse a date formatted in iso8061 (example: 2010-10-01T13:33:50-04:00) into a java.util.Date.  If parsing fails,
+     * this method will attempt to parse using the format 'yyyy-MM-dd".  If both fail, this method will
+     * throw a ParseException
+     *
+     * @param iso8061StrDateTime the date to format
+     * @return a java.util.Date representing iso8061StrDateTime
+     * @throws ParseException if the date isn't formatte properly
+     */
     public static Date parseDate(String iso8061StrDateTime) throws ParseException {
         if(iso8061StrDateTime == null) {
             return null;
         }
 
-        return fmt.parseDateTime(iso8061StrDateTime).toDate();
+        try{
+            return fmt.parseDateTime(iso8061StrDateTime).toDate();
+        } catch (IllegalArgumentException iae) {
+            return fmtDateOnly.parseDateTime(iso8061StrDateTime).toDate();
+        }
     }
 
     public static String formatDate(Date date) {

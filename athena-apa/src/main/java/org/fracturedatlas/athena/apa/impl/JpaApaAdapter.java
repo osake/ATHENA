@@ -199,6 +199,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 operator = apc.getOper();
                 value = apc.getValue();
                 TicketProp prop = vt.newTicketProp();
+
                 prop.setValue(value);
 
                 queryString = "FROM " + prop.getClass().getName()
@@ -253,6 +254,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             }
             return finishedTicketsSet;
         } catch (Exception ex) {
+            ex.printStackTrace();
             logger.error("Error While searching [" + apaSearch.asList() + "]: Threw the follwoing error " + ex.getLocalizedMessage());
             return new HashSet<Ticket>();
         } finally {
