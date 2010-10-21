@@ -117,6 +117,5 @@ public class PTicket {
         return ToStringBuilder.reflectionToString(this,
                                                   ToStringStyle.MULTI_LINE_STYLE);
     }
-
     
 }

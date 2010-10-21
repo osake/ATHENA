@@ -16,28 +16,42 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
-*/
-
+ */
 package org.fracturedatlas.athena.web.serialization;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Map.Entry;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.apa.model.Ticket;
+import org.fracturedatlas.athena.id.IdAdapter;
+import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 
 @Provider
 @Produces({"application/json"})
-public class JsonTicketSerializer implements MessageBodyWriter<Ticket> {
+public class JsonTicketSerializer implements MessageBodyWriter<Ticket>,
+                                             MessageBodyReader<PTicket>,
+                                             JsonSerializer<PTicket>,
+                                             JsonDeserializer<PTicket> {
 
     @Override
     public long getSize(Ticket t, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType) {
@@ -52,9 +66,43 @@ public class JsonTicketSerializer implements MessageBodyWriter<Ticket> {
 
     @Override
     public void writeTo(Ticket t, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream out) throws IOException, WebApplicationException {
-        Gson gson = JsonUtil.getGson();
-        PTicket pTicket = t.toClientTicket();
-        out.write(gson.toJson(pTicket).getBytes());
+        out.write(JsonUtil.getGson().toJson(t.toClientTicket()).getBytes());
+    }
+    
+    @Override
+    public boolean isReadable(java.lang.Class<?> type, java.lang.reflect.Type genericType, java.lang.annotation.Annotation[] annotations, MediaType mediaType) {
+        return (PTicket.class.isAssignableFrom(type));
     }
 
+    @Override
+    public PTicket readFrom(java.lang.Class<PTicket> type, java.lang.reflect.Type genericType, java.lang.annotation.Annotation[] annotations, MediaType mediaType, MultivaluedMap<java.lang.String,java.lang.String> httpHeaders, java.io.InputStream entityStream) {
+        Gson gson = JsonUtil.getGson();
+        PTicket pTicket = gson.fromJson(new InputStreamReader(entityStream), PTicket.class);
+        if(pTicket == null) {
+            throw new AthenaException("Could not understand JSON request");
+        }
+        return pTicket;
+    }
+
+    public JsonElement serialize(PTicket pTicket, Type typeOfSrc, JsonSerializationContext context) {
+        JsonObject jsonPropMap = JsonUtil.mapToJson(pTicket.getProps());
+        jsonPropMap.addProperty("id", IdAdapter.toString(pTicket.getId()));
+        jsonPropMap.addProperty("name", pTicket.getName());
+        return jsonPropMap;
+
+    }
+
+    public PTicket deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        PTicket pTicket = new PTicket();
+        JsonObject ticketObj = json.getAsJsonObject();
+        pTicket.setId(JsonUtil.nullSafeGetAsString(ticketObj.get("id")));
+        pTicket.setName(JsonUtil.nullSafeGetAsString(ticketObj.get("name")));
+        ticketObj.remove("id");
+        ticketObj.remove("name");
+        for (Entry<String, JsonElement> entry : ticketObj.entrySet()) {
+            System.out.println("GETTING: " + entry.getKey());
+            pTicket.put(entry.getKey(), entry.getValue().getAsString());
+        }
+        return pTicket;
+    }
 }

@@ -21,15 +21,22 @@ package org.fracturedatlas.athena.web.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.LongSerializationPolicy;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.codehaus.jackson.map.AnnotationIntrospector;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
+import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.web.serialization.JsonTicketSerializer;
 
 public class JsonUtil {
 
     static GsonBuilder gb = new GsonBuilder()
-                                .setLongSerializationPolicy(LongSerializationPolicy.STRING);
+                                .setLongSerializationPolicy(LongSerializationPolicy.STRING)
+                                .registerTypeAdapter(PTicket.class, new JsonTicketSerializer());
 
     static Gson gson;
 
@@ -55,5 +62,20 @@ public class JsonUtil {
         }
         return mapper;
     }
-    
+
+    public synchronized static JsonObject mapToJson(Map<String, String> map) {
+        JsonObject jsonObject = new JsonObject();
+        for(Entry<String, String> entry : map.entrySet()) {
+            jsonObject.addProperty(entry.getKey(), entry.getValue());
+        }
+        return jsonObject;
+    }
+
+    public static String nullSafeGetAsString(JsonElement e) {
+        if(e == null) {
+            return null;
+        } else {
+            return e.getAsString();
+        }
+    }
 }

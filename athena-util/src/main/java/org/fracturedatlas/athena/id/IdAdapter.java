@@ -22,11 +22,23 @@ package org.fracturedatlas.athena.id;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 public class IdAdapter extends XmlAdapter<String, Object> {
+    
+    @Override
     public Object unmarshal(String s) {
         return s;
     }
-     
+    
+    @Override
     public String marshal(Object o) {
+        return toString(o);
+
+    }
+    
+    public static String toString(Object o) {
+        if(o == null) {
+            return null;
+        }
+
         if(Long.class.isAssignableFrom(o.getClass())) {
             return Long.toString((Long)o);
         } if(Integer.class.isAssignableFrom(o.getClass())) {
@@ -35,9 +47,9 @@ public class IdAdapter extends XmlAdapter<String, Object> {
             return (String)o;
         } else {
             throw new RuntimeException("Unable to unmarshall type: " + o.getClass().getName());
-        }
+        }        
     }
-
+    
     /**
      * Test equality between two Athena Ids
      *

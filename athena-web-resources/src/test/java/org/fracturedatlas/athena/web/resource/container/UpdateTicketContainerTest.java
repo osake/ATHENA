@@ -262,7 +262,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
         ticketsToDelete.add(t);
 
         PTicket pTicket = t.toClientTicket();
-        pTicket.put("PERFORMANCE", "2010-09-30 09:33");
+        pTicket.put("PERFORMANCE", "2010-10-19T13:33:50-04:00");
         String ticketJson = gson.toJson(pTicket);
 
         String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);

@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.web.resource;
 
+import com.google.gson.Gson;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -29,13 +30,10 @@ import javax.ws.rs.Produces;
 import org.apache.log4j.Logger;
 import org.fracturedatlas.athena.web.manager.TicketManager;
 import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sun.jersey.api.NotFoundException;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.core.Context;
@@ -44,8 +42,8 @@ import javax.ws.rs.core.UriInfo;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.web.exception.ForbiddenException;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
-import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.fracturedatlas.athena.apa.model.TicketProp;
+import org.fracturedatlas.athena.web.util.JsonUtil;
 
 @Path("")
 @Consumes({"application/json"})
@@ -55,6 +53,8 @@ public class RecordResource {
     Logger logger = Logger.getLogger(RecordResource.class);
     @Autowired
     TicketManager ticketManager;
+
+    Gson gson = JsonUtil.getGson();
 
     @GET
     @Path("{id}")
@@ -137,8 +137,7 @@ public class RecordResource {
      * @throws Exception if the json was malformed
      */
     @POST
-    public Object save(String json) throws Exception {
-        PTicket pTicket = stringToPTicket(json);
+    public Object save(PTicket pTicket) throws Exception {
         Ticket ticket = ticketManager.saveTicketFromClientRequest(pTicket);
         return ticket;
     }
@@ -152,29 +151,8 @@ public class RecordResource {
      */
     @PUT
     @Path("{id}")
-    public Object update(@PathParam("id") String id, String json) throws Exception {
-        PTicket pTicket = stringToPTicket(json);
+    public Object update(@PathParam("id") String id, PTicket pTicket) throws Exception {
         Ticket ticket = ticketManager.updateTicketFromClientTicket(pTicket, id);
         return ticket;
-    }
-
-    /*
-     * This will reutrn a not-null pTicket.  If null, then will throw AthenaException
-     */
-    private PTicket stringToPTicket(String json) {
-        PTicket pTicket = null;
-
-        try {
-            pTicket = JsonUtil.getGson().fromJson(json, PTicket.class);
-        } catch (com.google.gson.JsonParseException pe) {
-            pe.printStackTrace();
-            throw new AthenaException("Sent a blank or malformed request body.  Could not make a ticket out of it.");
-        }
-
-        if(pTicket == null) {
-            throw new AthenaException("Sent a blank or malformed request body.  Could not make a ticket out of it.");
-        }
-
-        return pTicket;
     }
 }

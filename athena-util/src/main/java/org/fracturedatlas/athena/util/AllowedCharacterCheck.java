@@ -34,6 +34,7 @@ public class AllowedCharacterCheck {
 
 	/**
 	 * Checks that the String:
+         *  - is not a "Reserved" field name.
          *  - is not null
          *  - is not blank
          *  - does not contain characters other than [0-9a-zA-Z\_]
@@ -44,6 +45,11 @@ public class AllowedCharacterCheck {
 	 */  
 	public static boolean confirm(String str) {
             if(str == null) {
+                return false;
+            }
+
+            //TODO: This should be moved to some config file
+            if("id".equals(str) || "name".equals(str)) {
                 return false;
             }
 
