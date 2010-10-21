@@ -99,8 +99,6 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
         String ticketString = tix.path(path).get(String.class);
         assertNotNull(ticketString);
-        String expectedString = "{\"id\":\"" + t.getId() + "\",\"name\":\"" + t.getName() + "\",\"props\":{\"SECTION\":\"ORCHESTRA\",\"SEAT_NUMBER\":\"3D\"}}";
-        assertEquals(expectedString, ticketString);
         PTicket pTicket = gson.fromJson(ticketString, PTicket.class);
         assertTicketsEqual(t, pTicket);
     }
@@ -133,8 +131,6 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
         String ticketString = tix.path(path).get(String.class);
         assertNotNull(ticketString);
-        String expectedString = "{\"id\":\"" + t.getId() + "\",\"name\":\"" + t.getName() + "\",\"props\":{\"SECTION\":\"true\",\"SEAT_NUMBER\":\"3D\"}}";
-        assertEquals(expectedString, ticketString);
         PTicket pTicket = gson.fromJson(ticketString, PTicket.class);
         assertTicketsEqual(t, pTicket);
     }
@@ -167,8 +163,6 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
         String ticketString = tix.path(path).get(String.class);
         assertNotNull(ticketString);
-        String expectedString = "{\"id\":\"" + t.getId() + "\",\"name\":\"" + t.getName() + "\",\"props\":{\"SECTION\":\"true\",\"PERFORMANCE\":\"2010-10-14T13:33:50-04:00\"}}";
-        assertEquals(expectedString, ticketString);
         PTicket pTicket = gson.fromJson(ticketString, PTicket.class);
         assertTicketsEqual(t, pTicket);
     }
@@ -200,8 +194,6 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
         String ticketString = tix.path(path).get(String.class);
         assertNotNull(ticketString);
-        String expectedString = "{\"id\":\"" + t.getId() + "\",\"name\":\"" + t.getName() + "\",\"props\":{\"SECTION\":\"true\",\"SEAT_NUMBER\":\"490\"}}";
-        assertEquals(expectedString, ticketString);
         PTicket pTicket = gson.fromJson(ticketString, PTicket.class);
         assertTicketsEqual(t, pTicket);
     }
@@ -276,8 +268,6 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
         String ticketString = tix.path(path).get(String.class);
         assertNotNull(ticketString);
-        String expectedString = "{\"id\":\"" + t.getId() + "\",\"name\":\"" + t.getName() + "\",\"props\":{}}";
-        assertEquals(expectedString, ticketString);
         PTicket pTicket = gson.fromJson(ticketString, PTicket.class);
         assertTicketsEqual(t, pTicket);
     }
