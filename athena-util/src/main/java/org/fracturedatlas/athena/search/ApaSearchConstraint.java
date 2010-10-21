@@ -19,18 +19,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.search;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 
 public class ApaSearchConstraint {
 
     Operator oper = null;
     String parameter = null;
-    String value = null;
+    Set<String> valueSet = null;
 
     public ApaSearchConstraint(String param, Operator operator, String val) {
         parameter = param;
         oper = operator;
-        value = val;
+        valueSet = new HashSet<String>();
+        valueSet.add(val);
     }
+
+    public ApaSearchConstraint(String param, Operator operator, Set<String> values) {
+        parameter = param;
+        oper = operator;
+        valueSet = values;
+    }
+
 
     public Operator getOper() {
         return oper;
@@ -49,16 +61,20 @@ public class ApaSearchConstraint {
     }
 
     public String getValue() {
-        return value;
+        return valueSet.iterator().next();
     }
 
-    public void setValue(String value) {
-        this.value = value;
+    public Set<String> getValueSet() {
+        return valueSet;
+    }
+
+    public void setValueSet(Set<String> values) {
+        this.valueSet = values;
     }
 
     @Override
     public String toString() {
-        return parameter + " " + oper + " " + value;
+            return parameter + " " + oper + " (" + valueSet + ")";
     }
 
     @Override
@@ -76,7 +92,7 @@ public class ApaSearchConstraint {
         if ((this.parameter == null) ? (other.parameter != null) : !this.parameter.equals(other.parameter)) {
             return false;
         }
-        if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
+        if ((this.valueSet == null) ? (other.valueSet != null) : !this.valueSet.equals(other.valueSet)) {
             return false;
         }
         return true;
@@ -87,7 +103,8 @@ public class ApaSearchConstraint {
         int hash = 7;
         hash = 61 * hash + (this.oper != null ? this.oper.hashCode() : 0);
         hash = 61 * hash + (this.parameter != null ? this.parameter.hashCode() : 0);
-        hash = 61 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 61 * hash + (this.valueSet != null ? this.valueSet.hashCode() : 0);
+
         return hash;
     }
 

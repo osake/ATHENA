@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -117,6 +118,7 @@ public abstract class TicketProp extends TixEntity implements Serializable, Comp
     @Transient
     public abstract void setValue(Object o) throws Exception;
 
+
     public abstract int compareTo(Object o) throws ClassCastException,
             IllegalArgumentException;
 
@@ -163,5 +165,23 @@ public abstract class TicketProp extends TixEntity implements Serializable, Comp
         return hash;
     }
 
-
+    public boolean validValue(String value) {
+        PropField pf = getPropField();
+        try {
+            this.setValue(value);
+        } catch (Exception ex) {
+            //TODO: log message
+            return false;
+        }
+        if(pf.getStrict()) {
+            Collection<PropValue> pvc = pf.getPropValues();
+            for(PropValue pv : pvc) {
+                if (pv.equals(this.getValue())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;
+    }
 }

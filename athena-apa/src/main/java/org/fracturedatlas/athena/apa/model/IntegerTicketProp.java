@@ -90,4 +90,5 @@ public class IntegerTicketProp extends TicketProp implements Serializable {
         hash = 79 * hash + (this.value != null ? this.value.hashCode() : 0);
         return hash;
     }
+
 }

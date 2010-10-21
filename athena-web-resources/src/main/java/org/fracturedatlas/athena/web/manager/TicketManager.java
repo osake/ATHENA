@@ -20,14 +20,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.web.manager;
 
 import com.sun.jersey.api.NotFoundException;
+import java.text.CharacterIterator;
 import java.text.ParseException;
+import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.ws.rs.core.MultivaluedMap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.client.PTicket;
@@ -86,6 +90,7 @@ public class TicketManager {
         List<String> values = null;
         Operator operator;
         String value;
+        Set<String> valueSet = null;
         ApaSearch apaSearch = new ApaSearch();
         for (String fieldName : queryParams.keySet()) {
             values = queryParams.get(fieldName);
@@ -93,14 +98,66 @@ public class TicketManager {
                 if (fieldName.startsWith("_")) {
                     apaSearch.setSearchModifier(fieldName, operatorPrefixedValue);
                 } else {
-                    operator = Operator.fromString(operatorPrefixedValue.substring(0, 1));
-                    value = operatorPrefixedValue.substring(1, operatorPrefixedValue.length());
-                    apaSearch.addConstraint(fieldName, operator, value);
+                    operator = Operator.fromType(operatorPrefixedValue.substring(0, 2));
+                    value = operatorPrefixedValue.substring(2, operatorPrefixedValue.length());
+                    valueSet = parseValues(value);
+                    apaSearch.addConstraint(fieldName, operator, valueSet);
                 }
             }
         }
 
         return apa.findTickets(apaSearch);
+    }
+
+    static Set<String> parseValues(String valueString) {
+        HashSet<String> values = new HashSet<String>();
+        valueString = StringUtils.trimToEmpty(valueString);
+        valueString = StringUtils.strip(valueString, "()");
+        valueString = StringUtils.trimToEmpty(valueString);
+        CharacterIterator it = new StringCharacterIterator(valueString);
+        boolean inString = false;
+        int begin = 0;
+        int end = 0;
+        int numValues = 0;
+        StringBuilder sb = new StringBuilder();
+        // Iterate over the characters in the forward direction
+        for (char ch = it.first(); ch != CharacterIterator.DONE; ch = it.next()) {
+            if (ch == '\"') {
+                inString = true;
+                ch = it.next();
+                sb = new StringBuilder();
+                for (; ch != CharacterIterator.DONE; ch = it.next()) {
+                    if (ch == '\\') {
+                        // skip any " in a string
+                        sb.append(ch);
+                        ch = it.next();
+                    } else if (ch == '\"') {
+                        break;
+                    }
+                    sb.append(ch);
+                }
+                inString = false;
+                values.add(StringUtils.trimToEmpty(sb.toString()));
+            } else if (ch == ',') {
+                // new value
+            } else if (" \t\n\r".indexOf(ch) > -1) {
+                //skip whitespace
+            } else {
+                // not a comma, whitespace or a string start
+                sb = new StringBuilder();
+                for (; ch != CharacterIterator.DONE; ch = it.next()) {
+                    if (ch == ',') {
+                        break;
+                    }
+                    sb.append(ch);
+                }
+                inString = false;
+                values.add(StringUtils.trimToEmpty(sb.toString()));
+
+            }
+        }
+
+        return values;
     }
 
     public Ticket saveTicketFromClientRequest(PTicket pTicket) throws Exception {
