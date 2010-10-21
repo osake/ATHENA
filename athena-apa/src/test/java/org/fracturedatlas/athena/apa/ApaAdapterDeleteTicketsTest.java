@@ -118,16 +118,16 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
         PropField pf3 = apa.savePropField(new PropField(ValueType.DATETIME, "Date", Boolean.FALSE));
         propFieldsToDelete.add(pf3);
 
-        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t = apa.saveTicket(t);
 
-        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t2 = apa.saveTicket(t2);
 
-        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t3 = apa.saveTicket(t3);
 
-        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t4 = apa.saveTicket(t4);
 
 
@@ -159,16 +159,16 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
         PropField pf3 = apa.savePropField(new PropField(ValueType.DATETIME, "Date", Boolean.FALSE));
         propFieldsToDelete.add(pf3);
 
-        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t = apa.saveTicket(t);
 
-        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t2 = apa.saveTicket(t2);
 
-        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t3 = apa.saveTicket(t3);
 
-        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-09 16:00:00")));
+        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
         t4 = apa.saveTicket(t4);
 
 

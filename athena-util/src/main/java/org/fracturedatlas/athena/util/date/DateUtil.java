@@ -21,32 +21,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.util.date;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.UUID;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 
 public class DateUtil {
-    private static SimpleDateFormat iso8061Formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-    private static SimpleDateFormat shortDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-    private static SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
+    static DateTimeFormatter fmt = ISODateTimeFormat.dateTimeNoMillis();
+    static DateTimeFormatter fmtDateOnly = ISODateTimeFormat.date();
 
-    public static Date parseDate(String date) throws ParseException {
-        if(date == null) {
+    DateTime datetime;
+
+    /**
+     * Will parse a date formatted in iso8061 (example: 2010-10-01T13:33:50-04:00) into a java.util.Date.  If parsing fails,
+     * this method will attempt to parse using the format 'yyyy-MM-dd".  If both fail, this method will
+     * throw a ParseException
+     *
+     * @param iso8061StrDateTime the date to format
+     * @return a java.util.Date representing iso8061StrDateTime
+     * @throws ParseException if the date isn't formatte properly
+     */
+    public static Date parseDate(String iso8061StrDateTime) throws ParseException {
+        if(iso8061StrDateTime == null) {
             return null;
         }
 
-        try {
-            return iso8061Formatter.parse(date);
-        } catch (ParseException pe) {
-            return shortDateFormatter.parse(date);
+        try{
+            return fmt.parseDateTime(iso8061StrDateTime).toDate();
+        } catch (IllegalArgumentException iae) {
+            return fmtDateOnly.parseDateTime(iso8061StrDateTime).toDate();
         }
-    } 
+    }
 
     public static String formatDate(Date date) {
         if(date == null) {
             return null;
         } else {
-            return iso8061Formatter.format(date);
+            return fmt.print(date.getTime());
         }
     }
 
@@ -54,7 +65,7 @@ public class DateUtil {
         if(date == null) {
             return null;
         } else {
-            return iso8061Formatter.format(date);
+            return fmt.print(date.getTime());
         }
     }
 }

@@ -255,7 +255,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
         PropField pf = apa.savePropField(field);
         propFieldsToDelete.add(pf);
 
-        DateTimeTicketProp prop = new DateTimeTicketProp(pf, DateUtil.parseDate("2010-09-19 08:00"));
+        DateTimeTicketProp prop = new DateTimeTicketProp(pf, DateUtil.parseDate("2010-10-19T13:33:50-04:00"));
         t.addTicketProp(prop);
 
         t = apa.saveTicket(t);
@@ -280,7 +280,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
         PropField pf = apa.savePropField(field);
         propFieldsToDelete.add(pf);
 
-        DateTimeTicketProp prop = new DateTimeTicketProp(pf, DateUtil.parseDate("2010-09-19 08:00"));
+        DateTimeTicketProp prop = new DateTimeTicketProp(pf, DateUtil.parseDate("2010-10-14T13:33:50-04:00"));
         t.addTicketProp(prop);
 
         t = apa.saveTicket(t);

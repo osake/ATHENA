@@ -114,7 +114,7 @@ public class ApaAdapterSavePropTest extends BaseApaAdapterTest {
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
-        DateTimeTicketProp newProp = new DateTimeTicketProp(pf4, DateUtil.parseDate("2010-10-10 11:34"));
+        DateTimeTicketProp newProp = new DateTimeTicketProp(pf4, DateUtil.parseDate("2010-10-10T11:34:33-04:00"));
         newProp.setTicket(t);
         try{
             apa.saveTicketProp(newProp);
