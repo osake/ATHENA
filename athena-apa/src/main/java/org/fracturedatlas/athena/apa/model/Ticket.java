@@ -30,6 +30,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.fracturedatlas.athena.id.IdAdapter;
@@ -81,6 +82,27 @@ public class Ticket extends TixEntity implements Serializable {
         this.ticketProps = ticketProps;
     }
 
+    /**
+     * Add a prop to this ticket.  If the prop exists on this ticket already, it will be replaced
+     * @param prop
+     */
+    @Transient
+    public void setTicketProp(TicketProp prop) throws Exception {
+        String propName = prop.getPropField().getName();
+        TicketProp existingProp = getTicketProp(propName);
+        if(existingProp == null) {
+            addTicketProp(prop);
+        } else {
+            existingProp.setValue(prop.getValue());
+        }
+    }
+
+    /**
+     * Add a prop to this ticket's props EVEN IF THIS PROP DUPLICATES AN EXISTING PROP
+     * To avoid this, either use apa.savePropValue OR use ticket.setTicketProp
+     *
+     * @param prop
+     */
     public void addTicketProp(TicketProp prop) {
         if (this.ticketProps == null) {
             this.ticketProps = new ArrayList<TicketProp>();
