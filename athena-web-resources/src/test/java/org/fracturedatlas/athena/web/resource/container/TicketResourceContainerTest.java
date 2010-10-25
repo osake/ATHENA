@@ -41,6 +41,8 @@ import org.fracturedatlas.athena.apa.model.ValueType;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.fracturedatlas.athena.util.date.DateUtil;
+import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
 import org.junit.After;
 import org.junit.Test;
 
@@ -147,9 +149,10 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         PropField pf = apa.savePropField(new PropField(ValueType.DATETIME, "PERFORMANCE", Boolean.FALSE));
         PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
 
+        DateTime dt = new DateTime();
         DateTimeTicketProp prop = new DateTimeTicketProp();
         prop.setPropField(pf);
-        prop.setValue(DateUtil.parseDate("2010-10-14T13:33:50-04:00"));
+        prop.setValue(DateUtil.parseDate(dt.toString(ISODateTimeFormat.dateTimeNoMillis())));
         t.addTicketProp(prop);
 
         BooleanTicketProp prop2 = new BooleanTicketProp();
@@ -167,7 +170,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
         String ticketString = tix.path(path).get(String.class);
         assertNotNull(ticketString);
-        String expectedString = "{\"id\":\"" + t.getId() + "\",\"name\":\"" + t.getName() + "\",\"props\":{\"SECTION\":\"true\",\"PERFORMANCE\":\"2010-10-14T13:33:50-04:00\"}}";
+        String expectedString = "{\"id\":\"" + t.getId() + "\",\"name\":\"" + t.getName() + "\",\"props\":{\"SECTION\":\"true\",\"PERFORMANCE\":\""+dt.toString(ISODateTimeFormat.dateTimeNoMillis())+"\"}}";
         assertEquals(expectedString, ticketString);
         PTicket pTicket = gson.fromJson(ticketString, PTicket.class);
         assertTicketsEqual(t, pTicket);
