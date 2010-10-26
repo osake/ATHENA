@@ -100,7 +100,6 @@ public class JsonTicketSerializer implements MessageBodyWriter<Ticket>,
         ticketObj.remove("id");
         ticketObj.remove("name");
         for (Entry<String, JsonElement> entry : ticketObj.entrySet()) {
-            System.out.println("GETTING: " + entry.getKey());
             pTicket.put(entry.getKey(), entry.getValue().getAsString());
         }
         return pTicket;
