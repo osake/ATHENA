@@ -34,7 +34,7 @@
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="validate"/>
             <property name="hibernate.ejb.autodetection" value="class"/>
-            <property name="hibernate.connection.url" value="jdbc:mysql://localhost/ATHENA-Tix"/>
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost/ATHENA-Test"/>
             <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             <property name="hibernate.show_sql" value="false"/>

@@ -59,7 +59,7 @@
                 </dependencies>
                 <configuration>
                     <driver>com.mysql.jdbc.Driver</driver>
-                    <url>jdbc:mysql://localhost/ATHENA-Tix</url>
+                    <url>jdbc:mysql://localhost/ATHENA-Test</url>
                     <username>parakeetdb</username>
                     <password>parakeetdb</password>
                     <srcFiles>
