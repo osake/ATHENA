@@ -53,7 +53,7 @@ public class DateTimeTicketProp extends TicketProp implements Serializable {
     }
 
     public Date getValue() {
-        return value;
+        return (Date)value;
     }
 
     public void setValue(Object o) {
@@ -92,7 +92,18 @@ public class DateTimeTicketProp extends TicketProp implements Serializable {
             return false;
         }
         final DateTimeTicketProp other = (DateTimeTicketProp) obj;
-        if (this.value != other.value && (this.value == null || !this.value.equals(other.value))) {
+
+        if (this.value!=null) {
+            if (other.value!=null) {
+                final Long thisDate = this.getValue().getTime();
+                final Long otherDate = other.getValue().getTime();
+                if (!thisDate.equals(otherDate)) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        } else if (other.value!=null) {
             return false;
         }
         return true;

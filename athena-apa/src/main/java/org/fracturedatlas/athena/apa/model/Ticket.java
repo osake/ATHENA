@@ -120,17 +120,36 @@ public class Ticket extends TixEntity implements Serializable {
         return null;
     }
 
-    @Override
+     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
+            return false;
+        }
+        if (this.getClass() != obj.getClass()) {
             return false;
         }
         final Ticket other = (Ticket) obj;
         if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
             return false;
         }
-
-        return IdAdapter.isEqual(this.getId(), other.getId());
+        if (!IdAdapter.isEqual(this.getId(), other.getId())) {
+            return false;
+        }
+        if (ticketProps.size() != other.getTicketProps().size()) {
+            return false;
+        }
+        TicketProp tempTp = null;
+        for (TicketProp tp : ticketProps) {
+            tempTp = other.getTicketProp(tp.getPropField().getName());
+            if (tempTp == null) {
+                return false;
+            } else {
+                if (!tp.equals(tempTp)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override
