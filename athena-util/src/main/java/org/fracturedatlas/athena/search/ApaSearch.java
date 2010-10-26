@@ -20,9 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.search;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ApaSearch {
 
@@ -35,6 +37,10 @@ public class ApaSearch {
 
     public void addConstraint(String fieldName, Operator operator, String searchValue) {
         asc.add(new ApaSearchConstraint(fieldName, operator, searchValue));
+    }
+
+    public void addConstraint(String fieldName, Operator operator, Set<String> searchValues) {
+        asc.add(new ApaSearchConstraint(fieldName, operator, searchValues));
     }
 
     public void addConstraint(ApaSearchConstraint searchConstraint) {

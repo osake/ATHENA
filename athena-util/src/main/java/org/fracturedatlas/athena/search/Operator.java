@@ -21,21 +21,39 @@ package org.fracturedatlas.athena.search;
 
 public enum Operator {
 
-    LESS_THAN("<"),
-    GREATER_THAN(">"),
-    EQUALS("=");
-    private String operatorString;
+    IN("in", "IN (:value)"),
+    LESS_THAN("lt", "< :value"),
+    GREATER_THAN("gt", "> :value"),
+    EQUALS("eq", "= :value");
 
-    private Operator(String operatorString) {
+    private String operatorString;
+    private String operatorType;
+
+    private Operator(String operatorType, String operatorString) {
+        this.operatorType = operatorType;
         this.operatorString = operatorString;
     }
 
+    public String getOperatorType() {
+        return operatorType;
+    }
 
     public String getOperatorString() {
         return operatorString;
     }
 
-    public static Operator fromString(String text) {
+    public static Operator fromType(String text) {
+        if (text != null) {
+            for (Operator op : Operator.values()) {
+                if (text.equalsIgnoreCase(op.operatorType)) {
+                    return op;
+                }
+            }
+        }
+        return null;
+    }
+
+       public static Operator fromString(String text) {
         if (text != null) {
             for (Operator op : Operator.values()) {
                 if (text.equalsIgnoreCase(op.operatorString)) {
@@ -45,4 +63,5 @@ public enum Operator {
         }
         return null;
     }
+
 }

@@ -21,6 +21,7 @@ package org.fracturedatlas.athena.apa.model;
 
 import javax.persistence.Entity;
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Table;
@@ -89,6 +90,8 @@ public class BooleanTicketProp extends TicketProp implements Serializable {
         hash = 79 * hash + (this.value != null ? this.value.hashCode() : 0);
         return hash;
     }
+
+
 
 
 }

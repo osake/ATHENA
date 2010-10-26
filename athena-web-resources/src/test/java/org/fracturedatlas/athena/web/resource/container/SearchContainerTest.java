@@ -44,7 +44,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
     @Test
     public void testFindTickets() {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
-        queryParams.add("SOLD", "=false");
+        queryParams.add("SOLD", "eqfalse");
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
         Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
         assertNotNull(tickets);
@@ -54,7 +54,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
     @Test
     public void testFindTicketsGreaterThan() {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
-        queryParams.add("PRICE", ">30");
+        queryParams.add("PRICE", "gt30");
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
         Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
         assertNotNull(tickets);
@@ -64,12 +64,129 @@ public class SearchContainerTest extends BaseTixContainerTest {
     @Test
     public void testFindTicketsRange() {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
-        queryParams.add("PRICE", ">30");
-        queryParams.add("PRICE", "<100");
+        queryParams.add("PRICE", "gt30");
+        queryParams.add("PRICE", "lt100");
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
         Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
         assertNotNull(tickets);
         assertEquals(6, tickets.length);
+    }
+
+    @Test
+    public void testFindTicketsInListStrings() {
+        MultivaluedMap queryParams = new MultivaluedMapImpl();
+        queryParams.add("SECTION", "in(A,B)");
+        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(9, tickets.length);
+
+        queryParams = new MultivaluedMapImpl();
+        queryParams.add("SECTION", "in( \"A \",B)");
+        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(9, tickets.length);
+
+
+        queryParams = new MultivaluedMapImpl();
+        queryParams.add("SECTION", "in( \\\"A \\\",  \"B\")");
+        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(4, tickets.length);
+    }
+
+    @Test
+    public void testFindTicketsInListDate() {
+        MultivaluedMap queryParams = new MultivaluedMapImpl();
+        queryParams.add("PERFORMANCE", "in(2010-10-14T13:33:50-04:00,2010-10-15T13:33:50-04:00)");
+        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(7, tickets.length);
+
+        queryParams = new MultivaluedMapImpl();
+        queryParams.add("PERFORMANCE", "in( \"2010-10-14T13:33:50-04:00\", 2010-10-15T13:33:50-04:00)");
+        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(7, tickets.length);
+
+        //First figure is not a valid number so only the second is found
+        queryParams = new MultivaluedMapImpl();
+        queryParams.add("PERFORMANCE", "in( \\\"2010-10-14T13:33:50-04:00 \\\",  \" 2010-10-15T13:33:50-04:00\")");
+        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(2, tickets.length);
+    }
+
+    @Test
+    public void testFindTicketsInListIntegers() {
+        MultivaluedMap queryParams = new MultivaluedMapImpl();
+        queryParams.add("PRICE", "in(25,50)");
+        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(8, tickets.length);
+
+        queryParams = new MultivaluedMapImpl();
+        queryParams.add("PRICE", "in( \"25\", 50)");
+        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(8, tickets.length);
+
+        //First figure is not a valid number so the query fails
+        queryParams = new MultivaluedMapImpl();
+        queryParams.add("PRICE", "in( \\\"25 \\\",  \" 50\")");
+        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(6, tickets.length);
+    }
+
+    @Test
+    public void testFindTicketsLimitResults() {
+        MultivaluedMap queryParams = new MultivaluedMapImpl();
+        queryParams.add("PRICE", "in(25,50)");
+        queryParams.add("_limit", "5");
+        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(5, tickets.length);
+
+        queryParams = new MultivaluedMapImpl();
+        queryParams.add("PRICE", "in( \"25\", 50)");
+        queryParams.add("_limit", "9");
+        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(8, tickets.length);
+
+    }
+
+    @Test
+    public void testFindTicketsStartPoint() {
+        
+        MultivaluedMap queryParams = new MultivaluedMapImpl();
+        queryParams.add("PRICE", "in(25,50)");
+        queryParams.add("_start", "0");
+
+        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(8, tickets.length);
+
+        queryParams = new MultivaluedMapImpl();
+        queryParams.add("PRICE", "in( \"25\", 50)");
+        queryParams.add("_start", "2");
+        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(6, tickets.length);
+
     }
 
     @Before
@@ -120,23 +237,23 @@ public class SearchContainerTest extends BaseTixContainerTest {
 
         t1.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
         t1.addTicketProp(new StringTicketProp(sectionProp, "A"));
-        t1.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t1.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-13T13:33:50-04:00")));
         t1.addTicketProp(new StringTicketProp(tierProp, "SILVER"));
         t1.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
         t1.addTicketProp(new BooleanTicketProp(soldProp, Boolean.TRUE));
         t1.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t1.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t1.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-13T13:33:50-04:00")));
         t1.addTicketProp(new IntegerTicketProp(priceProp, 50));
         t1.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
 
         t2.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
         t2.addTicketProp(new StringTicketProp(sectionProp, "A"));
-        t2.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t2.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-13T13:33:50-04:00")));
         t2.addTicketProp(new StringTicketProp(tierProp, "SILVER"));
         t2.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.TRUE));
         t2.addTicketProp(new BooleanTicketProp(soldProp, Boolean.TRUE));
         t2.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t2.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t2.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-13T13:33:50-04:00")));
         t2.addTicketProp(new IntegerTicketProp(priceProp, 50));
         t2.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
 
@@ -197,34 +314,34 @@ public class SearchContainerTest extends BaseTixContainerTest {
 
         t8.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
         t8.addTicketProp(new StringTicketProp(sectionProp, "B"));
-        t8.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t8.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-16T13:33:50-04:00")));
         t8.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
         t8.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
         t8.addTicketProp(new BooleanTicketProp(soldProp, Boolean.FALSE));
         t8.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t8.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t8.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-16T13:33:50-04:00")));
         t8.addTicketProp(new IntegerTicketProp(priceProp, 150));
         t8.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
 
         t9.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
         t9.addTicketProp(new StringTicketProp(sectionProp, "B"));
-        t9.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t9.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-15T13:33:50-04:00")));
         t9.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
         t9.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
         t9.addTicketProp(new BooleanTicketProp(soldProp, Boolean.FALSE));
         t9.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t9.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t9.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-15T13:33:50-04:00")));
         t9.addTicketProp(new IntegerTicketProp(priceProp, 25));
         t9.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
 
         t10.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
         t10.addTicketProp(new StringTicketProp(sectionProp, "C"));
-        t10.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t10.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-15T13:33:50-04:00")));
         t10.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
         t10.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
         t10.addTicketProp(new BooleanTicketProp(soldProp, Boolean.FALSE));
         t10.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t10.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t10.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-15T13:33:50-04:00")));
         t10.addTicketProp(new IntegerTicketProp(priceProp, 25));
         t10.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
 

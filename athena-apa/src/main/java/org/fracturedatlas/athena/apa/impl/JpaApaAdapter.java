@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -162,7 +163,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     public Set<Ticket> findTickets(ApaSearch apaSearch) {
         logger.debug("Searching for tickets matching [" + apaSearch + "]");
         EntityManager em = this.emf.createEntityManager();
-        String value = null;
+        Set<String> value = null;
         Query query = null;
         Ticket tempTicket = null;
         int limit = -1;
@@ -182,7 +183,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             logger.error("Error While searching [" + apaSearch.asList() + "]: Threw the follwoing error " + ex.getLocalizedMessage());
             start = -1;
         }
-         Collection<Ticket> finishedTicketsList = null;
+        Collection<Ticket> finishedTicketsList = null;
         Set<Ticket> finishedTicketsSet = null;
         Collection<Ticket> ticketsList = null;
         PropField pf = null;
@@ -191,24 +192,46 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         Operator operator = null;
         String fieldName = null;
         List<TicketProp> props = null;
+        Iterator<String> it = null;
+        String singleValue = null;
+        Set<Object> valuesAsObjects = null;
         try {
             for (ApaSearchConstraint apc : apaSearch.asList()) {
                 fieldName = apc.getParameter();
                 pf = getPropField(fieldName);
                 vt = pf.getValueType();
                 operator = apc.getOper();
-                value = apc.getValue();
+                value = apc.getValueSet();
                 TicketProp prop = vt.newTicketProp();
+                if (value.size() > 1) {
+                    it = value.iterator();
+                    valuesAsObjects = new HashSet<Object>();
+                    while (it.hasNext()) {
+                        singleValue = it.next();
+                        try {
+                            prop.setValue(singleValue);
+                            valuesAsObjects.add(prop.getValue());
+                        } catch (Exception ex) {
+                            //TODO: log message
+                        }
+                    }
+                    queryString = "FROM " + prop.getClass().getName()
+                            + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value "
+                            + operator.getOperatorString();
+                    query = em.createQuery(queryString);
+                    query.setParameter("value", valuesAsObjects);
+                    query.setParameter("fieldName", fieldName);
 
-                prop.setValue(value);
 
-                queryString = "FROM " + prop.getClass().getName()
-                        + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value"
-                        + operator.getOperatorString() + ":value";
-                query = em.createQuery(queryString);
-                query.setParameter("value", prop.getValue());
-
-                query.setParameter("fieldName", fieldName);
+                } else {
+                    prop.setValue(value.iterator().next());
+                    queryString = "FROM " + prop.getClass().getName()
+                            + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value "
+                            + operator.getOperatorString();
+                    query = em.createQuery(queryString);
+                    query.setParameter("value", prop.getValue());
+                    query.setParameter("fieldName", fieldName);
+                }
                 props = query.getResultList();
                 ticketsList = new ArrayList<Ticket>();
                 for (TicketProp tp : props) {
