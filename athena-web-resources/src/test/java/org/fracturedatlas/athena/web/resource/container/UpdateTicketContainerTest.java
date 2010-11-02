@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.web.resource.container;
 
+import java.util.Date;
 import org.joda.time.format.ISODateTimeFormat;
 import org.joda.time.DateTime;
 import com.google.gson.Gson;
@@ -256,15 +257,17 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
         PropField field = new PropField(ValueType.DATETIME, "PERFORMANCE", Boolean.FALSE);
         PropField pf = apa.savePropField(field);
         propFieldsToDelete.add(pf);
-        DateTime dt = new DateTime();
-        DateTimeTicketProp prop = new DateTimeTicketProp(pf, dt.toDate());
+        Date dt = new Date();
+        DateTimeTicketProp prop = new DateTimeTicketProp(pf, dt);
         t.addTicketProp(prop);
 
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
-        dt = dt.plusHours(6);
+        Long time = dt.getTime();
+        time = time + 5*60*60*1000;
+        dt.setTime(time);
         PTicket pTicket = t.toClientTicket();
-        pTicket.put("PERFORMANCE", dt.toString(ISODateTimeFormat.dateTimeNoMillis()));
+        pTicket.put("PERFORMANCE", DateUtil.formatDate(dt));
         String ticketJson = gson.toJson(pTicket);
 
         String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);

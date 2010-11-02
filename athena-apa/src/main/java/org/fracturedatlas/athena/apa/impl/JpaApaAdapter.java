@@ -92,7 +92,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             em.getTransaction().commit();
             return t;
         } catch (ApaException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(),e);
             em.getTransaction().rollback();
             throw e;
         } finally {
@@ -277,8 +277,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             }
             return finishedTicketsSet;
         } catch (Exception ex) {
-            ex.printStackTrace();
-            logger.error("Error While searching [" + apaSearch.asList() + "]: Threw the follwoing error " + ex.getLocalizedMessage());
+            logger.error("Error While searching [" + apaSearch.asList() + "]: Threw the following error " + ex.getLocalizedMessage(), ex);
             return new HashSet<Ticket>();
         } finally {
             cleanup(em);

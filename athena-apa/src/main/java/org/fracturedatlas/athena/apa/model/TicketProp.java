@@ -165,23 +165,5 @@ public abstract class TicketProp extends TixEntity implements Serializable, Comp
         return hash;
     }
 
-    public boolean validValue(String value) {
-        PropField pf = getPropField();
-        try {
-            this.setValue(value);
-        } catch (Exception ex) {
-            //TODO: log message
-            return false;
-        }
-        if(pf.getStrict()) {
-            Collection<PropValue> pvc = pf.getPropValues();
-            for(PropValue pv : pvc) {
-                if (pv.equals(this.getValue())) {
-                    return true;
-                }
-            }
-            return false;
-        }
-        return true;
-    }
+ 
 }
