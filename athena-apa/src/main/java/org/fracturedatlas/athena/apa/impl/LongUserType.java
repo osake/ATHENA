@@ -126,7 +126,7 @@ public class LongUserType implements UserType {
         retValue = null;
       }
     } else {
-      throw new UnsupportedOperationException("can't convert " + value.getClass());
+      throw new UnsupportedOperationException("Can't convert " + value.getClass() + " to an id");
     }
     return retValue;
   }

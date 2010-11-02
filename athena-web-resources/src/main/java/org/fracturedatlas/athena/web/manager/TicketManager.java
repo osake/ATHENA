@@ -185,7 +185,7 @@ public class TicketManager {
         }
 
         if (!IdAdapter.isEqual(ticket.getId(), clientTicket.getId())) {
-            throw new AthenaException("Requested update to [" + idToUpdate + "] but sent record with id [" + ticket.getId() + "]");
+            throw new AthenaException("Requested update to [" + idToUpdate + "] but sent record with id [" + clientTicket.getId() + "]");
         }
 
         /*

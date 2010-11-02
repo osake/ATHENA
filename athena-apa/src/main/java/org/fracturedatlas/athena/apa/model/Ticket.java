@@ -120,7 +120,7 @@ public class Ticket extends TixEntity implements Serializable {
         return null;
     }
 
-     @Override
+    @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
@@ -132,9 +132,11 @@ public class Ticket extends TixEntity implements Serializable {
         if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
             return false;
         }
+
         if (!IdAdapter.isEqual(this.getId(), other.getId())) {
             return false;
         }
+
         if (ticketProps.size() != other.getTicketProps().size()) {
             return false;
         }
