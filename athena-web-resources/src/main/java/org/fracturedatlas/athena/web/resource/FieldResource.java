@@ -30,12 +30,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import org.apache.log4j.Logger;
 import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.fracturedatlas.athena.web.manager.PropFieldManager;
 import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.PropValue;
 import org.fracturedatlas.athena.web.util.JsonUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Path("/fields")
@@ -46,13 +47,12 @@ public class FieldResource {
     @Autowired
     PropFieldManager propFieldManager;
     Gson gson = JsonUtil.getGson();
-    Logger logger = Logger.getLogger(FieldResource.class);
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     @GET
     @Path("{id}")
     public Object get(@PathParam("id") String id) throws Exception {
         PropField propField = propFieldManager.getPropField(id);
-        System.out.println(propField);
         if (propField == null) {
             throw new NotFoundException("Field with id [" + id + "] was not found");
         } else {
@@ -136,7 +136,7 @@ public class FieldResource {
     /**
      * Add a new value to this propField.
      *
-     * You cannot update a sepcific propValue from this endpoint.  You must first delete the value then add the new one.
+     * You cannot update a specific propValue from this endpoint.  You must first delete the value then add the new one.
      */
     @POST
     @Path("/{propFieldId}/values")
@@ -151,7 +151,7 @@ public class FieldResource {
             propValue = propFieldManager.savePropValue(propFieldId, propValue);
             return propValue;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            logger.error(ex.getMessage(),ex);
             throw ex;
         }
     }

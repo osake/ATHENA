@@ -27,7 +27,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.apache.log4j.Logger;
 import org.fracturedatlas.athena.web.manager.TicketManager;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,13 +43,15 @@ import org.fracturedatlas.athena.web.exception.ForbiddenException;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.web.util.JsonUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Path("")
 @Consumes({"application/json"})
 @Produces({"application/json"})
 public class RecordResource {
 
-    Logger logger = Logger.getLogger(RecordResource.class);
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     @Autowired
     TicketManager ticketManager;
 
@@ -105,6 +106,7 @@ public class RecordResource {
         } catch (ObjectNotFoundException onfe) {
             //Catching this because ONFE maps to a BAD_REQUEST.  Since the id's are on the URL
             //We want to throw a 404 instead
+            logger.error(onfe.getMessage(),onfe);
             throw new NotFoundException(onfe.getMessage());
         }
     }

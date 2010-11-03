@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.search;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 

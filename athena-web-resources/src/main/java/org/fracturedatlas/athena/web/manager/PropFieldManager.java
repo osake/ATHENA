@@ -29,12 +29,16 @@ import org.fracturedatlas.athena.apa.model.PropValue;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.util.AllowedCharacterCheck;
 import org.fracturedatlas.athena.web.exception.AthenaException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class PropFieldManager {
 
     @Autowired
     ApaAdapter apa;
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
 
     public PropField[] findPropFields() {
         return apa.getPropFields().toArray(new PropField[0]);
@@ -73,7 +77,7 @@ public class PropFieldManager {
         PropValue propValue = null;
 
         Collection<PropValue> propValues = apa.getPropValues(propFieldId);
-        System.out.println("HEY: " + propValues);
+        logger.debug("Property Values {}", propValues);
         if (propValues != null) {
             for (PropValue v : propValues) {
                 if (IdAdapter.isEqual(propValueId, v.getId())) {

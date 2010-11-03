@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.web.serialization;
 
-import com.google.gson.Gson;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;

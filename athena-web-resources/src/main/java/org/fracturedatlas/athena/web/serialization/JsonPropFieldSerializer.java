@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.web.serialization;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
@@ -33,9 +32,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import org.fracturedatlas.athena.client.PField;
-import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 
 @Provider
