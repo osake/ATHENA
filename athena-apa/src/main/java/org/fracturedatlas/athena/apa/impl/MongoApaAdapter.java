@@ -41,18 +41,19 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.apa.model.ValueType;
 import org.fracturedatlas.athena.id.IdAdapter;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
-    Logger logger = Logger.getLogger(this.getClass().getName());
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     DB db = null;
     DBCollection fields = null;
     DBCollection records = null;
@@ -335,7 +336,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                     ticketProp.setValue(propsObj.get(fieldName));
                 } catch (Exception e) {
                     //TODO: This should throw something besides Exception
-                    e.printStackTrace();
+                    logger.error(e.getMessage(),e);
                 }
 
                 ticketProp.setTicket(getTicket(ticketId, false));
@@ -414,7 +415,8 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                         ticketProp.setValue(val);
                     } catch (Exception e) {
                         //TODO: This should throw something besides Exception
-                        e.printStackTrace();
+                        logger.error(e.getMessage(),e);
+
                     }
 
                     ticketProp.setTicket(t);

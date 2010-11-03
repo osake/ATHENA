@@ -44,6 +44,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.hibernate.annotations.Type;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /*
  * Having to use ForceDiscriminator here really blows up JPA compatibility.
@@ -132,9 +134,12 @@ public abstract class TicketProp extends TixEntity implements Serializable, Comp
         try {
             isSame = compareTo(o) == 0;
         } catch (ClassCastException e) {
-            e.printStackTrace();
+            Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+            logger.error(e.getMessage(),e);
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
+            Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+            logger.error(e.getMessage(),e);
+
         }
         return isSame;
     }

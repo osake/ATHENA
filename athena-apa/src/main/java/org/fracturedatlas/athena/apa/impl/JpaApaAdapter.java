@@ -16,7 +16,6 @@ package org.fracturedatlas.athena.apa.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -27,7 +26,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.fracturedatlas.athena.apa.AbstractApaAdapter;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.apa.exception.ApaException;
@@ -47,7 +47,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     @Autowired
     private EntityManagerFactory emf;
-    Logger logger = Logger.getLogger(this.getClass().getName());
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     final String LIMIT = "_limit";
     final String START = "_start";
 
@@ -169,18 +169,26 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         int limit = -1;
         int start = -1;
         try {
-            limit = Integer.parseInt(apaSearch.getSearchModifier(LIMIT));
+            String limitString = apaSearch.getSearchModifier(LIMIT);
+            if (limitString!=null) {
+                limit = Integer.parseInt(limitString);
+            }
         } catch (NumberFormatException ex) {
-            logger.error("Error While searching [" + apaSearch.asList() + "]: Threw the follwoing error " + ex.getLocalizedMessage());
+            logger.error("Error While searching [{}]", apaSearch.asList());
+            logger.error(ex.getMessage(), ex);
             limit = -1;
         }
         if (limit == 0) {
             return new HashSet<Ticket>();
         }
         try {
-            start = Integer.parseInt(apaSearch.getSearchModifier(START));
+            String startString = apaSearch.getSearchModifier(START);
+            if (startString!=null) {
+                start = Integer.parseInt(startString);
+            }
         } catch (NumberFormatException ex) {
-            logger.error("Error While searching [" + apaSearch.asList() + "]: Threw the follwoing error " + ex.getLocalizedMessage());
+            logger.error("Error While searching [{}]", apaSearch.asList());
+            logger.error(ex.getMessage(), ex);
             start = -1;
         }
         Collection<Ticket> finishedTicketsList = null;
@@ -212,8 +220,9 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                             prop.setValue(singleValue);
                             valuesAsObjects.add(prop.getValue());
                         } catch (Exception ex) {
-                            //TODO: log message
-                        }
+                            logger.error("Error While searching [{}]", apaSearch.asList());
+                            logger.error(ex.getMessage(), ex);
+                       }
                     }
                     queryString = "FROM " + prop.getClass().getName()
                             + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value "
@@ -244,7 +253,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                     finishedTicketsList = CollectionUtils.intersection(finishedTicketsList, ticketsList);
                 }
             }
-            logger.debug("Returning " + finishedTicketsList.size() + " tickets");
+            logger.debug("Returning {} tickets", finishedTicketsList.size());
             finishedTicketsSet = new HashSet<Ticket>();
 
             int startCounter = 0;
@@ -277,7 +286,8 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             }
             return finishedTicketsSet;
         } catch (Exception ex) {
-            logger.error("Error While searching [" + apaSearch.asList() + "]: Threw the following error " + ex.getLocalizedMessage(), ex);
+            logger.error("Error While searching [{}]", apaSearch.asList());
+            logger.error(ex.getMessage(), ex);
             return new HashSet<Ticket>();
         } finally {
             cleanup(em);
@@ -300,7 +310,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             em.getTransaction().commit();
             return outProps;
         } catch (ApaException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             em.getTransaction().rollback();
             throw e;
         } finally {
