@@ -19,14 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.web.manager;
 
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.PropValue;
 import org.fracturedatlas.athena.apa.model.StrictType;
 import org.fracturedatlas.athena.apa.model.ValueType;
 import org.fracturedatlas.athena.web.util.BaseManagerTest;
-import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -34,7 +31,6 @@ import static org.junit.Assert.*;
 public class PropValueManagerTest extends BaseManagerTest {
 
     PropFieldManager manager;
-    Logger logger = Logger.getLogger(FieldNameManagerTest.class);
 
     public PropValueManagerTest() throws Exception {
         super();

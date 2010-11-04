@@ -21,8 +21,6 @@ package org.fracturedatlas.athena.apa;
 
 import java.util.Set;
 import org.fracturedatlas.athena.search.ApaSearch;
-import java.util.List;
-import java.util.ArrayList;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.search.ApaSearchConstraint;
 import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
@@ -302,7 +300,6 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
         for (int start = 0; start <= 6; start++) {
             search = new ApaSearch.Builder(con1).and(con2).start(start).limit(limit).build();
             results = apa.findTickets(search);
-            System.out.println(results);
             assertEquals(1, results.size());
         }
         search = new ApaSearch.Builder(con1).and(con2).start(7).limit(limit).build();

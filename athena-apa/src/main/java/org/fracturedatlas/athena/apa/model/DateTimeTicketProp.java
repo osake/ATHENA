@@ -28,15 +28,16 @@ import javax.persistence.Entity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import org.apache.log4j.Logger;
 import org.fracturedatlas.athena.util.date.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 @DiscriminatorValue("DATETIME")
 public class DateTimeTicketProp extends TicketProp implements Serializable {
 
     @Transient
-    Logger log = Logger.getLogger(this.getClass().getName());
+    Logger log = LoggerFactory.getLogger(this.getClass().getName());
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="valueDateTime")
@@ -76,7 +77,7 @@ public class DateTimeTicketProp extends TicketProp implements Serializable {
     public int compareTo(Object o) throws ClassCastException {
         try {
             Date date = DateUtil.parseDate((String)o);
-            log.debug("Comparing value [" + value + "] to input of [" + date + "]");
+            log.debug("Comparing value [{}] to input of [{}]", value, date);
             return value.compareTo(date);
         } catch (ParseException pe) {
             throw new ClassCastException("Could not make a date out of this [" + o + "]");

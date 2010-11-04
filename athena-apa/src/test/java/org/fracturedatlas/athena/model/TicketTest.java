@@ -150,9 +150,6 @@ public class TicketTest extends BaseApaAdapterTest {
         ticket2.setTicketProp(testProp);
         ticket2.setTicketProp(new StringTicketProp(field2, "23"));
 
-        System.out.println(ticket);
-        System.out.println(ticket2);
-
         assertTrue(ticket.equals(ticket2));
         assertTrue(ticket2.equals(ticket));
 

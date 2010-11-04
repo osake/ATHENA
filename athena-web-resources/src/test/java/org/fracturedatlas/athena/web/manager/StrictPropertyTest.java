@@ -20,10 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.web.manager;
 
-import org.fracturedatlas.athena.web.manager.TicketManager;
 import com.google.gson.Gson;
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
@@ -44,7 +41,6 @@ import static org.junit.Assert.*;
 public class StrictPropertyTest extends BaseManagerTest {
 
     TicketManager manager;
-    Logger logger = Logger.getLogger(FieldNameManagerTest.class);
     Gson gson = JsonUtil.getGson();
 
     public StrictPropertyTest() throws Exception {

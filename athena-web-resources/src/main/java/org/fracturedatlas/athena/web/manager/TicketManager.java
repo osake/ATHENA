@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
@@ -48,7 +47,6 @@ public class TicketManager {
 
     @Autowired
     ApaAdapter apa;
-    Logger logger = Logger.getLogger(this.getClass().getName());
 
     public Ticket getTicket(Object id) {
         return apa.getTicket(id);

@@ -20,8 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.web.manager;
 
-import org.fracturedatlas.athena.web.manager.PropFieldManager;
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.fracturedatlas.athena.web.exception.InvalidFieldNameException;
 import org.fracturedatlas.athena.apa.model.PropField;
@@ -32,7 +30,6 @@ import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class FieldNameManagerTest extends BaseManagerTest {
 
@@ -41,7 +38,6 @@ public class FieldNameManagerTest extends BaseManagerTest {
     String testFieldJson = "";
     PropField testField;
     PropValue testValue;
-    Logger logger = Logger.getLogger(FieldNameManagerTest.class);
     String path = "fields.json";
     ObjectMapper mapper = JsonUtil.getMapper();
 

@@ -23,7 +23,6 @@ import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
 import static org.junit.Assert.*;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.PropValue;
@@ -32,17 +31,17 @@ import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.fracturedatlas.athena.client.PField;
 import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FieldResourceContainerTest extends BaseTixContainerTest {
 
@@ -50,7 +49,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
     ObjectMapper mapper = JsonUtil.getMapper();
     PropField testField;
     PropValue testValue;
-    Logger logger = Logger.getLogger(FieldResourceContainerTest.class);
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     Gson gson = JsonUtil.getGson();
 
     public FieldResourceContainerTest() throws Exception {
@@ -183,14 +182,14 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
         String path = "fields/";
         PropField propField = null;
         testFieldJson = "{\"valueType\":\"DATETIME\",\"strict\":\"false\",\"name\":\"BOOL\"}";
-        logger.debug("Asking for creation of " + testFieldJson);
+        logger.debug("Asking for creation of {}", testFieldJson);
 
         ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
         String jsonResponse = response.getEntity(String.class);
 
-        logger.debug("Response is " + jsonResponse);
+        logger.debug("Response is {}", jsonResponse);
         propField = mapper.readValue(jsonResponse, PropField.class);
-        logger.debug("json of propField is " + mapper.writeValueAsString(propField));
+        logger.debug("json of propField is {}", mapper.writeValueAsString(propField));
         assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
         assertEquals(propField.getName(), "BOOL");
         assertEquals(propField.getValueType(), ValueType.DATETIME);
@@ -216,14 +215,14 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
         String path = "fields/";
         PropField propField = null;
         testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"false\",\"name\":\"ARTIST\"}";
-        logger.debug("Asking for creation of " + testFieldJson);
+        logger.debug("Asking for creation of {}", testFieldJson);
 
         ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
         String jsonResponse = response.getEntity(String.class);
 
-        logger.debug("Response is " + jsonResponse);
+        logger.debug("Response is {}", jsonResponse);
         propField = mapper.readValue(jsonResponse, PropField.class);
-        logger.debug("json of propField is " + mapper.writeValueAsString(propField));
+        logger.debug("json of propField is {}", mapper.writeValueAsString(propField));
         assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
         assertEquals(propField.getName(), "ARTIST");
         assertEquals(propField.getValueType(), ValueType.STRING);
@@ -243,7 +242,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
         ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
         String jsonResponse = response.getEntity(String.class);
 
-        logger.debug("Response is " + jsonResponse);
+        logger.debug("Response is {}", jsonResponse);
         propField = mapper.readValue(jsonResponse, PropField.class);
         propFieldsToDelete.add(propField);
         assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
@@ -263,7 +262,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
         ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
         String jsonResponse = response.getEntity(String.class);
 
-        logger.debug("Response is " + jsonResponse);
+        logger.debug("Response is {}", jsonResponse);
         assertEquals(ClientResponse.Status.OK, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
         PropField field = gson.fromJson(jsonResponse, PropField.class);

@@ -161,7 +161,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
      */
     @Override
     public Set<Ticket> findTickets(ApaSearch apaSearch) {
-        logger.debug("Searching for tickets matching [" + apaSearch + "]");
+        logger.debug("Searching for tickets matching [{}]", apaSearch);
         EntityManager em = this.emf.createEntityManager();
         Set<String> value = null;
         Query query = null;

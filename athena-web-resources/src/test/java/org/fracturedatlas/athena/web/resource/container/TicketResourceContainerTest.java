@@ -24,11 +24,8 @@ import com.sun.jersey.api.client.ClientResponse;
 import java.text.ParseException;
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
-import java.util.List;
 
 
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
@@ -50,7 +47,6 @@ import org.junit.Test;
 public class TicketResourceContainerTest extends BaseTixContainerTest {
 
     Ticket testTicket = new Ticket();
-    Logger logger = Logger.getLogger(TicketResourceContainerTest.class);
     String testTicketJson = "";
     ObjectMapper mapper = JsonUtil.getMapper();
     Gson gson = JsonUtil.getGson();

@@ -57,7 +57,7 @@ public class DateUtil {
         if(date == null) {
             return null;
         } else {
-            return fmtDateOnly.print(date.getTime());
+            return fmt.print(date.getTime());
         }
     }
 
