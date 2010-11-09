@@ -39,6 +39,8 @@ import org.fracturedatlas.athena.apa.model.*;
 import org.fracturedatlas.athena.client.*;
 import org.fracturedatlas.athena.id.*;
 import org.junit.After;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BaseTixContainerTest extends JerseyTest {
 
@@ -51,6 +53,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
 
     protected List<Ticket> ticketsToDelete = new ArrayList<Ticket>();
     protected List<PropField> propFieldsToDelete = new ArrayList<PropField>();
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     public BaseTixContainerTest() {
 
@@ -76,7 +79,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
             try {
                 apa.deleteTicket(t);
             } catch (Exception ignored) {
-                    ignored.printStackTrace();
+                    logger.error(ignored.getMessage(), ignored);
             }
         }
 
@@ -84,7 +87,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
             try {
                     apa.deletePropField(pf);
             } catch (Exception ignored) {
-                    ignored.printStackTrace();
+                    logger.error(ignored.getMessage(), ignored);
             }
         }
     }

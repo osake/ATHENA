@@ -27,6 +27,8 @@ import java.sql.Types;
 
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LongUserType implements UserType {
 
@@ -119,10 +121,11 @@ public class LongUserType implements UserType {
       try {
         retValue = Long.valueOf(value.toString());
       } catch (ClassCastException e) {
-        e.printStackTrace();
+        Logger logger = LoggerFactory.getLogger(LongUserType.class);
+        logger.error(e.getMessage(), e);
         retValue = null;
       } catch (NumberFormatException e) {
-        e.printStackTrace();
+        Logger logger = LoggerFactory.getLogger(LongUserType.class);
         retValue = null;
       }
     } else {

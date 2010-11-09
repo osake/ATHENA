@@ -207,7 +207,11 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             for (ApaSearchConstraint apc : apaSearch.asList()) {
                 fieldName = apc.getParameter();
                 pf = getPropField(fieldName);
-                vt = pf.getValueType();
+                if (pf != null) {
+                    vt = pf.getValueType();
+                } else {
+                    throw new ApaException("No Property Field called " + fieldName + " exists.");
+                }
                 operator = apc.getOper();
                 value = apc.getValueSet();
                 TicketProp prop = vt.newTicketProp();
@@ -252,6 +256,9 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 } else {
                     finishedTicketsList = CollectionUtils.intersection(finishedTicketsList, ticketsList);
                 }
+            }
+            if (finishedTicketsList == null) {
+                finishedTicketsList = new ArrayList<Ticket>();
             }
             logger.debug("Returning {} tickets", finishedTicketsList.size());
             finishedTicketsSet = new HashSet<Ticket>();

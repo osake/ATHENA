@@ -20,10 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.apa;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.log4j.Logger;
 import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
 import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.StringTicketProp;
@@ -39,7 +38,7 @@ import static org.junit.Assert.*;
 public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
 
     Ticket testTicket = new Ticket();
-    Logger logger = Logger.getLogger(ApaAdapterDeleteTicketsTest.class);
+    Logger logger = LoggerFactory.getLogger(ApaAdapterDeleteTicketsTest.class);
 
     public ApaAdapterDeleteTicketsTest() throws Exception {
         super();

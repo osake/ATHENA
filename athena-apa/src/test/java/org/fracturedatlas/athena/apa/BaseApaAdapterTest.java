@@ -25,12 +25,15 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import java.util.ArrayList;
 import java.util.List;
 import org.fracturedatlas.athena.apa.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BaseApaAdapterTest {
 
     protected ApaAdapter apa;
     protected List<Ticket> ticketsToDelete = new ArrayList<Ticket>();
     protected List<PropField> propFieldsToDelete = new ArrayList<PropField>();
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     public BaseApaAdapterTest() {
         ApplicationContext context = new ClassPathXmlApplicationContext("testApplicationContext.xml");
@@ -42,7 +45,7 @@ public abstract class BaseApaAdapterTest {
             try {
                 apa.deleteTicket(t);
             } catch (Exception ignored) {
-                    ignored.printStackTrace();
+                    logger.error(ignored.getMessage(), ignored);
             }
         }
 
@@ -50,7 +53,7 @@ public abstract class BaseApaAdapterTest {
             try {
                     apa.deletePropField(pf);
             } catch (Exception ignored) {
-                    ignored.printStackTrace();
+                    logger.error(ignored.getMessage(), ignored);
             }
         }
     }

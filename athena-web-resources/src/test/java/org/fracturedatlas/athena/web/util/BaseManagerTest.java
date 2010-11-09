@@ -25,6 +25,8 @@ import java.util.List;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.Ticket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
@@ -35,6 +37,7 @@ public abstract class BaseManagerTest {
 
     protected List<Ticket> ticketsToDelete = new ArrayList<Ticket>();
     protected List<PropField> propFieldsToDelete = new ArrayList<PropField>();
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     public BaseManagerTest() {
         context = new ClassPathXmlApplicationContext("testApplicationContext.xml");
@@ -46,7 +49,7 @@ public abstract class BaseManagerTest {
             try {
                 apa.deleteTicket(t);
             } catch (Exception ignored) {
-                ignored.printStackTrace();
+                    logger.error(ignored.getMessage(), ignored);
             }
         }
 
@@ -54,8 +57,8 @@ public abstract class BaseManagerTest {
             try {
                 apa.deletePropField(pf);
             } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
+                     logger.error(ignored.getMessage(), ignored);
+           }
         }
     }
 }
