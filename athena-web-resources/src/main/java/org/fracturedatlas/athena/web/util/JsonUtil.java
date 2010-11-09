@@ -30,13 +30,15 @@ import org.codehaus.jackson.map.AnnotationIntrospector;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.util.date.DateTypeConverter;
 import org.fracturedatlas.athena.web.serialization.JsonTicketSerializer;
 
 public class JsonUtil {
 
     static GsonBuilder gb = new GsonBuilder()
                                 .setLongSerializationPolicy(LongSerializationPolicy.STRING)
-                                .registerTypeAdapter(PTicket.class, new JsonTicketSerializer());
+                                .registerTypeAdapter(PTicket.class, new JsonTicketSerializer())
+                                .registerTypeAdapter(java.util.Date.class, new DateTypeConverter());
 
     static Gson gson;
 

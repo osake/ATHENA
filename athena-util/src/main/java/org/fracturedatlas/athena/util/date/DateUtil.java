@@ -27,8 +27,8 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
 public class DateUtil {
-    static DateTimeFormatter fmt = ISODateTimeFormat.dateTimeNoMillis();
-    static DateTimeFormatter fmtDateOnly = ISODateTimeFormat.date();
+    public static DateTimeFormatter ATHENA_DATE_TIME_FORMAT = ISODateTimeFormat.dateTimeNoMillis();
+    public static DateTimeFormatter ATHENA_DATE_FORMAT = ISODateTimeFormat.date();
 
     DateTime datetime;
 
@@ -47,9 +47,9 @@ public class DateUtil {
         }
 
         try{
-            return fmt.parseDateTime(iso8061StrDateTime).toDate();
+            return ATHENA_DATE_TIME_FORMAT.parseDateTime(iso8061StrDateTime).toDate();
         } catch (IllegalArgumentException iae) {
-            return fmtDateOnly.parseDateTime(iso8061StrDateTime).toDate();
+            return ATHENA_DATE_FORMAT.parseDateTime(iso8061StrDateTime).toDate();
         }
     }
 
@@ -57,7 +57,7 @@ public class DateUtil {
         if(date == null) {
             return null;
         } else {
-            return fmt.print(date.getTime());
+            return ATHENA_DATE_TIME_FORMAT.print(date.getTime());
         }
     }
 
@@ -65,7 +65,7 @@ public class DateUtil {
         if(date == null) {
             return null;
         } else {
-            return fmt.print(date.getTime());
+            return ATHENA_DATE_TIME_FORMAT.print(date.getTime());
         }
     }
 }
