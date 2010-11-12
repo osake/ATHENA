@@ -5,3 +5,4 @@ logs/
 .swp
 release.properties
 *.releaseBackup
+myApp.log
