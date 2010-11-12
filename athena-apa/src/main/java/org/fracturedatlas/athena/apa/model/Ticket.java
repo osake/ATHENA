@@ -180,7 +180,7 @@ public class Ticket extends TixEntity implements Serializable {
     public PTicket toClientTicket() {
         PTicket pTicket = new PTicket();
 
-        pTicket.setName(this.getType());
+        pTicket.setType(this.getType());
         if(this.getId() != null) {
             pTicket.setId(this.getId().toString());
         } else {

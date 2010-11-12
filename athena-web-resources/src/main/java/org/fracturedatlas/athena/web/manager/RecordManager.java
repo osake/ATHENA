@@ -43,7 +43,7 @@ import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class TicketManager {
+public class RecordManager {
 
     @Autowired
     ApaAdapter apa;
@@ -224,7 +224,7 @@ public class TicketManager {
         }
 
         ticket = apa.getTicket(clientTicket.getId());
-        ticket.setName(clientTicket.getName());
+        ticket.setType(clientTicket.getType());
         ticket = apa.saveTicket(ticket);
         return ticket;
     }
@@ -266,7 +266,7 @@ public class TicketManager {
             ticket.addTicketProp(ticketProp);
         }
 
-        ticket.setName(clientTicket.getName());
+        ticket.setType(clientTicket.getType());
         ticket = apa.saveTicket(ticket);
         return ticket;
     }

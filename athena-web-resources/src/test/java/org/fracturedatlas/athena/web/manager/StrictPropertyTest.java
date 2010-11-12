@@ -40,12 +40,12 @@ import static org.junit.Assert.*;
 
 public class StrictPropertyTest extends BaseManagerTest {
 
-    TicketManager manager;
+    RecordManager manager;
     Gson gson = JsonUtil.getGson();
 
     public StrictPropertyTest() throws Exception {
         super();
-        manager = (TicketManager)context.getBean("ticketManager");
+        manager = (RecordManager)context.getBean("recordManager");
     }
 
     @After

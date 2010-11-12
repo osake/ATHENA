@@ -97,7 +97,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
             assertTrue(IdAdapter.isEqual(t.getId(), pTicket.getId()));
         }
         
-        assertEquals(t.getName(), pTicket.getName());
+        assertEquals(t.getType(), pTicket.getType());
         assertEquals(t.getTicketProps().size(), pTicket.getProps().size());
 
         for(TicketProp ticketProp : t.getTicketProps()) {

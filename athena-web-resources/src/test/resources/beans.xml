@@ -8,7 +8,7 @@
            http://www.springframework.org/schema/tx
            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
                
-    <bean id="ticketManager" class="org.fracturedatlas.athena.web.manager.TicketManager" autowire="autodetect"/>
+    <bean id="recordManager" class="org.fracturedatlas.athena.web.manager.RecordManager" autowire="autodetect"/>
     <bean id="recordResource" class="org.fracturedatlas.athena.web.resource.RecordResource" autowire="autodetect"/>
 
     <bean id="fieldResource" class="org.fracturedatlas.athena.web.resource.FieldResource" autowire="autodetect"/>

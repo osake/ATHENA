@@ -62,7 +62,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testCreateTicketWithNoProps() {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
         PTicket pTicket = t.toClientTicket();
 
         String ticketJson = gson.toJson(pTicket);
@@ -182,7 +182,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testCreateTicketBooleanProp() {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
 
         PropField field = new PropField();
         field.setValueType(ValueType.STRING);
@@ -227,7 +227,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testCreateTicketDateTimeProp() throws Exception {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
 
         PropField field = new PropField();
         field.setValueType(ValueType.STRING);
@@ -299,7 +299,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
         PTicket pTicket = new PTicket();
 
-        pTicket.setName("ticket10");
+        pTicket.setType("ticket10");
         pTicket.getProps().put(seatNumberField.getName(), "34");
         pTicket.getProps().put(sectionField.getName(), "CCC");
         pTicket.getProps().put(soldField.getName(), "false");
@@ -337,7 +337,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
         PTicket pTicket = new PTicket();
 
-        pTicket.setName("ticket " + UUID.randomUUID().toString().substring(3, 8));
+        pTicket.setType("ticket " + UUID.randomUUID().toString().substring(3, 8));
 
         for (int i = 0; i < NUMBER_OF_PROPS; i++) {
             PropField randomField = apa.savePropField(new PropField(
@@ -405,7 +405,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     public Ticket createSampleTicket(Boolean saveItToo) {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
 
         PropField field = new PropField();
         field.setValueType(ValueType.STRING);

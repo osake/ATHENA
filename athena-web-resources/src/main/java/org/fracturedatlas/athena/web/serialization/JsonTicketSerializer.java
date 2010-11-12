@@ -87,7 +87,7 @@ public class JsonTicketSerializer implements MessageBodyWriter<Ticket>,
     public JsonElement serialize(PTicket pTicket, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonPropMap = JsonUtil.mapToJson(pTicket.getProps());
         jsonPropMap.addProperty("id", IdAdapter.toString(pTicket.getId()));
-        jsonPropMap.addProperty("name", pTicket.getName());
+        jsonPropMap.addProperty("type", pTicket.getType());
         return jsonPropMap;
 
     }
@@ -96,9 +96,9 @@ public class JsonTicketSerializer implements MessageBodyWriter<Ticket>,
         PTicket pTicket = new PTicket();
         JsonObject ticketObj = json.getAsJsonObject();
         pTicket.setId(JsonUtil.nullSafeGetAsString(ticketObj.get("id")));
-        pTicket.setName(JsonUtil.nullSafeGetAsString(ticketObj.get("name")));
+        pTicket.setType(JsonUtil.nullSafeGetAsString(ticketObj.get("type")));
         ticketObj.remove("id");
-        ticketObj.remove("name");
+        ticketObj.remove("type");
         for (Entry<String, JsonElement> entry : ticketObj.entrySet()) {
             pTicket.put(entry.getKey(), entry.getValue().getAsString());
         }

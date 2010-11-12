@@ -64,7 +64,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testCreateThenUpdateNoPropsNoChange() {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
         PTicket pTicket = t.toClientTicket();
 
         String ticketJson = gson.toJson(pTicket);
@@ -84,7 +84,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testCreateThenUpdate2NoPropsNoChange() {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
         PTicket pTicket = t.toClientTicket();
 
         String ticketJson = gson.toJson(pTicket);
@@ -109,7 +109,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
     public void testCreateThenUpdateName() {
         Ticket t = createSampleTicket(true);
         ticketsToDelete.add(t);
-        t.setName("updated ticket");
+        t.setType("updated ticket");
         PTicket pTicket = t.toClientTicket();
 
         String ticketJson = gson.toJson(pTicket);
@@ -132,7 +132,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
         PropField pf = apa.savePropField(field);
         propFieldsToDelete.add(pf);
 
-        t.setName("updated ticket");
+        t.setType("updated ticket");
         PTicket pTicket = t.toClientTicket();
         pTicket.put("FOO", "FIGHTERS");
 
@@ -158,12 +158,12 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
         PropField pf = apa.savePropField(field);
         propFieldsToDelete.add(pf);
 
-        t.setName("updated ticket");
+        t.setType("updated ticket");
         PTicket pTicket = t.toClientTicket();
         pTicket.put("FOO", "FIGHTERS");
 
         PTicket testPTicket = new PTicket();
-        testPTicket.setName(pTicket.getName());
+        testPTicket.setType(pTicket.getType());
         testPTicket.setId(pTicket.getId());
         testPTicket.put("FOO", "FIGHTERS");
         String ticketJson = gson.toJson(testPTicket);
@@ -180,7 +180,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
         Ticket t = createSampleTicket(true);
         ticketsToDelete.add(t);
 
-        t.setName("updated ticket");
+        t.setType("updated ticket");
         PTicket pTicket = t.toClientTicket();
         pTicket.put("SEAT_NUMBER", "3009");
         String ticketJson = gson.toJson(pTicket);
@@ -197,7 +197,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
         Ticket t = createSampleTicket(true);
         ticketsToDelete.add(t);
 
-        t.setName("updated ticket");
+        t.setType("updated ticket");
         PTicket pTicket = t.toClientTicket();
         pTicket.put("SEAT_NUMBER", "3009");
         pTicket.put("SECTION", "JIMMY");
@@ -239,7 +239,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
         Ticket t = createSampleTicket(false);
         ticketsToDelete.add(t);
 
-        t.setName("updated ticket");
+        t.setType("updated ticket");
         PTicket pTicket = t.toClientTicket();
         pTicket.setId(40000L);
 
@@ -325,7 +325,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
 
     public Ticket createSampleTicket(Boolean saveItToo) {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
 
         PropField field = new PropField();
         field.setValueType(ValueType.STRING);

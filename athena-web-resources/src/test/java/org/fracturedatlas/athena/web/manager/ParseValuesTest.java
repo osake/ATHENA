@@ -5,7 +5,7 @@
 
 package org.fracturedatlas.athena.web.manager;
 
-import org.fracturedatlas.athena.web.manager.TicketManager;
+import org.fracturedatlas.athena.web.manager.RecordManager;
 import java.util.Set;
 import java.util.HashSet;
 import org.junit.After;
@@ -43,12 +43,12 @@ public class ParseValuesTest {
      @Test
     public void parseValuesTest() {
      Set<String> testSet=new HashSet<String>();
-     testSet = TicketManager.parseValues("");
-     testSet = TicketManager.parseValues("(ABC,BBC)");
-     testSet = TicketManager.parseValues("( ABC ,BBC)");
-     testSet = TicketManager.parseValues("( \\\"A BC \\\",  \"BBC\")");
-     testSet = TicketManager.parseValues("( \"ABC \",BBC)");
-     testSet = TicketManager.parseValues("(\" ABC\", BBC\"");
+     testSet = RecordManager.parseValues("");
+     testSet = RecordManager.parseValues("(ABC,BBC)");
+     testSet = RecordManager.parseValues("( ABC ,BBC)");
+     testSet = RecordManager.parseValues("( \\\"A BC \\\",  \"BBC\")");
+     testSet = RecordManager.parseValues("( \"ABC \",BBC)");
+     testSet = RecordManager.parseValues("(\" ABC\", BBC\"");
 
 
      }

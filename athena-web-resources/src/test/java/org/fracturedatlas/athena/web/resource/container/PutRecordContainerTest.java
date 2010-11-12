@@ -104,7 +104,7 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
     @Test
     public void testCreateTicketWithPut() {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "PRICE", Boolean.FALSE));
         PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
         IntegerTicketProp prop = new IntegerTicketProp(pf, 4);
@@ -136,7 +136,7 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
         String path = RECORDS_PATH + "0.json";
 
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "PRICE", Boolean.FALSE));
         PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
         IntegerTicketProp prop = new IntegerTicketProp(pf, 4);
@@ -195,7 +195,7 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
 
     public Ticket createSampleTicket() {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
 
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "PRICE", Boolean.FALSE));
         PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));

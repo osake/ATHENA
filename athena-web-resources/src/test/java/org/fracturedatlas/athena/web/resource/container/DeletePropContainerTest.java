@@ -103,7 +103,7 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
     
     public Ticket createSampleTicket(Boolean saveItToo) {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
 
         PropField field = new PropField();
         field.setValueType(ValueType.STRING);

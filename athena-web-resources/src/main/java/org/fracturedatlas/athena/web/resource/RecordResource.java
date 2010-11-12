@@ -27,7 +27,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.fracturedatlas.athena.web.manager.TicketManager;
+import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -53,14 +53,14 @@ public class RecordResource {
 
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     @Autowired
-    TicketManager ticketManager;
+    RecordManager recordManager;
 
     Gson gson = JsonUtil.getGson();
 
     @GET
     @Path("{type}/{id}")
     public Object get(@PathParam("id") String id) throws NotFoundException {
-        Ticket ticket = ticketManager.getTicket(id);
+        Ticket ticket = recordManager.getTicket(id);
         if (ticket == null) {
             throw new NotFoundException("Ticket with id [" + id + "] was not found");
         } else {
@@ -78,7 +78,7 @@ public class RecordResource {
     @GET
     @Path("{type}/{id}/props")
     public TicketProp[] getProps(@PathParam("id") String id) throws NotFoundException {
-        Ticket ticket = ticketManager.getTicket(id);
+        Ticket ticket = recordManager.getTicket(id);
         if (ticket == null) {
             throw new NotFoundException("Ticket with id [" + id + "] was not found");
         } else {
@@ -89,11 +89,11 @@ public class RecordResource {
     @DELETE
     @Path("{type}/{id}")
     public void delete(@PathParam("id") String id) throws NotFoundException {
-        Ticket ticket = ticketManager.getTicket(id);
+        Ticket ticket = recordManager.getTicket(id);
         if (ticket == null) {
             throw new NotFoundException("Ticket with id [" + id + "] was not found");
         } else {
-            ticketManager.deleteTicket(ticket);
+            recordManager.deleteTicket(ticket);
         }
     }
 
@@ -102,7 +102,7 @@ public class RecordResource {
     public void delete(@PathParam("id") String id,
                        @PathParam("name") String name) throws NotFoundException {
         try {
-            ticketManager.deletePropertyFromTicket(name, id);
+            recordManager.deletePropertyFromTicket(name, id);
         } catch (ObjectNotFoundException onfe) {
             //Catching this because ONFE maps to a BAD_REQUEST.  Since the id's are on the URL
             //We want to throw a 404 instead
@@ -128,7 +128,7 @@ public class RecordResource {
             throw new ForbiddenException("You must specify at least one query parameter when searching for tickets");
         } 
 
-        return ticketManager.findTickets(queryParams);
+        return recordManager.findTickets(queryParams);
     }
 
     /**
@@ -141,7 +141,7 @@ public class RecordResource {
     @POST
     @Path("{type}/")
     public Object save(PTicket pTicket) throws Exception {
-        Ticket ticket = ticketManager.saveTicketFromClientRequest(pTicket);
+        Ticket ticket = recordManager.saveTicketFromClientRequest(pTicket);
         return ticket;
     }
 
@@ -155,7 +155,7 @@ public class RecordResource {
     @PUT
     @Path("{type}/{id}")
     public Object update(@PathParam("id") String id, PTicket pTicket) throws Exception {
-        Ticket ticket = ticketManager.updateTicketFromClientTicket(pTicket, id);
+        Ticket ticket = recordManager.updateTicketFromClientTicket(pTicket, id);
         return ticket;
     }
 }

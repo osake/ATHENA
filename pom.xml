@@ -63,7 +63,7 @@
                     <username>parakeetdb</username>
                     <password>parakeetdb</password>
                     <srcFiles>
-                        <srcFile>../ddl/parakeet-ddl.sql</srcFile>
+                        <srcFile>../ddl/athena-ddl.sql</srcFile>
                     </srcFiles>
                 </configuration>
                 <executions>

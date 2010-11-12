@@ -63,7 +63,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     @Test
     public void testGetTicketJson() {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
 
         PropField field = new PropField();
         field.setValueType(ValueType.STRING);
@@ -104,7 +104,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     @Test
     public void testGetTicketBooleanProp() {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
 
         PropField pf = apa.savePropField(new PropField(ValueType.STRING, "SEAT_NUMBER", Boolean.FALSE));
         PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
@@ -136,7 +136,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     @Test
     public void testGetTicketDateTimeProp() throws Exception {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
 
         PropField pf = apa.savePropField(new PropField(ValueType.DATETIME, "PERFORMANCE", Boolean.FALSE));
         PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
@@ -169,7 +169,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     @Test
     public void testGetTicketIntegerProp() {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", Boolean.FALSE));
         PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
 
@@ -200,7 +200,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     @Test
     public void testGetTicketProps() {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", Boolean.FALSE));
         propFieldsToDelete.add(pf);
         PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
@@ -237,7 +237,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     @Test
     public void testGetTicketPropsNoProps() {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", Boolean.FALSE));
         propFieldsToDelete.add(pf);
         PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
@@ -257,7 +257,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     @Test
     public void testGetTicketWithNoProps() {
         Ticket t = new Ticket();
-        t.setName("ticket");
+        t.setType("ticket");
 
         t = apa.saveTicket(t);
 
