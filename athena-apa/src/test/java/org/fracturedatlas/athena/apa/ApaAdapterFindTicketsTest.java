@@ -272,19 +272,19 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         PropField pf3 = apa.savePropField(field);
 
         t.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t.setName("1");
+        t.setType("1");
         t = apa.saveTicket(t);
 
         t2.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t2.setName("2");
+        t2.setType("2");
         t2 = apa.saveTicket(t2);
 
         t3.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t3.setName("3");
+        t3.setType("3");
         t3 = apa.saveTicket(t3);
 
         t4.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t4.setName("4");
+        t4.setType("4");
         t4 = apa.saveTicket(t4);
 
         ticketsToDelete.add(t);
@@ -300,7 +300,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
         Set<Integer> intNamesFound = new HashSet<Integer>();
         for (Ticket ticket : tickets) {
-            Integer intName = Integer.parseInt(ticket.getName());
+            Integer intName = Integer.parseInt(ticket.getType());
             if (intNamesFound.contains(intName)) {
                 fail("Found the same ticket twice");
             } else {
@@ -343,27 +343,27 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         PropField pf3 = apa.savePropField(field);
 
         t.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t.setName("1");
+        t.setType("1");
         t = apa.saveTicket(t);
 
         t2.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t2.setName("2");
+        t2.setType("2");
         t2 = apa.saveTicket(t2);
 
         t3.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t3.setName("3");
+        t3.setType("3");
         t3 = apa.saveTicket(t3);
 
         t4.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t4.setName("4");
+        t4.setType("4");
         t4 = apa.saveTicket(t4);
 
         t5.addTicketProp(new StringTicketProp(pf3, "Warrant"));
-        t5.setName("5");
+        t5.setType("5");
         t5 = apa.saveTicket(t5);
 
         t6.addTicketProp(new StringTicketProp(pf3, "Warrant"));
-        t6.setName("6");
+        t6.setType("6");
         t6 = apa.saveTicket(t6);
 
         ticketsToDelete.add(t);
@@ -382,7 +382,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
         Set<Integer> intNamesFound = new HashSet<Integer>();
         for (Ticket ticket : tickets) {
-            Integer intName = Integer.parseInt(ticket.getName());
+            Integer intName = Integer.parseInt(ticket.getType());
             if (intNamesFound.contains(intName)) {
                 fail("Found the same ticket twice");
             } else {
@@ -426,32 +426,32 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
         t.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t.setName("1");
+        t.setType("1");
         t = apa.saveTicket(t);
 
         t2.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t2.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t2.setName("2");
+        t2.setType("2");
         t2 = apa.saveTicket(t2);
 
         t3.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t3.addTicketProp(new IntegerTicketProp(pf4, 100));
-        t3.setName("3");
+        t3.setType("3");
         t3 = apa.saveTicket(t3);
 
         t4.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t4.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t4.setName("4");
+        t4.setType("4");
         t4 = apa.saveTicket(t4);
 
         t5.addTicketProp(new StringTicketProp(pf3, "Warrant"));
         t5.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t5.setName("5");
+        t5.setType("5");
         t5 = apa.saveTicket(t5);
 
         t6.addTicketProp(new StringTicketProp(pf3, "Warrant"));
         t6.addTicketProp(new IntegerTicketProp(pf4, 75));
-        t6.setName("6");
+        t6.setType("6");
         t6 = apa.saveTicket(t6);
 
         ticketsToDelete.add(t);
@@ -472,7 +472,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
         Set<Integer> intNamesFound = new HashSet<Integer>();
         for (Ticket ticket : tickets) {
-            Integer intName = Integer.parseInt(ticket.getName());
+            Integer intName = Integer.parseInt(ticket.getType());
             if (intNamesFound.contains(intName)) {
                 fail("Found the same ticket twice");
             } else {
@@ -513,32 +513,32 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
         t.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t.setName("1");
+        t.setType("1");
         t = apa.saveTicket(t);
 
         t2.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t2.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t2.setName("2");
+        t2.setType("2");
         t2 = apa.saveTicket(t2);
 
         t3.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t3.addTicketProp(new IntegerTicketProp(pf4, 100));
-        t3.setName("3");
+        t3.setType("3");
         t3 = apa.saveTicket(t3);
 
         t4.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t4.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t4.setName("4");
+        t4.setType("4");
         t4 = apa.saveTicket(t4);
 
         t5.addTicketProp(new StringTicketProp(pf3, "Warrant"));
         t5.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t5.setName("5");
+        t5.setType("5");
         t5 = apa.saveTicket(t5);
 
         t6.addTicketProp(new StringTicketProp(pf3, "Warrant"));
         t6.addTicketProp(new IntegerTicketProp(pf4, 75));
-        t6.setName("6");
+        t6.setType("6");
         t6 = apa.saveTicket(t6);
 
         ticketsToDelete.add(t);
@@ -577,32 +577,32 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
         t.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t.setName("1");
+        t.setType("1");
         t = apa.saveTicket(t);
 
         t2.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t2.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t2.setName("2");
+        t2.setType("2");
         t2 = apa.saveTicket(t2);
 
         t3.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t3.addTicketProp(new IntegerTicketProp(pf4, 100));
-        t3.setName("3");
+        t3.setType("3");
         t3 = apa.saveTicket(t3);
 
         t4.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t4.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t4.setName("4");
+        t4.setType("4");
         t4 = apa.saveTicket(t4);
 
         t5.addTicketProp(new StringTicketProp(pf3, "Warrant"));
         t5.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t5.setName("5");
+        t5.setType("5");
         t5 = apa.saveTicket(t5);
 
         t6.addTicketProp(new StringTicketProp(pf3, "Warrant"));
         t6.addTicketProp(new IntegerTicketProp(pf4, 75));
-        t6.setName("6");
+        t6.setType("6");
         t6 = apa.saveTicket(t6);
 
         ticketsToDelete.add(t);
@@ -622,7 +622,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
         Set<Integer> intNamesFound = new HashSet<Integer>();
         for (Ticket ticket : tickets) {
-            Integer intName = Integer.parseInt(ticket.getName());
+            Integer intName = Integer.parseInt(ticket.getType());
             if (intNamesFound.contains(intName)) {
                 fail("Found the same ticket twice");
             } else {

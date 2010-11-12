@@ -53,7 +53,7 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
-        ticket.setName("record");
+        ticket.setType("record");
         ticket.addTicketProp(new StringTicketProp(field, "03"));
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
         ticket.addTicketProp(new StringTicketProp(field2, "23"));
@@ -75,7 +75,7 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
-        ticket.setName("record");
+        ticket.setType("record");
         TicketProp testProp = new StringTicketProp(field1, "13");
         ticket.addTicketProp(new StringTicketProp(field, "03"));
         ticket.addTicketProp(testProp);
@@ -114,7 +114,7 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
-        ticket.setName("record");
+        ticket.setType("record");
         TicketProp testProp = new StringTicketProp(field1, "13");
         ticket.setTicketProp(new StringTicketProp(field, "03"));
         ticket.setTicketProp(testProp);
@@ -138,14 +138,14 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
-        ticket.setName("record");
+        ticket.setType("record");
         TicketProp testProp = new StringTicketProp(field1, "13");
         ticket.setTicketProp(new StringTicketProp(field, "03"));
         ticket.setTicketProp(testProp);
         ticket.setTicketProp(new StringTicketProp(field2, "23"));
 
         Ticket ticket2 = new Ticket();
-        ticket2.setName("record");
+        ticket2.setType("record");
         ticket2.setTicketProp(new StringTicketProp(field, "03"));
         ticket2.setTicketProp(testProp);
         ticket2.setTicketProp(new StringTicketProp(field2, "23"));
@@ -165,10 +165,10 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
-        ticket.setName("record");
+        ticket.setType("record");
 
         Ticket ticket2 = new Ticket();
-        ticket2.setName("record");
+        ticket2.setType("record");
 
         ticket = apa.saveTicket(ticket);
         ticketsToDelete.add(ticket);
@@ -189,14 +189,14 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
-        ticket.setName("record");
+        ticket.setType("record");
         TicketProp testProp = new StringTicketProp(field1, "13");
         ticket.setTicketProp(new StringTicketProp(field, "03"));
         ticket.setTicketProp(testProp);
         ticket.setTicketProp(new StringTicketProp(field2, "23"));
 
         Ticket ticket2 = new Ticket();
-        ticket2.setName("record");
+        ticket2.setType("record");
         ticket2.setTicketProp(new StringTicketProp(field, "03"));
         ticket2.setTicketProp(testProp);
         ticket2.setTicketProp(new StringTicketProp(field2, "23"));
@@ -220,7 +220,7 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
-        ticket.setName("record");
+        ticket.setType("record");
         TicketProp testProp = new StringTicketProp(field1, "13");
         ticket.setTicketProp(new StringTicketProp(field, "03"));
         ticket.setTicketProp(testProp);
@@ -229,7 +229,7 @@ public class TicketTest extends BaseApaAdapterTest {
         ticket = apa.saveTicket(ticket);
         Ticket savedTicket = apa.getTicket(ticket.getId());
         ticketsToDelete.add(savedTicket);
-        ticket.setName("foo");
+        ticket.setType("foo");
         assertFalse(ticket.equals(savedTicket));
         assertFalse(savedTicket.equals(ticket));
 
@@ -250,7 +250,7 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
-        ticket.setName("record");
+        ticket.setType("record");
         TicketProp testProp = new StringTicketProp(field1, "13");
         ticket.setTicketProp(new StringTicketProp(field, "03"));
         ticket.setTicketProp(testProp);

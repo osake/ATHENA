@@ -50,7 +50,7 @@ public class ApaAdapterSavePropTest extends BaseApaAdapterTest {
 
 
         Ticket t = new Ticket();
-        t.setName("TEST");
+        t.setType("TEST");
         PropField pf3 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT", Boolean.FALSE));
         propFieldsToDelete.add(pf3);
         PropField pf4 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT2", Boolean.FALSE));
@@ -78,7 +78,7 @@ public class ApaAdapterSavePropTest extends BaseApaAdapterTest {
 
 
         Ticket t = new Ticket();
-        t.setName("TEST");
+        t.setType("TEST");
         PropField pf3 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT", Boolean.FALSE));
         propFieldsToDelete.add(pf3);
         PropField pf4 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT2", Boolean.FALSE));
@@ -104,7 +104,7 @@ public class ApaAdapterSavePropTest extends BaseApaAdapterTest {
 
 
         Ticket t = new Ticket();
-        t.setName("TEST");
+        t.setType("TEST");
         PropField pf3 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT", Boolean.FALSE));
         propFieldsToDelete.add(pf3);
         PropField pf4 = apa.savePropField(new PropField(ValueType.STRING, "TESTINT2", Boolean.FALSE));

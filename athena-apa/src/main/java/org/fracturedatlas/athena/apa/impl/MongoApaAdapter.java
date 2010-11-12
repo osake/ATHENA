@@ -94,7 +94,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
 
         doc.put("_id", t.getId());
-        doc.put("name", t.getName());
+        doc.put("name", t.getType());
 
         BasicDBObject props = new BasicDBObject();
         for(TicketProp prop : t.getTicketProps()) {
@@ -399,7 +399,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         if(recordObject != null) {
             t = new Ticket();
             t.setId(recordObject.get("_id"));
-            t.setName((String)recordObject.get("name"));
+            t.setType((String)recordObject.get("name"));
             
             if(includeProps) {
                 DBObject propsObj = (DBObject)recordObject.get("props");

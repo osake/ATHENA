@@ -51,7 +51,7 @@ public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
-        ticket.setName("hockey");
+        ticket.setType("hockey");
         ticket.addTicketProp(new StringTicketProp(field, "03"));
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
         ticket.addTicketProp(new StringTicketProp(field2, "23"));
@@ -92,7 +92,7 @@ public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
-        ticket.setName("hockey");
+        ticket.setType("hockey");
         ticket.addTicketProp(new StringTicketProp(field, "03"));
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
         ticket.addTicketProp(new StringTicketProp(field2, "23"));
@@ -114,7 +114,7 @@ public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field2);
 
         Ticket ticket = new Ticket();
-        ticket.setName("hockey");
+        ticket.setType("hockey");
         ticket.addTicketProp(new StringTicketProp(field, "03"));
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
         ticket.addTicketProp(new StringTicketProp(field2, "23"));

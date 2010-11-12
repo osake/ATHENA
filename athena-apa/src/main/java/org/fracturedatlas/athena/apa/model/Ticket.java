@@ -52,7 +52,7 @@ public class Ticket extends TixEntity implements Serializable {
         cascade = CascadeType.ALL)
     Collection<TicketProp> ticketProps;
 
-    String name;
+    String type;
 
     public Ticket() {
         ticketProps = new ArrayList<TicketProp>();
@@ -66,12 +66,12 @@ public class Ticket extends TixEntity implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getType() {
+        return type;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setType(String name) {
+        this.type = name;
     }
 
     public Collection<TicketProp> getTicketProps() {
@@ -129,7 +129,7 @@ public class Ticket extends TixEntity implements Serializable {
             return false;
         }
         final Ticket other = (Ticket) obj;
-        if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+        if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
             return false;
         }
 
@@ -158,14 +158,14 @@ public class Ticket extends TixEntity implements Serializable {
     public int hashCode() {
         int hash = 5;
         hash = 79 * hash + (this.id != null ? this.id.hashCode() : 0);
-        hash = 79 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 79 * hash + (this.type != null ? this.type.hashCode() : 0);
         return hash;
     }
 
     @Override
     public String toString() {
         ToStringBuilder builder = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
-        builder.append(id).append(name);
+        builder.append(id).append(type);
 
 
         if (ticketProps != null) {
@@ -180,7 +180,7 @@ public class Ticket extends TixEntity implements Serializable {
     public PTicket toClientTicket() {
         PTicket pTicket = new PTicket();
 
-        pTicket.setName(this.getName());
+        pTicket.setName(this.getType());
         if(this.getId() != null) {
             pTicket.setId(this.getId().toString());
         } else {

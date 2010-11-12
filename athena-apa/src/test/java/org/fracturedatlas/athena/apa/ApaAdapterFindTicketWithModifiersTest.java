@@ -56,112 +56,112 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
 
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 1));
-        t.setName("1");
+        t.setType("1");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 2));
-        t.setName("2");
+        t.setType("2");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 3));
-        t.setName("3");
+        t.setType("3");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 4));
-        t.setName("4");
+        t.setType("4");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 5));
-        t.setName("5");
+        t.setType("5");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 6));
-        t.setName("6");
+        t.setType("6");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 7));
-        t.setName("7");
+        t.setType("7");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 8));
-        t.setName("8");
+        t.setType("8");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 1));
-        t.setName("9");
+        t.setType("9");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 2));
-        t.setName("10");
+        t.setType("10");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 3));
-        t.setName("11");
+        t.setType("11");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 4));
-        t.setName("12");
+        t.setType("12");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 5));
-        t.setName("13");
+        t.setType("13");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 6));
-        t.setName("14");
+        t.setType("14");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 7));
-        t.setName("15");
+        t.setType("15");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 8));
-        t.setName("16");
+        t.setType("16");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
