@@ -58,7 +58,7 @@ public class RecordResource {
     Gson gson = JsonUtil.getGson();
 
     @GET
-    @Path("{id}")
+    @Path("{type}/{id}")
     public Object get(@PathParam("id") String id) throws NotFoundException {
         Ticket ticket = ticketManager.getTicket(id);
         if (ticket == null) {
@@ -76,7 +76,7 @@ public class RecordResource {
      * @throws NotFoundException
      */
     @GET
-    @Path("{id}/props")
+    @Path("{type}/{id}/props")
     public TicketProp[] getProps(@PathParam("id") String id) throws NotFoundException {
         Ticket ticket = ticketManager.getTicket(id);
         if (ticket == null) {
@@ -87,7 +87,7 @@ public class RecordResource {
     }
 
     @DELETE
-    @Path("{id}")
+    @Path("{type}/{id}")
     public void delete(@PathParam("id") String id) throws NotFoundException {
         Ticket ticket = ticketManager.getTicket(id);
         if (ticket == null) {
@@ -98,7 +98,7 @@ public class RecordResource {
     }
 
     @DELETE
-    @Path("{id}/props/{name}")
+    @Path("{type}/{id}/props/{name}")
     public void delete(@PathParam("id") String id,
                        @PathParam("name") String name) throws NotFoundException {
         try {
@@ -120,7 +120,7 @@ public class RecordResource {
      * @return
      */
     @GET
-    @Path("")
+    @Path("{type}/")
     public Collection<Ticket> search(@Context UriInfo ui) {
         MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
 
@@ -139,6 +139,7 @@ public class RecordResource {
      * @throws Exception if the json was malformed
      */
     @POST
+    @Path("{type}/")
     public Object save(PTicket pTicket) throws Exception {
         Ticket ticket = ticketManager.saveTicketFromClientRequest(pTicket);
         return ticket;
@@ -152,7 +153,7 @@ public class RecordResource {
      * @throws Exception if the json was malformed
      */
     @PUT
-    @Path("{id}")
+    @Path("{type}/{id}")
     public Object update(@PathParam("id") String id, PTicket pTicket) throws Exception {
         Ticket ticket = ticketManager.updateTicketFromClientTicket(pTicket, id);
         return ticket;

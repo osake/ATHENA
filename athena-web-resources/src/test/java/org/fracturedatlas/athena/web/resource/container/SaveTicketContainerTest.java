@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
 public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     Gson gson = JsonUtil.getGson();
-    String path = "/";
+    String path = RECORDS_PATH;
 
     public SaveTicketContainerTest() throws Exception {
         super();

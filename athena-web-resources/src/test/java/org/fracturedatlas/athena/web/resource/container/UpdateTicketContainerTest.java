@@ -50,7 +50,7 @@ import static org.junit.Assert.*;
 public class UpdateTicketContainerTest extends BaseTixContainerTest {
 
     Gson gson = JsonUtil.getGson();
-    String path = "/";
+    String path = RECORDS_PATH;
 
     public UpdateTicketContainerTest() throws Exception {
         super();

@@ -47,8 +47,8 @@ public abstract class BaseTixContainerTest extends JerseyTest {
     protected WebResource tix;
     protected EntityManagerFactory emf;
     protected ApaAdapter apa;
-    protected final static String TIX_URI = "http://localhost:9998/parakeet";
-    protected final static String RECORDS_PATH = "/";
+    protected final static String TIX_URI = "http://localhost:9998/tix";
+    protected final static String RECORDS_PATH = "/tickets/";
     protected final static String FIELDS_PATH = "/fields";
 
     protected List<Ticket> ticketsToDelete = new ArrayList<Ticket>();
@@ -58,7 +58,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
     public BaseTixContainerTest() {
 
       super(new WebAppDescriptor.Builder("org.fracturedatlas.athena.web.resource")
-        .contextPath("parakeet")
+        .contextPath("tix")
         .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
         .servletClass(SpringServlet.class)
         .contextListenerClass(ContextLoaderListener.class)
