@@ -71,7 +71,7 @@ public class PutFieldContainerTest extends BaseTixContainerTest {
 
         PField pField = field.toClientField();
         pField.setId("40404");
-        ClientResponse response = tix.path(path + "/" + field.getId()).type("application/json").put(ClientResponse.class, gson.toJson(pField));
+        ClientResponse response = tix.path(path + field.getId()).type("application/json").put(ClientResponse.class, gson.toJson(pField));
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
     }
 

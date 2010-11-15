@@ -78,33 +78,33 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
         super.teardownTickets();
     }
 
-    @Test
-    public void testGetFieldJson() throws Exception {
-
-        String path = "fields/" + testField.getId() + ".json";
-        String propFieldString = tix.path(path).get(String.class);
-        assertNotNull(propFieldString);
-        PField actualField = mapper.readValue(propFieldString, PField.class);
-        assertEquals(testField.getName(), actualField.getName());
-        assertEquals(testField.getValueType().toString(), actualField.getValueType());
-        assertEquals(testField.getStrict(), actualField.getStrict());
-        assertTrue(IdAdapter.isEqual(testField.getId(), actualField.getId()));
-    }
-
-    @Test
-    public void testGetValueJson() throws Exception {
-        String path = "fields/" + testField.getId() + "/values/" + testValue.getId() + ".json";
-        PropValue actualValue = null;
-        String jsonResponse = tix.path(path).type("application/json").get(String.class);
-        actualValue = mapper.readValue(jsonResponse, PropValue.class);
-        assertNotNull(jsonResponse);
-        assertEquals(testValue.getId().toString(), actualValue.getId().toString());
-        assertEquals(testValue.getPropValue(), actualValue.getPropValue());
-    }
+//    @Test
+//    public void testGetFieldJson() throws Exception {
+//
+//        String path = FIELDS_PATH + testField.getId() + ".json";
+//        String propFieldString = tix.path(path).get(String.class);
+//        assertNotNull(propFieldString);
+//        PField actualField = mapper.readValue(propFieldString, PField.class);
+//        assertEquals(testField.getName(), actualField.getName());
+//        assertEquals(testField.getValueType().toString(), actualField.getValueType());
+//        assertEquals(testField.getStrict(), actualField.getStrict());
+//        assertTrue(IdAdapter.isEqual(testField.getId(), actualField.getId()));
+//    }
+//
+//    @Test
+//    public void testGetValueJson() throws Exception {
+//        String path = FIELDS_PATH + testField.getId() + "/values/" + testValue.getId() + ".json";
+//        PropValue actualValue = null;
+//        String jsonResponse = tix.path(path).type("application/json").get(String.class);
+//        actualValue = mapper.readValue(jsonResponse, PropValue.class);
+//        assertNotNull(jsonResponse);
+//        assertEquals(testValue.getId().toString(), actualValue.getId().toString());
+//        assertEquals(testValue.getPropValue(), actualValue.getPropValue());
+//    }
 
     @Test
     public void testGetAllValuesJson() {
-        String path = "fields/" + testField.getId() + "/values";
+        String path = FIELDS_PATH + testField.getId() + "/values";
         ClientResponse response = tix.path(path).type("application/json").get(ClientResponse.class);
         String jsonResponse = response.getEntity(String.class);
         assertNotNull(jsonResponse);
@@ -122,7 +122,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
         PropField f4 = apa.savePropField(new PropField(ValueType.DATETIME, "TEMP4", StrictType.STRICT));
         propFieldsToDelete.add(f4);
 
-        String path = "fields.json";
+        String path = FIELDS_PATH;
         ClientResponse response = tix.path(path).type("application/json").get(ClientResponse.class);
         String jsonResponse = response.getEntity(String.class);
         assertNotNull(jsonResponse);
@@ -152,14 +152,14 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testGetFieldThatDoesntExist() {
-        String path = "fields/0.json";
+        String path = FIELDS_PATH + "0.json";
         ClientResponse response = tix.path(path).get(ClientResponse.class);
         assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
     }
 
     @Test
     public void testCreateFieldBoolean() throws Exception {
-        String path = "fields/";
+        String path = FIELDS_PATH;
         PropField propField = null;
         testFieldJson = "{\"valueType\":\"BOOLEAN\",\"strict\":\"false\",\"name\":\"BOOL\"}";
 
@@ -179,7 +179,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateFieldDatetime() throws Exception {
-        String path = "fields/";
+        String path = FIELDS_PATH;
         PropField propField = null;
         testFieldJson = "{\"valueType\":\"DATETIME\",\"strict\":\"false\",\"name\":\"BOOL\"}";
         logger.debug("Asking for creation of {}", testFieldJson);
@@ -201,7 +201,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateFieldInvalidValueType() throws Exception {
-        String path = "fields/";
+        String path = FIELDS_PATH;
         PropField propField = null;
         testFieldJson = "{\"valueType\":\"FAKE!\",\"strict\":\"false\",\"name\":\"BOOL\"}";
 
@@ -212,7 +212,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateField() throws Exception {
-        String path = "fields/";
+        String path = FIELDS_PATH;
         PropField propField = null;
         testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"false\",\"name\":\"ARTIST\"}";
         logger.debug("Asking for creation of {}", testFieldJson);
@@ -235,7 +235,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateFieldStrict() throws Exception {
-        String path = "fields/";
+        String path = FIELDS_PATH;
         PropField propField = null;
         testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"true\",\"name\":\"TIRES\"}";
 
@@ -256,7 +256,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateFieldStrictIsEmpty() {
-        String path = "fields/";
+        String path = FIELDS_PATH;
         testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"\",\"name\":\"TIRES\"}";
 
         ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
@@ -275,7 +275,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateFieldWithForbiddenCharacters() throws Exception {
-        String path = "fields/";
+        String path = FIELDS_PATH;
         testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"true\",\"name\":\"Seat Number\"}";
 
         ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
@@ -285,14 +285,13 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testDeleteField() throws Exception {
-        String path = "fields/";
         testFieldJson = "{\"valueType\":\"STRING\",\"strict\":\"true\",\"name\":\"Promoter\"}";
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testFieldJson);
+        ClientResponse response = tix.path(FIELDS_PATH).type("application/json").post(ClientResponse.class, testFieldJson);
         String jsonResponse = response.getEntity(String.class);
 
         PropField propField = mapper.readValue(jsonResponse, PropField.class);
 
-        path = "fields/" + propField.getId().toString();
+        String path = FIELDS_PATH + propField.getId().toString();
 
         response = tix.path(path).type("application/json").delete(ClientResponse.class);
         assertEquals(ClientResponse.Status.NO_CONTENT, ClientResponse.Status.fromStatusCode(response.getStatus()));
@@ -301,7 +300,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testDeleteFieldDoesntExist() throws Exception {
-        String path = "fields/204040404440.json";
+        String path = FIELDS_PATH + "204040404440.json";
 
         ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
         assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));

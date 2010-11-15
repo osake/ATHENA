@@ -64,7 +64,7 @@ public class FieldResourceValuesContainerTest extends BaseTixContainerTest {
     @Test
     public void testDeleteValue() throws Exception {
 
-        String path = "fields/" + testField.getId() + "/values.json";
+        String path = FIELDS_PATH + testField.getId() + "/values.json";
         PropValue propValue = null;
         String testValueJson = "";
         ClientResponse response;
@@ -74,7 +74,7 @@ public class FieldResourceValuesContainerTest extends BaseTixContainerTest {
         jsonResponse = response.getEntity(String.class);
 
         propValue = mapper.readValue(jsonResponse, PropValue.class);
-        path = "fields/" + testField.getId() + "/values/" + propValue.getId().toString();
+        path = FIELDS_PATH + testField.getId() + "/values/" + propValue.getId().toString();
         response = tix.path(path).type("application/json").delete(ClientResponse.class);
         assertEquals(ClientResponse.Status.NO_CONTENT, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
@@ -82,7 +82,7 @@ public class FieldResourceValuesContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testGetValueJson() throws Exception {
-        String path = "fields/" + testField.getId() + "/values/" + testValue.getId() + ".json";
+        String path = FIELDS_PATH + testField.getId() + "/values/" + testValue.getId() + ".json";
         PropValue actualValue = null;
         String jsonResponse = tix.path(path).type("application/json").get(String.class);
         actualValue = mapper.readValue(jsonResponse, PropValue.class);
@@ -93,7 +93,7 @@ public class FieldResourceValuesContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateFieldNoData() {
-        String path = "fields/";
+        String path = FIELDS_PATH;
 
         ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, "");
         String jsonResponse = response.getEntity(String.class);
@@ -104,7 +104,7 @@ public class FieldResourceValuesContainerTest extends BaseTixContainerTest {
     @Test
     //You cannot update a value
     public void testUpdateValue() throws Exception {
-        String path = "fields/" + testField.getId() + "/values.json";
+        String path = FIELDS_PATH + testField.getId() + "/values.json";
         testValue.setPropValue("DD");
         String testValueJson = "{\"id\":\""+testValue.getId()+"\",\"propValue\":\""+testValue.getPropValue()+"\"}";
         ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, testValueJson);
@@ -113,7 +113,7 @@ public class FieldResourceValuesContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateValueWithoutIncludingPropField() throws Exception {
-        String path = "fields/" + testField.getId() + "/values";
+        String path = FIELDS_PATH + testField.getId() + "/values";
         PropValue propValue = null;
         String testValueJson = "";
 
@@ -131,7 +131,7 @@ public class FieldResourceValuesContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateDuplicateValue() throws Exception {
-        String path = "fields/" + testField.getId() + "/values";
+        String path = FIELDS_PATH + testField.getId() + "/values";
         PropValue propValue = null;
         String testValueJson = "";
         testValueJson = "{\"propValue\":\"AA\"}";
