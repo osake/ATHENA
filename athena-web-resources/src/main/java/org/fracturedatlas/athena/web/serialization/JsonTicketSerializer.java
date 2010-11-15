@@ -76,6 +76,7 @@ public class JsonTicketSerializer implements MessageBodyWriter<Ticket>,
 
     @Override
     public PTicket readFrom(java.lang.Class<PTicket> type, java.lang.reflect.Type genericType, java.lang.annotation.Annotation[] annotations, MediaType mediaType, MultivaluedMap<java.lang.String,java.lang.String> httpHeaders, java.io.InputStream entityStream) {
+        
         Gson gson = JsonUtil.getGson();
         PTicket pTicket = gson.fromJson(new InputStreamReader(entityStream), PTicket.class);
         if(pTicket == null) {
@@ -84,6 +85,9 @@ public class JsonTicketSerializer implements MessageBodyWriter<Ticket>,
         return pTicket;
     }
 
+    /*
+     * These methods are used by GSON, called implicitly from writeTo
+     */
     public JsonElement serialize(PTicket pTicket, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject jsonPropMap = JsonUtil.mapToJson(pTicket.getProps());
         jsonPropMap.addProperty("id", IdAdapter.toString(pTicket.getId()));
@@ -92,16 +96,24 @@ public class JsonTicketSerializer implements MessageBodyWriter<Ticket>,
 
     }
 
+    /*
+     * These methods are used by GSON, called implicitly from readFrom
+     */
     public PTicket deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        PTicket pTicket = new PTicket();
-        JsonObject ticketObj = json.getAsJsonObject();
-        pTicket.setId(JsonUtil.nullSafeGetAsString(ticketObj.get("id")));
-        pTicket.setType(JsonUtil.nullSafeGetAsString(ticketObj.get("type")));
-        ticketObj.remove("id");
-        ticketObj.remove("type");
-        for (Entry<String, JsonElement> entry : ticketObj.entrySet()) {
-            pTicket.put(entry.getKey(), entry.getValue().getAsString());
+        try{
+            PTicket pTicket = new PTicket();
+            JsonObject ticketObj = json.getAsJsonObject();
+            pTicket.setId(JsonUtil.nullSafeGetAsString(ticketObj.get("id")));
+            pTicket.setType(JsonUtil.nullSafeGetAsString(ticketObj.get("type")));
+            ticketObj.remove("id");
+            ticketObj.remove("type");
+            for (Entry<String, JsonElement> entry : ticketObj.entrySet()) {
+                pTicket.put(entry.getKey(), entry.getValue().getAsString());
+            }
+            return pTicket;
+        } catch (JsonParseException jpe) {
+            jpe.printStackTrace();
+            throw jpe;
         }
-        return pTicket;
     }
 }
