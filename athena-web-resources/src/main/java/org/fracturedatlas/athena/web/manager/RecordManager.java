@@ -224,7 +224,6 @@ public class RecordManager {
         }
 
         ticket = apa.getTicket(clientTicket.getId());
-        ticket.setType(clientTicket.getType());
         ticket = apa.saveTicket(ticket);
         return ticket;
     }
@@ -266,7 +265,6 @@ public class RecordManager {
             ticket.addTicketProp(ticketProp);
         }
 
-        ticket.setType(clientTicket.getType());
         ticket = apa.saveTicket(ticket);
         return ticket;
     }

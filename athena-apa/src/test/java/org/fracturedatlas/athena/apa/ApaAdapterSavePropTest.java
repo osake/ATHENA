@@ -68,7 +68,6 @@ public class ApaAdapterSavePropTest extends BaseApaAdapterTest {
         PTicket savedPTicket = saveTicket.toClientTicket();
         assertEquals("103", savedPTicket.get("TESTINT2"));
         assertEquals("3", savedPTicket.get("TESTINT"));
-        assertEquals("TEST", savedPTicket.getType());
         assertEquals(2, savedPTicket.getProps().entrySet().size());
     }
 

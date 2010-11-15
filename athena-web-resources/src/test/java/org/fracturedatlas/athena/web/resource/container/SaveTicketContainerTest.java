@@ -299,7 +299,6 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
         PTicket pTicket = new PTicket();
 
-        pTicket.setType("ticket10");
         pTicket.getProps().put(seatNumberField.getName(), "34");
         pTicket.getProps().put(sectionField.getName(), "CCC");
         pTicket.getProps().put(soldField.getName(), "false");
@@ -336,8 +335,6 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
 
         PTicket pTicket = new PTicket();
-
-        pTicket.setType("ticket " + UUID.randomUUID().toString().substring(3, 8));
 
         for (int i = 0; i < NUMBER_OF_PROPS; i++) {
             PropField randomField = apa.savePropField(new PropField(

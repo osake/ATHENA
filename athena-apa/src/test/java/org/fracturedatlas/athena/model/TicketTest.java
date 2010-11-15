@@ -95,7 +95,6 @@ public class TicketTest extends BaseApaAdapterTest {
 
         PTicket pTicket = ticket.toClientTicket();
         assertNotNull(pTicket.getId());
-        assertEquals("record", pTicket.getType());
         assertEquals(3, pTicket.getProps().size());
         assertEquals("03", pTicket.get("SEAT"));
         assertEquals("NEW_VALUE", pTicket.get("SEAT1"));

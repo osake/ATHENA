@@ -32,8 +32,6 @@ import org.fracturedatlas.athena.id.*;
 public class PTicket {
 
     private Object id;
-
-    private String type;
     private Map<String, String> props;
 
     public PTicket() {
@@ -46,14 +44,6 @@ public class PTicket {
 
     public void setId(Object id) {
         this.id = id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String name) {
-        this.type = name;
     }
 
     public Map<String, String> getProps() {
@@ -96,9 +86,6 @@ public class PTicket {
         if (this.id != other.id && (this.id == null || !IdAdapter.isEqual(this.id, other.id))) {
             return false;
         }
-        if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
-            return false;
-        }
         if (this.props != other.props && (this.props == null || !this.props.equals(other.props))) {
             return false;
         }
@@ -109,7 +96,6 @@ public class PTicket {
     public int hashCode() {
         int hash = 7;
         hash = 67 * hash + (this.id != null ? this.id.hashCode() : 0);
-        hash = 67 * hash + (this.type != null ? this.type.hashCode() : 0);
         hash = 67 * hash + (this.props != null ? this.props.hashCode() : 0);
         return hash;
     }

@@ -163,7 +163,6 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
         pTicket.put("FOO", "FIGHTERS");
 
         PTicket testPTicket = new PTicket();
-        testPTicket.setType(pTicket.getType());
         testPTicket.setId(pTicket.getId());
         testPTicket.put("FOO", "FIGHTERS");
         String ticketJson = gson.toJson(testPTicket);
