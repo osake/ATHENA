@@ -12,7 +12,6 @@
         <module>athena-apa</module>
         <module>athena-web-resources</module>
         <module>athena-sdk</module>
-        <module>athena-audit</module>
     </modules>
 
     <properties>
