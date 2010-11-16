@@ -59,21 +59,21 @@ public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
         ticket = apa.saveTicket(ticket);
         ticketsToDelete.add(ticket);
 
-        TicketProp prop = apa.getTicketProp(field.getName(), ticket.getId());
+        TicketProp prop = apa.getTicketProp(field.getName(), ticket.getType(), ticket.getId());
         assertNotNull(prop);
         assertEquals(field.getName(), prop.getPropField().getName());
         assertEquals(field.getValueType(), prop.getPropField().getValueType());
         assertEquals("03", prop.getValue());
         assertEquals(ticket.getId(), prop.getTicket().getId());
 
-        prop = apa.getTicketProp(field1.getName(), ticket.getId());
+        prop = apa.getTicketProp(field1.getName(), ticket.getType(), ticket.getId());
         assertNotNull(prop);
         assertEquals(field1.getName(), prop.getPropField().getName());
         assertEquals(field1.getValueType(), prop.getPropField().getValueType());
         assertEquals("13", prop.getValue());
         assertEquals(ticket.getId(), prop.getTicket().getId());
 
-        prop = apa.getTicketProp(field2.getName(), ticket.getId());
+        prop = apa.getTicketProp(field2.getName(), ticket.getType(), ticket.getId());
         assertNotNull(prop);
         assertEquals(field2.getName(), prop.getPropField().getName());
         assertEquals(field2.getValueType(), prop.getPropField().getValueType());
@@ -100,7 +100,7 @@ public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
         ticket = apa.saveTicket(ticket);
         ticketsToDelete.add(ticket);
 
-        TicketProp prop = apa.getTicketProp("NO_CHANCE", ticket.getId());
+        TicketProp prop = apa.getTicketProp("NO_CHANCE", ticket.getType(), ticket.getId());
         assertNull(prop);
     }
 
@@ -122,7 +122,7 @@ public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
         ticket = apa.saveTicket(ticket);
         ticketsToDelete.add(ticket);
 
-        TicketProp prop = apa.getTicketProp("SEAT", null);
+        TicketProp prop = apa.getTicketProp("SEAT", ticket.getType(), null);
         assertNull(prop);
     }
 }

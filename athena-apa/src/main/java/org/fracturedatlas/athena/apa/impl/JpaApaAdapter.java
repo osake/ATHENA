@@ -138,7 +138,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Boolean deleteTicket(Object id) {
+    public Boolean deleteTicket(String type, Object id) {
         logger.debug("Deleting ticket: " + id);
         if (id == null) {
             return false;
@@ -160,7 +160,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     @Override
     public Boolean deleteTicket(Ticket t) {
-        return deleteTicket(t.getId());
+        return deleteTicket(t.getType(), t.getId());
     }
 
     /**
@@ -380,7 +380,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public TicketProp getTicketProp(String fieldName, Object ticketId) {
+    public TicketProp getTicketProp(String fieldName, String type, Object ticketId) {
         EntityManager em = this.emf.createEntityManager();
 
         try {

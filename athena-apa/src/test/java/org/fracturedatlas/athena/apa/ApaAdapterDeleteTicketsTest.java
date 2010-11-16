@@ -57,6 +57,7 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testDeleteTicketPassingObjectId() {
         Ticket t = new Ticket();
+        t.setType("clown");    
 
         PropField field = new PropField();
         field.setValueType(ValueType.STRING);
@@ -73,7 +74,7 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t);
         propFieldsToDelete.add(pf);
 
-        assertTrue(apa.deleteTicket(t.getId()));
+        assertTrue(apa.deleteTicket(t.getType(), t.getId()));
 
         Ticket shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
         assertNull(shouldBeDeleted);
@@ -83,6 +84,7 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testDeleteTicketPassingTicket() {
         Ticket t = new Ticket();
+        t.setType("foo");
 
         PropField field = new PropField();
         field.setValueType(ValueType.STRING);
@@ -139,7 +141,7 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t2);
         ticketsToDelete.add(t3);
         ticketsToDelete.add(t4);
-        assertTrue(apa.deleteTicket(t2.getId()));
+        assertTrue(apa.deleteTicket(t2.getType(), t2.getId()));
 
         Ticket shouldBeDeleted = apa.getTicket(t2.getType(), t2.getId());
         assertNull(shouldBeDeleted);
@@ -186,9 +188,9 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t3);
         ticketsToDelete.add(t4);
 
-        assertTrue(apa.deleteTicket(t.getId()));
-        assertTrue(apa.deleteTicket(t2.getId()));
-        assertTrue(apa.deleteTicket(t3.getId()));
+        assertTrue(apa.deleteTicket(t.getType(), t.getId()));
+        assertTrue(apa.deleteTicket(t2.getType(), t2.getId()));
+        assertTrue(apa.deleteTicket(t3.getType(), t3.getId()));
 
         Ticket shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
         assertNull(shouldBeDeleted);
@@ -205,6 +207,7 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testDeleteTicketNullTicket() {
         Ticket t = new Ticket();
+        t.setType("clown");    
 
         PropField field = new PropField();
         field.setValueType(ValueType.STRING);
@@ -232,6 +235,7 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testDeleteTicketNotYetPersisted() {
         Ticket t = new Ticket();
+        t.setType("clown");
 
         PropField field = new PropField();
         field.setValueType(ValueType.STRING);

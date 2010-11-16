@@ -52,7 +52,7 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Boolean deleteTicket(Object id) {
+    public Boolean deleteTicket(String type, Object id) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
@@ -92,7 +92,7 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public TicketProp getTicketProp(String fieldName, Object ticketId) {
+    public TicketProp getTicketProp(String fieldName, String type, Object ticketId) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 

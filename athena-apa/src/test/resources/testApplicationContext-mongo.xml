@@ -13,7 +13,6 @@
         <constructor-arg index="0" value="localhost"/>
         <constructor-arg type="java.lang.Integer" index="1" value="27017"/>
         <constructor-arg index="2" value="test"/>
-        <constructor-arg index="3" value="records"/>
-        <constructor-arg index="4" value="fields"/>
+        <constructor-arg index="3" value="athena_fields"/>
     </bean>
 </beans>

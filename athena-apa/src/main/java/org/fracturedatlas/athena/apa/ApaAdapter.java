@@ -70,7 +70,7 @@ public interface ApaAdapter {
      * @param id the id to delete
      * @return true if the delete succeeded, false otherwise
      */
-    public Boolean deleteTicket(Object id);
+    public Boolean deleteTicket(String type, Object id);
 
     /**
      * Delete a ticket from the database.  This is a convenience method to call deleteTicket(Object).
@@ -130,7 +130,7 @@ public interface ApaAdapter {
      * @param id the id
      * @return the ticket prop if found, null otherwise
      */
-    public TicketProp getTicketProp(String fieldName, Object ticketId);
+    public TicketProp getTicketProp(String fieldName, String type, Object ticketId);
 
     /**
      * get the ticketProps for the given field name

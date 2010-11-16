@@ -62,7 +62,7 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         ticket = apa.saveTicket(ticket);
         ticketsToDelete.add(ticket);
 
-        seatProp = apa.getTicketProp("SEAT", ticket.getId());
+        seatProp = apa.getTicketProp("SEAT", ticket.getType(), ticket.getId());
         apa.deleteTicketProp(seatProp);
 
         ticket = apa.getTicket(ticket.getType(), ticket.getId());
@@ -119,7 +119,7 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         ticket2 = apa.saveTicket(ticket2);
         ticketsToDelete.add(ticket2);
 
-        seatProp = apa.getTicketProp("SEAT", ticket.getId());
+        seatProp = apa.getTicketProp("SEAT", ticket.getType(), ticket.getId());
         apa.deleteTicketProp(seatProp);
 
         ticket = apa.getTicket(ticket.getType(), ticket.getId());

@@ -64,21 +64,19 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     public MongoApaAdapter(String host,
                            Integer port,
                            String dbName,
-                           String recordsCollectionName,
                            String fieldsCollectionName) throws UnknownHostException {
         Mongo m = new Mongo(host, port);
         db = m.getDB(dbName);
-        records = db.getCollection(recordsCollectionName);
         fields = db.getCollection(fieldsCollectionName);
     }
 
     @Override
     public Ticket getTicket(String type, Object id) {
-        return toRecord(getRecordDocument(new BasicDBObject(), ObjectId.massageToObjectId(id)), true);
+        return toRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), true);
     }
 
-    public Ticket getTicket(Object id, Boolean includeProps) {
-        return toRecord(getRecordDocument(new BasicDBObject(), ObjectId.massageToObjectId(id)), includeProps);
+    public Ticket getTicket(String type, Object id, Boolean includeProps) {
+        return toRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), includeProps);
     }
 
     @Override
@@ -94,7 +92,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
 
         doc.put("_id", t.getId());
-        doc.put("name", t.getType());
+        doc.put("type", t.getType());
 
         BasicDBObject props = new BasicDBObject();
         for(TicketProp prop : t.getTicketProps()) {
@@ -103,7 +101,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
         doc.put("props", props);
 
-        records.save(doc);
+        db.getCollection(t.getType()).save(doc);
 
         return t;
     }
@@ -241,25 +239,25 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return null;
     }
 
-//    @Override
-//    public Boolean deleteTicket(Object id) {
-//        Ticket t = getTicket(id);
-//
-//        if(t == null) {
-//            return false;
-//        } else{
-//
-//            BasicDBObject query = new BasicDBObject();
-//            ObjectId oid = ObjectId.massageToObjectId(id);
-//            query.put("_id", oid);
-//            records.remove(query);
-//            return true;
-//        }
-//    }
+    @Override
+    public Boolean deleteTicket(String type, Object id) {
+        Ticket t = getTicket(type, id);
+
+        if(t == null) {
+            return false;
+        } else{
+
+            BasicDBObject query = new BasicDBObject();
+            ObjectId oid = ObjectId.massageToObjectId(id);
+            query.put("_id", oid);
+            db.getCollection(type).remove(query);
+            return true;
+        }
+    }
 
     @Override
     public Boolean deleteTicket(Ticket t) {
-        return deleteTicket(t.getId());
+        return deleteTicket(t.getType(), t.getId());
     }
 
     @Override
@@ -319,9 +317,9 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public TicketProp getTicketProp(String fieldName, Object ticketId) {
+    public TicketProp getTicketProp(String fieldName, String type, Object ticketId) {
         TicketProp ticketProp = null;
-        DBObject recordDoc = getRecordDocument(new BasicDBObject(), ObjectId.massageToObjectId(ticketId));
+        DBObject recordDoc = getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(ticketId));
 
         if(recordDoc != null) {
             DBObject propsObj = (DBObject)recordDoc.get("props");
@@ -339,7 +337,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                     logger.error(e.getMessage(),e);
                 }
 
-                ticketProp.setTicket(getTicket(ticketId, false));
+                ticketProp.setTicket(getTicket(type, ticketId, false));
             }
         }
 
@@ -350,7 +348,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     public void deleteTicketProp(TicketProp prop) {
         TicketProp ticketProp = null;
         if(prop.getTicket() != null) {
-            DBObject recordDoc = getRecordDocument(new BasicDBObject(), ObjectId.massageToObjectId(prop.getTicket().getId()));
+            DBObject recordDoc = getRecordDocument(new BasicDBObject(), prop.getTicket().getType(), ObjectId.massageToObjectId(prop.getTicket().getId()));
             String fieldName = prop.getPropField().getName();
 
             if(recordDoc != null) {
@@ -384,9 +382,9 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return query;
     }
 
-    private DBObject getRecordDocument(BasicDBObject query, ObjectId oid) {
+    private DBObject getRecordDocument(BasicDBObject query, String type, ObjectId oid) {
         query.put("_id", oid);
-        return records.findOne(query);
+        return db.getCollection(type).findOne(query);
     }
 
     private Ticket toRecord(DBObject recordObject) {
@@ -399,7 +397,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         if(recordObject != null) {
             t = new Ticket();
             t.setId(recordObject.get("_id"));
-            t.setType((String)recordObject.get("name"));
+            t.setType((String)recordObject.get("type"));
             
             if(includeProps) {
                 DBObject propsObj = (DBObject)recordObject.get("props");
