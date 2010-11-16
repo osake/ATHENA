@@ -36,10 +36,8 @@ import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.fracturedatlas.athena.apa.exception.ApaException;
@@ -48,15 +46,15 @@ import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.apa.model.ValueType;
 import org.fracturedatlas.athena.id.IdAdapter;
+import org.fracturedatlas.athena.search.ApaSearch;
+import org.fracturedatlas.athena.search.ApaSearchConstraint;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     DB db = null;
     DBCollection fields = null;
-    DBCollection records = null;
 
     //This is the mongo name for the props object within a record
     public static final String PROPS_STRING = "props";
@@ -106,35 +104,59 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return t;
     }
 
-//    @Override
-    public Set<Ticket> findTickets(HashMap<String, List<String>> searchParams) {
+    @Override
+    public Set<Ticket> findTickets(ApaSearch apaSearch) {
+        if(apaSearch.getType() == null) {
+            throw new ApaException("You must specify a record type when doing a search");
+        }
+
         Set<Ticket> tickets = new HashSet<Ticket>();
         BasicDBObject query = new BasicDBObject();
 
-        for(Entry<String, List<String>> entry : searchParams.entrySet()) {
-            PropField field = getPropField(entry.getKey());
+        if("0".equals(apaSearch.getSearchModifiers().get("_limit"))) {
+            return tickets;
+        }
+
+        for(ApaSearchConstraint constraint : apaSearch.getConstraints()) {
+            PropField field = getPropField(constraint.getParameter());
             if(field != null) {
-                //load the field's value type so we can search for it with proper typing
+                //load the field's value type so we can apaSearch for it with proper typing
                 TicketProp searchProp = field.getValueType().newTicketProp();
 
                 try{
-                    searchProp.setValue(entry.getValue());
+                    searchProp.setValue(constraint.getValue());
                 } catch (Exception e) {
-                    //searching on a param with a bad type (like search a boolean field for "4"
+                    //searching on a param with a bad type (like apaSearch a boolean field for "4"
                     //TODO: Handle it
                 }
 
-                query.put(PROPS_STRING + "." + entry.getKey(), searchProp.getValue());
+                query.put(PROPS_STRING + "." + field.getName(), searchProp.getValue());
             } else {
                 //TODO: Serching for field that doesn't exist, ignore?
             }
         }
 
-        DBCursor recordsCursor = records.find(query);
+        
+        DBCursor recordsCursor = db.getCollection(apaSearch.getType()).find(query);
+        recordsCursor = setLimit(recordsCursor, apaSearch.getSearchModifiers().get("_limit"));
+
         for(DBObject recordObject : recordsCursor) {
             tickets.add(toRecord(recordObject));
         }
         return tickets;
+    }
+    
+    private DBCursor setLimit(DBCursor recordsCursor, String limit) {
+        if(limit != null) {
+            try{
+                Integer lim = Integer.parseInt(limit);
+                recordsCursor.limit(lim);
+            } catch (NumberFormatException nfe) {
+                //ignored, no limit will be set
+            }            
+        }
+
+        return recordsCursor;
     }
 
     /**
@@ -357,7 +379,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                     propsObj.removeField(fieldName);
                 }
                 recordDoc.put("props", propsObj);
-                records.save(recordDoc);
+                db.getCollection(prop.getTicket().getType()).save(recordDoc);
             }
         }
     }

@@ -78,7 +78,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
         assertTrue(savedPTicket.equals(updatedPTicket));
         assertTicketsEqual(t, updatedPTicket, false);
 
-        apa.deleteTicket(savedPTicket.getId());
+        apa.deleteTicket(t.getType(), savedPTicket.getId());
     }
 
     @Test
@@ -102,7 +102,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
         assertTrue(savedPTicket.equals(updatedPTicket));
         assertTicketsEqual(t, updatedPTicket, false);
 
-        apa.deleteTicket(savedPTicket.getId());
+        apa.deleteTicket(t.getType(), savedPTicket.getId());
     }
 
     @Test

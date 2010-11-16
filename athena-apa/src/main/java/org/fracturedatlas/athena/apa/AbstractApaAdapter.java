@@ -67,11 +67,6 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Set<Ticket> findTickets(HashMap<String, List<String>> searchParams) {
-        throw new UnsupportedOperationException("Unsupported operation");
-    }
-
-    @Override
     public Set<Ticket> findTickets(ApaSearch search) {
         return new HashSet<Ticket>();
     }

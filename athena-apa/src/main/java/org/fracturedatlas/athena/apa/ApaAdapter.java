@@ -82,15 +82,7 @@ public interface ApaAdapter {
      * @return true if the delete succeeded, false otherwise
      */
     public Boolean deleteTicket(Ticket t);
-
-    /**
-     * Search for tickets that match all criteria in searchParams.
-     *
-     * @param searchParams the search criteria.  Criteria should be in the format: key = prop, value = prop value
-     * @return matching tickets, empty List if no tickets found
-     */
-    public Set<Ticket> findTickets(HashMap<String, List<String>> searchParams);
-
+    
     /**
      * Search for tickets that match all criteria in search.
      *

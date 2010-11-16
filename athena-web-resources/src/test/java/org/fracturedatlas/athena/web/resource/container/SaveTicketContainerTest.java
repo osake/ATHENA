@@ -70,7 +70,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         PTicket savedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
         assertNotNull(savedPTicket.getId());
         assertTicketsEqual(t, savedPTicket, false);
-        apa.deleteTicket(savedPTicket.getId());
+        apa.deleteTicket(t.getType(), savedPTicket.getId());
     }
 
     @Test

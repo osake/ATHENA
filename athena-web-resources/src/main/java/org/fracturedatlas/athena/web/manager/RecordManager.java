@@ -56,13 +56,13 @@ public class RecordManager {
         apa.deleteTicket(t);
     }
 
-    public void deleteTicket(Object id) {
-        apa.deleteTicket(id);
+    public void deleteTicket(String type, Object id) {
+        apa.deleteTicket(type, id);
     }
 
     public void deletePropertyFromTicket(String type, String propName, Object ticketId)
             throws ObjectNotFoundException {
-        TicketProp prop = apa.getTicketProp(propName, ticketId);
+        TicketProp prop = apa.getTicketProp(propName, type, ticketId);
 
         if (prop == null) {
             //no prop found, try and figure out why so we can return a sensible 404
@@ -196,7 +196,7 @@ public class RecordManager {
         for (String key : keys) {
             String val = propMap.get(key);
 
-            TicketProp ticketProp = apa.getTicketProp(key, ticket.getId());
+            TicketProp ticketProp = apa.getTicketProp(key, type, ticket.getId());
 
             if (ticketProp == null) {
                 PropField propField = apa.getPropField(key);
