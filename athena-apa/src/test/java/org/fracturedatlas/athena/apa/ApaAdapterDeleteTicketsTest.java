@@ -75,7 +75,7 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
 
         assertTrue(apa.deleteTicket(t.getId()));
 
-        Ticket shouldBeDeleted = apa.getTicket(t.getId());
+        Ticket shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
         assertNull(shouldBeDeleted);
     }
 
@@ -101,7 +101,7 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
 
         assertTrue(apa.deleteTicket(t));
 
-        Ticket shouldBeDeleted = apa.getTicket(t.getId());
+        Ticket shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
         assertNull(shouldBeDeleted);
     }
 
@@ -113,6 +113,11 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
         Ticket t2 = new Ticket();
         Ticket t3 = new Ticket();
         Ticket t4 = new Ticket();
+
+        t.setType("ticket");
+        t2.setType("ticket");
+        t3.setType("ticket");
+        t4.setType("ticket");
 
         PropField pf3 = apa.savePropField(new PropField(ValueType.DATETIME, "Date", Boolean.FALSE));
         propFieldsToDelete.add(pf3);
@@ -134,16 +139,15 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t2);
         ticketsToDelete.add(t3);
         ticketsToDelete.add(t4);
-
         assertTrue(apa.deleteTicket(t2.getId()));
 
-        Ticket shouldBeDeleted = apa.getTicket(t2.getId());
+        Ticket shouldBeDeleted = apa.getTicket(t2.getType(), t2.getId());
         assertNull(shouldBeDeleted);
-        Ticket expected = apa.getTicket(t.getId());
+        Ticket expected = apa.getTicket(t.getType(), t.getId());
         assertEquals(expected, t);
-        expected = apa.getTicket(t3.getId());
+        expected = apa.getTicket(t3.getType(), t3.getId());
         assertEquals(expected, t3);
-        expected = apa.getTicket(t4.getId());
+        expected = apa.getTicket(t4.getType(), t4.getId());
         assertEquals(expected, t4);
     }
 
@@ -155,6 +159,12 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
         Ticket t2 = new Ticket();
         Ticket t3 = new Ticket();
         Ticket t4 = new Ticket();
+
+        t.setType("ticket");
+        t2.setType("ticket");
+        t3.setType("ticket");
+        t4.setType("ticket");
+        
         PropField pf3 = apa.savePropField(new PropField(ValueType.DATETIME, "Date", Boolean.FALSE));
         propFieldsToDelete.add(pf3);
 
@@ -180,14 +190,14 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
         assertTrue(apa.deleteTicket(t2.getId()));
         assertTrue(apa.deleteTicket(t3.getId()));
 
-        Ticket shouldBeDeleted = apa.getTicket(t.getId());
+        Ticket shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
         assertNull(shouldBeDeleted);
-        shouldBeDeleted = apa.getTicket(t2.getId());
+        shouldBeDeleted = apa.getTicket(t2.getType(), t2.getId());
         assertNull(shouldBeDeleted);
-        shouldBeDeleted = apa.getTicket(t3.getId());
+        shouldBeDeleted = apa.getTicket(t3.getType(), t3.getId());
         assertNull(shouldBeDeleted);
 
-        Ticket expected = apa.getTicket(t4.getId());
+        Ticket expected = apa.getTicket(t4.getType(), t4.getId());
         assertEquals(expected, t4);
 
     }

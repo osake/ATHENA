@@ -80,7 +80,7 @@ public class StrictPropertyTest extends BaseManagerTest {
 
         PTicket expectedPTicket = t.toClientTicket();
         expectedPTicket.put(pf.getName(), "UPDATED");
-        Ticket savedTicket = manager.saveTicketFromClientRequest(expectedPTicket);
+        Ticket savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
         PTicket actualPTicket = savedTicket.toClientTicket();
         assertTrue(expectedPTicket.equals(actualPTicket));
     }
@@ -103,7 +103,7 @@ public class StrictPropertyTest extends BaseManagerTest {
         PTicket expectedPTicket = t.toClientTicket();
         expectedPTicket.put(pf.getName(), "THIS_SHOULD_FAIL");
         try {
-            Ticket savedTicket = manager.saveTicketFromClientRequest(expectedPTicket);
+            Ticket savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
             fail("Should have gotten an InvalidValueException");
         } catch (InvalidValueException ive) {
             //pass
@@ -130,7 +130,7 @@ public class StrictPropertyTest extends BaseManagerTest {
 
         PTicket expectedPTicket = t.toClientTicket();
         expectedPTicket.put(pf.getName(), "5");
-        Ticket savedTicket = manager.saveTicketFromClientRequest(expectedPTicket);
+        Ticket savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
         PTicket actualPTicket = savedTicket.toClientTicket();
         assertTrue(expectedPTicket.equals(actualPTicket));
     }
@@ -156,7 +156,7 @@ public class StrictPropertyTest extends BaseManagerTest {
         PTicket expectedPTicket = t.toClientTicket();
         expectedPTicket.put(pf.getName(), "6");
         try {
-            Ticket savedTicket = manager.saveTicketFromClientRequest(expectedPTicket);
+            Ticket savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
             fail("Should have gotten an InvalidValueException");
         } catch (InvalidValueException ive) {
             //pass

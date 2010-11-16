@@ -310,7 +310,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.NO_CONTENT,
                 ClientResponse.Status.fromStatusCode(response.getStatus()));
 
-        Ticket shouldBeDeleted = apa.getTicket(t.getId());
+        Ticket shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
         assertNull(shouldBeDeleted);
 
         path = "tickets/" + t.getId() + ".json";
@@ -358,13 +358,13 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.NO_CONTENT,
                 ClientResponse.Status.fromStatusCode(response.getStatus()));
 
-        Ticket shouldBeDeleted = apa.getTicket(t3.getId());
+        Ticket shouldBeDeleted = apa.getTicket(t3.getType(), t3.getId());
         assertNull(shouldBeDeleted);
-        Ticket expected = apa.getTicket(t.getId());
+        Ticket expected = apa.getTicket(t.getType(), t.getId());
         assertEquals(expected, t);
-        expected = apa.getTicket(t2.getId());
+        expected = apa.getTicket(t2.getType(), t2.getId());
         assertEquals(expected, t2);
-        expected = apa.getTicket(t4.getId());
+        expected = apa.getTicket(t4.getType(), t4.getId());
         assertEquals(expected, t4);
 
         path = "tickets/" + t3.getId() + ".json";
@@ -417,11 +417,11 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.NO_CONTENT,
                 ClientResponse.Status.fromStatusCode(response.getStatus()));
 
-        Ticket shouldBeDeleted = apa.getTicket(t3.getId());
+        Ticket shouldBeDeleted = apa.getTicket(t3.getType(), t3.getId());
         assertNull(shouldBeDeleted);
-        Ticket expected = apa.getTicket(t.getId());
+        Ticket expected = apa.getTicket(t.getType(), t.getId());
         assertEquals(expected, t);
-        expected = apa.getTicket(t2.getId());
+        expected = apa.getTicket(t2.getType(), t2.getId());
         assertEquals(expected, t2);
 
         path = RECORDS_PATH + t3.getId() + ".json";
@@ -457,7 +457,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.NOT_FOUND,
                 ClientResponse.Status.fromStatusCode(response.getStatus()));
 
-        Ticket shouldStillExist = apa.getTicket(t.getId());
+        Ticket shouldStillExist = apa.getTicket(t.getType(), t.getId());
         assertEquals(t, shouldStillExist);
     }
 }

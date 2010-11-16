@@ -30,6 +30,8 @@ public class ApaSearch {
     ArrayList<ApaSearchConstraint> asc = null;
     Map<String, String> searchModifiers = new HashMap<String, String>();
 
+    String type;
+
     public ApaSearch() {
         asc = new ArrayList<ApaSearchConstraint>();
     }
@@ -69,12 +71,24 @@ public class ApaSearch {
         return searchModifiers;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public static class Builder {
         ApaSearch search;
 
         public Builder(ApaSearchConstraint sc) {
             this.search = new ApaSearch();
             this.search.addConstraint(sc);
+        }
+
+        public Builder() {
+            this.search = new ApaSearch();
         }
 
         public ApaSearch build() {
@@ -93,6 +107,11 @@ public class ApaSearch {
 
          public ApaSearch.Builder start(Integer start) {
             search.setSearchModifier("_start", start.toString());
+            return this;
+        }
+
+         public ApaSearch.Builder type(String type) {
+            search.setType(type);
             return this;
         }
 

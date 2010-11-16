@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 import org.apache.commons.collections.CollectionUtils;
@@ -57,15 +58,22 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Ticket getTicket(Object id) {
+    public Ticket getTicket(String type, Object id) {
         EntityManager em = this.emf.createEntityManager();
         try {
             Long longId = LongUserType.massageToLong(id);
             if (longId == null) {
                 return null;
             } else {
-                Ticket t = em.find(Ticket.class, longId);
-                return t;
+                try{
+                    Ticket t = (Ticket) em.createQuery("from Ticket as ticket where id=:id AND type=:ticketType")
+                                    .setParameter("id", longId)
+                                    .setParameter("ticketType", type)
+                                    .getSingleResult();
+                    return t;
+                } catch (NoResultException nre) {
+                    return null;
+                }
             }
         } finally {
             cleanup(em);
@@ -231,19 +239,37 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                     queryString = "FROM " + prop.getClass().getName()
                             + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value "
                             + operator.getOperatorString();
+
+                    if(apaSearch.getType() != null) {
+                        queryString += " AND ticketProp.ticket.type=:ticketType ";
+                    }
+                    
                     query = em.createQuery(queryString);
                     query.setParameter("value", valuesAsObjects);
                     query.setParameter("fieldName", fieldName);
 
+                    if(apaSearch.getType() != null) {
+                        query.setParameter("ticketType", apaSearch.getType());
+                    }
+
 
                 } else {
                     prop.setValue(value.iterator().next());
-                    queryString = "FROM " + prop.getClass().getName()
+                    queryString = "FROM " + prop.getClass().getName() 
                             + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value "
                             + operator.getOperatorString();
-                    query = em.createQuery(queryString);
+
+                    if(apaSearch.getType() != null) {
+                        queryString += " AND ticketProp.ticket.type=:ticketType ";
+                    }
+
+                    query = em.createQuery(queryString);    
                     query.setParameter("value", prop.getValue());
                     query.setParameter("fieldName", fieldName);
+
+                    if(apaSearch.getType() != null) {
+                        query.setParameter("ticketType", apaSearch.getType());
+                    }
                 }
                 props = query.getResultList();
                 ticketsList = new ArrayList<Ticket>();

@@ -48,8 +48,8 @@ public class RecordManager {
     @Autowired
     ApaAdapter apa;
 
-    public Ticket getTicket(Object id) {
-        return apa.getTicket(id);
+    public Ticket getTicket(String type, Object id) {
+        return apa.getTicket(type, id);
     }
 
     public void deleteTicket(Ticket t) {
@@ -60,13 +60,13 @@ public class RecordManager {
         apa.deleteTicket(id);
     }
 
-    public void deletePropertyFromTicket(String propName, Object ticketId)
+    public void deletePropertyFromTicket(String type, String propName, Object ticketId)
             throws ObjectNotFoundException {
         TicketProp prop = apa.getTicketProp(propName, ticketId);
 
         if (prop == null) {
             //no prop found, try and figure out why so we can return a sensible 404
-            Ticket t = apa.getTicket(ticketId);
+            Ticket t = apa.getTicket(type, ticketId);
             if (t == null) {
                 throw new ObjectNotFoundException("Ticket with id [" + ticketId + "] was not found");
             } else {
@@ -81,13 +81,14 @@ public class RecordManager {
      * @param queryParams
      * @return
      */
-    public Set<Ticket> findTickets(MultivaluedMap<String, String> queryParams) {
+    public Set<Ticket> findTickets(String type, MultivaluedMap<String, String> queryParams) {
 
         List<String> values = null;
         Operator operator;
         String value;
         Set<String> valueSet = null;
         ApaSearch apaSearch = new ApaSearch();
+        apaSearch.setType(type);
         for (String fieldName : queryParams.keySet()) {
             values = queryParams.get(fieldName);
             for (String operatorPrefixedValue : values) {
@@ -156,12 +157,12 @@ public class RecordManager {
         return values;
     }
 
-    public Ticket saveTicketFromClientRequest(PTicket pTicket) throws Exception {
+    public Ticket saveTicketFromClientRequest(String type, PTicket pTicket) throws Exception {
         //if this ticket has an id
         if (pTicket.getId() != null) {
-            return updateTicketFromClientTicket(pTicket, pTicket.getId());
+            return updateTicketFromClientTicket(type, pTicket, pTicket.getId());
         } else {
-            return createAndSaveTicketFromClientTicket(pTicket);
+            return createAndSaveTicketFromClientTicket(type, pTicket);
         }
     }
 
@@ -169,8 +170,8 @@ public class RecordManager {
      * updateTicketFromClientTicket assumes that PTicket has been sent with an ID.
      * updateTicketFromClientTicket will load a ticket with that ID.
      */
-    public Ticket updateTicketFromClientTicket(PTicket clientTicket, Object idToUpdate) throws Exception {
-        Ticket ticket = apa.getTicket(idToUpdate);
+    public Ticket updateTicketFromClientTicket(String type, PTicket clientTicket, Object idToUpdate) throws Exception {
+        Ticket ticket = apa.getTicket(type, idToUpdate);
 
         /*
          * If the client ID on the url but we didn't find the ticket, toss back
@@ -223,7 +224,7 @@ public class RecordManager {
             apa.saveTicketProp(ticketProp);
         }
 
-        ticket = apa.getTicket(clientTicket.getId());
+        ticket = apa.getTicket(type, clientTicket.getId());
         ticket = apa.saveTicket(ticket);
         return ticket;
     }
@@ -238,7 +239,7 @@ public class RecordManager {
      * createAndSaveTicketFromClientTicket assumes that PTicket has been sent WITHOUT an ID.
      * createAndSaveTicketFromClientTicket will create a new ticket using magic and wizardry
      */
-    private Ticket createAndSaveTicketFromClientTicket(PTicket clientTicket) throws Exception {
+    private Ticket createAndSaveTicketFromClientTicket(String type, PTicket clientTicket) throws Exception {
 
         Ticket ticket = new Ticket();
 
@@ -265,6 +266,7 @@ public class RecordManager {
             ticket.addTicketProp(ticketProp);
         }
 
+        ticket.setType(type);
         ticket = apa.saveTicket(ticket);
         return ticket;
     }

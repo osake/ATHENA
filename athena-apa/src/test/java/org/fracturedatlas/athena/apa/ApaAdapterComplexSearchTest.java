@@ -40,10 +40,14 @@ import static org.junit.Assert.*;
  */
 public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
-    ApaSearch search = new ApaSearch();
+    ApaSearch search = getSearcher();
 
     public ApaAdapterComplexSearchTest() {
         super();
+    }
+
+    public ApaSearch getSearcher() {
+        return new ApaSearch.Builder().type("ticket").build();
     }
 
     @Test
@@ -54,13 +58,13 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
         assertNotNull(tickets);
         assertEquals(5, tickets.size());
 
-        search = new ApaSearch();
+        search = getSearcher();
         search.addConstraint("SECTION", Operator.EQUALS, "B");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(4, tickets.size());
 
-        search = new ApaSearch();
+        search = getSearcher();
         search.addConstraint("SECTION", Operator.EQUALS, "C");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
@@ -70,19 +74,19 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
     @Test
     public void testFindTicketsGreaterThan() {
-
+        search = getSearcher();
         search.addConstraint("PRICE", Operator.GREATER_THAN, "0");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(10, tickets.size());
 
-        search = new ApaSearch();
+        search = getSearcher();
         search.addConstraint("PRICE", Operator.GREATER_THAN, "25");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(8, tickets.size());
 
-        search = new ApaSearch();
+        search = getSearcher();
         search.addConstraint("PRICE", Operator.GREATER_THAN, "100");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
@@ -93,12 +97,13 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsRange() {
 
+        search = getSearcher();
         search.addConstraint("PRICE", Operator.GREATER_THAN, "0");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(10, tickets.size());
-
-        search = new ApaSearch();
+        
+        search = getSearcher();
         search.addConstraint("PRICE", Operator.LESS_THAN, "100");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
@@ -109,18 +114,19 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsGreaterThanDate() {
 
+        search = getSearcher();
         search.addConstraint("PERFORMANCE", Operator.GREATER_THAN, "2010-10-05");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(6, tickets.size());
 
-        search = new ApaSearch();
+        search = getSearcher();
         search.addConstraint("PERFORMANCE", Operator.GREATER_THAN, "2010-10-06");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(5, tickets.size());
 
-        search = new ApaSearch();
+        search = getSearcher();
         search.addConstraint("PERFORMANCE", Operator.GREATER_THAN, "2010-10-07");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
@@ -131,18 +137,19 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsLessThanDate() {
 
+        search = getSearcher();
         search.addConstraint("PERFORMANCE", Operator.LESS_THAN, "2010-10-05");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(4, tickets.size());
 
-        search = new ApaSearch();
+        search = getSearcher();
         search.addConstraint("PERFORMANCE", Operator.LESS_THAN, "2010-10-06");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(5, tickets.size());
 
-        search = new ApaSearch();
+        search = getSearcher();
         search.addConstraint("PERFORMANCE", Operator.LESS_THAN, "2010-10-07");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
@@ -153,7 +160,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsDateRange() {
 
-        search = new ApaSearch();
+        search = getSearcher();
         search.addConstraint("PERFORMANCE", Operator.GREATER_THAN, "2010-10-05");
         search.addConstraint("PERFORMANCE", Operator.LESS_THAN, "2010-10-07");
         Collection<Ticket> tickets = apa.findTickets(search);
@@ -165,12 +172,13 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsBadRange() {
 
+        search = getSearcher();
         search.addConstraint("PRICE", Operator.GREATER_THAN, "0");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(10, tickets.size());
 
-        search = new ApaSearch();
+        search = getSearcher();
         search.addConstraint("PRICE", Operator.LESS_THAN, "1");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
@@ -181,6 +189,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsGreaterThanNegativeValue() {
 
+        search = getSearcher();
         search.addConstraint("PRICE", Operator.GREATER_THAN, "-40");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
@@ -191,6 +200,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsGreaterThanString() {
 
+        search = getSearcher();
         search.addConstraint("PRICE", Operator.GREATER_THAN, "OHNOES");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
@@ -201,24 +211,25 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsBoolean() {
 
+        search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(7, tickets.size());
 
-        search = new ApaSearch();
+        search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "true");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(3, tickets.size());
 
-        search = new ApaSearch();
+        search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "FALSE");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(7, tickets.size());
 
-        search = new ApaSearch();
+        search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "TRUE");
         tickets = apa.findTickets(search);
         assertNotNull(tickets);
@@ -228,6 +239,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
     @Test
     public void testFindTicketsWithLimit() {
+        search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier("_limit", "6");
         Collection<Ticket> tickets = apa.findTickets(search);
@@ -237,6 +249,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
     @Test
     public void testFindTicketsWithLimitEqualToResult() {
+        search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier("_limit", "7");
         Collection<Ticket> tickets = apa.findTickets(search);
@@ -246,6 +259,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
     @Test
     public void testFindTicketsWithLimitHigherThanResult() {
+        search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier("_limit", "8");
         Collection<Ticket> tickets = apa.findTickets(search);
@@ -255,6 +269,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
     @Test
     public void testFindTicketsWithLimitofZero() {
+        search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier("_limit", "0");
         Collection<Ticket> tickets = apa.findTickets(search);
@@ -264,6 +279,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
     @Test
     public void testFindTicketsWithLimitOfOne() {
+        search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier("_limit", "1");
         Collection<Ticket> tickets = apa.findTickets(search);
@@ -274,6 +290,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
     @Test
     public void testFindTicketsWithInvalidLimit() {
+        search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier("_limit", "dog");
         Collection<Ticket> tickets = apa.findTickets(search);
@@ -283,6 +300,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
     @Test
     public void testFindTicketsRangeWithBoolean() {
+        search = getSearcher();
         search.addConstraint("PRICE", Operator.GREATER_THAN, "26");
         search.addConstraint("SOLD", Operator.EQUALS, "FALSE");
         Collection<Ticket> tickets = apa.findTickets(search);
@@ -293,6 +311,18 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsString() {
 
+        search = getSearcher();
+        search.addConstraint("TIER", Operator.EQUALS, "SILVER");
+        Collection<Ticket> tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(2, tickets.size());
+
+    }
+
+    @Test
+    public void testFindTicketsWithoutSpecifyingType() {
+
+        search = new ApaSearch();
         search.addConstraint("TIER", Operator.EQUALS, "SILVER");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
@@ -312,6 +342,17 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
         Ticket t8 = new Ticket();
         Ticket t9 = new Ticket();
         Ticket t10 = new Ticket();
+
+        t1.setType("ticket");
+        t2.setType("ticket");
+        t3.setType("ticket");
+        t4.setType("ticket");
+        t5.setType("ticket");
+        t6.setType("ticket");
+        t7.setType("ticket");
+        t8.setType("ticket");
+        t9.setType("ticket");
+        t10.setType("ticket");
 
         PropField seatNumberProp = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", StrictType.NOT_STRICT));
         PropField sectionProp = apa.savePropField(new PropField(ValueType.STRING, "SECTION", StrictType.NOT_STRICT));

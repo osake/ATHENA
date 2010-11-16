@@ -70,7 +70,7 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
         PTicket updatedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
         assertTrue(pTicket.equals(updatedPTicket));
 
-        Ticket updatedTicket = apa.getTicket(updatedPTicket.getId());
+        Ticket updatedTicket = apa.getTicket(t.getType(), updatedPTicket.getId());
         assertTicketsEqual(updatedTicket, updatedPTicket);
     }
 
@@ -162,7 +162,7 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
         //make sure nothing got updated
-        Ticket savedTicket = apa.getTicket(t.getId());
+        Ticket savedTicket = apa.getTicket(t.getType(), t.getId());
         assertTicketsEqual(t, savedTicket.toClientTicket());
     }
 

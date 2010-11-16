@@ -75,7 +75,7 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.NO_CONTENT, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
         //check and make sure the prop is deleted
-        t = apa.getTicket(t.getId());
+        t = apa.getTicket(t.getType(), t.getId());
         PTicket pTicket = t.toClientTicket();
         assertEquals(1, pTicket.getProps().size());
         assertEquals("ORCHESTRA", pTicket.get("SECTION"));
@@ -95,7 +95,7 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.NO_CONTENT, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
         //check and make sure the prop is deleted
-        t = apa.getTicket(t.getId());
+        t = apa.getTicket(t.getType(), t.getId());
         PTicket pTicket = t.toClientTicket();
         assertEquals(0, pTicket.getProps().size());
 

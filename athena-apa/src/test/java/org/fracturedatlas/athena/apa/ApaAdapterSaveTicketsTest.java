@@ -61,7 +61,7 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
         assertNotNull(ticket.getId());
         ticketsToDelete.add(ticket);
 
-        ticket = apa.getTicket(ticket.getId());
+        ticket = apa.getTicket(ticket.getType(), ticket.getId());
 
         PTicket pTicket = ticket.toClientTicket();
         assertNotNull(pTicket.getId());

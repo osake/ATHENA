@@ -65,7 +65,7 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         seatProp = apa.getTicketProp("SEAT", ticket.getId());
         apa.deleteTicketProp(seatProp);
 
-        ticket = apa.getTicket(ticket.getId());
+        ticket = apa.getTicket(ticket.getType(), ticket.getId());
         assertEquals(2, ticket.getTicketProps().size());
 
         for(TicketProp prop : ticket.getTicketProps()) {
@@ -122,7 +122,7 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         seatProp = apa.getTicketProp("SEAT", ticket.getId());
         apa.deleteTicketProp(seatProp);
 
-        ticket = apa.getTicket(ticket.getId());
+        ticket = apa.getTicket(ticket.getType(), ticket.getId());
         assertEquals(2, ticket.getTicketProps().size());
 
         for(TicketProp prop : ticket.getTicketProps()) {
@@ -143,7 +143,7 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
             }
         }
 
-        ticket2 = apa.getTicket(ticket2.getId());
+        ticket2 = apa.getTicket(ticket2.getType(), ticket2.getId());
         assertEquals(3, ticket2.getTicketProps().size());
 
         for(TicketProp prop : ticket2.getTicketProps()) {
@@ -195,7 +195,7 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
             //this is cool.  Hibernate is complaining that we're deleting an unsaved transient blah blah blah...
         }
 
-        ticket = apa.getTicket(ticket.getId());
+        ticket = apa.getTicket(ticket.getType(), ticket.getId());
         assertEquals(3, ticket.getTicketProps().size());
 
         for(TicketProp prop : ticket.getTicketProps()) {

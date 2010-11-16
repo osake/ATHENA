@@ -121,7 +121,7 @@ public class TicketTest extends BaseApaAdapterTest {
 
         ticket = apa.saveTicket(ticket);
         ticketsToDelete.add(ticket);
-        Ticket ticket2 = apa.getTicket(ticket.getId());
+        Ticket ticket2 = apa.getTicket(ticket.getType(), ticket.getId());
         assertTrue(ticket.equals(ticket2));
         assertTrue(ticket2.equals(ticket));
 
@@ -226,7 +226,7 @@ public class TicketTest extends BaseApaAdapterTest {
         ticket.setTicketProp(new StringTicketProp(field2, "23"));
 
         ticket = apa.saveTicket(ticket);
-        Ticket savedTicket = apa.getTicket(ticket.getId());
+        Ticket savedTicket = apa.getTicket(ticket.getType(), ticket.getId());
         ticketsToDelete.add(savedTicket);
         ticket.setType("foo");
         assertFalse(ticket.equals(savedTicket));
@@ -256,7 +256,7 @@ public class TicketTest extends BaseApaAdapterTest {
         ticket.setTicketProp(new StringTicketProp(field2, "23"));
 
         ticket = apa.saveTicket(ticket);
-        Ticket savedTicket = apa.getTicket(ticket.getId());
+        Ticket savedTicket = apa.getTicket(ticket.getType(), ticket.getId());
         ticketsToDelete.add(savedTicket);
         ticket.setTicketProp(new StringTicketProp(field2, "123"));
         assertFalse(ticket.equals(savedTicket));

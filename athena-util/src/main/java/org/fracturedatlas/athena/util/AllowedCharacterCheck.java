@@ -34,7 +34,7 @@ public class AllowedCharacterCheck {
 
 	/**
 	 * Checks that the String:
-         *  - is not a "Reserved" field name.
+         *  - is not a "Reserved" field name.  Right now the only one we prevent is "id"
          *  - is not null
          *  - is not blank
          *  - does not contain characters other than [0-9a-zA-Z\_]
@@ -49,7 +49,7 @@ public class AllowedCharacterCheck {
             }
 
             //TODO: This should be moved to some config file
-            if("id".equals(str) || "name".equals(str)) {
+            if("id".equals(str)) {
                 return false;
             }
 

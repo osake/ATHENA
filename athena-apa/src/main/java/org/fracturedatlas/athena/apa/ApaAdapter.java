@@ -53,7 +53,7 @@ public interface ApaAdapter {
      * @param id
      * @return the ticket or null if the ticket is not found
      */
-    public Ticket getTicket(Object id);
+    public Ticket getTicket(String type, Object id);
 
     /**
      * Save a ticket to the database.  This method can be used to save new tickets and update existing tickets.

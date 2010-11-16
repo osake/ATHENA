@@ -16,7 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
- */
+*/
+
 package org.fracturedatlas.athena.web.resource.container;
 
 import com.google.gson.Gson;
@@ -36,157 +37,44 @@ import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-public class SearchContainerTest extends BaseTixContainerTest {
+public class SearchByTypeContainerTest extends BaseTixContainerTest {
 
-    String path = RECORDS_PATH;
+    String bottlesPath = "/bottles/";
+    String casesPath = "/cases/";
     Gson gson = JsonUtil.getGson();
 
     @Test
     public void testFindTickets() {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
         queryParams.add("SOLD", "eqfalse");
-        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        String jsonString = tix.path(bottlesPath).queryParams(queryParams).get(String.class);
         Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(0, tickets.length);
+
+        queryParams = new MultivaluedMapImpl();
+        queryParams.add("SOLD", "eqfalse");
+        jsonString = tix.path(casesPath).queryParams(queryParams).get(String.class);
+        tickets = gson.fromJson(jsonString, Ticket[].class);
         assertNotNull(tickets);
         assertEquals(5, tickets.length);
     }
 
     @Test
-    public void testFindTicketsGreaterThan() {
+    public void testFindTicketsByTier() {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
-        queryParams.add("PRICE", "gt30");
-        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        queryParams.add("TIER", "eqSILVER");
+        String jsonString = tix.path(bottlesPath).queryParams(queryParams).get(String.class);
         Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
-        assertNotNull(tickets);
-        assertEquals(8, tickets.length);
-    }
-
-    @Test
-    public void testFindTicketsRange() {
-        MultivaluedMap queryParams = new MultivaluedMapImpl();
-        queryParams.add("PRICE", "gt30");
-        queryParams.add("PRICE", "lt100");
-        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
-        assertNotNull(tickets);
-        assertEquals(6, tickets.length);
-    }
-
-    @Test
-    public void testFindTicketsInListStrings() {
-        MultivaluedMap queryParams = new MultivaluedMapImpl();
-        queryParams.add("SECTION", "in(A,B)");
-        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
-        assertNotNull(tickets);
-        assertEquals(9, tickets.length);
-
-        queryParams = new MultivaluedMapImpl();
-        queryParams.add("SECTION", "in( \"A \",B)");
-        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
-        assertNotNull(tickets);
-        assertEquals(9, tickets.length);
-
-
-        queryParams = new MultivaluedMapImpl();
-        queryParams.add("SECTION", "in( \\\"A \\\",  \"B\")");
-        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
-        assertNotNull(tickets);
-        assertEquals(4, tickets.length);
-    }
-
-    @Test
-    public void testFindTicketsInListDate() {
-        MultivaluedMap queryParams = new MultivaluedMapImpl();
-        queryParams.add("PERFORMANCE", "in(2010-10-14T13:33:50-04:00,2010-10-15T13:33:50-04:00)");
-        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
-        assertNotNull(tickets);
-        assertEquals(7, tickets.length);
-
-        queryParams = new MultivaluedMapImpl();
-        queryParams.add("PERFORMANCE", "in( \"2010-10-14T13:33:50-04:00\", 2010-10-15T13:33:50-04:00)");
-        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
-        assertNotNull(tickets);
-        assertEquals(7, tickets.length);
-
-        //First figure is not a valid number so only the second is found
-        queryParams = new MultivaluedMapImpl();
-        queryParams.add("PERFORMANCE", "in( \\\"2010-10-14T13:33:50-04:00 \\\",  \" 2010-10-15T13:33:50-04:00\")");
-        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
         assertNotNull(tickets);
         assertEquals(2, tickets.length);
-    }
-
-    @Test
-    public void testFindTicketsInListIntegers() {
-        MultivaluedMap queryParams = new MultivaluedMapImpl();
-        queryParams.add("PRICE", "in(25,50)");
-        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
-        assertNotNull(tickets);
-        assertEquals(8, tickets.length);
 
         queryParams = new MultivaluedMapImpl();
-        queryParams.add("PRICE", "in( \"25\", 50)");
-        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        queryParams.add("TIER", "eqSILVER");
+        jsonString = tix.path(casesPath).queryParams(queryParams).get(String.class);
         tickets = gson.fromJson(jsonString, Ticket[].class);
         assertNotNull(tickets);
-        assertEquals(8, tickets.length);
-
-        //First figure is not a valid number so the query fails
-        queryParams = new MultivaluedMapImpl();
-        queryParams.add("PRICE", "in( \\\"25 \\\",  \" 50\")");
-        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
-        assertNotNull(tickets);
-        assertEquals(6, tickets.length);
-    }
-
-    @Test
-    public void testFindTicketsLimitResults() {
-        MultivaluedMap queryParams = new MultivaluedMapImpl();
-        queryParams.add("PRICE", "in(25,50)");
-        queryParams.add("_limit", "5");
-        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
-        assertNotNull(tickets);
-        assertEquals(5, tickets.length);
-
-        queryParams = new MultivaluedMapImpl();
-        queryParams.add("PRICE", "in( \"25\", 50)");
-        queryParams.add("_limit", "9");
-        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
-        assertNotNull(tickets);
-        assertEquals(8, tickets.length);
-
-    }
-
-    @Test
-    public void testFindTicketsStartPoint() {
-        
-        MultivaluedMap queryParams = new MultivaluedMapImpl();
-        queryParams.add("PRICE", "in(25,50)");
-        queryParams.add("_start", "0");
-
-        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
-        assertNotNull(tickets);
-        assertEquals(8, tickets.length);
-
-        queryParams = new MultivaluedMapImpl();
-        queryParams.add("PRICE", "in( \"25\", 50)");
-        queryParams.add("_start", "2");
-        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
-        assertNotNull(tickets);
-        assertEquals(6, tickets.length);
-
+        assertEquals(0, tickets.length);
     }
 
     @Before
@@ -202,16 +90,16 @@ public class SearchContainerTest extends BaseTixContainerTest {
         Ticket t9 = new Ticket();
         Ticket t10 = new Ticket();
 
-        t1.setType("ticket");
-        t2.setType("ticket");
-        t3.setType("ticket");
-        t4.setType("ticket");
-        t5.setType("ticket");
-        t6.setType("ticket");
-        t7.setType("ticket");
-        t8.setType("ticket");
-        t9.setType("ticket");
-        t10.setType("ticket");
+        t1.setType("bottle");
+        t2.setType("bottle");
+        t3.setType("bottle");
+        t4.setType("bottle");
+        t5.setType("bottle");
+        t6.setType("case");
+        t7.setType("case");
+        t8.setType("case");
+        t9.setType("case");
+        t10.setType("case");
 
         PropField seatNumberProp = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", StrictType.NOT_STRICT));
         PropField sectionProp = apa.savePropField(new PropField(ValueType.STRING, "SECTION", StrictType.NOT_STRICT));

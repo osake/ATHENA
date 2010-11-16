@@ -73,7 +73,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Ticket getTicket(Object id) {
+    public Ticket getTicket(String type, Object id) {
         return toRecord(getRecordDocument(new BasicDBObject(), ObjectId.massageToObjectId(id)), true);
     }
 
@@ -85,7 +85,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     public Ticket saveTicket(Ticket t) {
         BasicDBObject doc = new BasicDBObject();
 
-        Ticket savedTicket = getTicket(t.getId());
+        Ticket savedTicket = getTicket(t.getType(), t.getId());
 
         if(savedTicket == null) {
             ObjectId oid = new ObjectId();
@@ -235,27 +235,27 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     public TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException {
         enforceStrict(prop.getPropField(), prop.getValueAsString());
         enforceCorrectValueType(prop.getPropField(), prop);
-        Ticket t = getTicket(prop.getTicket().getId());
+        Ticket t = getTicket(prop.getTicket().getType(), prop.getTicket().getId());
         t.addTicketProp(prop);
         saveTicket(t);
         return null;
     }
 
-    @Override
-    public Boolean deleteTicket(Object id) {
-        Ticket t = getTicket(id);
-
-        if(t == null) {
-            return false;
-        } else{
-
-            BasicDBObject query = new BasicDBObject();
-            ObjectId oid = ObjectId.massageToObjectId(id);
-            query.put("_id", oid);
-            records.remove(query);
-            return true;
-        }
-    }
+//    @Override
+//    public Boolean deleteTicket(Object id) {
+//        Ticket t = getTicket(id);
+//
+//        if(t == null) {
+//            return false;
+//        } else{
+//
+//            BasicDBObject query = new BasicDBObject();
+//            ObjectId oid = ObjectId.massageToObjectId(id);
+//            query.put("_id", oid);
+//            records.remove(query);
+//            return true;
+//        }
+//    }
 
     @Override
     public Boolean deleteTicket(Ticket t) {

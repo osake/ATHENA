@@ -70,8 +70,8 @@ public class Ticket extends TixEntity implements Serializable {
         return type;
     }
 
-    public void setType(String name) {
-        this.type = name;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Collection<TicketProp> getTicketProps() {

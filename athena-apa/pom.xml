@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
@@ -41,7 +41,6 @@
             <artifactId>persistence-api</artifactId>
             <version>1.0</version>
         </dependency>
-
 
         <!-- HIBERNATE -->
 

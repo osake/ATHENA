@@ -42,7 +42,7 @@ import org.fracturedatlas.athena.search.ApaSearch;
 public abstract class AbstractApaAdapter implements ApaAdapter {
     
     @Override
-    public Ticket getTicket(Object id) {
+    public Ticket getTicket(String type, Object id) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
     

@@ -119,7 +119,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
         PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
         assertEquals("false", savedPTicket.get("FOO_BOOL"));
-        Ticket savedTicket = apa.getTicket(savedPTicket.getId());
+        Ticket savedTicket = apa.getTicket(t.getType(), savedPTicket.getId());
         ticketsToDelete.add(savedTicket);
     }
 
@@ -137,7 +137,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         assertNotNull(savedPTicket.getId());
         assertTicketsEqual(t, savedPTicket, false);
 
-        Ticket savedTicket = apa.getTicket(savedPTicket.getId());
+        Ticket savedTicket = apa.getTicket(t.getType(), savedPTicket.getId());
         assertTicketsEqual(savedTicket, savedPTicket);
         ticketsToDelete.add(savedTicket);
     }
@@ -154,7 +154,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
         //make sure the ticket hasn't changed
-        PTicket actualPTicket = apa.getTicket(t.getId()).toClientTicket();
+        PTicket actualPTicket = apa.getTicket(t.getType(), t.getId()).toClientTicket();
         assertTicketsEqual(t, actualPTicket);
     }
 
@@ -216,7 +216,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         assertNotNull(savedPTicket.getId());
         assertTicketsEqual(t, savedPTicket, false);
 
-        Ticket savedTicket = apa.getTicket(savedPTicket.getId());
+        Ticket savedTicket = apa.getTicket(t.getType(), savedPTicket.getId());
         assertTicketsEqual(savedTicket, savedPTicket);
 
         ticketsToDelete.add(savedTicket);
@@ -261,7 +261,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         assertNotNull(savedPTicket.getId());
         assertTicketsEqual(t, savedPTicket, false);
 
-        Ticket savedTicket = apa.getTicket(savedPTicket.getId());
+        Ticket savedTicket = apa.getTicket(t.getType(), savedPTicket.getId());
         assertTicketsEqual(savedTicket, savedPTicket);
 
         ticketsToDelete.add(savedTicket);
@@ -318,7 +318,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         pTicket.setId(savedPTicket.getId());
         assertTrue(pTicket.equals(savedPTicket));
 
-        Ticket savedTicket = apa.getTicket(savedPTicket.getId());
+        Ticket savedTicket = apa.getTicket("ticket", savedPTicket.getId());
         assertTicketsEqual(savedTicket, savedPTicket);
 
         ticketsToDelete.add(savedTicket);
@@ -394,7 +394,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         pTicket.setId(savedPTicket.getId());
         assertTrue(pTicket.equals(savedPTicket));
 
-        Ticket savedTicket = apa.getTicket(savedPTicket.getId());
+        Ticket savedTicket = apa.getTicket("ticket", savedPTicket.getId());
         assertTicketsEqual(savedTicket, savedPTicket);
 
         ticketsToDelete.add(savedTicket);

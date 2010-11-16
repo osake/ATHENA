@@ -38,11 +38,13 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
+import org.apache.commons.lang.StringUtils;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.web.exception.ForbiddenException;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.web.util.JsonUtil;
+import org.modeshape.common.text.Inflector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,10 +61,12 @@ public class RecordResource {
 
     @GET
     @Path("{type}/{id}")
-    public Object get(@PathParam("id") String id) throws NotFoundException {
-        Ticket ticket = recordManager.getTicket(id);
+    public Object get(@PathParam("type") String type, @PathParam("id") String id) throws NotFoundException {
+        type = Inflector.getInstance().singularize(type);
+        Ticket ticket = recordManager.getTicket(type, id);
         if (ticket == null) {
-            throw new NotFoundException("Ticket with id [" + id + "] was not found");
+            type = StringUtils.capitalize(type);
+            throw new NotFoundException(type + " with id [" + id + "] was not found");
         } else {
             return ticket;
         }
@@ -77,8 +81,9 @@ public class RecordResource {
      */
     @GET
     @Path("{type}/{id}/props")
-    public TicketProp[] getProps(@PathParam("id") String id) throws NotFoundException {
-        Ticket ticket = recordManager.getTicket(id);
+    public TicketProp[] getProps(@PathParam("type") String type, @PathParam("id") String id) throws NotFoundException {
+        type = Inflector.getInstance().singularize(type);
+        Ticket ticket = recordManager.getTicket(type, id);
         if (ticket == null) {
             throw new NotFoundException("Ticket with id [" + id + "] was not found");
         } else {
@@ -88,8 +93,9 @@ public class RecordResource {
 
     @DELETE
     @Path("{type}/{id}")
-    public void delete(@PathParam("id") String id) throws NotFoundException {
-        Ticket ticket = recordManager.getTicket(id);
+    public void delete(@PathParam("type") String type, @PathParam("id") String id) throws NotFoundException {
+        type = Inflector.getInstance().singularize(type);
+        Ticket ticket = recordManager.getTicket(type, id);
         if (ticket == null) {
             throw new NotFoundException("Ticket with id [" + id + "] was not found");
         } else {
@@ -99,10 +105,12 @@ public class RecordResource {
 
     @DELETE
     @Path("{type}/{id}/props/{name}")
-    public void delete(@PathParam("id") String id,
+    public void delete(@PathParam("type") String type,
+                       @PathParam("id") String id,
                        @PathParam("name") String name) throws NotFoundException {
+        type = Inflector.getInstance().singularize(type);
         try {
-            recordManager.deletePropertyFromTicket(name, id);
+            recordManager.deletePropertyFromTicket(type, name, id);
         } catch (ObjectNotFoundException onfe) {
             //Catching this because ONFE maps to a BAD_REQUEST.  Since the id's are on the URL
             //We want to throw a 404 instead
@@ -121,14 +129,15 @@ public class RecordResource {
      */
     @GET
     @Path("{type}/")
-    public Collection<Ticket> search(@Context UriInfo ui) {
+    public Collection<Ticket> search(@PathParam("type") String type, @Context UriInfo ui) {
+        type = Inflector.getInstance().singularize(type);
         MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
 
         if (queryParams.isEmpty()) {
             throw new ForbiddenException("You must specify at least one query parameter when searching for tickets");
         } 
 
-        return recordManager.findTickets(queryParams);
+        return recordManager.findTickets(type, queryParams);
     }
 
     /**
@@ -140,8 +149,9 @@ public class RecordResource {
      */
     @POST
     @Path("{type}/")
-    public Object save(PTicket pTicket) throws Exception {
-        Ticket ticket = recordManager.saveTicketFromClientRequest(pTicket);
+    public Object save(@PathParam("type") String type, PTicket pTicket) throws Exception {
+        type = Inflector.getInstance().singularize(type);
+        Ticket ticket = recordManager.saveTicketFromClientRequest(type, pTicket);
         return ticket;
     }
 
@@ -154,8 +164,9 @@ public class RecordResource {
      */
     @PUT
     @Path("{type}/{id}")
-    public Object update(@PathParam("id") String id, PTicket pTicket) throws Exception {
-        Ticket ticket = recordManager.updateTicketFromClientTicket(pTicket, id);
+    public Object update(@PathParam("type") String type, @PathParam("id") String id, PTicket pTicket) throws Exception {
+        type = Inflector.getInstance().singularize(type);
+        Ticket ticket = recordManager.updateTicketFromClientTicket(type, pTicket, id);
         return ticket;
     }
 }
