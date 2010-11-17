@@ -289,6 +289,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     @Test
     public void testDeleteTicket() {
         Ticket t = new Ticket();
+        t.setType("ticket");
 
         PropField field = new PropField();
         field.setValueType(ValueType.STRING);
@@ -335,15 +336,19 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         PropField pf3 = apa.savePropField(field);
 
         t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t.setType("ticket");
         t = apa.saveTicket(t);
 
         t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t2.setType("ticket");
         t2 = apa.saveTicket(t2);
 
         t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t3.setType("ticket");
         t3 = apa.saveTicket(t3);
 
         t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t4.setType("ticket");
         t4 = apa.saveTicket(t4);
 
 
@@ -389,15 +394,19 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         PropField pf3 = apa.savePropField(field);
 
         t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t.setType("ticket");
         t = apa.saveTicket(t);
 
         t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t2.setType("ticket");
         t2 = apa.saveTicket(t2);
 
         t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t3.setType("ticket");
         t3 = apa.saveTicket(t3);
 
         t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
+        t4.setType("ticket");
         t4 = apa.saveTicket(t4);
 
 
@@ -436,6 +445,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     @Test
     public void testDeleteTicketDoesntExist() {
         Ticket t = new Ticket();
+        t.setType("ticket");
 
         PropField field = new PropField();
         field.setValueType(ValueType.STRING);
