@@ -48,6 +48,7 @@ import org.fracturedatlas.athena.apa.model.ValueType;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.ApaSearch;
 import org.fracturedatlas.athena.search.ApaSearchConstraint;
+import org.fracturedatlas.athena.search.Operator;
 import org.slf4j.LoggerFactory;
 
 public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
@@ -111,7 +112,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
 
         Set<Ticket> tickets = new HashSet<Ticket>();
-        BasicDBObject query = new BasicDBObject();
+        DBObject currentQuery = new BasicDBObject();
 
         if("0".equals(apaSearch.getSearchModifiers().get("_limit"))) {
             return tickets;
@@ -130,20 +131,52 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                     //TODO: Handle it
                 }
 
-                query.put(PROPS_STRING + "." + field.getName(), searchProp.getValue());
+                buildMongoQuery(currentQuery, PROPS_STRING + "." + field.getName(), constraint.getOper(), searchProp.getValue());
             } else {
                 //TODO: Serching for field that doesn't exist, ignore?
             }
         }
 
-        
-        DBCursor recordsCursor = db.getCollection(apaSearch.getType()).find(query);
+        DBCursor recordsCursor = db.getCollection(apaSearch.getType()).find(currentQuery);
         recordsCursor = setLimit(recordsCursor, apaSearch.getSearchModifiers().get("_limit"));
+        recordsCursor = setSkip(recordsCursor, apaSearch.getSearchModifiers().get("_Start"));
 
         for(DBObject recordObject : recordsCursor) {
             tickets.add(toRecord(recordObject));
         }
         return tickets;
+    }
+    
+    /**
+     * Takes an athena operator and returns a MOngo operator
+     * @param o the Athena operator
+     * @return the mongo operator
+     */
+    public static void buildMongoQuery(DBObject currentQuery, String field, Operator o, Object value) {
+        DBObject queryValue = (DBObject)currentQuery.get(field);
+        if(queryValue == null) {
+            queryValue = new BasicDBObject();
+        }
+        
+        switch (o) {
+            case EQUALS:
+                currentQuery.put(field, value);
+                return;
+            case GREATER_THAN:
+                queryValue.put("$gt",value);
+                currentQuery.put(field, queryValue);
+                return;
+            case LESS_THAN:
+                queryValue.put("$lt",value);
+                currentQuery.put(field, queryValue);
+                return;
+            case IN:
+                queryValue.put("$in",value);
+                currentQuery.put(field, queryValue);
+                return;
+
+        }
+        throw new UnsupportedOperationException("Can't translate search operator [" + o.toString() + "]");
     }
     
     private DBCursor setLimit(DBCursor recordsCursor, String limit) {
@@ -154,6 +187,19 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             } catch (NumberFormatException nfe) {
                 //ignored, no limit will be set
             }            
+        }
+
+        return recordsCursor;
+    }
+
+    private DBCursor setSkip(DBCursor recordsCursor, String start) {
+        if(start != null) {
+            try{
+                Integer st = Integer.parseInt(start);
+                recordsCursor.skip(st);
+            } catch (NumberFormatException nfe) {
+                //ignored, no limit will be set
+            }
         }
 
         return recordsCursor;
@@ -426,7 +472,6 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 for(String key : propsObj.keySet()) {
                     Object val = propsObj.get(key);
                     PropField field = getPropField(key);
-
                     TicketProp ticketProp = field.getValueType().newTicketProp();
                     ticketProp.setId(null);
                     ticketProp.setPropField(field);

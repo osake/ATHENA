@@ -56,112 +56,112 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
 
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 1));
-        t.setType("1");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 2));
-        t.setType("2");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 3));
-        t.setType("3");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 4));
-        t.setType("4");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 5));
-        t.setType("5");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 6));
-        t.setType("6");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 7));
-        t.setType("7");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
         t.addTicketProp(new IntegerTicketProp(pf2, 8));
-        t.setType("8");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 1));
-        t.setType("9");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 2));
-        t.setType("10");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 3));
-        t.setType("11");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 4));
-        t.setType("12");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 5));
-        t.setType("13");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 6));
-        t.setType("14");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 7));
-        t.setType("15");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
         t = new Ticket();
         t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
         t.addTicketProp(new IntegerTicketProp(pf2, 8));
-        t.setType("16");
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
@@ -176,11 +176,11 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
     public void testStartOnly() {
 
         ApaSearch search = new ApaSearch();
+        search.setType("ticket");
         search.setSearchModifier("_start", "3");
 
         Set results = apa.findTickets(search);
         assertEquals(0, results.size());
-
     }
 
     @Test
@@ -188,7 +188,7 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
         ApaSearchConstraint con1 = new ApaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
         ApaSearchConstraint con2 = new ApaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
 
-        ApaSearch search = new ApaSearch.Builder(con1).and(con2).start(3).build();
+        ApaSearch search = new ApaSearch.Builder(con1).and(con2).start(3).type("ticket").build();
 
         Set results = apa.findTickets(search);
         assertEquals(4, results.size());
@@ -201,7 +201,7 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
         ApaSearchConstraint con1 = new ApaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
         ApaSearchConstraint con2 = new ApaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
 
-        ApaSearch search = new ApaSearch.Builder(con1).and(con2).start(3).limit(2).build();
+        ApaSearch search = new ApaSearch.Builder(con1).and(con2).start(3).limit(2).type("ticket").build();
 
         Set results = apa.findTickets(search);
         assertEquals(2, results.size());
@@ -213,7 +213,7 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
         ApaSearchConstraint con1 = new ApaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
         ApaSearchConstraint con2 = new ApaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
 
-        ApaSearch search = new ApaSearch.Builder(con1).and(con2).start(8).build();
+        ApaSearch search = new ApaSearch.Builder(con1).and(con2).start(8).type("ticket").build();
 
         Set results = apa.findTickets(search);
         assertEquals(0, results.size());
@@ -225,7 +225,7 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
         ApaSearchConstraint con1 = new ApaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
         ApaSearchConstraint con2 = new ApaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
 
-        ApaSearch search = new ApaSearch.Builder(con1).and(con2).start(7).build();
+        ApaSearch search = new ApaSearch.Builder(con1).and(con2).start(7).type("ticket").build();
 
         Set results = apa.findTickets(search);
         assertEquals(0, results.size());
@@ -240,6 +240,7 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
         search.setSearchModifier("_start", "dog");
         search.addConstraint(con1);
         search.addConstraint(con2);
+        search.setType("ticket");
         Set results = apa.findTickets(search);
         assertEquals(7, results.size());
 
@@ -250,7 +251,7 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
         ApaSearchConstraint con1 = new ApaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
         ApaSearchConstraint con2 = new ApaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
 
-        ApaSearch search = new ApaSearch.Builder(con1).and(con2).start(3).limit(5).build();
+        ApaSearch search = new ApaSearch.Builder(con1).and(con2).start(3).limit(5).type("ticket").build();
 
         Set results = apa.findTickets(search);
         assertEquals(4, results.size());
@@ -265,7 +266,7 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
         ApaSearch search = null;
 
         for (int start = 0; start <= 7; start++) {
-            search = new ApaSearch.Builder(con1).and(con2).start(start).build();
+            search = new ApaSearch.Builder(con1).and(con2).start(start).type("ticket").build();
             results = apa.findTickets(search);
             assertEquals(7 - start, results.size());
         }
@@ -281,7 +282,7 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
         int limit = 0;
 
         for (int start = 0; start <= 7; start++) {
-            search = new ApaSearch.Builder(con1).and(con2).start(start).limit(limit).build();
+            search = new ApaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
             results = apa.findTickets(search);
             assertEquals(0, results.size());
         }
@@ -298,11 +299,11 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
         int limit = 1;
 
         for (int start = 0; start <= 6; start++) {
-            search = new ApaSearch.Builder(con1).and(con2).start(start).limit(limit).build();
+            search = new ApaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
             results = apa.findTickets(search);
             assertEquals(1, results.size());
         }
-        search = new ApaSearch.Builder(con1).and(con2).start(7).limit(limit).build();
+        search = new ApaSearch.Builder(con1).and(con2).start(7).limit(limit).type("ticket").build();
         results = apa.findTickets(search);
         assertEquals(0, results.size());
 
@@ -318,15 +319,15 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
         int limit = 2;
 
         for (int start = 0; start <= 5; start++) {
-            search = new ApaSearch.Builder(con1).and(con2).start(start).limit(limit).build();
+            search = new ApaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
             results = apa.findTickets(search);
             assertEquals(2, results.size());
         }
-        search = new ApaSearch.Builder(con1).and(con2).start(6).limit(limit).build();
+        search = new ApaSearch.Builder(con1).and(con2).start(6).limit(limit).type("ticket").build();
         results = apa.findTickets(search);
         assertEquals(1, results.size());
 
-        search = new ApaSearch.Builder(con1).and(con2).start(7).limit(limit).build();
+        search = new ApaSearch.Builder(con1).and(con2).start(7).limit(limit).type("ticket").build();
         results = apa.findTickets(search);
         assertEquals(0, results.size());
 

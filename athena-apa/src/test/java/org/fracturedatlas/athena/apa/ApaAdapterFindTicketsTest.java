@@ -86,6 +86,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsOneBooleanProperty() {
         Ticket t = new Ticket();
+        t.setType("ticket");
 
         PropField field = new PropField();
         field.setValueType(ValueType.BOOLEAN);
@@ -111,6 +112,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsOneIntegerProperty() {
         Ticket t = new Ticket();
+        t.setType("ticket");
 
         PropField field = new PropField();
         field.setValueType(ValueType.INTEGER);
@@ -145,6 +147,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     public void testFindTicketsTwoProperties() {
 
         Ticket t = new Ticket();
+        t.setType("ticket");
 
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", StrictType.NOT_STRICT));
         PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "LOCKED", StrictType.NOT_STRICT));
@@ -168,6 +171,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     public void testFindTicketsMultipleProperties() throws ParseException {
 
         Ticket t = new Ticket();
+        t.setType("ticket");
 
         PropField field = new PropField();
         field.setValueType(ValueType.INTEGER);
@@ -217,6 +221,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     public void testFindTicketsMultipleProperties2() throws ParseException {
 
         Ticket t = new Ticket();
+        t.setType("ticket");
 
         PropField field = new PropField();
         field.setValueType(ValueType.INTEGER);
