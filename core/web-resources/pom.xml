@@ -1,18 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
-        <artifactId>athena</artifactId>
+        <artifactId>core</artifactId>
         <version>0.4-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.fracturedatlas.athena</groupId>
-    <artifactId>athena-web-resources</artifactId>
+    <artifactId>web-resources</artifactId>
     <packaging>jar</packaging>
     <version>0.4-SNAPSHOT</version>
-    <name>athena-web-resources</name>
+    <name>web-resources</name>
     <build>
-        <finalName>athena-web-resources</finalName>
+        <finalName>web-resources</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -50,15 +50,15 @@
         <!-- ATHENA -->
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
-            <artifactId>athena-util</artifactId>
+            <artifactId>util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
-            <artifactId>athena-client</artifactId>
+            <artifactId>client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
-            <artifactId>athena-apa</artifactId>
+            <artifactId>apa</artifactId>
         </dependency>
 
         <dependency>

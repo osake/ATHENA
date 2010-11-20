@@ -25,9 +25,9 @@ Once MySQL is set up and listening, do this:
 
 	git clone git@github.com:fracturedatlas/ATHENA.git
 	cd ATHENA
-	cd athena-apa
+	cd apa
 	mvn test
-	cd ../athena-web-resources
+	cd ../web-resources
 	mvn test -Dtest=ContainerSuite
 	mvn install -DskipTests=true
 	
@@ -35,23 +35,23 @@ Once MySQL is set up and listening, do this:
 
 ATHENA is made up of Maven sub-projects or "modules".
 
-###athena-apa
+###apa
 
 The Data Access layer of ATHENA
 
-###athena-web-resources
+###web-resources
 
 The Jersey RESTful front end and the business logic that sits behind it.
 
-###athena-util
+###util
 
 Utilities that are shared across all modules
 
-###athena-sdk
+###sdk
 
 A POM that includes several other modules so that projects can include all needed athena dependencies with one pom dependency
 
-###athena-client
+###client
 
 Client library for consuming ATHENA resources from Java clients.
 
@@ -61,7 +61,7 @@ Add this dependency to your projects POM file
 
 	<dependency>
 	    <groupId>org.fracturedatlas.athena</groupId>
-	    <artifactId>athena-sdk</artifactId>
+	    <artifactId>sdk</artifactId>
 	    <version>${athena-version}</version>
 	    <type>pom</type>
 	</dependency>
