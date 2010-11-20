@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.fracturedatlas.athena</groupId>
+    <artifactId>components</artifactId>
+    <name>components</name>
+    <version>0.4-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+      <module>tix</module>
+      <module>people</module>
+      <module>orders</module>
+      <module>payments</module>
+    <module>stage</module>
+  </modules>
+
+    <properties>
+        <athena-version>0.4-SNAPSHOT</athena-version>
+    </properties>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>Fractured Atlas Snapshots</name>
+            <url>http://maven2.fracturedatlas.org:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>releases</id>
+            <name>Fractured Atlas Releases</name>
+            <url>http://maven2.fracturedatlas.org:8081/nexus/content/repositories/releases/</url>
+        </repository>
+    </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.0</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.glassfish.distributions</groupId>
+            <artifactId>web-all</artifactId>
+            <version>10.0-build-20080430</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.embedded</groupId>
+            <artifactId>gf-embedded-api</artifactId>
+            <version>1.0-alpha-4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.fracturedatlas.athena</groupId>
+            <artifactId>sdk</artifactId>
+            <version>${athena-version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>fractured-atlas-releases</id>
+            <name>Fractured Atlas Releases</name>
+            <url>http://nexus.fracturedatlas.org:8081/nexus/content/repositories/releases/</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+                <checksumPolicy>ignore</checksumPolicy>
+            </releases>
+        </repository>
+        <repository>
+            <id>fractured-atlas-snapshots</id>
+            <name>Fractured Atlas Snapshots</name>
+            <url>http://nexus.fracturedatlas.org:8081/nexus/content/repositories/snapshots/</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>true</enabled>
+                <checksumPolicy>ignore</checksumPolicy>
+            </snapshots>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+        </repository>
+    </repositories>
+    <scm>
+        <connection>scm:git:git@github.com:fracturedatlas/ATHENA-Components.git</connection>
+        <developerConnection>scm:git:git@github.com:fracturedatlas/ATHENA-Components.git</developerConnection>
+    </scm>
+</project>

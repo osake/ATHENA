@@ -1,0 +1,23 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/tx
+           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+               
+    <bean id="processor" class="org.fracturedatlas.athena.payments.processor.Braintree" autowire="autodetect">
+        <constructor-arg index="0" value="SANDBOX"/>
+        <constructor-arg index="1" value="bzy5dt9tm5x3jvys"/>
+        <constructor-arg index="2" value="n8xrkpmvkdmgxqgc"/>
+        <constructor-arg index="3" value="6gnq5wzg79rtbq4v"/>
+    </bean>
+    <bean id="transactionsManager" class="org.fracturedatlas.athena.payments.manager.TransactionsManager" autowire="autodetect"/>
+    <bean id="transactionsResource" class="org.fracturedatlas.athena.payments.web.resource.TransactionsResource" autowire="autodetect"/>
+    <bean id="customersManager" class="org.fracturedatlas.athena.payments.manager.CustomersManager" autowire="autodetect"/>
+    <bean id="customersResource" class="org.fracturedatlas.athena.payments.web.resource.CustomersResource" autowire="autodetect"/>
+    <bean id="cardsManager" class="org.fracturedatlas.athena.payments.manager.CardsManager" autowire="autodetect"/>
+    <bean id="cardsResource" class="org.fracturedatlas.athena.payments.web.resource.CardsResource" autowire="autodetect"/>
+</beans>
