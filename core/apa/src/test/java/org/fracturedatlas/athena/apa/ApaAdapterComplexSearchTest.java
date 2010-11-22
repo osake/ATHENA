@@ -353,7 +353,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
     }
 
-    @Test
+//    @Test
     public void testFindTicketsWithoutSpecifyingType() {
 
         search = new ApaSearch();

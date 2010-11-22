@@ -72,7 +72,7 @@ public class StrictPropertyTest extends BaseManagerTest {
         PropValue v1 = apa.savePropValue(new PropValue(pf, "WXYZ"));
         PropValue v2 = apa.savePropValue(new PropValue(pf, "UPDATED"));
         propFieldsToDelete.add(pf);
-
+        t.setType("ticket");
         StringTicketProp prop = new StringTicketProp(pf, "WXYZ");
         t.addTicketProp(prop);
         t = apa.saveTicket(t);
@@ -95,8 +95,10 @@ public class StrictPropertyTest extends BaseManagerTest {
         PropValue v2 = apa.savePropValue(new PropValue(pf, "UPDATED"));
         propFieldsToDelete.add(pf);
 
+
         StringTicketProp prop = new StringTicketProp(pf, "WXYZ");
         t.addTicketProp(prop);
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
@@ -125,6 +127,7 @@ public class StrictPropertyTest extends BaseManagerTest {
 
         IntegerTicketProp prop = new IntegerTicketProp(pf, 2);
         t.addTicketProp(prop);
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
@@ -150,6 +153,7 @@ public class StrictPropertyTest extends BaseManagerTest {
 
         IntegerTicketProp prop = new IntegerTicketProp(pf, 2);
         t.addTicketProp(prop);
+        t.setType("ticket");
         t = apa.saveTicket(t);
         ticketsToDelete.add(t);
 
