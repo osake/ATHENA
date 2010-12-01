@@ -17,6 +17,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
+
+/**
+ * Since the APA layer is datastore-agnostic, "id" fields must be declared as type: Object.  This class
+ * defines "id" as a Long for JpaApaAdapter and Hibernate.  See annotations over "Object id" in the model classes
+ */
 package org.fracturedatlas.athena.apa.impl;
 
 import java.io.Serializable;
