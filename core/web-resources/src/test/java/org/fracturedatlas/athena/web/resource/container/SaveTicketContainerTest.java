@@ -19,13 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.web.resource.container;
 
-import org.fracturedatlas.athena.search.ApaSearch;
+import org.fracturedatlas.athena.search.AthenaSearch;
 import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -170,11 +169,11 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
         //make sure nothing got saved
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("SECTION", Operator.EQUALS, "ORCHESTRA");
         assertEquals(0, apa.findTickets(as).size());
 
-        as = new ApaSearch();
+        as = new AthenaSearch();
         as.addConstraint("SEAT_NUMBER", Operator.EQUALS, "3D");
         assertEquals(0, apa.findTickets(as).size());
     }

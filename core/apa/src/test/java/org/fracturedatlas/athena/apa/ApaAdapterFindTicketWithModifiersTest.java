@@ -20,9 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import java.util.Set;
-import org.fracturedatlas.athena.search.ApaSearch;
+import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.Operator;
-import org.fracturedatlas.athena.search.ApaSearchConstraint;
+import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
 import org.fracturedatlas.athena.apa.model.StringTicketProp;
 import org.fracturedatlas.athena.apa.model.Ticket;
@@ -175,7 +175,7 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
     @Test
     public void testStartOnly() {
 
-        ApaSearch search = new ApaSearch();
+        AthenaSearch search = new AthenaSearch();
         search.setType("ticket");
         search.setSearchModifier("_start", "3");
 
@@ -185,10 +185,10 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
 
     @Test
     public void testStartAndConstraints() {
-        ApaSearchConstraint con1 = new ApaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        ApaSearchConstraint con2 = new ApaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
 
-        ApaSearch search = new ApaSearch.Builder(con1).and(con2).start(3).type("ticket").build();
+        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(3).type("ticket").build();
 
         Set results = apa.findTickets(search);
         assertEquals(4, results.size());
@@ -198,10 +198,10 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
 
     @Test
     public void testStartLimitAndConstraints() {
-        ApaSearchConstraint con1 = new ApaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        ApaSearchConstraint con2 = new ApaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
 
-        ApaSearch search = new ApaSearch.Builder(con1).and(con2).start(3).limit(2).type("ticket").build();
+        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(3).limit(2).type("ticket").build();
 
         Set results = apa.findTickets(search);
         assertEquals(2, results.size());
@@ -210,10 +210,10 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
 
     @Test
     public void testStartGreaterThanReturn() {
-        ApaSearchConstraint con1 = new ApaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        ApaSearchConstraint con2 = new ApaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
 
-        ApaSearch search = new ApaSearch.Builder(con1).and(con2).start(8).type("ticket").build();
+        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(8).type("ticket").build();
 
         Set results = apa.findTickets(search);
         assertEquals(0, results.size());
@@ -222,10 +222,10 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
 
     @Test
     public void testStartEqualReturn() {
-        ApaSearchConstraint con1 = new ApaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        ApaSearchConstraint con2 = new ApaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
 
-        ApaSearch search = new ApaSearch.Builder(con1).and(con2).start(7).type("ticket").build();
+        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(7).type("ticket").build();
 
         Set results = apa.findTickets(search);
         assertEquals(0, results.size());
@@ -234,9 +234,9 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
 
     @Test
     public void testInvalidStart() {
-        ApaSearchConstraint con1 = new ApaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        ApaSearchConstraint con2 = new ApaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-        ApaSearch search = new ApaSearch();
+        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+        AthenaSearch search = new AthenaSearch();
         search.setSearchModifier("_start", "dog");
         search.addConstraint(con1);
         search.addConstraint(con2);
@@ -248,10 +248,10 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
 
     @Test
     public void testStartWithLimitGreaterThanReturn() {
-        ApaSearchConstraint con1 = new ApaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        ApaSearchConstraint con2 = new ApaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
 
-        ApaSearch search = new ApaSearch.Builder(con1).and(con2).start(3).limit(5).type("ticket").build();
+        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(3).limit(5).type("ticket").build();
 
         Set results = apa.findTickets(search);
         assertEquals(4, results.size());
@@ -260,13 +260,13 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
 
      @Test
    public void testStartofZerotoReturnSize() {
-        ApaSearchConstraint con1 = new ApaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        ApaSearchConstraint con2 = new ApaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
         Set results = null;
-        ApaSearch search = null;
+        AthenaSearch search = null;
 
         for (int start = 0; start <= 7; start++) {
-            search = new ApaSearch.Builder(con1).and(con2).start(start).type("ticket").build();
+            search = new AthenaSearch.Builder(con1).and(con2).start(start).type("ticket").build();
             results = apa.findTickets(search);
             assertEquals(7 - start, results.size());
         }
@@ -274,15 +274,15 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
 
     @Test
     public void testStartofZerotoReturnSizeAndLimitofZero() {
-        ApaSearchConstraint con1 = new ApaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        ApaSearchConstraint con2 = new ApaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
         Set results = null;
-        ApaSearch search = null;
+        AthenaSearch search = null;
 
         int limit = 0;
 
         for (int start = 0; start <= 7; start++) {
-            search = new ApaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
+            search = new AthenaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
             results = apa.findTickets(search);
             assertEquals(0, results.size());
         }
@@ -290,20 +290,20 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
 
     @Test
     public void testStartofZerotoReturnSizeAndLimitofOne() {
-        ApaSearchConstraint con1 = new ApaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        ApaSearchConstraint con2 = new ApaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
         Set<Ticket> results = null;
-        ApaSearch search = null;
+        AthenaSearch search = null;
         Ticket t = null;
 
         int limit = 1;
 
         for (int start = 0; start <= 6; start++) {
-            search = new ApaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
+            search = new AthenaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
             results = apa.findTickets(search);
             assertEquals(1, results.size());
         }
-        search = new ApaSearch.Builder(con1).and(con2).start(7).limit(limit).type("ticket").build();
+        search = new AthenaSearch.Builder(con1).and(con2).start(7).limit(limit).type("ticket").build();
         results = apa.findTickets(search);
         assertEquals(0, results.size());
 
@@ -312,22 +312,22 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
 
     @Test
     public void testStartofZerotoReturnSizeAndLimitofTwo() {
-        ApaSearchConstraint con1 = new ApaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        ApaSearchConstraint con2 = new ApaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
         Set results = null;
-        ApaSearch search = null;
+        AthenaSearch search = null;
         int limit = 2;
 
         for (int start = 0; start <= 5; start++) {
-            search = new ApaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
+            search = new AthenaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
             results = apa.findTickets(search);
             assertEquals(2, results.size());
         }
-        search = new ApaSearch.Builder(con1).and(con2).start(6).limit(limit).type("ticket").build();
+        search = new AthenaSearch.Builder(con1).and(con2).start(6).limit(limit).type("ticket").build();
         results = apa.findTickets(search);
         assertEquals(1, results.size());
 
-        search = new ApaSearch.Builder(con1).and(con2).start(7).limit(limit).type("ticket").build();
+        search = new AthenaSearch.Builder(con1).and(con2).start(7).limit(limit).type("ticket").build();
         results = apa.findTickets(search);
         assertEquals(0, results.size());
 

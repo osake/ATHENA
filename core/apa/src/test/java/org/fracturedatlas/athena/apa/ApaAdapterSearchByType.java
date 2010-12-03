@@ -29,8 +29,8 @@ import org.fracturedatlas.athena.apa.model.StrictType;
 import org.fracturedatlas.athena.apa.model.StringTicketProp;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.ValueType;
-import org.fracturedatlas.athena.search.ApaSearch;
-import org.fracturedatlas.athena.search.ApaSearchConstraint;
+import org.fracturedatlas.athena.search.AthenaSearch;
+import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.junit.*;
@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
 
 public class ApaAdapterSearchByType extends BaseApaAdapterTest {
 
-    ApaSearch search;
+    AthenaSearch search;
 
     public ApaAdapterSearchByType() {
         super();
@@ -48,9 +48,9 @@ public class ApaAdapterSearchByType extends BaseApaAdapterTest {
     @Test
     public void testFindRecordsByType() {
 
-        search = new ApaSearch.Builder()
+        search = new AthenaSearch.Builder()
                               .type("event")
-                              .and(new ApaSearchConstraint("HALF_PRICE_AVAILABLE", Operator.EQUALS, "true"))
+                              .and(new AthenaSearchConstraint("HALF_PRICE_AVAILABLE", Operator.EQUALS, "true"))
                               .build();
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
@@ -60,9 +60,9 @@ public class ApaAdapterSearchByType extends BaseApaAdapterTest {
     @Test
     public void testFindRecordsByType2() {
 
-        search = new ApaSearch.Builder()
+        search = new AthenaSearch.Builder()
                               .type("performance")
-                              .and(new ApaSearchConstraint("HALF_PRICE_AVAILABLE", Operator.EQUALS, "true"))
+                              .and(new AthenaSearchConstraint("HALF_PRICE_AVAILABLE", Operator.EQUALS, "true"))
                               .build();
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
@@ -72,7 +72,7 @@ public class ApaAdapterSearchByType extends BaseApaAdapterTest {
     @Test
     public void testFindRecordsNoType() {
 
-        search = new ApaSearch.Builder(new ApaSearchConstraint("HALF_PRICE_AVAILABLE", Operator.EQUALS, "true"))
+        search = new AthenaSearch.Builder(new AthenaSearchConstraint("HALF_PRICE_AVAILABLE", Operator.EQUALS, "true"))
                               .build();
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);

@@ -41,8 +41,8 @@ import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.lock.exception.TicketsLockedException;
 import org.fracturedatlas.athena.helper.lock.model.AthenaLock;
 import org.fracturedatlas.athena.helper.lock.model.AthenaLockStatus;
-import org.fracturedatlas.athena.search.ApaSearch;
-import org.fracturedatlas.athena.search.ApaSearchConstraint;
+import org.fracturedatlas.athena.search.AthenaSearch;
+import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.fracturedatlas.athena.web.exception.AthenaException;
@@ -86,9 +86,9 @@ public class AthenaLockManager {
 
     public AthenaLock getLock(String id, HttpServletRequest request) throws Exception {
 
-        ApaSearch apaSearch = new ApaSearch
-                                  .Builder(new ApaSearchConstraint(AthenaLockManager.LOCK_ID, Operator.EQUALS, id))
-                                  .and(new ApaSearchConstraint(AthenaLockManager.LOCKED_BY_API_KEY, Operator.EQUALS, request.getHeader("X-ATHENA-Key")))
+        AthenaSearch apaSearch = new AthenaSearch
+                                  .Builder(new AthenaSearchConstraint(AthenaLockManager.LOCK_ID, Operator.EQUALS, id))
+                                  .and(new AthenaSearchConstraint(AthenaLockManager.LOCKED_BY_API_KEY, Operator.EQUALS, request.getHeader("X-ATHENA-Key")))
                                   .build();
 
         Collection<Ticket> tickets = apa.findTickets(apaSearch);
@@ -321,7 +321,7 @@ public class AthenaLockManager {
     }
 
     private Set<Ticket> getTicketsInTransaction(String lockId) {
-        ApaSearch search = new ApaSearch();
+        AthenaSearch search = new AthenaSearch();
         search.addConstraint(AthenaLockManager.LOCK_ID, Operator.EQUALS, lockId);
         Set<Ticket> ticketsInTransaction = apa.findTickets(search);
         return ticketsInTransaction;

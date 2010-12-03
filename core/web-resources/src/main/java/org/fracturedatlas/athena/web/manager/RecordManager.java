@@ -38,7 +38,7 @@ import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.id.IdAdapter;
-import org.fracturedatlas.athena.search.ApaSearch;
+import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +87,7 @@ public class RecordManager {
         Operator operator;
         String value;
         Set<String> valueSet = null;
-        ApaSearch apaSearch = new ApaSearch();
+        AthenaSearch apaSearch = new AthenaSearch();
         apaSearch.setType(type);
         for (String fieldName : queryParams.keySet()) {
             values = queryParams.get(fieldName);

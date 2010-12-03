@@ -29,7 +29,7 @@ import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.PropValue;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.TicketProp;
-import org.fracturedatlas.athena.search.ApaSearch;
+import org.fracturedatlas.athena.search.AthenaSearch;
 
 /**
  * Abstract implementation of ApaAdapter as a convenience for developers seeking
@@ -67,7 +67,7 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Set<Ticket> findTickets(ApaSearch search) {
+    public Set<Ticket> findTickets(AthenaSearch search) {
         return new HashSet<Ticket>();
     }
 

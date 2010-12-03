@@ -29,7 +29,7 @@ import org.fracturedatlas.athena.apa.model.StrictType;
 import org.fracturedatlas.athena.apa.model.StringTicketProp;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.ValueType;
-import org.fracturedatlas.athena.search.ApaSearch;
+import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.junit.*;
@@ -37,14 +37,14 @@ import static org.junit.Assert.*;
 
 public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
-    ApaSearch search = getSearcher();
+    AthenaSearch search = getSearcher();
 
     public ApaAdapterComplexSearchTest() {
         super();
     }
 
-    public ApaSearch getSearcher() {
-        return new ApaSearch.Builder().type("ticket").build();
+    public AthenaSearch getSearcher() {
+        return new AthenaSearch.Builder().type("ticket").build();
     }
 
     @Test
@@ -356,7 +356,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 //    @Test
     public void testFindTicketsWithoutSpecifyingType() {
 
-        search = new ApaSearch();
+        search = new AthenaSearch();
         search.addConstraint("TIER", Operator.EQUALS, "SILVER");
         try{
             Collection<Ticket> tickets = apa.findTickets(search);

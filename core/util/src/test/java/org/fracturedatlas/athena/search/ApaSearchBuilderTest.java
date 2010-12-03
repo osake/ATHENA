@@ -30,8 +30,8 @@ public class ApaSearchBuilderTest {
 
     @Test
     public void testBuilderOneTerm() {
-        ApaSearchConstraint con = new ApaSearchConstraint("FOO", Operator.EQUALS, "BAR");
-        ApaSearch search = new ApaSearch.Builder(con).build();
+        AthenaSearchConstraint con = new AthenaSearchConstraint("FOO", Operator.EQUALS, "BAR");
+        AthenaSearch search = new AthenaSearch.Builder(con).build();
         assertEquals(1, search.getConstraints().size());
         assertEquals(con, search.getConstraints().get(0));
 
@@ -41,13 +41,13 @@ public class ApaSearchBuilderTest {
 
     @Test
     public void testBuilderTwoTerms() {
-        ApaSearchConstraint con1 = new ApaSearchConstraint("FOO", Operator.EQUALS, "BAR");
-        ApaSearchConstraint con2 = new ApaSearchConstraint("BIZ", Operator.GREATER_THAN, "BLAH");
-        List<ApaSearchConstraint> cons = new ArrayList<ApaSearchConstraint>();
+        AthenaSearchConstraint con1 = new AthenaSearchConstraint("FOO", Operator.EQUALS, "BAR");
+        AthenaSearchConstraint con2 = new AthenaSearchConstraint("BIZ", Operator.GREATER_THAN, "BLAH");
+        List<AthenaSearchConstraint> cons = new ArrayList<AthenaSearchConstraint>();
         cons.add(con1);
         cons.add(con2);
 
-        ApaSearch search = new ApaSearch.Builder(con1)
+        AthenaSearch search = new AthenaSearch.Builder(con1)
                                .and(con2)
                                .build();
 
@@ -60,13 +60,13 @@ public class ApaSearchBuilderTest {
 
     @Test
     public void testBuilderTwoTermsAndALimit() {
-        ApaSearchConstraint con1 = new ApaSearchConstraint("FOO", Operator.EQUALS, "BAR");
-        ApaSearchConstraint con2 = new ApaSearchConstraint("BIZ", Operator.GREATER_THAN, "BLAH");
-        List<ApaSearchConstraint> cons = new ArrayList<ApaSearchConstraint>();
+        AthenaSearchConstraint con1 = new AthenaSearchConstraint("FOO", Operator.EQUALS, "BAR");
+        AthenaSearchConstraint con2 = new AthenaSearchConstraint("BIZ", Operator.GREATER_THAN, "BLAH");
+        List<AthenaSearchConstraint> cons = new ArrayList<AthenaSearchConstraint>();
         cons.add(con1);
         cons.add(con2);
 
-        ApaSearch search = new ApaSearch.Builder(con1)
+        AthenaSearch search = new AthenaSearch.Builder(con1)
                                .and(con2)
                                .limit(3)
                                .build();

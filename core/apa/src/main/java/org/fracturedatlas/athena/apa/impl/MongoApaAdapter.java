@@ -46,8 +46,8 @@ import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.apa.model.ValueType;
 import org.fracturedatlas.athena.id.IdAdapter;
-import org.fracturedatlas.athena.search.ApaSearch;
-import org.fracturedatlas.athena.search.ApaSearchConstraint;
+import org.fracturedatlas.athena.search.AthenaSearch;
+import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
 import org.slf4j.LoggerFactory;
 
@@ -106,19 +106,19 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Set<Ticket> findTickets(ApaSearch apaSearch) {
-        if(apaSearch.getType() == null) {
+    public Set<Ticket> findTickets(AthenaSearch athenaSearch) {
+        if(athenaSearch.getType() == null) {
             throw new ApaException("You must specify a record type when doing a search");
         }
 
         Set<Ticket> tickets = new HashSet<Ticket>();
         DBObject currentQuery = new BasicDBObject();
 
-        if("0".equals(apaSearch.getSearchModifiers().get("_limit"))) {
+        if("0".equals(athenaSearch.getSearchModifiers().get("_limit"))) {
             return tickets;
         }
 
-        for(ApaSearchConstraint constraint : apaSearch.getConstraints()) {
+        for(AthenaSearchConstraint constraint : athenaSearch.getConstraints()) {
             PropField field = getPropField(constraint.getParameter());
             if(field != null) {
                 //load the field's value type so we can apaSearch for it with proper typing
@@ -137,9 +137,9 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             }
         }
 
-        DBCursor recordsCursor = db.getCollection(apaSearch.getType()).find(currentQuery);
-        recordsCursor = setLimit(recordsCursor, apaSearch.getSearchModifiers().get("_limit"));
-        recordsCursor = setSkip(recordsCursor, apaSearch.getSearchModifiers().get("_Start"));
+        DBCursor recordsCursor = db.getCollection(athenaSearch.getType()).find(currentQuery);
+        recordsCursor = setLimit(recordsCursor, athenaSearch.getSearchModifiers().get("_limit"));
+        recordsCursor = setSkip(recordsCursor, athenaSearch.getSearchModifiers().get("_Start"));
 
         for(DBObject recordObject : recordsCursor) {
             tickets.add(toRecord(recordObject));

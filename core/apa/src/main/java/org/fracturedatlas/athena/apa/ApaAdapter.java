@@ -29,7 +29,7 @@ import org.fracturedatlas.athena.apa.model.PropField;
 import org.fracturedatlas.athena.apa.model.PropValue;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.TicketProp;
-import org.fracturedatlas.athena.search.ApaSearch;
+import org.fracturedatlas.athena.search.AthenaSearch;
 
 /**
  * The interface from Parakeet to a data store.
@@ -89,7 +89,7 @@ public interface ApaAdapter {
      * @param searchParams the search criteria.  Criteria should be in the format: key = prop, value = prop value
      * @return matching tickets, empty List if no tickets found
      */
-    public Set<Ticket> findTickets(ApaSearch search);
+    public Set<Ticket> findTickets(AthenaSearch search);
 
     /**
      * Save the ticketProps contained in this list

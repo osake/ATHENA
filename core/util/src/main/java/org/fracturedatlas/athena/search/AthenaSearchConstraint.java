@@ -23,20 +23,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-public class ApaSearchConstraint {
+public class AthenaSearchConstraint {
 
     Operator oper = null;
     String parameter = null;
     Set<String> valueSet = null;
 
-    public ApaSearchConstraint(String param, Operator operator, String val) {
+    public AthenaSearchConstraint(String param, Operator operator, String val) {
         parameter = param;
         oper = operator;
         valueSet = new HashSet<String>();
         valueSet.add(val);
     }
 
-    public ApaSearchConstraint(String param, Operator operator, Set<String> values) {
+    public AthenaSearchConstraint(String param, Operator operator, Set<String> values) {
         parameter = param;
         oper = operator;
         valueSet = values;
@@ -84,7 +84,7 @@ public class ApaSearchConstraint {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ApaSearchConstraint other = (ApaSearchConstraint) obj;
+        final AthenaSearchConstraint other = (AthenaSearchConstraint) obj;
         if (this.oper != other.oper && (this.oper == null || !this.oper.equals(other.oper))) {
             return false;
         }

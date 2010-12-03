@@ -41,8 +41,8 @@ import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.apa.model.ValueType;
 import org.fracturedatlas.athena.search.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.fracturedatlas.athena.search.ApaSearch;
-import org.fracturedatlas.athena.search.ApaSearchConstraint;
+import org.fracturedatlas.athena.search.AthenaSearch;
+import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 
 public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
@@ -164,12 +164,12 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     /**
-     * @param apaSearch a set of search constraints and search modifiers
-     * @return Set of tickets whose Props match the apaSearch
+     * @param athenaSearch a set of search constraints and search modifiers
+     * @return Set of tickets whose Props match the athenaSearch
      */
     @Override
-    public Set<Ticket> findTickets(ApaSearch apaSearch) {
-        logger.debug("Searching for tickets matching [{}]", apaSearch);
+    public Set<Ticket> findTickets(AthenaSearch athenaSearch) {
+        logger.debug("Searching for tickets matching [{}]", athenaSearch);
         EntityManager em = this.emf.createEntityManager();
         Set<String> value = null;
         Query query = null;
@@ -177,12 +177,12 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         int limit = -1;
         int start = -1;
         try {
-            String limitString = apaSearch.getSearchModifier(LIMIT);
+            String limitString = athenaSearch.getSearchModifier(LIMIT);
             if (limitString!=null) {
                 limit = Integer.parseInt(limitString);
             }
         } catch (NumberFormatException ex) {
-            logger.error("Error While searching [{}]", apaSearch.asList());
+            logger.error("Error While searching [{}]", athenaSearch.asList());
             logger.error(ex.getMessage(), ex);
             limit = -1;
         }
@@ -190,12 +190,12 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             return new HashSet<Ticket>();
         }
         try {
-            String startString = apaSearch.getSearchModifier(START);
+            String startString = athenaSearch.getSearchModifier(START);
             if (startString!=null) {
                 start = Integer.parseInt(startString);
             }
         } catch (NumberFormatException ex) {
-            logger.error("Error While searching [{}]", apaSearch.asList());
+            logger.error("Error While searching [{}]", athenaSearch.asList());
             logger.error(ex.getMessage(), ex);
             start = -1;
         }
@@ -212,7 +212,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         String singleValue = null;
         Set<Object> valuesAsObjects = null;
         try {
-            for (ApaSearchConstraint apc : apaSearch.asList()) {
+            for (AthenaSearchConstraint apc : athenaSearch.asList()) {
                 fieldName = apc.getParameter();
                 pf = getPropField(fieldName);
                 if (pf != null) {
@@ -232,7 +232,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                             prop.setValue(singleValue);
                             valuesAsObjects.add(prop.getValue());
                         } catch (Exception ex) {
-                            logger.error("Error While searching [{}]", apaSearch.asList());
+                            logger.error("Error While searching [{}]", athenaSearch.asList());
                             logger.error(ex.getMessage(), ex);
                        }
                     }
@@ -240,7 +240,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                             + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value "
                             + operator.getOperatorString();
 
-                    if(apaSearch.getType() != null) {
+                    if(athenaSearch.getType() != null) {
                         queryString += " AND ticketProp.ticket.type=:ticketType ";
                     }
                     
@@ -248,8 +248,8 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                     query.setParameter("value", valuesAsObjects);
                     query.setParameter("fieldName", fieldName);
 
-                    if(apaSearch.getType() != null) {
-                        query.setParameter("ticketType", apaSearch.getType());
+                    if(athenaSearch.getType() != null) {
+                        query.setParameter("ticketType", athenaSearch.getType());
                     }
 
 
@@ -259,7 +259,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                             + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value "
                             + operator.getOperatorString();
 
-                    if(apaSearch.getType() != null) {
+                    if(athenaSearch.getType() != null) {
                         queryString += " AND ticketProp.ticket.type=:ticketType ";
                     }
 
@@ -267,8 +267,8 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                     query.setParameter("value", prop.getValue());
                     query.setParameter("fieldName", fieldName);
 
-                    if(apaSearch.getType() != null) {
-                        query.setParameter("ticketType", apaSearch.getType());
+                    if(athenaSearch.getType() != null) {
+                        query.setParameter("ticketType", athenaSearch.getType());
                     }
                 }
                 props = query.getResultList();
@@ -319,7 +319,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             }
             return finishedTicketsSet;
         } catch (Exception ex) {
-            logger.error("Error While searching [{}]", apaSearch.asList());
+            logger.error("Error While searching [{}]", athenaSearch.asList());
             logger.error(ex.getMessage(), ex);
             return new HashSet<Ticket>();
         } finally {

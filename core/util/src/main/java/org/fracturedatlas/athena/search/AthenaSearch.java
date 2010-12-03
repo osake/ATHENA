@@ -25,37 +25,37 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ApaSearch {
+public class AthenaSearch {
 
-    ArrayList<ApaSearchConstraint> asc = null;
+    ArrayList<AthenaSearchConstraint> asc = null;
     Map<String, String> searchModifiers = new HashMap<String, String>();
 
     String type;
 
-    public ApaSearch() {
-        asc = new ArrayList<ApaSearchConstraint>();
+    public AthenaSearch() {
+        asc = new ArrayList<AthenaSearchConstraint>();
     }
 
     public void addConstraint(String fieldName, Operator operator, String searchValue) {
-        asc.add(new ApaSearchConstraint(fieldName, operator, searchValue));
+        asc.add(new AthenaSearchConstraint(fieldName, operator, searchValue));
     }
 
     public void addConstraint(String fieldName, Operator operator, Set<String> searchValues) {
-        asc.add(new ApaSearchConstraint(fieldName, operator, searchValues));
+        asc.add(new AthenaSearchConstraint(fieldName, operator, searchValues));
     }
 
-    public void addConstraint(ApaSearchConstraint searchConstraint) {
+    public void addConstraint(AthenaSearchConstraint searchConstraint) {
         asc.add(searchConstraint);
     }
 
     /*
      * TODO: refactor this out
      */
-    public List<ApaSearchConstraint> asList() {
+    public List<AthenaSearchConstraint> asList() {
         return getConstraints();
     }
 
-    public List<ApaSearchConstraint> getConstraints() {
+    public List<AthenaSearchConstraint> getConstraints() {
         return asc;
     }
 
@@ -80,37 +80,37 @@ public class ApaSearch {
     }
 
     public static class Builder {
-        ApaSearch search;
+        AthenaSearch search;
 
-        public Builder(ApaSearchConstraint sc) {
-            this.search = new ApaSearch();
+        public Builder(AthenaSearchConstraint sc) {
+            this.search = new AthenaSearch();
             this.search.addConstraint(sc);
         }
 
         public Builder() {
-            this.search = new ApaSearch();
+            this.search = new AthenaSearch();
         }
 
-        public ApaSearch build() {
+        public AthenaSearch build() {
             return search;
         }
 
-        public ApaSearch.Builder and(ApaSearchConstraint sc) {
+        public AthenaSearch.Builder and(AthenaSearchConstraint sc) {
             search.addConstraint(sc);
             return this;
         }
 
-        public ApaSearch.Builder limit(Integer limit) {
+        public AthenaSearch.Builder limit(Integer limit) {
             search.setSearchModifier("_limit", limit.toString());
             return this;
         }
 
-         public ApaSearch.Builder start(Integer start) {
+         public AthenaSearch.Builder start(Integer start) {
             search.setSearchModifier("_start", start.toString());
             return this;
         }
 
-         public ApaSearch.Builder type(String type) {
+         public AthenaSearch.Builder type(String type) {
             search.setType(type);
             return this;
         }

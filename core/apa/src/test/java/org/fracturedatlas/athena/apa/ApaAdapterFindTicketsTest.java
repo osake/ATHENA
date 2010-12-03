@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import org.fracturedatlas.athena.search.Operator;
-import org.fracturedatlas.athena.search.ApaSearch;
+import org.fracturedatlas.athena.search.AthenaSearch;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,7 +60,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
     @Test
     public void testFindTicketsEmptyValue() {
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("SEAT NUMBER", Operator.EQUALS, "");
 
         Collection<Ticket> tickets = apa.findTickets(as);
@@ -69,7 +69,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
     @Test
     public void testFindTicketsUnknownPropName() {
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("UNKNOWN_PROP_NAME15", Operator.EQUALS, "ABCDEFG");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
@@ -77,7 +77,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
     @Test
     public void testFindTicketsInvalidValue() {
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("Seat Number", Operator.EQUALS, "ABCDEFG");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
@@ -103,7 +103,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t);
         propFieldsToDelete.add(pf);
 
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("BOOLEAN_PROP", Operator.EQUALS, "true");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(1, tickets.size());
@@ -129,7 +129,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t);
         propFieldsToDelete.add(pf);
 
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("INTEGER_PROP", Operator.EQUALS, "2");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(1, tickets.size());
@@ -160,7 +160,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf);
         propFieldsToDelete.add(pf2);
 
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("SEAT_NUMBER", Operator.EQUALS, "3");
         as.addConstraint("LOCKED", Operator.EQUALS, "true");
         Collection<Ticket> tickets = apa.findTickets(as);
@@ -207,7 +207,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf4);
 
 
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("Seat Number", Operator.EQUALS, "4");
         as.addConstraint("locked", Operator.EQUALS, "false");
         as.addConstraint("Artist", Operator.EQUALS, "ACDC");
@@ -256,7 +256,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf3);
         propFieldsToDelete.add(pf4);
 
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("Seat Number", Operator.EQUALS, "3");
         as.addConstraint("locked", Operator.EQUALS, "true");
         as.addConstraint("Artist", Operator.EQUALS, "Foo");
@@ -298,7 +298,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t4);
         propFieldsToDelete.add(pf3);
 
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("Artist", Operator.EQUALS, "ACDC");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(4, tickets.size());
@@ -380,7 +380,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf3);
 
 
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("Artist", Operator.EQUALS, "ACDC");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(4, tickets.size());
@@ -469,7 +469,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf4);
 
 
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("Artist", Operator.EQUALS, "ACDC");
         as.addConstraint("PRICE", Operator.EQUALS, "50");
         Collection<Ticket> tickets = apa.findTickets(as);
@@ -556,7 +556,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf4);
 
 
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("Artist", Operator.EQUALS, "Warrant");
         as.addConstraint("PRICE", Operator.EQUALS, "100");
         Collection<Ticket> tickets = apa.findTickets(as);
@@ -620,7 +620,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf4);
 
 
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("PRICE", Operator.EQUALS, "50");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(4, tickets.size());
@@ -686,7 +686,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t4);
         propFieldsToDelete.add(pf3);
 
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("Date", Operator.EQUALS, "2010-10-09");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
@@ -727,7 +727,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t4);
         propFieldsToDelete.add(pf3);
 
-        ApaSearch as = new ApaSearch();
+        AthenaSearch as = new AthenaSearch();
         as.addConstraint("Date", Operator.EQUALS, "16:00:00");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
