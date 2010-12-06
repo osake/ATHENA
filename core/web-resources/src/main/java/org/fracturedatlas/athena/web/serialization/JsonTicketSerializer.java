@@ -78,10 +78,17 @@ public class JsonTicketSerializer implements MessageBodyWriter<Ticket>,
     public PTicket readFrom(java.lang.Class<PTicket> type, java.lang.reflect.Type genericType, java.lang.annotation.Annotation[] annotations, MediaType mediaType, MultivaluedMap<java.lang.String,java.lang.String> httpHeaders, java.io.InputStream entityStream) {
         
         Gson gson = JsonUtil.getGson();
-        PTicket pTicket = gson.fromJson(new InputStreamReader(entityStream), PTicket.class);
-        if(pTicket == null) {
-            throw new AthenaException("Could not understand JSON request");
+        PTicket pTicket;
+        try{
+            pTicket = gson.fromJson(new InputStreamReader(entityStream), PTicket.class);
+            if(pTicket == null) {
+                throw new AthenaException("Could not create record from JSON request");
+            }
+        } catch (JsonParseException jpe) {
+            jpe.printStackTrace();
+            throw new AthenaException("Could not deserialize JSON request", jpe);
         }
+
         return pTicket;
     }
 
@@ -105,7 +112,7 @@ public class JsonTicketSerializer implements MessageBodyWriter<Ticket>,
             pTicket.setId(JsonUtil.nullSafeGetAsString(ticketObj.get("id")));
             ticketObj.remove("id");
             for (Entry<String, JsonElement> entry : ticketObj.entrySet()) {
-                pTicket.put(entry.getKey(), entry.getValue().getAsString());
+                pTicket.put(entry.getKey(), JsonUtil.nullSafeGetAsString(entry.getValue()));
             }
             return pTicket;
         } catch (JsonParseException jpe) {

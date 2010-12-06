@@ -36,6 +36,7 @@ import org.fracturedatlas.athena.web.serialization.JsonTicketSerializer;
 public class JsonUtil {
 
     static GsonBuilder gb = new GsonBuilder()
+                                .serializeNulls()
                                 .setLongSerializationPolicy(LongSerializationPolicy.STRING)
                                 .registerTypeAdapter(PTicket.class, new JsonTicketSerializer())
                                 .registerTypeAdapter(java.util.Date.class, new DateTypeConverter());
@@ -75,6 +76,8 @@ public class JsonUtil {
 
     public static String nullSafeGetAsString(JsonElement e) {
         if(e == null) {
+            return null;
+        } else if (e.isJsonNull()) {
             return null;
         } else {
             return e.getAsString();
