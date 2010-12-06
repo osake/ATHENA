@@ -61,7 +61,7 @@ public abstract class BaseContainerTest extends JerseyTest {
         .contextParam("contextConfigLocation", "classpath:athenatest-applicationContext.xml")
         .servletClass(SpringServlet.class)
         .contextListenerClass(ContextLoaderListener.class)
-        .contextParam("javax.ws.rs.Application", "org.fracturedatlas.athena.web.config.ParakeetConfig")
+        .contextParam("javax.ws.rs.Application", "org.fracturedatlas.athena.web.config.AthenaWebConfig")
         .build());
 
         ClientConfig cc = new DefaultClientConfig();

@@ -95,6 +95,9 @@ public class RecordManager {
                 if (fieldName.startsWith("_")) {
                     apaSearch.setSearchModifier(fieldName, operatorPrefixedValue);
                 } else {
+
+                    //TODO: If there is no operator, we should default to equals.  This will
+                    //allow for query strings that look normal
                     operator = Operator.fromType(operatorPrefixedValue.substring(0, 2));
                     value = operatorPrefixedValue.substring(2, operatorPrefixedValue.length());
                     valueSet = parseValues(value);
