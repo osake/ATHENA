@@ -50,7 +50,7 @@ public abstract class BasePaymentsTest extends JerseyTest {
         .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
         .servletClass(SpringServlet.class)
         .contextListenerClass(ContextLoaderListener.class)
-        .contextParam("javax.ws.rs.Application", "org.fracturedatlas.athena.web.config.ParakeetConfig")
+        .contextParam("javax.ws.rs.Application", "org.fracturedatlas.athena.web.config.AthenaWebConfig")
         .build());
 
         ClientConfig cc = new DefaultClientConfig();

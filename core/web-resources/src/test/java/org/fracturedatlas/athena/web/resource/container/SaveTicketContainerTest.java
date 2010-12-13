@@ -33,6 +33,7 @@ import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
 import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
 import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
 import org.fracturedatlas.athena.apa.model.PropField;
+import org.fracturedatlas.athena.apa.model.StrictType;
 import org.fracturedatlas.athena.apa.model.StringTicketProp;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.ValueType;
@@ -56,6 +57,42 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
     @After
     public void teardownTickets() {
         super.teardownTickets();
+    }
+
+    @Test
+    public void postRecordWithNullId() {
+        Ticket t = new Ticket();
+        t.setType("ticket");
+        PTicket pTicket = t.toClientTicket();
+        
+        PropField pf = apa.savePropField(new PropField(ValueType.STRING, "temp", StrictType.NOT_STRICT));
+        propFieldsToDelete.add(pf);
+
+        String ticketJson = "{\"id\":null,\"temp\":\"34\"}";
+        
+        String updatedTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
+        PTicket savedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
+        assertNotNull(savedPTicket.getId());
+        assertEquals(savedPTicket.get("temp"), "34");
+        apa.deleteTicket(t.getType(), savedPTicket.getId());
+    }
+
+    @Test
+    public void postRecordWithNullValue() {
+        Ticket t = new Ticket();
+        t.setType("ticket");
+        PTicket pTicket = t.toClientTicket();
+
+        PropField pf = apa.savePropField(new PropField(ValueType.STRING, "temp", StrictType.NOT_STRICT));
+        propFieldsToDelete.add(pf);
+
+        String ticketJson = "{\"temp\":null}";
+
+        String updatedTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
+        PTicket savedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
+        assertNotNull(savedPTicket.getId());
+        assertEquals(savedPTicket.get("temp"), null);
+        apa.deleteTicket(t.getType(), savedPTicket.getId());
     }
 
     @Test

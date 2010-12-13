@@ -22,9 +22,9 @@ package org.fracturedatlas.athena.web.config;
 import com.sun.jersey.api.core.PackagesResourceConfig;
 import javax.ws.rs.core.MediaType;
 
-public class ParakeetConfig extends PackagesResourceConfig {
+public class AthenaWebConfig extends PackagesResourceConfig {
 
-    public ParakeetConfig() {
+    public AthenaWebConfig() {
         super ("org.fracturedatlas");
 
         getMediaTypeMappings().put("json", MediaType.APPLICATION_JSON_TYPE);
