@@ -2,10 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package org.fracturedatlas.athena.audit.model;
 
 import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -23,19 +24,27 @@ import org.hibernate.annotations.Type;
 @Table(name = "MESSAGES")
 public class AuditMessage {
 
+    public enum Variable {
 
+        ID, DATETIME, USER, ACTION,
+        RESOURCE, MESSAGE, NOVALUE;
+
+        public static Variable toVariable(String str) {
+            try {
+                return valueOf(str.toUpperCase());
+            } catch (Exception ex) {
+                return NOVALUE;
+            }
+        }
+    }
     @Id
-    @Type(type = "org.fracturedatlas.athena.audit.persist.impl.LongUserType")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @XmlJavaTypeAdapter(IdAdapter.class)
-    Object id;
-
+    Long id;
     Long dateTime;
     String User;
     String Action;
     String Resource;
     String Message;
-    
 
     public AuditMessage() {
     }
@@ -50,26 +59,72 @@ public class AuditMessage {
         this.Message = Message;
     }
 
+    public Object get(String variable) {
+        switch (Variable.toVariable(variable)) {
+            case ID:
+                return getId();
+            case DATETIME:
+                return getDateTime();
+            case USER:
+                return getUser();
+            case ACTION:
+                return getAction();
+            case RESOURCE:
+                return getResource();
+            case MESSAGE:
+                return getMessage();
+        }
+        return null;
+    }
+
+    public void set(String variable, String value) {
+        switch (Variable.toVariable(variable)) {
+            case ID:
+                setId(value);
+                break;
+            case DATETIME:
+                try {
+                    setDateTime(value);
+                } catch (Exception ex) {
+                    Logger.getLogger(AuditMessage.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
+            case USER:
+                setUser(value);
+                break;
+            case ACTION:
+                setAction(value);
+                break;
+            case RESOURCE:
+                setResource(value);
+                break;
+            case MESSAGE:
+                setMessage(value);
+        }
+    }
+
     public Long getDateTime() {
         return dateTime;
     }
-
 
     public void setDateTime(Long dateTime) {
         this.dateTime = dateTime;
     }
 
     public void setDateTime(String s) throws Exception {
-        setDateTime(Long.getLong(s));
+        setDateTime(Long.valueOf(s));
     }
 
-
-      public Object getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Object id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public void setId(String id) {
+        this.id = Long.valueOf(id);
     }
 
     public String getAction() {
@@ -116,15 +171,15 @@ public class AuditMessage {
         if (this.id != other.id && (this.id == null || !this.id.equals(other.id))) {
             return false;
         }
-        if (this.dateTime!=null) {
-            if (other.dateTime!=null) {
+        if (this.dateTime != null) {
+            if (other.dateTime != null) {
                 if (!this.dateTime.equals(other.dateTime)) {
                     return false;
                 }
             } else {
                 return false;
             }
-        } else if (other.dateTime!=null) {
+        } else if (other.dateTime != null) {
             return false;
         }
 
@@ -159,8 +214,4 @@ public class AuditMessage {
     public String toString() {
         return "AuditMessage{" + "id=" + id + "dateTime=" + dateTime + "User=" + User + "Action=" + Action + "Resource=" + Resource + "Message=" + Message + '}';
     }
-
- 
- 
-
 }
