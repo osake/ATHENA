@@ -14,5 +14,6 @@
 
     <modules>
         <module>lock</module>
+        <module>ticketfactory</module>
     </modules>
 </project>
