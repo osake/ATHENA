@@ -68,8 +68,8 @@ public class AuditManagerTest {
         MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
         queryParams.add("User", "eqTom");
         List expResult = null;
-        List<AuditMessage> result = auditManager.getAuditMessages(queryParams);
-        assertTrue(result.size()>0);
+        AuditMessage[] result = auditManager.getAuditMessages(queryParams);
+        assertTrue(result.length>0);
         for (AuditMessage auditMessage: result) {
           assertTrue(auditMessage.getUser().equals("Tom"));
         }

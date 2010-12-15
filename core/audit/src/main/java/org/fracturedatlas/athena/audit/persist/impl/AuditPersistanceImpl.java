@@ -74,7 +74,7 @@ public class AuditPersistanceImpl implements AuditPersistance {
     }
 
     @Override
-    public List getAuditMessages(AthenaSearch athenaSearch) {
+    public List<AuditMessage> getAuditMessages(AthenaSearch athenaSearch) {
         logger.debug("Searching for AuditMessages matching [{}]", athenaSearch);
         EntityManager em = this.emf.createEntityManager();
         Set<String> value = null;

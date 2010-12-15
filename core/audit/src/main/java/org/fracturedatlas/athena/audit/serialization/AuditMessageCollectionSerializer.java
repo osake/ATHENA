@@ -25,21 +25,21 @@ import org.fracturedatlas.athena.audit.model.AuditMessage;
 
 @Provider
 @Produces({"application/json"})
-public class AuditMessageCollectionSerializer implements MessageBodyWriter<Collection<AuditMessage>> {
+public class AuditMessageCollectionSerializer implements MessageBodyWriter<AuditMessage[]> {
 
     @Override
-    public long getSize(Collection<AuditMessage> t, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType) {
+    public long getSize(AuditMessage[] t, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType) {
         //TODO: Do this
         return -1L;
     }
 
     @Override
     public boolean isWriteable(Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType) {
-        return (Collection.class.isAssignableFrom(type));
+        return (AuditMessage[].class.isAssignableFrom(type));
     }
 
     @Override
-    public void writeTo(Collection<AuditMessage> messages, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream out) throws IOException, WebApplicationException {
+    public void writeTo(AuditMessage[] messages, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream out) throws IOException, WebApplicationException {
         Gson gson = new GsonBuilder().setLongSerializationPolicy(LongSerializationPolicy.STRING).create();
         out.write(gson.toJson(messages).getBytes());
 //        JsonArray valueArray = new JsonArray();

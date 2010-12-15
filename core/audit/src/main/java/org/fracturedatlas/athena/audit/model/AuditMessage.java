@@ -51,7 +51,6 @@ public class AuditMessage {
 
     public AuditMessage(String User, String Action, String Resource, String Message) {
         this.id = null;
-        Calendar cal = Calendar.getInstance();
         this.dateTime = System.currentTimeMillis();
         this.User = User;
         this.Action = Action;
