@@ -11,11 +11,30 @@
         <artifactId>core</artifactId>
         <version>0.4-SNAPSHOT</version>
     </parent>
+    <properties>
+        <jersey-version>1.2</jersey-version>
+    </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>util</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${jersey-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-json</artifactId>
+            <version>${jersey-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>${jersey-version}</version>
         </dependency>
     </dependencies>
 
