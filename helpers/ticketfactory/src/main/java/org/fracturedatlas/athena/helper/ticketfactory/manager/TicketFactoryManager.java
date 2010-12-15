@@ -20,9 +20,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.helper.ticketfactory.manager;
 
+import org.fracturedatlas.athena.client.AthenaComponent;
+import org.fracturedatlas.athena.client.PTicket;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TicketFactoryManager {
-    
+    private AthenaComponent athenaStage;
+
+    public void createTickets(PTicket pTicket) {
+        String performanceId = pTicket.get("id");
+        athenaStage.get(performanceId);
+    }
+
+    public AthenaComponent getAthenaStage() {
+        return athenaStage;
+    }
+
+    public void setAthenaStage(AthenaComponent athenaStage) {
+        this.athenaStage = athenaStage;
+    } 
 }

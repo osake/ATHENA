@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
 
-package org.fracturedatlas.athena.helper.ticketfactory.resource.container;
+package org.fracturedatlas.athena.helper.ticketfactory.manager;
 
 import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
@@ -34,14 +34,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.fracturedatlas.athena.helper.ticketfactory.manager.TicketFactoryManager;
 import static org.mockito.Mockito.*;
 
-public class TicketFactoryContainerTest extends BaseContainerTest {
-    Gson gson = JsonUtil.getGson();
-    String path = "/";
+public class TicketFactoryManagerTest {
 
-    protected final static String TICKET_FACTORY_PATH = "/meta/ticketfactory";
-    public static final String API_KEY = "SAMPLEAPIKEYfowihe9338833wehhfhf";
-
-    //grab the context because we're going to need ot inject our mock stage component
     ApplicationContext context = new ClassPathXmlApplicationContext("athenatest-applicationContext.xml");
     TicketFactoryManager manager;
 
@@ -51,31 +45,13 @@ public class TicketFactoryContainerTest extends BaseContainerTest {
     public void createTickets() throws Exception {
         String jsonPost = "{\"id\":\"4\"}";
 
-        ClientResponse response = tix.path(TICKET_FACTORY_PATH)
-                                   .type("application/json")
-                                   .header("X-ATHENA-Key", API_KEY)
-                                   .post(ClientResponse.class, jsonPost);
-    }
+        PTicket pTicket = new PTicket();
+        pTicket.put("id", "4");
 
-//    @Test
-//    public void createTicketsForPerformanceAlreadyOnSale() throws Exception {
-//        String jsonPost = "";
-//
-//        ClientResponse response = tix.path(TICKET_FACTORY_PATH)
-//                                   .type("application/json")
-//                                   .header("X-ATHENA-Key", API_KEY)
-//                                   .post(ClientResponse.class, gson.toJson(jsonPost));
-//    }
-//
-//    @Test
-//    public void createTicketsForPerformanceThatDoesNotExist() throws Exception {
-//        String jsonPost = "";
-//
-//        ClientResponse response = tix.path(TICKET_FACTORY_PATH)
-//                                   .type("application/json")
-//                                   .header("X-ATHENA-Key", API_KEY)
-//                                   .post(ClientResponse.class, gson.toJson(jsonPost));
-//    }
+        manager.createTickets(pTicket);
+
+        verify(mockStage).get(4);
+    }
 
     public void injectmockStageIntoManager(AthenaComponent mockStage) {
         manager = (TicketFactoryManager)context.getBean("ticketFactoryManager");
@@ -90,10 +66,5 @@ public class TicketFactoryContainerTest extends BaseContainerTest {
         PTicket mockPerformance = new PTicket();
         mockPerformance.put("id", "4");
         when(mockStage.get(4)).thenReturn(mockPerformance);
-    }
-
-    @After
-    public void teardownTickets() {
-        super.teardownTickets();
     }
 }

@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
-package org.fracturedatlas.athena.helper.lock.resource.container;
+package org.fracturedatlas.athena.helper.ticketfactory.resource.container;
 
 
 import com.sun.jersey.api.client.*;

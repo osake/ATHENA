@@ -26,6 +26,7 @@ import javax.ws.rs.Produces;
 
 
 import javax.ws.rs.POST;
+import javax.ws.rs.core.Response;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.ticketfactory.manager.TicketFactoryManager;
 import org.fracturedatlas.athena.web.util.JsonUtil;
@@ -39,13 +40,16 @@ import org.springframework.stereotype.Component;
 public class TicketFactoryResource {
 
     Gson gson = JsonUtil.getGson();
+    
     @Autowired
     TicketFactoryManager ticketFactoryManager;
 
     @POST
     @Path("")
     public Object createTickets(PTicket pTicket) throws Exception {
-        //return ticketFactoryManager.createLock(request, tran);
-        return null;
+        ticketFactoryManager.createTickets(pTicket);
+        return Response.status(Response.Status.OK).
+                type("text/plain").
+                build();
     }
 }
