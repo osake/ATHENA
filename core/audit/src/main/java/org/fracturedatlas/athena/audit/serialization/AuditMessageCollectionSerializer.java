@@ -23,7 +23,8 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import org.fracturedatlas.athena.audit.model.AuditMessage;
 
-@Provider
+//HACKL This is to disable auditing because fo the serialization problem
+//@Provider
 @Produces({"application/json"})
 public class AuditMessageCollectionSerializer implements MessageBodyWriter<AuditMessage[]> {
 
