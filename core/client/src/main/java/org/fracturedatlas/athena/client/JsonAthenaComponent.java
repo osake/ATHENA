@@ -31,7 +31,6 @@ import org.fracturedatlas.athena.search.AthenaSearch;
 public class JsonAthenaComponent implements AthenaComponent {
 
     WebResource component;
-    Gson gson = JsonUtil.fuck();
 
     public JsonAthenaComponent(String hostname, String port, String componentName, String apiKey) {
         String uri = "http://" + hostname + ":" + port + "/" + componentName + "/";
@@ -44,6 +43,7 @@ public class JsonAthenaComponent implements AthenaComponent {
 
     public PTicket get(String type, Object id) {
         String json = component.path(type).get(String.class);
+        return new PTicket();
     }
 
     public Collection<PTicket> find(AthenaSearch athenaSearch) {
