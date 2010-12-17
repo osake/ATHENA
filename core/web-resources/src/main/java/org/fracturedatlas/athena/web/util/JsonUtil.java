@@ -26,9 +26,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.LongSerializationPolicy;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.codehaus.jackson.map.AnnotationIntrospector;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.util.date.DateTypeConverter;
 import org.fracturedatlas.athena.web.serialization.JsonTicketSerializer;
@@ -49,21 +46,6 @@ public class JsonUtil {
         }
 
         return gson;
-    }
-     
-    static ObjectMapper mapper;
-
-  
-    public static ObjectMapper getMapper() {
-        if(mapper == null) {
-        	mapper = new ObjectMapper();
-        	AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
-        	// make deserializer use JAXB annotations (only)
-        	mapper.getDeserializationConfig().setAnnotationIntrospector(introspector);
-        	// make serializer use JAXB annotations (only)
-        	mapper.getSerializationConfig().setAnnotationIntrospector(introspector);
-        }
-        return mapper;
     }
 
     public synchronized static JsonObject mapToJson(Map<String, String> map) {
