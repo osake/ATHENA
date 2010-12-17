@@ -117,5 +117,37 @@ public class AthenaSearch {
 
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AthenaSearch other = (AthenaSearch) obj;
+        if (this.asc != other.asc && (this.asc == null || !this.asc.equals(other.asc))) {
+            return false;
+        }
+        if (this.searchModifiers != other.searchModifiers && (this.searchModifiers == null || !this.searchModifiers.equals(other.searchModifiers))) {
+            return false;
+        }
+        if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + (this.asc != null ? this.asc.hashCode() : 0);
+        hash = 23 * hash + (this.searchModifiers != null ? this.searchModifiers.hashCode() : 0);
+        hash = 23 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
+
+
+
 
 }

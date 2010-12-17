@@ -160,6 +160,10 @@ public class RecordManager {
         return values;
     }
 
+    /*
+     * TODO: The fact that this throws Exception (and not something more specific)
+     * is a crime against humanity
+     */
     public Ticket saveTicketFromClientRequest(String type, PTicket pTicket) throws Exception {
         //if this ticket has an id
         if (pTicket.getId() != null) {

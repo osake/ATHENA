@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.client;
 
+import com.google.gson.Gson;
 import com.sun.jersey.api.client.*;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
@@ -30,6 +31,7 @@ import org.fracturedatlas.athena.search.AthenaSearch;
 public class JsonAthenaComponent implements AthenaComponent {
 
     WebResource component;
+    Gson gson = JsonUtil.fuck();
 
     public JsonAthenaComponent(String hostname, String port, String componentName, String apiKey) {
         String uri = "http://" + hostname + ":" + port + "/" + componentName + "/";
@@ -41,7 +43,7 @@ public class JsonAthenaComponent implements AthenaComponent {
     }
 
     public PTicket get(String type, Object id) {
-        throw new UnsupportedOperationException();
+        String json = component.path(type).get(String.class);
     }
 
     public Collection<PTicket> find(AthenaSearch athenaSearch) {
