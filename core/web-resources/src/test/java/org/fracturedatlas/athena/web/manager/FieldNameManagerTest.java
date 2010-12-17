@@ -39,7 +39,7 @@ public class FieldNameManagerTest extends BaseManagerTest {
     PropField testField;
     PropValue testValue;
     String path = "fields.json";
-    ObjectMapper mapper = JsonUtil.getMapper();
+    ObjectMapper mapper = new ObjectMapper();
 
     public FieldNameManagerTest() throws Exception {
         super();

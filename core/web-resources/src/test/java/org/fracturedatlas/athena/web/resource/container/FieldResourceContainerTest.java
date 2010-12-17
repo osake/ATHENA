@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 public class FieldResourceContainerTest extends BaseTixContainerTest {
 
     String testFieldJson = "";
-    ObjectMapper mapper = JsonUtil.getMapper();
+    ObjectMapper mapper = new ObjectMapper();
     PropField testField;
     PropValue testValue;
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
