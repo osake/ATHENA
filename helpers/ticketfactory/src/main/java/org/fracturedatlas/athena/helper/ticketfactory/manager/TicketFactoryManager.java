@@ -42,7 +42,7 @@ public class TicketFactoryManager {
     private RecordManager ticketManager;
 
     public void createTickets(PTicket pTicket) {
-        String performanceId = pTicket.get("id");
+        String performanceId = (String)pTicket.getId();
         PTicket performance = athenaStage.get("performance", performanceId);
         String chartId = performance.get("chartId");
         String eventId = performance.get("eventId");

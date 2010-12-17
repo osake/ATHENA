@@ -20,11 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.client;
 
-import com.google.gson.Gson;
 import com.sun.jersey.api.client.*;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.api.client.filter.*;
+import com.sun.jersey.core.impl.provider.entity.Inflector;
 import java.util.Collection;
 import org.fracturedatlas.athena.search.AthenaSearch;
 
@@ -42,8 +42,9 @@ public class JsonAthenaComponent implements AthenaComponent {
     }
 
     public PTicket get(String type, Object id) {
-        String json = component.path(type).get(String.class);
-        return new PTicket();
+        type = Inflector.getInstance().pluralize(type);
+        PTicket pTicket = component.path(type + "/" + id).get(PTicket.class);
+        return pTicket;
     }
 
     public Collection<PTicket> find(AthenaSearch athenaSearch) {

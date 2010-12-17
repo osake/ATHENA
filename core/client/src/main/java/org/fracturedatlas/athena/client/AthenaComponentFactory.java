@@ -23,7 +23,7 @@ import org.springframework.beans.factory.FactoryBean;
 
 public class AthenaComponentFactory implements FactoryBean {
 
-    public enum Channel { JSON, MOCK }
+    public enum Channel { JSON }
 
     String hostname;
     String port;
