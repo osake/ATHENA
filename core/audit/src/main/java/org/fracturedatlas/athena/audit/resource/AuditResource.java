@@ -73,9 +73,9 @@ public class AuditResource {
         }
     }
 
-        @GET
+    @GET
     @Path("")
-    public Collection<AuditMessage> getAuditMessages(@Context UriInfo ui) {
+    public AuditMessage[] getAuditMessages(@Context UriInfo ui) {
         MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
 
         if (queryParams.isEmpty()) {

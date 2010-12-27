@@ -74,7 +74,7 @@ public class AuditPersistanceImpl implements AuditPersistance {
     }
 
     @Override
-    public List getAuditMessages(AthenaSearch athenaSearch) {
+    public List<AuditMessage> getAuditMessages(AthenaSearch athenaSearch) {
         logger.debug("Searching for AuditMessages matching [{}]", athenaSearch);
         EntityManager em = this.emf.createEntityManager();
         Set<String> value = null;
@@ -115,6 +115,7 @@ public class AuditPersistanceImpl implements AuditPersistance {
         queryString = "FROM AuditMessage am WHERE ";
         int i = 1;
         HashMap<String, String> valuesTable = new HashMap<String, String>();
+        HashMap<String, String> namesTable = new HashMap<String, String>();
         AthenaSearchConstraint apc = null;
         try {
             while (searchListItr.hasNext()) {
@@ -128,6 +129,7 @@ public class AuditPersistanceImpl implements AuditPersistance {
                         singleValue = it.next();
                         //check if name is valid
                         queryString = queryString + "am." + name + operator.getOperatorString() + i;
+                        namesTable.put("value" + i, name);
                         valuesTable.put("value" + i, singleValue);
                         i++;
                         if (it.hasNext()) {
@@ -136,6 +138,7 @@ public class AuditPersistanceImpl implements AuditPersistance {
                     }
                 } else {
                     queryString = queryString + "am." + name + operator.getOperatorString() + i;
+                    namesTable.put("value" + i, name);
                     valuesTable.put("value" + i, value.iterator().next());
                 }
                 if (searchListItr.hasNext()) {
@@ -144,8 +147,10 @@ public class AuditPersistanceImpl implements AuditPersistance {
 
             }
             query = em.createQuery(queryString);
+            AuditMessage temp = new AuditMessage();
             for (int j = 1; j <= i; j++) {
-                query.setParameter("value" + i, valuesTable.get("value" + i));
+                temp.set(namesTable.get("value" + j), valuesTable.get("value" + j));
+                query.setParameter("value" + j, temp.get(namesTable.get("value" + j)));
             }
             finishedAuditMessages = query.getResultList();
             int startCounter = 0;

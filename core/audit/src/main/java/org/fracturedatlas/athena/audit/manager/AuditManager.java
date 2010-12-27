@@ -42,7 +42,7 @@ public class AuditManager {
         return auditPersistance.saveAuditMessage(auditMessage);
     }
 
-    public List getAuditMessages(MultivaluedMap<String, String> queryParams) {
+    public AuditMessage[] getAuditMessages(MultivaluedMap<String, String> queryParams) {
         List<String> values = null;
         Operator operator;
         String value;
@@ -61,7 +61,7 @@ public class AuditManager {
                 }
             }
         }
-        return auditPersistance.getAuditMessages(athenaSearch);
+        return auditPersistance.getAuditMessages(athenaSearch).toArray(new AuditMessage[0]);
     }
 
     static Set<String> parseValues(String valueString) {

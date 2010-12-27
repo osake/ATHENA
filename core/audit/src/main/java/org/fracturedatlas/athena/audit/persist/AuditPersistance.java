@@ -32,6 +32,6 @@ public interface AuditPersistance {
 
     public AuditMessage saveAuditMessage(AuditMessage am) throws Exception;
 
-    public List getAuditMessages(AthenaSearch as);
+    public List<AuditMessage> getAuditMessages(AthenaSearch as);
 
 }
