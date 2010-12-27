@@ -58,10 +58,10 @@ public class TicketFactoryManagerTest {
     @Test
     public void createTickets() throws Exception {
         manager.createTickets(samplePerformance);
-        verify(mockStage).get("performance", samplePerformance.get("id"));
-        verify(mockStage).get("chart", sampleSeatChart.get("id"));
-        verify(mockStage).get("event", sampleEvent.get("id"));
-        verify(mockStage).find(athenaSearch);
+        verify(mockStage).get("performance", samplePerformance.getId());
+        verify(mockStage).get("chart", sampleSeatChart.getId());
+        verify(mockStage).get("event", sampleEvent.getId());
+        verify(mockStage).find("section", athenaSearch);
         verify(mockTicketManager, times(totalNumberOfTickets)).saveTicketFromClientRequest(eq("ticket"), argThat(isAPTicket));
     }
 
@@ -74,20 +74,20 @@ public class TicketFactoryManagerTest {
     }
 
     public void createSearchForSections() {
-       AthenaSearchConstraint con1 = new AthenaSearchConstraint("chartId", Operator.EQUALS, sampleSeatChart.get("id"));
+       AthenaSearchConstraint con1 = new AthenaSearchConstraint("chartId", Operator.EQUALS, (String)sampleSeatChart.getId());
        athenaSearch = new AthenaSearch.Builder(con1).build();
     }
 
     public void createSampleEvent() {
         sampleEvent = new PTicket();
-        sampleEvent.put("id", "31");
+        sampleEvent.setId("31");
         sampleEvent.put("venue", "The Test Theater");
         sampleEvent.put("name", "The Test Tour");
     }
 
     public void createSampleSeatChart() {
         sampleSeatChart = new PTicket();
-        sampleSeatChart.put("id", "900");
+        sampleSeatChart.setId("900");
     }
 
     public void createSampleSections() {
@@ -97,14 +97,14 @@ public class TicketFactoryManagerTest {
         sections = new ArrayList<PTicket>();
 
         sampleSection1 = new PTicket();
-        sampleSection1.put("id", "24");
+        sampleSection1.setId("24");
         sampleSection1.put("capacity", orchestraSeats.toString());
         sampleSection1.put("price", "25");
         sampleSection1.put("name", "Orchestra");
         sections.add(sampleSection1);
 
         sampleSection2 = new PTicket();
-        sampleSection2.put("id", "25");
+        sampleSection2.setId("25");
         sampleSection2.put("capacity", balconySeats.toString());
         sampleSection2.put("price", "10");
         sampleSection2.put("name", "Balcony");
@@ -115,9 +115,9 @@ public class TicketFactoryManagerTest {
 
     public void createSamplePerformance() {
         samplePerformance = new PTicket();
-        samplePerformance.put("id", "4");
-        samplePerformance.put("chartId", sampleSeatChart.get("id"));
-        samplePerformance.put("eventId", sampleEvent.get("id"));
+        samplePerformance.setId("4");
+        samplePerformance.put("chartId", (String)sampleSeatChart.getId());
+        samplePerformance.put("eventId", (String)sampleEvent.getId());
         samplePerformance.put("datetime", "2010-03-20T20:20:11-04:00");
     }
 
@@ -125,10 +125,10 @@ public class TicketFactoryManagerTest {
     public void mockupStage() {
         MockitoAnnotations.initMocks(this);
         createSampleObjects();
-        when(mockStage.get("performance", samplePerformance.get("id"))).thenReturn(samplePerformance);
-        when(mockStage.get("chart", sampleSeatChart.get("id"))).thenReturn(sampleSeatChart);
-        when(mockStage.get("event", sampleEvent.get("id"))).thenReturn(sampleEvent);
-        when(mockStage.find(athenaSearch)).thenReturn(sections);
+        when(mockStage.get("performance", samplePerformance.getId())).thenReturn(samplePerformance);
+        when(mockStage.get("chart", sampleSeatChart.getId())).thenReturn(sampleSeatChart);
+        when(mockStage.get("event", sampleEvent.getId())).thenReturn(sampleEvent);
+        when(mockStage.find("section", athenaSearch)).thenReturn(sections);
 
         manager.setAthenaStage(mockStage);
         manager.setTicketManager(mockTicketManager);

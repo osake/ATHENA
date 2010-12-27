@@ -23,7 +23,11 @@ package org.fracturedatlas.athena.client;
 import java.util.Collection;
 import org.fracturedatlas.athena.search.AthenaSearch;
 
+/**
+ * An interface for one component to talk to another component.  Implementations should be
+ * injected in the core component's spring config.  See: tix
+ */
 public interface AthenaComponent {
     public PTicket get(String type, Object id);
-    public Collection<PTicket> find(AthenaSearch athenaSearch);
+    public Collection<PTicket> find(String type, AthenaSearch athenaSearch);
 }

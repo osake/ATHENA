@@ -48,7 +48,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
     Ticket testTicket = new Ticket();
     String testTicketJson = "";
-    ObjectMapper mapper = JsonUtil.getMapper();
+    ObjectMapper mapper = new ObjectMapper();
     Gson gson = JsonUtil.getGson();
 
     public TicketResourceContainerTest() throws Exception {

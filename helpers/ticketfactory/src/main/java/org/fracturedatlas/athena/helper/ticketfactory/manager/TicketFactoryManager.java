@@ -42,7 +42,7 @@ public class TicketFactoryManager {
     private RecordManager ticketManager;
 
     public void createTickets(PTicket pTicket) {
-        String performanceId = pTicket.get("id");
+        String performanceId = (String)pTicket.getId();
         PTicket performance = athenaStage.get("performance", performanceId);
         String chartId = performance.get("chartId");
         String eventId = performance.get("eventId");
@@ -51,7 +51,7 @@ public class TicketFactoryManager {
 
         AthenaSearchConstraint sectionSearch = new AthenaSearchConstraint("chartId", Operator.EQUALS, chartId);
         AthenaSearch athenaSearch = new AthenaSearch.Builder(sectionSearch).build();
-        Collection<PTicket> sections = athenaStage.find(athenaSearch);
+        Collection<PTicket> sections = athenaStage.find("section", athenaSearch);
 
         ArrayList<PTicket> ticketsToCreate = new ArrayList<PTicket>();
 

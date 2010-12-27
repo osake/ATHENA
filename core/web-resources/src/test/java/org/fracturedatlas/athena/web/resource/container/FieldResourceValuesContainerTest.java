@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
 public class FieldResourceValuesContainerTest extends BaseTixContainerTest {
     
     Gson gson = JsonUtil.getGson();
-    ObjectMapper mapper = JsonUtil.getMapper();
+    ObjectMapper mapper = new ObjectMapper();
     PropField testField = null;
     PropValue testValue = null;
     

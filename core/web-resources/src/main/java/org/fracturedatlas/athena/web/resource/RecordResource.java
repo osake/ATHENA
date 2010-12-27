@@ -44,7 +44,7 @@ import org.fracturedatlas.athena.web.exception.ForbiddenException;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.web.util.JsonUtil;
-import org.modeshape.common.text.Inflector;
+import com.sun.jersey.core.impl.provider.entity.Inflector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
