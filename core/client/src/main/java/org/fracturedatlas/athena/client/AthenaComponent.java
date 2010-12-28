@@ -29,5 +29,6 @@ import org.fracturedatlas.athena.search.AthenaSearch;
  */
 public interface AthenaComponent {
     public PTicket get(String type, Object id);
+    public PTicket save(String type, PTicket record);
     public Collection<PTicket> find(String type, AthenaSearch athenaSearch);
 }

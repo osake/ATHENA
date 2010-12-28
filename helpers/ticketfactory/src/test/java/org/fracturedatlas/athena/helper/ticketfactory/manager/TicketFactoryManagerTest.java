@@ -30,6 +30,7 @@ import org.fracturedatlas.athena.helper.PTicketMatcher;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
+import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +39,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 
 public class TicketFactoryManagerTest {
 
@@ -56,13 +58,91 @@ public class TicketFactoryManagerTest {
     @Mock private RecordManager mockTicketManager;
 
     @Test
-    public void createTickets() throws Exception {
+    public void testCreateTickets() throws Exception {
         manager.createTickets(samplePerformance);
         verify(mockStage).get("performance", samplePerformance.getId());
         verify(mockStage).get("chart", sampleSeatChart.getId());
         verify(mockStage).get("event", sampleEvent.getId());
         verify(mockStage).find("section", athenaSearch);
         verify(mockTicketManager, times(totalNumberOfTickets)).saveTicketFromClientRequest(eq("ticket"), argThat(isAPTicket));
+        samplePerformance.put("ticketsCreated", "true");
+        verify(mockStage).save("performance", samplePerformance);
+    }
+
+    /**
+     * Testing creating tickets for a performance with a performanceId that Athena does not know about
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testCreateTicketsUnknownPerformance() throws Exception {
+
+        samplePerformance = new PTicket();
+        samplePerformance.setId("49");
+        samplePerformance.put("chartId", (String)sampleSeatChart.getId());
+        samplePerformance.put("eventId", (String)sampleEvent.getId());
+        samplePerformance.put("datetime", "2010-03-20T20:20:11-04:00");
+        when(mockStage.get("performance", samplePerformance.getId())).thenReturn(null);
+        try{
+            manager.createTickets(samplePerformance);
+            fail("Should have thrown an AthenaException");
+        } catch (AthenaException ae) {
+            //pass!
+        }
+        
+        verify(mockStage, times(1)).get("performance", samplePerformance.getId());
+        verify(mockTicketManager, never()).saveTicketFromClientRequest(eq("ticket"), argThat(isAPTicket));
+        samplePerformance.put("ticketsCreated", "true");
+        verify(mockStage, never()).save("performance", samplePerformance);
+    }
+
+    /**
+     * Testing creating tickets for a performance that has already had its tickets created
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testCreateTicketsAlreadyCreated() throws Exception {
+
+        samplePerformance = new PTicket();
+        samplePerformance.setId("49");
+        samplePerformance.put("ticketsCreated", "true");
+        samplePerformance.put("chartId", (String)sampleSeatChart.getId());
+        samplePerformance.put("eventId", (String)sampleEvent.getId());
+        samplePerformance.put("datetime", "2010-03-20T20:20:11-04:00");
+        when(mockStage.get("performance", samplePerformance.getId())).thenReturn(null);
+        try{
+            manager.createTickets(samplePerformance);
+            fail("Should have thrown an AthenaException");
+        } catch (AthenaException ae) {
+            //pass!
+        }
+
+        verify(mockStage, times(1)).get("performance", samplePerformance.getId());
+        verify(mockStage, never()).save("performance", samplePerformance);
+    }
+
+    /**
+     * Testing creating tickets for a performance with a performanceId that Athena does not know about
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testCreateTicketsNullPerformance() throws Exception {
+
+        samplePerformance = new PTicket();
+        samplePerformance.setId(null);
+        when(mockStage.get("performance", samplePerformance.getId())).thenReturn(null);
+        try{
+            manager.createTickets(samplePerformance);
+            fail("Should have thrown an AthenaException");
+        } catch (AthenaException ae) {
+            //pass!
+        }
+
+        verify(mockStage, times(1)).get("performance", samplePerformance.getId());
+        samplePerformance.put("ticketsCreated", "true");
+        verify(mockStage, never()).save("performance", samplePerformance);
     }
 
     public void createSampleObjects() {
@@ -129,6 +209,7 @@ public class TicketFactoryManagerTest {
         when(mockStage.get("chart", sampleSeatChart.getId())).thenReturn(sampleSeatChart);
         when(mockStage.get("event", sampleEvent.getId())).thenReturn(sampleEvent);
         when(mockStage.find("section", athenaSearch)).thenReturn(sections);
+        when(mockStage.save("performance", samplePerformance)).thenReturn(samplePerformance);
 
         manager.setAthenaStage(mockStage);
         manager.setTicketManager(mockTicketManager);

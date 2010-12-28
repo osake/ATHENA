@@ -26,6 +26,7 @@ import javax.ws.rs.Produces;
 
 
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.core.Response;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.ticketfactory.manager.TicketFactoryManager;
@@ -46,6 +47,16 @@ public class TicketFactoryResource {
 
     @POST
     @Path("")
+    public Object postCreateTickets(PTicket pTicket) throws Exception {
+        return createTickets(pTicket);
+    }
+
+    @PUT
+    @Path("{id}")
+    public Object putCreateTickets(PTicket pTicket) throws Exception {
+        return createTickets(pTicket);
+    }
+
     public Object createTickets(PTicket pTicket) throws Exception {
         ticketFactoryManager.createTickets(pTicket);
         return Response.status(Response.Status.OK).

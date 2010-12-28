@@ -28,7 +28,10 @@ import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
+import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.fracturedatlas.athena.web.manager.RecordManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -41,9 +44,21 @@ public class TicketFactoryManager {
     @Autowired
     private RecordManager ticketManager;
 
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
     public void createTickets(PTicket pTicket) {
         String performanceId = (String)pTicket.getId();
         PTicket performance = athenaStage.get("performance", performanceId);
+
+        //If the performace isn't found, throw a bad request
+        if(performance == null) {
+            throw new AthenaException("Performance with id [" + performanceId + "] was not found");
+        }
+
+        if(Boolean.parseBoolean(performance.get("ticketsCreated"))) {
+            throw new AthenaException("Tickets have already been created for this performance");
+        }
+
         String chartId = performance.get("chartId");
         String eventId = performance.get("eventId");
         PTicket chart = athenaStage.get("chart", chartId);
@@ -55,9 +70,12 @@ public class TicketFactoryManager {
 
         ArrayList<PTicket> ticketsToCreate = new ArrayList<PTicket>();
 
+        logger.info("[{}] sections", sections.size());
+
         //for each section
         for(PTicket section : sections) {
             Integer capacity = Integer.parseInt(section.get("capacity"));
+            logger.info("capacity of section [{}] is [{}]", section.getId(), capacity);
             for(int seatNum = 0; seatNum < capacity; seatNum++) {
                 PTicket ticket = new PTicket();
                 ticket.put("price", section.get("price"));
@@ -70,18 +88,22 @@ public class TicketFactoryManager {
                 ticket.put("event", event.get("name"));
                 ticket.put("eventId", eventId);
 
+                logger.info("Creating ticket, save below: ");
+                logger.info(ticket.toString());
                 ticketsToCreate.add(ticket);
 
             }
         }
 
+        logger.info("[{}] tickets to create", ticketsToCreate.size());
+
         for(PTicket ticket : ticketsToCreate) {
             try{
+                logger.info("Saving ticket: ");
+                logger.info(ticket.toString());
                 ticketManager.saveTicketFromClientRequest("ticket", ticket);
             } catch (Exception e) {
                 //TODO: Cleanup tickets that we created
-                //TODO: Once the managers and exceptios get refactored out of
-                //web-resources, throw a better exception.
                 //Finally, an exception here is something that we can't recover from, so it's okay to throw
                 //our hands up in the air and cry with a HTTP 500
                 throw new RuntimeException(e);
@@ -89,6 +111,8 @@ public class TicketFactoryManager {
         }
 
         //mark performance as "tickets_created"
+        performance.put("ticketsCreated", "true");
+        performance = athenaStage.save("performance", performance);
     }
 
     public AthenaComponent getAthenaStage() {

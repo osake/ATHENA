@@ -16,7 +16,7 @@
   </appender>
  
   <logger name="javax.persistence" level="ERROR"/>
-  <logger name="org.fracturedatlas" level="ERROR" />
+  <logger name="org.fracturedatlas" level="DEBUG" />
   <logger name="org.hibernate" additivity="false">
     <appender-ref ref="FILE" />
   </logger>

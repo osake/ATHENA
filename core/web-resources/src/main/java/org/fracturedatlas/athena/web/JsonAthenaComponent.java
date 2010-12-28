@@ -46,6 +46,8 @@ public class JsonAthenaComponent implements AthenaComponent {
     Gson gson = JsonUtil.getGson();
 
     public JsonAthenaComponent(String hostname, String port, String componentName) {
+        
+        //TODO: Use a URL builder
         uri = "http://" + hostname + ":" + port + "/" + componentName + "/";
 
         ClientConfig cc = new DefaultClientConfig();
@@ -55,20 +57,52 @@ public class JsonAthenaComponent implements AthenaComponent {
     /**
      * Get a record.
      *
-     * TODO: Respond properly if error
-     *
      * @param type the type of record
      * @param id the id of the record
-     * @return the record
+     * @return the record, null if not found
      */
     public PTicket get(String type, Object id) {
 
-        //TODO: needs to be cleaned up
+        //TODO: needs to be cleaned up.  No need for this to create a new
+        //resource every time
         component = c.resource(uri);
         
         type = Inflector.getInstance().pluralize(type);
         String json = component.path(type + "/" + id).get(String.class);
         return gson.fromJson(json, PTicket.class);
+    }
+
+    /**
+     * Save a record.  If the record includes an id, this will post a PUT to the component,
+     * otherwise, the opject will be POSTed
+     * @param type
+     * @param record the record to be saved
+     * @return the saved record
+     */
+    public PTicket save(String type, PTicket record) {
+
+        //TODO: needs to be cleaned up.  No need for this to create a new
+        //resource every time
+        component = c.resource(uri);
+
+        type = Inflector.getInstance().pluralize(type);
+        String jsonResponse;
+        String path = type;
+        String recordJson = gson.toJson(record);
+
+        if(record.getId() != null) {
+            path = "/" + type + "/" + record.getId();
+            jsonResponse = component.path(path)
+                                    .type("application/json")
+                                    .put(String.class, recordJson);
+        } else {
+            path = "/" + type;
+            jsonResponse = component.path(path)
+                                    .type("application/json")
+                                    .post(String.class, recordJson);
+        }
+
+        return gson.fromJson(jsonResponse, PTicket.class);
     }
 
     /**

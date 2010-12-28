@@ -272,7 +272,6 @@ public class RecordManager {
             ticketProp.setTicket(ticket);
             ticket.addTicketProp(ticketProp);
         }
-
         ticket.setType(type);
         ticket = apa.saveTicket(ticket);
         return ticket;
