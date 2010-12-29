@@ -19,14 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.apa;
 
-import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.fracturedatlas.athena.apa.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.junit.Assert.*;
 
 public abstract class BaseApaAdapterTest {
 
@@ -56,5 +57,27 @@ public abstract class BaseApaAdapterTest {
                     logger.error(ignored.getMessage(), ignored);
             }
         }
+    }
+
+    /**
+     * Compares two lists for equality ignoring order.
+     * @param col1
+     * @param col2
+     */
+    public void  doCollectionsContainSameElements(Collection col1, Collection col2) {
+
+        if(col1 == null) {
+            assertNull(col2);
+        } else if (col2 == null) {
+            fail("One list is null and the other is not");
+        }
+
+        assertEquals(col1.size(), col2.size());
+
+        for(Object o : col2) {
+            col1.remove(o);
+        }
+
+        assertEquals(0, col1.size());
     }
 }

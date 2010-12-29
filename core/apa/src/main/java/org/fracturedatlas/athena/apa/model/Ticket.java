@@ -58,6 +58,11 @@ public class Ticket extends TixEntity implements Serializable {
         ticketProps = new ArrayList<TicketProp>();
     }
 
+    public Ticket(String type) {
+        this.type = type;
+        ticketProps = new ArrayList<TicketProp>();
+    }
+
     public Object getId() {
         return id;
     }
@@ -122,6 +127,7 @@ public class Ticket extends TixEntity implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
+        
         if (obj == null) {
             return false;
         }
