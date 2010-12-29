@@ -49,8 +49,6 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     @Autowired
     private EntityManagerFactory emf;
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
-    final String LIMIT = "_limit";
-    final String START = "_start";
 
     @PersistenceUnit
     public void setEntityManagerFactory(EntityManagerFactory emf) {
@@ -164,6 +162,9 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     /**
+     * Find tickets according to the AtheaSearch.
+     * Type must be specified, but search constraints may be empty.  This method honors start, end, and limit modifiers.
+     *
      * @param athenaSearch a set of search constraints and search modifiers
      * @return Set of tickets whose Props match the athenaSearch
      */
@@ -177,12 +178,12 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         int limit = -1;
         int start = -1;
         try {
-            String limitString = athenaSearch.getSearchModifier(LIMIT);
+            String limitString = athenaSearch.getSearchModifier(AthenaSearch.LIMIT);
             if (limitString!=null) {
                 limit = Integer.parseInt(limitString);
             }
         } catch (NumberFormatException ex) {
-            logger.error("Error While searching [{}]", athenaSearch.asList());
+            logger.error("Error While searching [{}]", athenaSearch.getConstraints());
             logger.error(ex.getMessage(), ex);
             limit = -1;
         }
@@ -190,12 +191,12 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             return new HashSet<Ticket>();
         }
         try {
-            String startString = athenaSearch.getSearchModifier(START);
+            String startString = athenaSearch.getSearchModifier(AthenaSearch.START);
             if (startString!=null) {
                 start = Integer.parseInt(startString);
             }
         } catch (NumberFormatException ex) {
-            logger.error("Error While searching [{}]", athenaSearch.asList());
+            logger.error("Error While searching [{}]", athenaSearch.getConstraints());
             logger.error(ex.getMessage(), ex);
             start = -1;
         }
@@ -212,114 +213,132 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         String singleValue = null;
         Set<Object> valuesAsObjects = null;
         try {
-            for (AthenaSearchConstraint apc : athenaSearch.asList()) {
-                fieldName = apc.getParameter();
-                pf = getPropField(fieldName);
-                if (pf != null) {
-                    vt = pf.getValueType();
-                } else {
-                    throw new ApaException("No Property Field called " + fieldName + " exists.");
-                }
-                operator = apc.getOper();
-                value = apc.getValueSet();
-                TicketProp prop = vt.newTicketProp();
-                if (value.size() > 1) {
-                    it = value.iterator();
-                    valuesAsObjects = new HashSet<Object>();
-                    while (it.hasNext()) {
-                        singleValue = it.next();
-                        try {
-                            prop.setValue(singleValue);
-                            valuesAsObjects.add(prop.getValue());
-                        } catch (Exception ex) {
-                            logger.error("Error While searching [{}]", athenaSearch.asList());
-                            logger.error(ex.getMessage(), ex);
-                       }
-                    }
-                    queryString = "FROM " + prop.getClass().getName()
-                            + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value "
-                            + operator.getOperatorString();
+            //if there are no modifiers, grab all records of (type)
+            if(CollectionUtils.isEmpty(athenaSearch.getConstraints())) {
+                    query = em.createQuery("from Ticket as ticket where type=:ticketType")
+                                    .setParameter("ticketType", athenaSearch.getType());
 
-                    if(athenaSearch.getType() != null) {
-                        queryString += " AND ticketProp.ticket.type=:ticketType ";
-                    }
-                    
-                    query = em.createQuery(queryString);
-                    query.setParameter("value", valuesAsObjects);
-                    query.setParameter("fieldName", fieldName);
-
-                    if(athenaSearch.getType() != null) {
-                        query.setParameter("ticketType", athenaSearch.getType());
+                    if(limit > 0) {
+                        query.setMaxResults(limit);
                     }
 
-
-                } else {
-                    prop.setValue(value.iterator().next());
-                    queryString = "FROM " + prop.getClass().getName() 
-                            + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value "
-                            + operator.getOperatorString();
-
-                    if(athenaSearch.getType() != null) {
-                        queryString += " AND ticketProp.ticket.type=:ticketType ";
+                    if(start > 0) {
+                        query.setFirstResult(start);
                     }
 
-                    query = em.createQuery(queryString);    
-                    query.setParameter("value", prop.getValue());
-                    query.setParameter("fieldName", fieldName);
-
-                    if(athenaSearch.getType() != null) {
-                        query.setParameter("ticketType", athenaSearch.getType());
-                    }
-                }
-                props = query.getResultList();
-                ticketsList = new ArrayList<Ticket>();
-                for (TicketProp tp : props) {
-                    tempTicket = tp.getTicket();
-                    ticketsList.add(tempTicket);
-                }
-                if (finishedTicketsList == null) {
-                    finishedTicketsList = ticketsList;
-                } else {
-                    finishedTicketsList = CollectionUtils.intersection(finishedTicketsList, ticketsList);
-                }
-            }
-            if (finishedTicketsList == null) {
-                finishedTicketsList = new ArrayList<Ticket>();
-            }
-            logger.debug("Returning {} tickets", finishedTicketsList.size());
-            finishedTicketsSet = new HashSet<Ticket>();
-
-            int startCounter = 0;
-            int limitCounter = 0;
-
-            if ((limit > 0) && (finishedTicketsList.size() > limit)) {
-                for (Ticket t : finishedTicketsList) {
-                    if (startCounter < start) {
-                        startCounter++;
+                    finishedTicketsSet = new HashSet<Ticket>(query.getResultList());
+            } else {
+            //else, search with the modifiers
+                for (AthenaSearchConstraint apc : athenaSearch.getConstraints()) {
+                    fieldName = apc.getParameter();
+                    pf = getPropField(fieldName);
+                    if (pf != null) {
+                        vt = pf.getValueType();
                     } else {
-                        finishedTicketsSet.add(t);
-                        limitCounter++;
-                        if (limitCounter == limit) {
-                            break;
+                        throw new ApaException("No Property Field called " + fieldName + " exists.");
+                    }
+                    operator = apc.getOper();
+                    value = apc.getValueSet();
+                    TicketProp prop = vt.newTicketProp();
+                    if (value.size() > 1) {
+                        it = value.iterator();
+                        valuesAsObjects = new HashSet<Object>();
+                        while (it.hasNext()) {
+                            singleValue = it.next();
+                            try {
+                                prop.setValue(singleValue);
+                                valuesAsObjects.add(prop.getValue());
+                            } catch (Exception ex) {
+                                logger.error("Error While searching [{}]", athenaSearch.getConstraints());
+                                logger.error(ex.getMessage(), ex);
+                           }
+                        }
+                        queryString = "FROM " + prop.getClass().getName()
+                                + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value "
+                                + operator.getOperatorString();
+
+                        if(athenaSearch.getType() != null) {
+                            queryString += " AND ticketProp.ticket.type=:ticketType ";
+                        }
+
+                        query = em.createQuery(queryString);
+                        query.setParameter("value", valuesAsObjects);
+                        query.setParameter("fieldName", fieldName);
+
+                        if(athenaSearch.getType() != null) {
+                            query.setParameter("ticketType", athenaSearch.getType());
+                        }
+
+
+                    } else {
+                        prop.setValue(value.iterator().next());
+                        queryString = "FROM " + prop.getClass().getName()
+                                + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value "
+                                + operator.getOperatorString();
+
+                        if(athenaSearch.getType() != null) {
+                            queryString += " AND ticketProp.ticket.type=:ticketType ";
+                        }
+
+                        query = em.createQuery(queryString);
+                        query.setParameter("value", prop.getValue());
+                        query.setParameter("fieldName", fieldName);
+
+                        if(athenaSearch.getType() != null) {
+                            query.setParameter("ticketType", athenaSearch.getType());
                         }
                     }
+                    props = query.getResultList();
+                    ticketsList = new ArrayList<Ticket>();
+                    for (TicketProp tp : props) {
+                        tempTicket = tp.getTicket();
+                        ticketsList.add(tempTicket);
+                    }
+                    if (finishedTicketsList == null) {
+                        finishedTicketsList = ticketsList;
+                    } else {
+                        finishedTicketsList = CollectionUtils.intersection(finishedTicketsList, ticketsList);
+                    }
                 }
-            } else {
-                if (start > 0) {
+                if (finishedTicketsList == null) {
+                    finishedTicketsList = new ArrayList<Ticket>();
+                }
+                logger.debug("Returning {} tickets", finishedTicketsList.size());
+                finishedTicketsSet = new HashSet<Ticket>();
+
+                int startCounter = 0;
+                int limitCounter = 0;
+
+                if ((limit > 0) && (finishedTicketsList.size() > limit)) {
                     for (Ticket t : finishedTicketsList) {
                         if (startCounter < start) {
                             startCounter++;
                         } else {
                             finishedTicketsSet.add(t);
+                            limitCounter++;
+                            if (limitCounter == limit) {
+                                break;
+                            }
                         }
                     }
                 } else {
-                    finishedTicketsSet.addAll(finishedTicketsList);
+                    if (start > 0) {
+                        for (Ticket t : finishedTicketsList) {
+                            if (startCounter < start) {
+                                startCounter++;
+                            } else {
+                                finishedTicketsSet.add(t);
+                            }
+                        }
+                    } else {
+                        finishedTicketsSet.addAll(finishedTicketsList);
+                    }
                 }
             }
+
             return finishedTicketsSet;
         } catch (Exception ex) {
-            logger.error("Error While searching [{}]", athenaSearch.asList());
+            logger.error("Error While searching [{}]", athenaSearch.getConstraints());
             logger.error(ex.getMessage(), ex);
             return new HashSet<Ticket>();
         } finally {

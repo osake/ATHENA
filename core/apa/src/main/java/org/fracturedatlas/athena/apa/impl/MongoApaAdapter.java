@@ -114,7 +114,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         Set<Ticket> tickets = new HashSet<Ticket>();
         DBObject currentQuery = new BasicDBObject();
 
-        if("0".equals(athenaSearch.getSearchModifiers().get("_limit"))) {
+        if("0".equals(athenaSearch.getSearchModifiers().get(AthenaSearch.LIMIT))) {
             return tickets;
         }
 
@@ -138,8 +138,8 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
 
         DBCursor recordsCursor = db.getCollection(athenaSearch.getType()).find(currentQuery);
-        recordsCursor = setLimit(recordsCursor, athenaSearch.getSearchModifiers().get("_limit"));
-        recordsCursor = setSkip(recordsCursor, athenaSearch.getSearchModifiers().get("_Start"));
+        recordsCursor = setLimit(recordsCursor, athenaSearch.getSearchModifiers().get(AthenaSearch.LIMIT));
+        recordsCursor = setSkip(recordsCursor, athenaSearch.getSearchModifiers().get(AthenaSearch.START));
 
         for(DBObject recordObject : recordsCursor) {
             tickets.add(toRecord(recordObject));

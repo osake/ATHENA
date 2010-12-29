@@ -27,6 +27,9 @@ import java.util.Set;
 
 public class AthenaSearch {
 
+    public static final String LIMIT = "_limit";
+    public static final String START = "_start";
+    
     ArrayList<AthenaSearchConstraint> asc = null;
     Map<String, String> searchModifiers = new HashMap<String, String>();
 
@@ -46,13 +49,6 @@ public class AthenaSearch {
 
     public void addConstraint(AthenaSearchConstraint searchConstraint) {
         asc.add(searchConstraint);
-    }
-
-    /*
-     * TODO: refactor this out
-     */
-    public List<AthenaSearchConstraint> asList() {
-        return getConstraints();
     }
 
     public List<AthenaSearchConstraint> getConstraints() {
@@ -101,12 +97,12 @@ public class AthenaSearch {
         }
 
         public AthenaSearch.Builder limit(Integer limit) {
-            search.setSearchModifier("_limit", limit.toString());
+            search.setSearchModifier(AthenaSearch.LIMIT, limit.toString());
             return this;
         }
 
          public AthenaSearch.Builder start(Integer start) {
-            search.setSearchModifier("_start", start.toString());
+            search.setSearchModifier(AthenaSearch.START, start.toString());
             return this;
         }
 

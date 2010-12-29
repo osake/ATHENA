@@ -69,16 +69,6 @@ public class ApaAdapterSearchByType extends BaseApaAdapterTest {
         assertEquals(1, tickets.size());
     }
 
-    @Test
-    public void testFindRecordsNoType() {
-
-        search = new AthenaSearch.Builder(new AthenaSearchConstraint("HALF_PRICE_AVAILABLE", Operator.EQUALS, "true"))
-                              .build();
-        Collection<Ticket> tickets = apa.findTickets(search);
-        assertNotNull(tickets);
-        assertEquals(10, tickets.size());
-    }
-
     @Before
     public void addTickets() throws Exception {
         Ticket t1 = new Ticket();
