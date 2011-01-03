@@ -243,7 +243,6 @@ public class AthenaLockManager {
             TicketProp lockExpiresProp = apa.getTicketProp("sold", LOCK_TYPE, ticketId);
 
             if(lockExpiresProp == null) {
-                //TODO: This is backwards
                 PropField soldProp = apa.getPropField("sold");
                 lockExpiresProp = new BooleanTicketProp(soldProp, Boolean.TRUE);
                 lockExpiresProp.setTicket(apa.getTicket(LOCK_TYPE, ticketId));

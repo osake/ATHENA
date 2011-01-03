@@ -127,4 +127,8 @@ public class JsonAthenaComponent implements AthenaComponent {
         PTicket[] ticketArray = gson.fromJson(json, PTicket[].class);
         return Arrays.asList(ticketArray);
     }
+
+    public PTicket invoke(String method, String type, PTicket record) {
+        throw new UnsupportedOperationException("Invoke is not allowed on Json components");
+    }
 }
