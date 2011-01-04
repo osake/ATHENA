@@ -50,7 +50,6 @@ public class PropFieldManager {
 
     public PropField savePropField(PropField pf) throws Exception {
         if (!AllowedCharacterCheck.confirm(pf.getName())) {
-            //TODO: if AllowedCharacterCheck throws this exception, we can be more specific with this message
             throw new InvalidFieldNameException("Field name ["
                     + pf.getName() + "] is invalid.  Either it contains invalid characters, no characters, or it is too long.");
         }
