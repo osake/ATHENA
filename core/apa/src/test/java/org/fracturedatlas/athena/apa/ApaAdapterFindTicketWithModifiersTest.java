@@ -41,6 +41,9 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
         super();
     }
 
+    /*
+     * Add 15 tickets
+     */
     @Before
     public void setupTickets() {
         Ticket t = new Ticket();
@@ -177,10 +180,10 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
 
         AthenaSearch search = new AthenaSearch();
         search.setType("ticket");
-        search.setSearchModifier("_start", "3");
+        search.setSearchModifier(AthenaSearch.START, "3");
 
         Set results = apa.findTickets(search);
-        assertEquals(0, results.size());
+        assertEquals(13, results.size());
     }
 
     @Test
@@ -237,7 +240,7 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
         AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
         AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
         AthenaSearch search = new AthenaSearch();
-        search.setSearchModifier("_start", "dog");
+        search.setSearchModifier(AthenaSearch.START, "dog");
         search.addConstraint(con1);
         search.addConstraint(con2);
         search.setType("ticket");

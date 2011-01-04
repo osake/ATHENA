@@ -265,7 +265,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     public void testFindTicketsWithLimit() {
         search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
-        search.setSearchModifier("_limit", "6");
+        search.setSearchModifier(AthenaSearch.LIMIT, "6");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(6, tickets.size());
@@ -275,7 +275,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     public void testFindTicketsWithLimitEqualToResult() {
         search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
-        search.setSearchModifier("_limit", "7");
+        search.setSearchModifier(AthenaSearch.LIMIT, "7");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(7, tickets.size());
@@ -285,7 +285,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     public void testFindTicketsWithLimitHigherThanResult() {
         search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
-        search.setSearchModifier("_limit", "8");
+        search.setSearchModifier(AthenaSearch.LIMIT, "8");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(7, tickets.size());
@@ -295,7 +295,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     public void testFindTicketsWithLimitofZero() {
         search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
-        search.setSearchModifier("_limit", "0");
+        search.setSearchModifier(AthenaSearch.LIMIT, "0");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(0, tickets.size());
@@ -305,7 +305,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     public void testFindTicketsWithLimitOfOne() {
         search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
-        search.setSearchModifier("_limit", "1");
+        search.setSearchModifier(AthenaSearch.LIMIT, "1");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(1, tickets.size());
@@ -316,7 +316,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     public void testFindTicketsWithInvalidLimit() {
         search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
-        search.setSearchModifier("_limit", "dog");
+        search.setSearchModifier(AthenaSearch.LIMIT, "dog");
         Collection<Ticket> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(7, tickets.size());

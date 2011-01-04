@@ -24,9 +24,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AthenaSearch {
 
+    public static final String LIMIT = "_limit";
+    public static final String START = "_start";
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    
     ArrayList<AthenaSearchConstraint> asc = null;
     Map<String, String> searchModifiers = new HashMap<String, String>();
 
@@ -46,13 +52,6 @@ public class AthenaSearch {
 
     public void addConstraint(AthenaSearchConstraint searchConstraint) {
         asc.add(searchConstraint);
-    }
-
-    /*
-     * TODO: refactor this out
-     */
-    public List<AthenaSearchConstraint> asList() {
-        return getConstraints();
     }
 
     public List<AthenaSearchConstraint> getConstraints() {
@@ -79,6 +78,37 @@ public class AthenaSearch {
         this.type = type;
     }
 
+    /**
+     * Get the limit of this search
+     * @return the limit, null if limit has not been set
+     */
+    public Integer getLimit() {
+        return getIntegerModifier(LIMIT);
+    }
+
+    /**
+     * Get the start of this search
+     * @return the start, null if start has not been set
+     */    
+    public Integer getStart() {
+        return getIntegerModifier(START);
+    }
+
+    private Integer getIntegerModifier(String modifierName) {
+        Integer modifierValue = null;
+        String stringVal = getSearchModifier(modifierName);
+        if (stringVal != null) {
+            try {
+                modifierValue = Integer.parseInt(stringVal);
+            } catch (NumberFormatException ex) {
+                logger.error("{} parameter for AthenaSearch was malformed [{}]", modifierName, stringVal);
+                logger.error("Continuing with search");
+            }
+        }
+
+        return modifierValue;
+    }
+
     public static class Builder {
         AthenaSearch search;
 
@@ -101,12 +131,12 @@ public class AthenaSearch {
         }
 
         public AthenaSearch.Builder limit(Integer limit) {
-            search.setSearchModifier("_limit", limit.toString());
+            search.setSearchModifier(AthenaSearch.LIMIT, limit.toString());
             return this;
         }
 
          public AthenaSearch.Builder start(Integer start) {
-            search.setSearchModifier("_start", start.toString());
+            search.setSearchModifier(AthenaSearch.START, start.toString());
             return this;
         }
 
