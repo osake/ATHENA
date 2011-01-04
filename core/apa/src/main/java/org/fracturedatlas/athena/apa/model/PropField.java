@@ -103,10 +103,11 @@ public class PropField extends TixEntity implements Serializable {
         return propValues;
     }
 
-    /*
-     * TODO: This should REPLACE the propValues, NOT ammend them.
-     */
     public void setPropValues(Collection<PropValue> propValues) {
+        this.propValues = propValues;
+    }
+
+    public void addPropValues(Collection<PropValue> propValues) {
         if (this.propValues == null) {
             this.propValues = new ArrayList<PropValue>();
         }
