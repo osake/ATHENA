@@ -88,7 +88,7 @@ public class AuditPersistanceImpl implements AuditPersistance {
                 limit = Integer.parseInt(limitString);
             }
         } catch (NumberFormatException ex) {
-            logger.error("Error While searching [{}]", athenaSearch.asList());
+            logger.error("Error While searching [{}]", athenaSearch.getConstraints());
             logger.error(ex.getMessage(), ex);
             limit = -1;
         }
@@ -101,7 +101,7 @@ public class AuditPersistanceImpl implements AuditPersistance {
                 start = Integer.parseInt(startString);
             }
         } catch (NumberFormatException ex) {
-            logger.error("Error While searching [{}]", athenaSearch.asList());
+            logger.error("Error While searching [{}]", athenaSearch.getConstraints());
             logger.error(ex.getMessage(), ex);
             start = -1;
         }
@@ -111,7 +111,7 @@ public class AuditPersistanceImpl implements AuditPersistance {
         String name = null;
         Iterator<String> it = null;
         String singleValue = null;
-        Iterator<AthenaSearchConstraint> searchListItr = athenaSearch.asList().iterator();
+        Iterator<AthenaSearchConstraint> searchListItr = athenaSearch.getConstraints().iterator();
         queryString = "FROM AuditMessage am WHERE ";
         int i = 1;
         HashMap<String, String> valuesTable = new HashMap<String, String>();
@@ -167,7 +167,7 @@ public class AuditPersistanceImpl implements AuditPersistance {
             }
             return finishedAuditMessages;
         } catch (Exception ex) {
-            logger.error("Error While searching [{}]", athenaSearch.asList());
+            logger.error("Error While searching [{}]", athenaSearch.getConstraints());
             logger.error(ex.getMessage(), ex);
             return new ArrayList<AuditMessage>();
         } finally {
