@@ -23,6 +23,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility methods for filtering allowed characters
@@ -30,7 +32,8 @@ import org.apache.commons.lang.StringUtils;
 public class AllowedCharacterCheck {
 
 	private final static Pattern forbiddenChar = Pattern.compile("\\W");
-        private static final Integer MAX_STRING_LENGTH = 45;
+    private static final Integer MAX_STRING_LENGTH = 45;
+    static Logger logger = LoggerFactory.getLogger(AllowedCharacterCheck.class.getName());
 
 	/**
 	 * Checks that the String:
@@ -44,16 +47,29 @@ public class AllowedCharacterCheck {
 	 * @return true if str does not contain characters other than [0-9a-zA-Z\_] 
 	 */  
 	public static boolean confirm(String str) {
+        logger.info("Confirming [{}]", str);
+        
             if(str == null) {
+                logger.info("String is null");
                 return false;
             }
 
             //TODO: This should be moved to some config file
             if("id".equals(str)) {
+                logger.info("This string equals [id]");
                 return false;
             }
 
             Matcher m = forbiddenChar.matcher(str);
-            return (!m.find() && !StringUtils.isBlank(str) && str.length() < MAX_STRING_LENGTH);
+            logger.info("Checking against regex \\w");
+            boolean worked = (!m.find() && !StringUtils.isBlank(str) && str.length() < MAX_STRING_LENGTH);
+
+            if(!worked) {
+                logger.info("Regex failed to match");
+            } else {
+                logger.info("Field name check passed");
+            }
+
+            return worked;
 	}
 }
