@@ -75,6 +75,6 @@ public class ApaSearchBuilderTest {
         assertEquals(cons, search.getConstraints());
 
         Map<String, String> mods = search.getSearchModifiers();
-        assertEquals("3", mods.get("_limit"));
+        assertEquals("3", mods.get(AthenaSearch.LIMIT));
     }
 }

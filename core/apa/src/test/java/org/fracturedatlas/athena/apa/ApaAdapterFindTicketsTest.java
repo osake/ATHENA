@@ -19,16 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.apa;
 
+import java.text.ParseException;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map.Entry;
-import java.util.Set;
 import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
 import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
 import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
@@ -38,7 +35,7 @@ import org.fracturedatlas.athena.apa.model.StringTicketProp;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.ValueType;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.id.IdAdapter;
+import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -62,6 +59,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     public void testFindTicketsEmptyValue() {
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("SEAT NUMBER", Operator.EQUALS, "");
+        as.setType("ticket");
 
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
@@ -71,6 +69,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     public void testFindTicketsUnknownPropName() {
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("UNKNOWN_PROP_NAME15", Operator.EQUALS, "ABCDEFG");
+        as.setType("ticket");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
     }
@@ -79,6 +78,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     public void testFindTicketsInvalidValue() {
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("Seat Number", Operator.EQUALS, "ABCDEFG");
+        as.setType("ticket");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
     }
@@ -105,6 +105,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("BOOLEAN_PROP", Operator.EQUALS, "true");
+        as.setType("ticket");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(1, tickets.size());
     }
@@ -131,6 +132,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("INTEGER_PROP", Operator.EQUALS, "2");
+        as.setType("ticket");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(1, tickets.size());
 
@@ -163,6 +165,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("SEAT_NUMBER", Operator.EQUALS, "3");
         as.addConstraint("LOCKED", Operator.EQUALS, "true");
+        as.setType("ticket");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(1, tickets.size());
     }
@@ -212,6 +215,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         as.addConstraint("locked", Operator.EQUALS, "false");
         as.addConstraint("Artist", Operator.EQUALS, "ACDC");
         as.addConstraint("Date", Operator.EQUALS, "\'2010-10-14T13:33:50-04:00\'");
+        as.setType("ticket");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(1, tickets.size());
     }
@@ -260,76 +264,12 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         as.addConstraint("Seat Number", Operator.EQUALS, "3");
         as.addConstraint("locked", Operator.EQUALS, "true");
         as.addConstraint("Artist", Operator.EQUALS, "Foo");
+        as.setType("ticket");
         Collection<Ticket> tickets = apa.findTickets(as);
 
         assertEquals(0, tickets.size());
     }
 
-    @Test
-    public void testFindMultipleTickets() {
-
-        Ticket t = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
-
-        PropField field = new PropField(ValueType.STRING, "Artist", Boolean.FALSE);
-        PropField pf3 = apa.savePropField(field);
-
-        t.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t.setType("1");
-        t = apa.saveTicket(t);
-
-        t2.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t2.setType("2");
-        t2 = apa.saveTicket(t2);
-
-        t3.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t3.setType("3");
-        t3 = apa.saveTicket(t3);
-
-        t4.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t4.setType("4");
-        t4 = apa.saveTicket(t4);
-
-        ticketsToDelete.add(t);
-        ticketsToDelete.add(t2);
-        ticketsToDelete.add(t3);
-        ticketsToDelete.add(t4);
-        propFieldsToDelete.add(pf3);
-
-        AthenaSearch as = new AthenaSearch();
-        as.addConstraint("Artist", Operator.EQUALS, "ACDC");
-        Collection<Ticket> tickets = apa.findTickets(as);
-        assertEquals(4, tickets.size());
-
-        Set<Integer> intNamesFound = new HashSet<Integer>();
-        for (Ticket ticket : tickets) {
-            Integer intName = Integer.parseInt(ticket.getType());
-            if (intNamesFound.contains(intName)) {
-                fail("Found the same ticket twice");
-            } else {
-                intNamesFound.add(intName);
-            }
-            switch (intName) {
-                case 1:
-                    assertTrue(IdAdapter.isEqual(t.getId(), ticket.getId()));
-                    break;
-                case 2:
-                    assertTrue(IdAdapter.isEqual(t2.getId(), ticket.getId()));
-                    break;
-                case 3:
-                    assertTrue(IdAdapter.isEqual(t3.getId(), ticket.getId()));
-                    break;
-                case 4:
-                    assertTrue(IdAdapter.isEqual(t4.getId(), ticket.getId()));
-                    break;
-                default:
-                    fail("Found a ticket that shouldn't be there");
-                    break;
-            }
-        }
-    }
 
     /*
      * Six tickets in the DB.  Looking for four
@@ -337,38 +277,34 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testFindMultipleTickets2() {
 
-        Ticket t = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
-        Ticket t5 = new Ticket();
-        Ticket t6 = new Ticket();
+        List<Ticket> winners = new ArrayList<Ticket>();
+
+        Ticket t = new Ticket("ticket");
+        Ticket t2 = new Ticket("ticket");
+        Ticket t3 = new Ticket("ticket");
+        Ticket t4 = new Ticket("ticket");
+        Ticket t5 = new Ticket("ticket");
+        Ticket t6 = new Ticket("ticket");
 
         PropField field = new PropField(ValueType.STRING, "Artist", Boolean.FALSE);
         PropField pf3 = apa.savePropField(field);
 
         t.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t.setType("1");
         t = apa.saveTicket(t);
 
         t2.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t2.setType("2");
         t2 = apa.saveTicket(t2);
 
         t3.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t3.setType("3");
         t3 = apa.saveTicket(t3);
 
         t4.addTicketProp(new StringTicketProp(pf3, "ACDC"));
-        t4.setType("4");
         t4 = apa.saveTicket(t4);
 
         t5.addTicketProp(new StringTicketProp(pf3, "Warrant"));
-        t5.setType("5");
         t5 = apa.saveTicket(t5);
 
         t6.addTicketProp(new StringTicketProp(pf3, "Warrant"));
-        t6.setType("6");
         t6 = apa.saveTicket(t6);
 
         ticketsToDelete.add(t);
@@ -379,38 +315,19 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t6);
         propFieldsToDelete.add(pf3);
 
+        winners.add(t);
+        winners.add(t2);
+        winners.add(t3);
+        winners.add(t4);
 
-        AthenaSearch as = new AthenaSearch();
-        as.addConstraint("Artist", Operator.EQUALS, "ACDC");
+
+        AthenaSearch as = new AthenaSearch.Builder().type("ticket")
+                                                    .and(new AthenaSearchConstraint("Artist", Operator.EQUALS, "ACDC"))
+                                                    .build();
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(4, tickets.size());
 
-        Set<Integer> intNamesFound = new HashSet<Integer>();
-        for (Ticket ticket : tickets) {
-            Integer intName = Integer.parseInt(ticket.getType());
-            if (intNamesFound.contains(intName)) {
-                fail("Found the same ticket twice");
-            } else {
-                intNamesFound.add(intName);
-            }
-            switch (intName) {
-                case 1:
-                    assertTrue(IdAdapter.isEqual(t.getId(), ticket.getId()));
-                    break;
-                case 2:
-                    assertTrue(IdAdapter.isEqual(t2.getId(), ticket.getId()));
-                    break;
-                case 3:
-                    assertTrue(IdAdapter.isEqual(t3.getId(), ticket.getId()));
-                    break;
-                case 4:
-                    assertTrue(IdAdapter.isEqual(t4.getId(), ticket.getId()));
-                    break;
-                default:
-                    fail("Found a ticket that shouldn't be there");
-                    break;
-            }
-        }
+        doCollectionsContainSameElements(winners, tickets);
     }
 
     /*
@@ -419,6 +336,8 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testFindMultipleTickets3() {
 
+        List<Ticket> winners = new ArrayList<Ticket>();
+
         Ticket t = new Ticket();
         Ticket t2 = new Ticket();
         Ticket t3 = new Ticket();
@@ -431,32 +350,32 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
         t.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t.setType("1");
+        t.setType("ticket");
         t = apa.saveTicket(t);
 
         t2.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t2.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t2.setType("2");
+        t2.setType("ticket");
         t2 = apa.saveTicket(t2);
 
         t3.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t3.addTicketProp(new IntegerTicketProp(pf4, 100));
-        t3.setType("3");
+        t3.setType("ticket");
         t3 = apa.saveTicket(t3);
 
         t4.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t4.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t4.setType("4");
+        t4.setType("ticket");
         t4 = apa.saveTicket(t4);
 
         t5.addTicketProp(new StringTicketProp(pf3, "Warrant"));
         t5.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t5.setType("5");
+        t5.setType("ticket");
         t5 = apa.saveTicket(t5);
 
         t6.addTicketProp(new StringTicketProp(pf3, "Warrant"));
         t6.addTicketProp(new IntegerTicketProp(pf4, 75));
-        t6.setType("6");
+        t6.setType("ticket");
         t6 = apa.saveTicket(t6);
 
         ticketsToDelete.add(t);
@@ -468,36 +387,18 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf3);
         propFieldsToDelete.add(pf4);
 
+        winners.add(t);
+        winners.add(t2);
+        winners.add(t4);
 
-        AthenaSearch as = new AthenaSearch();
-        as.addConstraint("Artist", Operator.EQUALS, "ACDC");
-        as.addConstraint("PRICE", Operator.EQUALS, "50");
+        AthenaSearch as = new AthenaSearch.Builder().type("ticket")
+                                                    .and(new AthenaSearchConstraint("Artist", Operator.EQUALS, "ACDC"))
+                                                    .and(new AthenaSearchConstraint("PRICE", Operator.EQUALS, "50"))
+                                                    .build();
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(3, tickets.size());
 
-        Set<Integer> intNamesFound = new HashSet<Integer>();
-        for (Ticket ticket : tickets) {
-            Integer intName = Integer.parseInt(ticket.getType());
-            if (intNamesFound.contains(intName)) {
-                fail("Found the same ticket twice");
-            } else {
-                intNamesFound.add(intName);
-            }
-            switch (intName) {
-                case 1:
-                    assertTrue(IdAdapter.isEqual(t.getId(), ticket.getId()));
-                    break;
-                case 2:
-                    assertTrue(IdAdapter.isEqual(t2.getId(), ticket.getId()));
-                    break;
-                case 4:
-                    assertTrue(IdAdapter.isEqual(t4.getId(), ticket.getId()));
-                    break;
-                default:
-                    fail("Found a ticket that shouldn't be there");
-                    break;
-            }
-        }
+        doCollectionsContainSameElements(winners, tickets);
     }
 
     /*
@@ -506,6 +407,8 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testFindMultipleTickets4() {
 
+        List<Ticket> winners = new ArrayList<Ticket>();
+        
         Ticket t = new Ticket();
         Ticket t2 = new Ticket();
         Ticket t3 = new Ticket();
@@ -518,32 +421,32 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
         t.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t.setType("1");
+        t.setType("ticket");
         t = apa.saveTicket(t);
 
         t2.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t2.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t2.setType("2");
+        t2.setType("ticket");
         t2 = apa.saveTicket(t2);
 
         t3.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t3.addTicketProp(new IntegerTicketProp(pf4, 100));
-        t3.setType("3");
+        t3.setType("ticket");
         t3 = apa.saveTicket(t3);
 
         t4.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t4.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t4.setType("4");
+        t4.setType("ticket");
         t4 = apa.saveTicket(t4);
 
         t5.addTicketProp(new StringTicketProp(pf3, "Warrant"));
         t5.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t5.setType("5");
+        t5.setType("ticket");
         t5 = apa.saveTicket(t5);
 
         t6.addTicketProp(new StringTicketProp(pf3, "Warrant"));
         t6.addTicketProp(new IntegerTicketProp(pf4, 75));
-        t6.setType("6");
+        t6.setType("ticket");
         t6 = apa.saveTicket(t6);
 
         ticketsToDelete.add(t);
@@ -556,11 +459,14 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(pf4);
 
 
-        AthenaSearch as = new AthenaSearch();
-        as.addConstraint("Artist", Operator.EQUALS, "Warrant");
-        as.addConstraint("PRICE", Operator.EQUALS, "100");
+
+        AthenaSearch as = new AthenaSearch.Builder().type("ticket")
+                                                    .and(new AthenaSearchConstraint("Artist", Operator.EQUALS, "Warrant"))
+                                                    .and(new AthenaSearchConstraint("PRICE", Operator.EQUALS, "100"))
+                                                    .build();
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
+        doCollectionsContainSameElements(winners, tickets);
 
     }
 
@@ -570,44 +476,40 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testFindMultipleTickets5() {
 
-        Ticket t = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
-        Ticket t5 = new Ticket();
-        Ticket t6 = new Ticket();
+        List<Ticket> winners = new ArrayList<Ticket>();
+
+        Ticket t = new Ticket("ticket");
+        Ticket t2 = new Ticket("ticket");
+        Ticket t3 = new Ticket("ticket");
+        Ticket t4 = new Ticket("ticket");
+        Ticket t5 = new Ticket("ticket");
+        Ticket t6 = new Ticket("ticket");
 
         PropField pf3 = apa.savePropField(new PropField(ValueType.STRING, "Artist", Boolean.FALSE));
         PropField pf4 = apa.savePropField(new PropField(ValueType.INTEGER, "PRICE", Boolean.FALSE));
 
         t.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t.setType("1");
         t = apa.saveTicket(t);
 
         t2.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t2.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t2.setType("2");
         t2 = apa.saveTicket(t2);
 
         t3.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t3.addTicketProp(new IntegerTicketProp(pf4, 100));
-        t3.setType("3");
         t3 = apa.saveTicket(t3);
 
         t4.addTicketProp(new StringTicketProp(pf3, "ACDC"));
         t4.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t4.setType("4");
         t4 = apa.saveTicket(t4);
 
         t5.addTicketProp(new StringTicketProp(pf3, "Warrant"));
         t5.addTicketProp(new IntegerTicketProp(pf4, 50));
-        t5.setType("5");
         t5 = apa.saveTicket(t5);
 
         t6.addTicketProp(new StringTicketProp(pf3, "Warrant"));
         t6.addTicketProp(new IntegerTicketProp(pf4, 75));
-        t6.setType("6");
         t6 = apa.saveTicket(t6);
 
         ticketsToDelete.add(t);
@@ -618,47 +520,28 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t6);
         propFieldsToDelete.add(pf3);
         propFieldsToDelete.add(pf4);
+        
+        winners.add(t);
+        winners.add(t2);
+        winners.add(t4);
+        winners.add(t5);
 
 
-        AthenaSearch as = new AthenaSearch();
-        as.addConstraint("PRICE", Operator.EQUALS, "50");
+        AthenaSearch as = new AthenaSearch.Builder().type("ticket")
+                                                    .and(new AthenaSearchConstraint("PRICE", Operator.EQUALS, "50"))
+                                                    .build();
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(4, tickets.size());
-
-        Set<Integer> intNamesFound = new HashSet<Integer>();
-        for (Ticket ticket : tickets) {
-            Integer intName = Integer.parseInt(ticket.getType());
-            if (intNamesFound.contains(intName)) {
-                fail("Found the same ticket twice");
-            } else {
-                intNamesFound.add(intName);
-            }
-            switch (intName) {
-                case 1:
-                    assertTrue(IdAdapter.isEqual(t.getId(), ticket.getId()));
-                    break;
-                case 2:
-                    assertTrue(IdAdapter.isEqual(t2.getId(), ticket.getId()));
-                    break;
-                case 4:
-                    assertTrue(IdAdapter.isEqual(t4.getId(), ticket.getId()));
-                    break;
-                case 5:
-                    assertTrue(IdAdapter.isEqual(t5.getId(), ticket.getId()));
-                    break;
-                default:
-                    fail("Found a ticket that shouldn't be there");
-                    break;
-            }
-        }
+        doCollectionsContainSameElements(winners, tickets);
     }
 
     @Test
     public void testFindTicketsWithoutTime() throws ParseException {
-        Ticket t = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
+
+        Ticket t = new Ticket("ticket");
+        Ticket t2 = new Ticket("ticket");
+        Ticket t3 = new Ticket("ticket");
+        Ticket t4 = new Ticket("ticket");
 
         PropField field = new PropField();
         field = new PropField();
@@ -688,6 +571,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("Date", Operator.EQUALS, "2010-10-09");
+        as.setType("ticket");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
     }
@@ -729,6 +613,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
 
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("Date", Operator.EQUALS, "16:00:00");
+        as.setType("ticket");
         Collection<Ticket> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
     }

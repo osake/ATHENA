@@ -86,6 +86,8 @@ public interface ApaAdapter {
     /**
      * Search for tickets that match all criteria in search.
      *
+     * Type must be specified, but search constraints may be empty.  This method must honor start, end, and limit modifiers.
+     *
      * @param searchParams the search criteria.  Criteria should be in the format: key = prop, value = prop value
      * @return matching tickets, empty List if no tickets found
      */

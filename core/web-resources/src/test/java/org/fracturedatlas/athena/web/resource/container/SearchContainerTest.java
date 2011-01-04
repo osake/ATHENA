@@ -30,6 +30,7 @@ import org.fracturedatlas.athena.apa.model.StrictType;
 import org.fracturedatlas.athena.apa.model.StringTicketProp;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
@@ -151,7 +152,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
     public void testFindTicketsLimitResults() {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
         queryParams.add("PRICE", "in(25,50)");
-        queryParams.add("_limit", "5");
+        queryParams.add(AthenaSearch.LIMIT, "5");
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
         Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
         assertNotNull(tickets);
@@ -159,7 +160,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
 
         queryParams = new MultivaluedMapImpl();
         queryParams.add("PRICE", "in( \"25\", 50)");
-        queryParams.add("_limit", "9");
+        queryParams.add(AthenaSearch.LIMIT, "9");
         jsonString = tix.path(path).queryParams(queryParams).get(String.class);
         tickets = gson.fromJson(jsonString, Ticket[].class);
         assertNotNull(tickets);
@@ -172,7 +173,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
         
         MultivaluedMap queryParams = new MultivaluedMapImpl();
         queryParams.add("PRICE", "in(25,50)");
-        queryParams.add("_start", "0");
+        queryParams.add(AthenaSearch.START, "0");
 
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
         Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
@@ -181,7 +182,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
 
         queryParams = new MultivaluedMapImpl();
         queryParams.add("PRICE", "in( \"25\", 50)");
-        queryParams.add("_start", "2");
+        queryParams.add(AthenaSearch.START, "2");
         jsonString = tix.path(path).queryParams(queryParams).get(String.class);
         tickets = gson.fromJson(jsonString, Ticket[].class);
         assertNotNull(tickets);
