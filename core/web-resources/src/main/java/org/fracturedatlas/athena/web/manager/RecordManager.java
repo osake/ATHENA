@@ -96,10 +96,14 @@ public class RecordManager {
                     apaSearch.setSearchModifier(fieldName, operatorPrefixedValue);
                 } else {
 
-                    //TODO: If there is no operator, we should default to equals.  This will
-                    //allow for query strings that look normal
+                    //If the operator isn't found, this defaults to equals
                     operator = Operator.fromType(operatorPrefixedValue.substring(0, 2));
-                    value = operatorPrefixedValue.substring(2, operatorPrefixedValue.length());
+                    int start = 2;
+                    if(operator == null) {
+                        operator = Operator.EQUALS;
+                        start = 0;
+                    }
+                    value = operatorPrefixedValue.substring(start, operatorPrefixedValue.length());
                     valueSet = parseValues(value);
                     apaSearch.addConstraint(fieldName, operator, valueSet);
                 }

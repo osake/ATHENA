@@ -43,6 +43,36 @@ public class SearchContainerTest extends BaseTixContainerTest {
     Gson gson = JsonUtil.getGson();
 
     @Test
+    public void testFindTicketsDefaultToEquals() {
+        MultivaluedMap queryParams = new MultivaluedMapImpl();
+        queryParams.add("PRICE", "50");
+        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(6, tickets.length);
+    }
+
+    @Test
+    public void testFindTicketsDefaultToEquals2() {
+        MultivaluedMap queryParams = new MultivaluedMapImpl();
+        queryParams.add("PRICE", "30");
+        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(0, tickets.length);
+    }
+
+    @Test
+    public void testFindTicketsDefaultToEquals3() {
+        MultivaluedMap queryParams = new MultivaluedMapImpl();
+        queryParams.add("SOLD", "false");
+        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        assertNotNull(tickets);
+        assertEquals(5, tickets.length);
+    }
+
+    @Test
     public void testFindTickets() {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
         queryParams.add("SOLD", "eqfalse");
@@ -170,7 +200,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testFindTicketsStartPoint() {
-        
+
         MultivaluedMap queryParams = new MultivaluedMapImpl();
         queryParams.add("PRICE", "in(25,50)");
         queryParams.add(AthenaSearch.START, "0");
