@@ -22,8 +22,6 @@ package org.fracturedatlas.athena.apa.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Vector;
 import javax.persistence.CascadeType;
 
 import javax.persistence.Entity;
@@ -33,10 +31,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.apache.commons.collections.ListUtils;
 
 import org.fracturedatlas.athena.id.IdAdapter;
@@ -50,7 +46,6 @@ public class PropField extends TixEntity implements Serializable {
     @Id
     @Type(type = "org.fracturedatlas.athena.apa.impl.LongUserType")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @XmlJavaTypeAdapter(IdAdapter.class)
     Object id;
 
 //    @OneToMany(mappedBy = "propField", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)

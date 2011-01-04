@@ -4,7 +4,6 @@
  */
 package org.fracturedatlas.athena.audit.model;
 
-import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.Entity;
@@ -12,9 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.fracturedatlas.athena.id.IdAdapter;
-import org.hibernate.annotations.Type;
 
 /**
  *

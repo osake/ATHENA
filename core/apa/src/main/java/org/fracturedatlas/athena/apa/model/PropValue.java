@@ -29,7 +29,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.hibernate.annotations.Type;
@@ -41,7 +40,6 @@ public class PropValue extends TixEntity implements Serializable {
     @Id
     @Type(type = "org.fracturedatlas.athena.apa.impl.LongUserType")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @XmlJavaTypeAdapter(IdAdapter.class)
     Object id;
 
     @ManyToOne

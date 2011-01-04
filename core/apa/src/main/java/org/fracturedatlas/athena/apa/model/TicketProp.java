@@ -40,7 +40,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.hibernate.annotations.Type;
@@ -81,7 +80,6 @@ public abstract class TicketProp extends TixEntity implements Serializable, Comp
     Ticket ticket;
 
     @XmlElement(name="id")
-    @XmlJavaTypeAdapter(IdAdapter.class)
     public Object getId() {
         return id;
     }
