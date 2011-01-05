@@ -43,7 +43,6 @@ public class JsonPropValueSerializer implements MessageBodyWriter<PropValue> {
 
     @Override
     public long getSize(PropValue value, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType) {
-        //TODO: Do this
         return -1L;
     }
 

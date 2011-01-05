@@ -42,7 +42,6 @@ public class JsonPropFieldArraySerializer implements MessageBodyWriter<PropField
 
     @Override
     public long getSize(PropField[] fields, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType) {
-        //TODO: Do this
         return -1L;
     }
 

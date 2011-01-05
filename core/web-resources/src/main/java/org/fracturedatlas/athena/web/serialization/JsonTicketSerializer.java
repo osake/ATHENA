@@ -55,7 +55,6 @@ public class JsonTicketSerializer implements MessageBodyWriter<Ticket>,
 
     @Override
     public long getSize(Ticket t, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType) {
-        //TODO: Do this
         return -1L;
     }
 

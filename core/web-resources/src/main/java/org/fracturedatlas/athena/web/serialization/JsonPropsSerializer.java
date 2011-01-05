@@ -41,7 +41,6 @@ public class JsonPropsSerializer implements MessageBodyWriter<TicketProp[]> {
 
     @Override
     public long getSize(TicketProp[] props, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType) {
-        //TODO: Do this
         return -1L;
     }
 
