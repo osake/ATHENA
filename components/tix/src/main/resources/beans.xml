@@ -11,7 +11,7 @@
 
     <bean name="athenaStage" class="org.fracturedatlas.athena.web.JsonAthenaComponent">
         <constructor-arg index="0" value="localhost"/>
-        <constructor-arg index="1" value="8888"/>
+        <constructor-arg index="1" value="8080"/>
         <constructor-arg index="2" value="stage"/>
     </bean>
     
