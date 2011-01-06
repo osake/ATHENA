@@ -7,8 +7,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>core</module>
-		    <module>components</module>
-		    <module>helpers</module>
+        <module>components</module>
+        <module>helpers</module>
     </modules>
 
     <properties>
@@ -155,11 +155,11 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.6.0</version>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.14</version>
-</dependency>
+        </dependency>
     </dependencies>
     <scm>
         <connection>scm:git:git@github.com:fracturedatlas/ATHENA.git</connection>
