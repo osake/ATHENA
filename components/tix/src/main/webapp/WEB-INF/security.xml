@@ -1,54 +1,62 @@
-<beans:beans xmlns="http://www.springframework.org/schema/security"
-             xmlns:beans="http://www.springframework.org/schema/beans"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.springframework.org/schema/beans
-             http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-             http://www.springframework.org/schema/security
-             http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
-  <http entry-point-ref="digestEntryPoint">
-    <intercept-url pattern="/**" access="ROLE_USER" />
-    <custom-filter position="BASIC_AUTH_FILTER" ref="digestFilter" />
-  </http>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:sec="http://www.springframework.org/schema/security"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/security
+       http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
+    <sec:http entry-point-ref="digestEntryPoint">
+        <sec:intercept-url pattern="/**" access="ROLE_USER" />
+        <sec:custom-filter position="BASIC_AUTH_FILTER" ref="digestFilter" />
+    </sec:http>
 
-  <beans:bean id="dataSourceUsers" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
-    <beans:property name="driverClassName">
-      <beans:value>com.mysql.jdbc.Driver</beans:value>
-    </beans:property>
-    <beans:property name="url">
-      <beans:value>jdbc:mysql://localhost/ATHENA-Security</beans:value>
-    </beans:property>
-    <beans:property name="username">
-      <beans:value>root</beans:value>
-    </beans:property>
-    <beans:property name="password">
-      <beans:value></beans:value>
-    </beans:property>
-  </beans:bean>
+    <bean id="dataSourceUsers" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
+        <property name="driverClassName">
+            <value>com.mysql.jdbc.Driver</value>
+        </property>
+        <property name="url">
+            <value>jdbc:mysql://localhost/ATHENA-Security</value>
+        </property>
+        <property name="username">
+            <value>root</value>
+        </property>
+        <property name="password">
+            <value></value>
+        </property>
+    </bean>
 
-  <authentication-manager>
-    <authentication-provider user-service-ref="jdbcUserService">
-    </authentication-provider>
-  </authentication-manager>
+    <bean class="org.springframework.security.authentication.dao.ReflectionSaltSource" id="saltSource">
+        <property name="userPropertyToUse" value="username"/>
+    </bean>
+    
+    <bean class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" id="passwordEncoder">
+    </bean>
 
-  <!-- This is unused -->
+    <sec:authentication-manager>
+        <sec:authentication-provider user-service-ref="jdbcUserService">
+        </sec:authentication-provider>
+    </sec:authentication-manager>
+
+    <!-- This is unused -->
   <!--
   <user-service id="userService">
     <user name="completely" password="ignored" authorities="ROLE_USER" />
   </user-service>
   -->
 
-<jdbc-user-service id="jdbcUserService" data-source-ref="dataSourceUsers"/>
+    <sec:jdbc-user-service id="jdbcUserService" data-source-ref="dataSourceUsers"/>
 
-  <beans:bean id="digestEntryPoint" class=
-              "org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
-    <beans:property name="realmName" value="ATHENA"/>
-    <beans:property name="key" value="d1a5e26d0558c455d3860e26d0558c45585fad77d427"/>
-    <beans:property name="nonceValiditySeconds" value="10"/>
-  </beans:bean>
+    <bean id="digestEntryPoint" class=
+          "org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
+        <property name="realmName" value="ATHENA"/>
+        <property name="key" value="d1a5e26d0558c455d3860e26d0558c45585fad77d427"/>
+        <property name="nonceValiditySeconds" value="10"/>
+    </bean>
 
-  <beans:bean id="digestFilter" class=
-              "org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
-    <beans:property name="userDetailsService" ref="jdbcUserService"/>
-    <beans:property name="authenticationEntryPoint" ref="digestEntryPoint"/>
-  </beans:bean>
-</beans:beans>
+    <bean id="digestFilter" class=
+          "org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
+        <property name="passwordAlreadyEncoded" value="true"/>
+        <property name="userDetailsService" ref="jdbcUserService"/>
+        <property name="authenticationEntryPoint" ref="digestEntryPoint"/>
+    </bean>
+</beans>
