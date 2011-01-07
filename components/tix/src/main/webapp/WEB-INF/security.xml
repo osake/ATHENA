@@ -6,7 +6,7 @@
        http://www.springframework.org/schema/security
        http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
     <sec:http entry-point-ref="digestEntryPoint">
-        <sec:intercept-url pattern="/**" access="ROLE_USER" />
+        <sec:intercept-url pattern="/**" access="ROLE_CLIENT_APPLICATION" />
         <sec:custom-filter position="BASIC_AUTH_FILTER" ref="digestFilter" />
     </sec:http>
 
