@@ -125,7 +125,7 @@ public class CustomersResourceTest extends BasePaymentsTest {
         newCard.setExpirationDate("05/2013");
         newCard.setCardholderName("Jose R Cool");
         newCard.setCustomer(savedCustomer);
-        CreditCard newSavedCard = payments.saveCreditCard(card);
+        CreditCard newSavedCard = payments.saveCreditCard(newCard);
 
         gettedCustomer = payments.getCustomer(savedCustomer.getId());
 

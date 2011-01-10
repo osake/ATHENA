@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.payments.web.resource;
 
 import com.google.gson.Gson;
+import com.sun.jersey.api.client.ClientResponse;
 import org.fracturedatlas.athena.payments.model.CreditCard;
 import org.fracturedatlas.athena.payments.model.Customer;
 import org.junit.Test;
@@ -71,6 +72,41 @@ public class CardsResourceTest extends BasePaymentsTest {
     }
 
     @Test
+    public void testCantSendNumber(){
+        Customer customer = new Customer();
+
+        customer.setCompany("Bad Company");
+        customer.setEmail("test@test.com");
+        customer.setFirstName("Joe");
+        customer.setLastName(("Tester"));
+        customer.setPhone("410-909-9090");
+
+        Customer savedCustomer = payments.saveCustomer(customer);
+
+        CreditCard card = new CreditCard();
+        card.setCardNumber("4111111111111111");
+        card.setExpirationDate("05/2011");
+        card.setCardholderName("Joe Cool");
+        card.setCustomer(savedCustomer);
+
+        CreditCard savedCard = payments.saveCreditCard(card);
+        assertNotNull(savedCard.getId());
+        assertNotNull(savedCard.getToken());
+        cardsEqual(savedCard, card);
+        CreditCard getCard = payments.getCard(savedCard.getId());
+        assertTrue(getCard.equals(savedCard));
+
+        savedCard.setCardNumber("1111222233334444");
+        ClientResponse response = webResource.path(CARD_PATH + savedCard.getId()).type("application/json")
+                                             .put(ClientResponse.class, gson.toJson(savedCard));
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+        payments.deleteCard(savedCard);
+
+        payments.deleteCustomer(savedCustomer);
+    }
+
+    @Test
     public void createUpdateGetDeleteCard() {
         Customer customer = new Customer();
 
@@ -96,9 +132,13 @@ public class CardsResourceTest extends BasePaymentsTest {
         assertTrue(getCard.equals(savedCard));
 
         savedCard.setExpirationDate("12/2012");
+        savedCard.setCardNumber(null);
         CreditCard updatedCard = payments.saveCreditCard(savedCard);
         assertEquals(savedCard.getId(), updatedCard.getId());
         assertEquals(savedCard.getToken(), updatedCard.getToken());
+        
+        //Saved card number had number blanked out
+        savedCard.setCardNumber(updatedCard.getCardNumber());
         cardsEqual(savedCard, updatedCard);
 
         payments.deleteCard(savedCard);

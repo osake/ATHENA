@@ -36,7 +36,8 @@ import org.springframework.web.context.ContextLoaderListener;
 
 public abstract class BasePaymentsTest extends JerseyTest {
 
-    private WebResource webResource;
+    public static final String CARD_PATH = "cards/";
+    protected WebResource webResource;
     protected AthenaPayments payments;
     protected final static String BASE_URI = "http://localhost:9998/payments";
     protected final static String AUTHORIZATION_PATH = "/transactions/authorize";
