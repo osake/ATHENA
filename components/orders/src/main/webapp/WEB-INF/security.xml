@@ -48,7 +48,6 @@
 
     <bean id="digestEntryPoint" class=
           "org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
-        <!-- TODO: Realm needs to be moved to a properties file -->
         <property name="realmName" value="ATHENA"/>
         <property name="key" value="d1a5e26d0558c455d3860e26d0558c45585fad77d427"/>
         <property name="nonceValiditySeconds" value="10"/>

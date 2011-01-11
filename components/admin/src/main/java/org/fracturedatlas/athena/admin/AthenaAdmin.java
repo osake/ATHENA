@@ -20,13 +20,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.admin;
 
 import java.io.Console;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 
 public class AthenaAdmin {
 
     public static void main(String[] args) {
+
+        ApplicationContext context = new ClassPathXmlApplicationContext("security.xml");
+        JdbcUserDetailsManager userDao = (JdbcUserDetailsManager)context.getBean("userDao");
+        Md5PasswordEncoder encoder = (Md5PasswordEncoder)context.getBean("passwordEncoder");
+
+        //TODO: Props file
+        String realmName = "ATHENA";
+
         if (args.length == 0) {
             System.out.println("USAGE: admin [command]");
             System.out.println("Where [command] is one of: create-user");
@@ -35,7 +51,6 @@ public class AthenaAdmin {
 
         Console c = System.console();
         if (c == null) {
-            System.err.println("No console.");
             System.exit(1);
         }
 
@@ -53,14 +68,19 @@ public class AthenaAdmin {
             }
         }
 
-        System.out.println("yaa");
-
-        ApplicationContext context = new ClassPathXmlApplicationContext("security.xml");
-
-        java.util.Arrays.fill(password, ' ');
-        java.util.Arrays.fill(confirmedPassword, ' ');
-
-
-        System.out.println("yaa!!!!!!!!!!!!!!");
+        Collection<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        authorities.add(new GrantedAuthorityImpl("ROLE_CLIENT_APPLICATION"));
+        String clearPassword = new String(password);
+        String saltedClearPassword = login + ":" + realmName + ":" + clearPassword;
+        String encryptedPassword = encoder.encodePassword(saltedClearPassword, null);
+        User user = new User(login, encryptedPassword, true, true, true, true, authorities);
+        try {
+            userDao.createUser(user);
+        } catch (org.springframework.dao.DuplicateKeyException dke) {
+            System.out.println("Username [" + user.getUsername() + "] already exists.");
+            System.exit(1);
+        }
+        
+        System.out.println("Successfully created [" + user.getUsername() + "]");
     }
 }

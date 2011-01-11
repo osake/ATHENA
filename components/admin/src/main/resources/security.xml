@@ -20,9 +20,11 @@
             <value></value>
         </property>
     </bean>
-
-    <bean class="org.springframework.security.authentication.dao.ReflectionSaltSource" id="saltSource">
-        <property name="userPropertyToUse" value="username"/>
+    
+    <bean id="userDao" class="org.springframework.security.provisioning.JdbcUserDetailsManager">
+        <property name="dataSource">
+            <ref bean="dataSourceUsers"/>
+        </property>
     </bean>
 
     <bean class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" id="passwordEncoder">
