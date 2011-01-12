@@ -28,11 +28,14 @@ import com.sun.jersey.api.client.filter.*;
 import com.sun.jersey.core.impl.provider.entity.Inflector;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.web.util.JsonUtil;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
 
 /**
  * Implementation of AthenaComponent so that components can talk to other components over HTTP
@@ -42,17 +45,32 @@ public class JsonAthenaComponent implements AthenaComponent {
     WebResource component;
     Client c;
     String uri;
+    Map<String, String> credentials;
+    SecurityContext securityContext;
 
     Gson gson = JsonUtil.getGson();
 
-    public JsonAthenaComponent(String hostname, String port, String componentName) {
+    public JsonAthenaComponent(String hostname, String port, String componentName, SecurityContextHolderStrategy contextHolderStrategy) {
         
         //TODO: Use a URL builder
         uri = "http://" + hostname + ":" + port + "/" + componentName + "/";
 
         ClientConfig cc = new DefaultClientConfig();
         c = Client.create(cc);
+        this.securityContext = contextHolderStrategy.getContext();
     }
+
+
+    /**
+     * The credentials for Digest autnetication
+     *
+     * @param credentials a Map of credentials with the keys "username" and "password"
+     */
+    public void addCredentials(Map<String, String> credentials) {
+        this.credentials = credentials;
+    }
+
+
 
     /**
      * Get a record.

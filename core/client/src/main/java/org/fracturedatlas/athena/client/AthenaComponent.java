@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.client;
 
 import java.util.Collection;
+import java.util.Map;
 import org.fracturedatlas.athena.search.AthenaSearch;
 
 /**
@@ -28,6 +29,14 @@ import org.fracturedatlas.athena.search.AthenaSearch;
  * injected in the core component's spring config.  See: tix
  */
 public interface AthenaComponent {
+
+    /**
+     * If the underlying implementation requires authentication, this method should be called
+     * to supply the needed credentials.  Implementors should require that this method be called once only,
+     * likely before interacting with other methods
+     * @param credentials A Map containing the credentials (likely "username" and "password")
+     */
+    public void addCredentials(Map<String, String> credentials);
 
     /**
      * Get the record of this type associated with this id

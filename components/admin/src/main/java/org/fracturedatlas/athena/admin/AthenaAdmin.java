@@ -20,28 +20,47 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.admin;
 
 import java.io.Console;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Properties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
-import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.core.io.ClassPathResource;
 
 public class AthenaAdmin {
-
+    
     public static void main(String[] args) {
 
+        Console c = System.console();
+        if (c == null) {
+            System.exit(1);
+        }
+
+        Properties props = new Properties();
+        ClassPathResource cpr = new ClassPathResource("admin.properties");
+        try{
+            InputStream in = cpr.getInputStream();
+            props.load(in);
+            in.close();
+        } catch (Exception e) {
+            c.format("Could not read properties file admin.properties\n");
+            System.exit(1);
+        }
+        
         ApplicationContext context = new ClassPathXmlApplicationContext("security.xml");
         JdbcUserDetailsManager userDao = (JdbcUserDetailsManager)context.getBean("userDao");
         Md5PasswordEncoder encoder = (Md5PasswordEncoder)context.getBean("passwordEncoder");
 
         //TODO: Props file
-        String realmName = "ATHENA";
+        String realmName = props.getProperty("athena.admin.realm");
 
         if (args.length == 0) {
             System.out.println("USAGE: admin [command]");
@@ -49,12 +68,16 @@ public class AthenaAdmin {
             System.exit(1);
         }
 
-        Console c = System.console();
-        if (c == null) {
-            System.exit(1);
+        Boolean usernameGood = false;
+        String login = null;
+        while(!usernameGood) {
+            login = c.readLine("Enter new username: ");
+            if(StringUtils.isBlank(login)) {
+               c.format("username cannot be blank, please try again\n");
+            } else {
+                usernameGood = true;
+            }
         }
-
-        String login = c.readLine("Enter new username: ");
         Boolean match = false;
         char[] password = null;
         char[] confirmedPassword = null;
@@ -63,8 +86,7 @@ public class AthenaAdmin {
             confirmedPassword = c.readPassword("Enter password again: ");
             match = Arrays.equals(password, confirmedPassword);
             if(!match) {
-               c.format("Passwords do not match please try again");
-               c.format("\n");
+               c.format("Passwords do not match please try again\n");
             }
         }
 
