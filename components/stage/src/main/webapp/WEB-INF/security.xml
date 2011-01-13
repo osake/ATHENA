@@ -18,16 +18,13 @@
             <value>jdbc:mysql://localhost/ATHENA-Security</value>
         </property>
         <property name="username">
-            <value>root</value>
+            <value>parakeetdb</value>
         </property>
         <property name="password">
-            <value></value>
+            <value>parakeetdb</value>
         </property>
     </bean>
 
-    <bean class="org.springframework.security.authentication.dao.ReflectionSaltSource" id="saltSource">
-        <property name="userPropertyToUse" value="username"/>
-    </bean>
     
     <bean class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" id="passwordEncoder">
     </bean>

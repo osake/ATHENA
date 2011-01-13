@@ -81,17 +81,15 @@ public class JsonAthenaComponent implements AthenaComponent {
      */
     public PTicket get(String type, Object id) {
 
-        //TODO: needs to be cleaned up.  No need for this to create a new
+        //TODO: needs to be cleaned up.  No need for t
+        //TODO: This needs to go on when we enable securityhis to create a new
         //resource every time
-        SecurityContext securityContext = this.contextHolderStrategy.getContext();
-        Authentication authentication = securityContext.getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        String username = user.getUsername();
-        String password = user.getPassword();
-        c.addFilter(
-                new HTTPDigestAuthFilter(
-                username,
-                password));
+//        SecurityContext securityContext = this.contextHolderStrategy.getContext();
+//        Authentication authentication = securityContext.getAuthentication();
+//        User user = (User) authentication.getPrincipal();
+//        String username = user.getUsername();
+//        String password = user.getPassword();
+//        c.addFilter(new HTTPDigestAuthFilter(username,password));
         component = c.resource(uri);
 
         type = Inflector.getInstance().pluralize(type);
