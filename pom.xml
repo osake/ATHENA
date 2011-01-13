@@ -12,7 +12,7 @@
     </modules>
 
     <properties>
-        <spring-version>3.0.3.RELEASE</spring-version>
+        <spring-version>3.0.5.RELEASE</spring-version>
         <hibernate-version>3.3.2.GA</hibernate-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -58,8 +58,8 @@
                 <configuration>
                     <driver>com.mysql.jdbc.Driver</driver>
                     <url>jdbc:mysql://localhost/ATHENA-Test</url>
-                    <username>root</username>
-                    <password></password>
+                    <username>parakeetdb</username>
+                    <password>parakeetdb</password>
                     <srcFiles>
                         <srcFile>../../ddl/athena-ddl.sql</srcFile>
                     </srcFiles>
