@@ -15,7 +15,10 @@
   </modules>
 
     <properties>
+        <jersey-version>1.4</jersey-version>
         <athena-version>0.4-SNAPSHOT</athena-version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <distributionManagement>
@@ -77,6 +80,7 @@
     </dependencies>
 
     <repositories>
+        <!--
         <repository>
             <id>fractured-atlas-releases</id>
             <name>Fractured Atlas Releases</name>
@@ -104,6 +108,7 @@
                 <enabled>false</enabled>
             </releases>
         </repository>
+        -->
     </repositories>
     <scm>
         <connection>scm:git:git@github.com:fracturedatlas/ATHENA-Components.git</connection>
