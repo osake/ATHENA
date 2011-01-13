@@ -58,8 +58,8 @@
                 <configuration>
                     <driver>com.mysql.jdbc.Driver</driver>
                     <url>jdbc:mysql://localhost/ATHENA-Test</url>
-                    <username>parakeetdb</username>
-                    <password>parakeetdb</password>
+                    <username>root</username>
+                    <password></password>
                     <srcFiles>
                         <srcFile>../../ddl/athena-ddl.sql</srcFile>
                     </srcFiles>
