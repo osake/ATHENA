@@ -23,25 +23,17 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+/**
+ *
+ * @author gary
+ */
 @Provider
-public class TicketNotFoundException extends Exception {
+public class AthenaExceptionMapper implements ExceptionMapper<AthenaException> {
 
-    public TicketNotFoundException(String message) {
-        super(message);
-    }
-
-    public TicketNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    @Provider
-    public class TicketNotFoundExceptionMapper implements ExceptionMapper<TicketNotFoundException> {
-
-        public Response toResponse(TicketNotFoundException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).
-                    entity(ex.getMessage()).
-                    type("text/plain").
-                    build();
-        }
+    public Response toResponse(AthenaException ex) {
+        return Response.status(Response.Status.BAD_REQUEST).
+                entity(ex.getMessage()).
+                type("text/plain").
+                build();
     }
 }

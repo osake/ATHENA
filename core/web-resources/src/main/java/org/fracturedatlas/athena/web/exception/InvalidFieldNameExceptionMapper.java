@@ -24,24 +24,12 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class TicketNotFoundException extends Exception {
+public class InvalidFieldNameExceptionMapper implements ExceptionMapper<InvalidFieldNameException> {
 
-    public TicketNotFoundException(String message) {
-        super(message);
-    }
-
-    public TicketNotFoundException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    @Provider
-    public class TicketNotFoundExceptionMapper implements ExceptionMapper<TicketNotFoundException> {
-
-        public Response toResponse(TicketNotFoundException ex) {
-            return Response.status(Response.Status.BAD_REQUEST).
-                    entity(ex.getMessage()).
-                    type("text/plain").
-                    build();
-        }
+    public Response toResponse(InvalidFieldNameException ex) {
+        return Response.status(Response.Status.BAD_REQUEST).
+                entity(ex.getMessage()).
+                type("text/plain").
+                build();
     }
 }

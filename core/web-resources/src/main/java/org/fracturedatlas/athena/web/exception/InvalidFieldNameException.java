@@ -24,9 +24,8 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class InvalidFieldNameException extends Exception
-                                       implements ExceptionMapper<InvalidFieldNameException> {
-    
+public class InvalidFieldNameException extends Exception {
+
     public InvalidFieldNameException(String message) {
         super(message);
     }
@@ -35,10 +34,14 @@ public class InvalidFieldNameException extends Exception
         super(message, cause);
     }
 
-    public Response toResponse(InvalidFieldNameException ex) {
-        return Response.status(Response.Status.BAD_REQUEST).
-                entity(ex.getMessage()).
-                type("text/plain").
-                build();
+    @Provider
+    public class InvalidFieldNameExceptionMapper implements ExceptionMapper<InvalidFieldNameException> {
+
+        public Response toResponse(InvalidFieldNameException ex) {
+            return Response.status(Response.Status.BAD_REQUEST).
+                    entity(ex.getMessage()).
+                    type("text/plain").
+                    build();
+        }
     }
 }

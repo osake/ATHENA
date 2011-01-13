@@ -34,8 +34,7 @@ import javax.ws.rs.ext.Provider;
  * @author gary
  */
 @Provider
-public class ObjectNotFoundException extends Exception
-                                     implements ExceptionMapper<ObjectNotFoundException> {
+public class ObjectNotFoundException extends Exception {
 
     public ObjectNotFoundException(String message) {
         super(message);
@@ -43,12 +42,5 @@ public class ObjectNotFoundException extends Exception
 
     public ObjectNotFoundException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    public Response toResponse(ObjectNotFoundException ex) {
-        return Response.status(Response.Status.BAD_REQUEST).
-                entity(ex.getMessage()).
-                type("text/plain").
-                build();
     }
 }
