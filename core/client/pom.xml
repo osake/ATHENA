@@ -12,7 +12,7 @@
         <version>0.4-SNAPSHOT</version>
     </parent>
     <properties>
-        <jersey-version>1.2</jersey-version>
+        <jersey-version>1.4</jersey-version>
     </properties>
 
     <dependencies>

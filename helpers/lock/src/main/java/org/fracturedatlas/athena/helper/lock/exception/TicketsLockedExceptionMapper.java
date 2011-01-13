@@ -25,13 +25,12 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class TicketsLockedException extends RuntimeException {
-    public TicketsLockedException(String message) {
-        super(message);
+public class TicketsLockedExceptionMapper implements ExceptionMapper<TicketsLockedException> {
+    @Override
+    public Response toResponse(TicketsLockedException ex) {
+        return Response.status(Response.Status.CONFLICT).
+            entity(ex.getMessage()).
+            type("text/plain").
+            build();
     }
-
-    public TicketsLockedException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
 }

@@ -23,7 +23,7 @@ import com.google.gson.Gson;
 import com.sun.jersey.api.client.*;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.client.filter.*;
+import com.sun.jersey.api.client.filter.HTTPDigestAuthFilter;
 import com.sun.jersey.core.impl.provider.entity.Inflector;
 import java.util.Arrays;
 import java.util.Collection;
@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.core.userdetails.User;
 
 /**
  * Implementation of AthenaComponent so that components can talk to other components over HTTP
@@ -48,7 +49,7 @@ public class JsonAthenaComponent implements AthenaComponent {
     Client c;
     String uri;
     Map<String, String> credentials;
-    SecurityContext securityContext;
+    SecurityContextHolderStrategy contextHolderStrategy;
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     Gson gson = JsonUtil.getGson();
 
@@ -59,14 +60,7 @@ public class JsonAthenaComponent implements AthenaComponent {
 
         ClientConfig cc = new DefaultClientConfig();
         c = Client.create(cc);
-        this.securityContext = contextHolderStrategy.getContext();
-        Authentication authentication = this.securityContext.getAuthentication();
-        String password = (String) authentication.getCredentials();
-        String username = (String) authentication.getPrincipal();
-//        c.addFilter(
-//                new HTTPDigestAuthFilter(
-//                username,
-//                password));
+        this.contextHolderStrategy = contextHolderStrategy;
     }
 
     /**
@@ -89,6 +83,15 @@ public class JsonAthenaComponent implements AthenaComponent {
 
         //TODO: needs to be cleaned up.  No need for this to create a new
         //resource every time
+        SecurityContext securityContext = this.contextHolderStrategy.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String username = user.getUsername();
+        String password = user.getPassword();
+        c.addFilter(
+                new HTTPDigestAuthFilter(
+                username,
+                password));
         component = c.resource(uri);
 
         type = Inflector.getInstance().pluralize(type);
