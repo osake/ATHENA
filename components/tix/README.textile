@@ -11,11 +11,13 @@ holder above.
 
 =====
 
-The end-points assume that you have deploed ATHENA-Tix as "tickets" to an external glassfish container.  The application is available at:
+The end-points assume that you have deployed ATHENA-Tix as "tix" to an external glassfish container.  The application is available at:
 
-http://hostname.com:port/tickets/
+http://hostname.com:port/tix/
 
-*POST http://hostname.com:port/tickets*
+The remainder of this document provides paths that should be pre-pended with the above value.
+
+*POST /tickets*
 
 Save a ticket.  If an id is included in the JSON body, that ticket will be updated.  If no id is specified, the ticket will be saved as new.
 
@@ -24,9 +26,7 @@ Save a ticket.  If an id is included in the JSON body, that ticket will be updat
 pre. /tickets
 
 pre. body =>
-{"name":"ticket",
- "props":
-  {"PRICE":"50",
+{"PRICE":"50",
    "HALF_PRICE":"true",
    "SEAT_NUMBER":"10",
    "TITLE":"Jersey Boys",
@@ -34,14 +34,12 @@ pre. body =>
    "PERFORMANCE":"2010-10-02 09:00",
    "SECTION":"B",
    "SOLD":"false",
-   "VENUE":"St. James Theater"}}
+   "VENUE":"St. James Theater"}
 
 +Example response:+
 
-pre. {"name":"ticket",
- "id":"44",
- "props":
-  {"PRICE":"50",
+pre. {"id":"44",
+   "PRICE":"50",
    "HALF_PRICE":"true",
    "SEAT_NUMBER":"10",
    "TITLE":"Jersey Boys",
@@ -49,9 +47,9 @@ pre. {"name":"ticket",
    "PERFORMANCE":"2010-10-02 09:00",
    "SECTION":"B",
    "SOLD":"false",
-   "VENUE":"St. James Theater"}}
+   "VENUE":"St. James Theater"}
 
-*PUT http://hostname.com:port/tickets/{id}*
+*PUT http://hostname.com:port/tix/tickets/{id}*
 
 Update a ticket
 
@@ -60,9 +58,8 @@ Update a ticket
 pre. /tickets/{id}
 
 pre. body =>
-{"name":"ticket",
- "props":
-  {"PRICE":"50",
+{"id":"44",
+   "PRICE":"50",
    "HALF_PRICE":"true",
    "SEAT_NUMBER":"10",
    "TITLE":"Jersey Boys",
@@ -70,14 +67,11 @@ pre. body =>
    "PERFORMANCE":"2010-10-02 09:00",
    "SECTION":"B",
    "SOLD":"false",
-   "VENUE":"St. James Theater"}}
+   "VENUE":"St. James Theater"}
 
 +Example response:+
 
-pre. {"name":"ticket",
- "id":"44",
- "props":
-  {"PRICE":"50",
+pre. {"PRICE":"50",
    "HALF_PRICE":"true",
    "SEAT_NUMBER":"10",
    "TITLE":"Jersey Boys",
@@ -85,7 +79,7 @@ pre. {"name":"ticket",
    "PERFORMANCE":"2010-10-02 09:00",
    "SECTION":"B",
    "SOLD":"false",
-   "VENUE":"St. James Theater"}}
+   "VENUE":"St. James Theater"}
 
 *GET /tickets/{id}*
 
@@ -97,10 +91,7 @@ pre. /tickets/44
 
 +Example response:+
 
-pre. {"name":"ticket",
- "id":"44",
- "props":
-  {"PRICE":"50",
+pre. {"PRICE":"50",
    "HALF_PRICE":"true",
    "SEAT_NUMBER":"10",
    "TITLE":"Jersey Boys",
@@ -108,7 +99,7 @@ pre. {"name":"ticket",
    "PERFORMANCE":"2010-10-02 09:00",
    "SECTION":"B",
    "SOLD":"false",
-   "VENUE":"St. James Theater"}}
+   "VENUE":"St. James Theater"}
 
 *GET /tickets/{id}/props*
 
@@ -159,14 +150,12 @@ Search for tickets.  Return an array of tickets matching the criteria  If no cri
 
 +Example request:+
 
-pre. /tickets?HALF_PRICE='=true'&PRICE='=50'
+pre. /tickets?HALF_PRICE=eqtrue&PRICE=eq50
 
 +Example response:+
 
-pre. [ {"name":"ticket",
- "id":"44",
- "props":
-  {"PRICE":"50",
+pre. [ {"id":"44",
+   "PRICE":"50",
    "HALF_PRICE":"true",
    "SEAT_NUMBER":"10",
    "TITLE":"Jersey Boys",
@@ -174,11 +163,12 @@ pre. [ {"name":"ticket",
    "PERFORMANCE":"2010-10-02 09:00",
    "SECTION":"B",
    "SOLD":"false",
-   "VENUE":"St. James Theater"}} ]
+   "VENUE":"St. James Theater"} ]
 
-*POST /tickets/fields*
+*POST /meta/fields*
+*PUT /meta/fields/{id}*
 
-Save a field.  If an id is included in the JSON body, that ticket will be updated.  If no id is specified, the field will be saved as new.
+Save a field.  Use POST to create a new field and PUT to update an existing field.
 
 +Name -+ the name of the field.  It can only contain letters, numbers, and underscores.
 +Strict -+ the strictness of the field.  Strict fields can only be set to a specified list of values.  Non-strict fields can be set to any value within the bounds of it's value type
@@ -192,7 +182,7 @@ propValues cannot be edited using this endpoint.
 
 +Example request:+
 
-pre. /tickets/fields
+pre. /meta/fields
 
 pre. body =>
 {"name":"SECTION","strict":false,"valueType":"STRING"}
@@ -201,50 +191,50 @@ pre. body =>
 
 pre. {"id":"8","name":"SECTION","strict":false,"valueType":"STRING","propValues":[]}
 
-*GET /tickets/fields/{id}*
+*GET /meta/fields/{id}*
 
 Get the field for this id
 
 +Example request:+
 
-pre. /tickets/fields/8
+pre. /meta/fields/8
 
 +Example response:+
 
 pre. {"id":"8","name":"SECTION","strict":false,"valueType":"STRING","propValues":[]}
 
-* GET /tickets/fields *
+* GET /meta/fields *
 
 Get all fields
 
 +Example request:+
 
-pre. /tickets/fields
+pre. /meta/fields
 
 +Example response:+
 
 pre. [{"id":"7","name":"LOCKED","strict":false,"valueType":"STRING","propValues":[]},
 {"id":"8","name":"SECTION","strict":false,"valueType":"STRING","propValues":[]}]
 
-*DELETE /tickets/fields/{id}*
+*DELETE /meta/fields/{id}*
 
 Delete this field.  A successful request with return a 204 - No content.
 
 +Example request:+
 
-pre. /tickets/fields/44
+pre. /meta/fields/44
 
 +Example response:+
 
 pre. 204 No Content
 
-*POST /tickets/fields/{id}/values*
+*POST /meta/fields/{id}/values*
 
 Add a possible value to a strict field, or update the value (if id is included).  If this field already has this as a possible value, Parakeet will return 400 - Bad Request
 
 +Example request:+
 
-pre. /tickets/fields/6/values
+pre. /meta/fields/6/values
 
 pre. body =>
 {"propValue":"REDEEMED"}
@@ -253,13 +243,13 @@ pre. body =>
 
 pre. {"id":"5","propValue":"REDEEMED"}
 
-*GET /tickets/fields/{id}/values*
+*GET /meta/fields/{id}/values*
 
 Get the possible values for this field
 
 +Example request:+
 
-pre. /tickets/fields/6/values
+pre. /meta/fields/6/values
 
 +Example response:+
 
