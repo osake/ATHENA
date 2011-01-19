@@ -5,11 +5,30 @@
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
-           http://www.springframework.org/schema/tx
-           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
     <context:component-scan base-package="org.fracturedatlas.athena"/>
 
-<!-- BEANS -->
+    <!-- BEANS -->
+    <!--<import resource="beans.xml"/>-->
 
-    <import resource="beans.xml"/>
+    <bean
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location">
+            <value>processor.properties</value>
+        </property>
+    </bean>
+    <bean id="processor" class="${athena.payments.processor}" autowire="autodetect">
+        <constructor-arg index="0" value="${athena.payments.braintree.environment}"/>
+        <constructor-arg index="1" value="${athena.payments.braintree.merchantId}"/>
+        <constructor-arg index="2" value="${athena.payments.braintree.publicKey}"/>
+        <constructor-arg index="3" value="${athena.payments.braintree.privateKey}"/>
+    </bean>
+
+    <bean id="transactionsManager" class="org.fracturedatlas.athena.payments.manager.TransactionsManager" autowire="autodetect"/>
+    <bean id="transactionsResource" class="org.fracturedatlas.athena.payments.web.resource.TransactionsResource" autowire="autodetect"/>
+    <bean id="customersManager" class="org.fracturedatlas.athena.payments.manager.CustomersManager" autowire="autodetect"/>
+    <bean id="customersResource" class="org.fracturedatlas.athena.payments.web.resource.CustomersResource" autowire="autodetect"/>
+    <bean id="cardsManager" class="org.fracturedatlas.athena.payments.manager.CardsManager" autowire="autodetect"/>
+    <bean id="cardsResource" class="org.fracturedatlas.athena.payments.web.resource.CardsResource" autowire="autodetect"/>
 </beans>
