@@ -16,7 +16,7 @@ The only required elements are:
 - creditCard.cardNumber
 - creditCard.expirationDate
 
-* Minimum Request *
+*Minimum Request*
     POST /payments/transactions/authorize
     {
         "amount":"22.00",
@@ -26,7 +26,7 @@ The only required elements are:
             }
     }
 
-* Full Request*
+*Full Request*
     POST /payments/transactions/authorize
     {
         "amount":"10.00",

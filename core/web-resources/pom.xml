@@ -126,21 +126,25 @@
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-jaxrs</artifactId>
             <version>1.5.3</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.5.3</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
             <version>1.5.3</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-xc</artifactId>
             <version>1.5.3</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- DO NOT FEED THE BEARS -->
@@ -148,19 +152,13 @@
             <groupId>com.sun.grizzly</groupId>
             <artifactId>grizzly-servlet-webserver</artifactId>
             <version>1.9.8</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>1.5</version>
-        </dependency>
-
-        <!-- Modeshape is here only for their pluralizer -->
-        <dependency>
-          <groupId>org.modeshape</groupId>
-          <artifactId>modeshape-common</artifactId>
-          <version>2.3.0.Final</version>
         </dependency>
     </dependencies>
     <repositories>
