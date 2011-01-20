@@ -12,11 +12,21 @@ holder above.
 # Authorize a payment
 
 The only required elements are:
-* amount
-* creditCard.cardNumber
-* creditCard.expirationDate
+- amount
+- creditCard.cardNumber
+- creditCard.expirationDate
 
-*Request*
+* Minimum Request *
+    POST /payments/transactions/authorize
+    {
+        "amount":"22.00",
+        "creditCard":{
+            "cardNumber":"4111111111111111",
+            "expirationDate":"05/2013"
+            }
+    }
+
+* Full Request*
     POST /payments/transactions/authorize
     {
         "amount":"10.00",

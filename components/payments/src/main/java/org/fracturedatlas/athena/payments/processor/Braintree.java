@@ -82,22 +82,27 @@ public class Braintree implements PaymentProcessor {
                     customerId(authorizationRequest.getCustomer().getId()).
                     paymentMethodToken(authorizationRequest.getCreditCard().getToken());
         } else {
-            request.amount(authorizationRequest.getAmount()).
-                creditCard().
+            request.amount(authorizationRequest.getAmount());
+            if(authorizationRequest.getCreditCard() != null) {
+                request.creditCard().
                     number(authorizationRequest.getCreditCard().getCardNumber()).
                     expirationDate(authorizationRequest.getCreditCard().getExpirationDate()).
                     cardholderName(authorizationRequest.getCreditCard().getCardholderName()).
                     cvv(authorizationRequest.getCreditCard().getCvv()).
-                    done().
-                customer().
+                    done();
+            }
+            if(authorizationRequest.getCustomer() != null) {
+                request.customer().
                     firstName(authorizationRequest.getCustomer().getFirstName()).
                     lastName(authorizationRequest.getCustomer().getLastName()).
                     company(authorizationRequest.getCustomer().getCompany()).
                     phone(authorizationRequest.getCustomer().getPhone()).
                     fax(authorizationRequest.getCustomer().getFax()).
                     email(authorizationRequest.getCustomer().getEmail()).
-                    done().
-                billingAddress().
+                    done();
+            }
+            if(authorizationRequest.getBillingAddress() != null) {
+                request.billingAddress().
                     firstName(authorizationRequest.getBillingAddress().getFirstName()).
                     lastName(authorizationRequest.getBillingAddress().getLastName()).
                     company(authorizationRequest.getBillingAddress().getCompany()).
@@ -106,10 +111,11 @@ public class Braintree implements PaymentProcessor {
                     locality(authorizationRequest.getBillingAddress().getCity()).
                     region(authorizationRequest.getBillingAddress().getState()).
                     postalCode(authorizationRequest.getBillingAddress().getPostalCode()).
-                    done().
-                options().
-                    storeInVault(authorizationRequest.getStoreCard()).
                     done();
+            }
+            request.options().
+                storeInVault(authorizationRequest.getStoreCard()).
+                done();
 
             
         }
