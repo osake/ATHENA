@@ -53,6 +53,12 @@
             <type>pom</type>
         </dependency>
         <dependency>
+            <groupId>org.fracturedatlas.athena</groupId>
+            <artifactId>audit-client</artifactId>
+            <version>0.4-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.fracturedatlas.athena.helper</groupId>
             <artifactId>lock</artifactId>
             <version>0.4-SNAPSHOT</version>

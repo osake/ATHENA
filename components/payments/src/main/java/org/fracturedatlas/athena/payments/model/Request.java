@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.payments.model;
 
 import java.math.BigDecimal;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 
 public class Request {
@@ -87,5 +89,18 @@ public class Request {
 
     public void setShippingAddress(ShippingAddress shippingAddress) {
         this.shippingAddress = shippingAddress;
+    }
+
+    String toEscapedString() {
+        ToStringBuilder builder = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
+
+        return builder.append(transactionId)
+                .append(amount)
+                .append(orderId)
+                .append(customer)
+                .append(billingAddress)
+                .append(shippingAddress)
+                .append(creditCard.toEscapedString()).toString();
+
     }
 }

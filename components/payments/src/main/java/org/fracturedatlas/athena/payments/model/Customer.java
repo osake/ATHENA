@@ -16,13 +16,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
-*/
-
+ */
 package org.fracturedatlas.athena.payments.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
 
 public class Customer {
 
@@ -33,7 +33,6 @@ public class Customer {
     String fax;
     String email;
     String id;
-
     List<CreditCard> creditCards = new ArrayList();
 
     public String getCompany() {
@@ -146,5 +145,14 @@ public class Customer {
         return hash;
     }
 
-    
+    public String toEscapedString() {
+        ToStringBuilder builder = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
+
+        builder.append(firstName).append(lastName).append(company).append(phone).append(fax).append(email).append(id);
+
+        for (CreditCard cc : creditCards) {
+            builder.append(cc.toEscapedString());
+        }
+        return builder.toString();
+    }
 }

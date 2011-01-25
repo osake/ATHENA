@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence">
+    <persistence-unit name="athena" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <class>org.fracturedatlas.athena.audit.model.AuditMessage</class>
+        <properties>
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.ejb.autodetection" value="class"/>
+            <property name="hibernate.proxool.pool_alias" value="proxool-audit"/>
+            <property name="hibernate.proxool.properties" value="proxool.properties"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.connection.provider_class" value="org.hibernate.connection.ProxoolConnectionProvider" />
+        </properties>
+    </persistence-unit>
+</persistence>

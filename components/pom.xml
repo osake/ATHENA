@@ -12,6 +12,8 @@
   <version>0.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
+    <module>audit-server</module>
+    <module>audit-client</module>
     <module>tix</module>
     <module>people</module>
     <module>orders</module>

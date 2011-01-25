@@ -10,7 +10,6 @@
         <class>org.fracturedatlas.athena.apa.model.DateTimeTicketProp</class>
         <class>org.fracturedatlas.athena.apa.model.PropField</class>
         <class>org.fracturedatlas.athena.apa.model.PropValue</class>
-        <class>org.fracturedatlas.athena.audit.model.AuditMessage</class>
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="validate"/>
             <property name="hibernate.ejb.autodetection" value="class"/>
@@ -32,7 +31,6 @@
         <class>org.fracturedatlas.athena.apa.model.DateTimeTicketProp</class>
         <class>org.fracturedatlas.athena.apa.model.PropField</class>
         <class>org.fracturedatlas.athena.apa.model.PropValue</class>
-        <class>org.fracturedatlas.athena.audit.model.AuditMessage</class>
        <properties>
             <property name="hibernate.hbm2ddl.auto" value="validate"/>
             <property name="hibernate.ejb.autodetection" value="class"/>

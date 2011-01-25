@@ -16,7 +16,6 @@
         <module>security</module>
         <module>util</module>
         <module>client</module>
-        <module>audit</module>
         <module>apa</module>
         <module>web-resources</module>
         <module>sdk</module>

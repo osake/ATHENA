@@ -16,14 +16,14 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
-*/
-
+ */
 package org.fracturedatlas.athena.payments.model;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreditCard {
 
@@ -141,5 +141,11 @@ public class CreditCard {
     public String toString() {
         ToStringBuilder builder = new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE);
         return builder.append(id).append(cardNumber).append(expirationDate).append(cardholderName).append(token).toString();
+    }
+
+    public String toEscapedString() {
+        ToStringBuilder builder = new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE);
+        String temp = builder.append(id).append("******" + cardNumber.substring((cardNumber.length() < 4 ? cardNumber.length() : cardNumber.length() - 4))).append(expirationDate).append(cardholderName).append(token).toString();
+        return temp;
     }
 }
