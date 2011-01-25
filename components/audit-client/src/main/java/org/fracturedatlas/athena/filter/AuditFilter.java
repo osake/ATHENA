@@ -19,9 +19,8 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.core.util.ReaderWriter;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Properties;
 import org.fracturedatlas.athena.client.audit.PublicAuditMessage;
 import org.fracturedatlas.athena.web.util.JsonUtil;
@@ -79,6 +78,7 @@ public class AuditFilter implements ContainerRequestFilter {
        try {
             String user = request.getRemoteAddr() + ":" + request.getRemotePort();
             //Action
+            logger.debug(request.getAttributeNames().toString());
             logger.debug(request.getParameterNames().toString());
             String action = "Restful request";
             //Resource
@@ -110,7 +110,7 @@ public class AuditFilter implements ContainerRequestFilter {
     public ContainerRequest filter(ContainerRequest request) {
                try {
 
-            String user = request.getUserPrincipal() + ":";
+            String user = request.getUserPrincipal() + ":" ;
             //Action
             logger.debug(request.getRequestHeaders().toString());
             logger.debug(request.toString());
@@ -126,13 +126,18 @@ public class AuditFilter implements ContainerRequestFilter {
             //Resource
             String resource = request.getRequestUri().toString();
             //Message
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            InputStream in = request.getEntityInputStream();
-            ReaderWriter.writeTo(in, out);
-            byte[] requestEntity = out.toByteArray();
+            InputStream is = request.getEntityInputStream();
+            final char[] buffer = new char[0x10000];
+            StringBuilder out = new StringBuilder();
+            Reader in = new InputStreamReader(is, "UTF-8");
+            int read;
+            do {
+                read = in.read(buffer, 0, buffer.length);
+                if (read>0) {
+                    out.append(buffer, 0, read);
+                }
+            } while (read>=0);
             String message = out.toString();
-            request.setEntityInputStream(new ByteArrayInputStream(requestEntity));
-
             PublicAuditMessage pam = new PublicAuditMessage(user, action, resource, message.toString());
             String path = "audit/";
             String recordJson = gson.toJson(pam);
