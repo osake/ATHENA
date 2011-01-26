@@ -24,10 +24,7 @@ import java.util.List;
 import org.fracturedatlas.athena.audit.model.AuditMessage;
 import org.fracturedatlas.athena.search.AthenaSearch;
 
-/**
- *
- * @author fintan
- */
+
 public interface AuditPersistance {
 
     public AuditMessage saveAuditMessage(AuditMessage am) throws Exception;
