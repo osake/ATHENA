@@ -24,7 +24,7 @@
         </init-param>
         <init-param>
           <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
-      <param-value>com.sun.jersey.api.container.filter.LoggingFilter;org.fracturedatlas.athena.payments.filter.PaymentsFilter</param-value>
+      <param-value>com.sun.jersey.api.container.filter.LoggingFilter;org.fracturedatlas.athena.filter.AuditFilter</param-value>
         </init-param>
         <init-param>
           <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
