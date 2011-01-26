@@ -1,6 +1,21 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+
+ATHENA Project: Management Tools for the Cultural Sector
+Copyright (C) 2010, Fractured Atlas
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/
+
  */
 package org.fracturedatlas.athena.filter;
 
@@ -19,6 +34,9 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
+import com.sun.jersey.core.util.ReaderWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Properties;
@@ -126,26 +144,23 @@ public class AuditFilter implements ContainerRequestFilter {
             //Resource
             String resource = request.getRequestUri().toString();
             //Message
-            InputStream is = request.getEntityInputStream();
-            final char[] buffer = new char[0x10000];
-            StringBuilder out = new StringBuilder();
-            Reader in = new InputStreamReader(is, "UTF-8");
-            int read;
-            do {
-                read = in.read(buffer, 0, buffer.length);
-                if (read>0) {
-                    out.append(buffer, 0, read);
-                }
-            } while (read>=0);
-            String message = out.toString();
-            PublicAuditMessage pam = new PublicAuditMessage(user, action, resource, message.toString());
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            InputStream in = request.getEntityInputStream();
+            ReaderWriter.writeTo(in, baos);
+            byte[] requestEntity = baos.toByteArray();
+            StringBuilder message = new StringBuilder();
+            message.append(new String(requestEntity));
+            PublicAuditMessage pam = new PublicAuditMessage(user, action, resource, message.toString());                         
+            request.setEntityInputStream(new ByteArrayInputStream(requestEntity));
             String path = "audit/";
             String recordJson = gson.toJson(pam);
             component.path(path).type("application/json")
                                 .post(String.class, recordJson);
+            return request;
         } catch (Exception ex) {
             logger.error(ex.getMessage(),ex);
+            return request;
         }
-        return request;
+        
     }
 }
