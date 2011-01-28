@@ -126,6 +126,41 @@ public class ScrubberTest {
     }
 
     @Test
+    public void testFilterOneFieldEscapedQuotes() {
+        List<String> testFields = new ArrayList<String>();
+        testFields.add("cardNumber");
+
+        StringBuffer testStringBuffer = new StringBuffer();
+        testStringBuffer.append("{\\\"creditCard\\\":")
+                        .append("{")
+                        .append("\\\"expirationDate\\\":\\\"05/2012\\\"")
+                        .append(",\\\"cvv\\\":\\\"999\\\"")
+                        .append(",\\\"cardNumber\\\":\\\"4111111111111111\\\"")
+                        .append(",\\\"cardholderName\\\":\\\"John Q Ticketbuyer\\\"")
+                        .append("}")
+                        .append(",\\\"amount\\\":\\\"4.0\\\"}");
+        testString = testStringBuffer.toString();
+
+        String targetString = new StringBuffer()
+                .append("{\\\"creditCard\\\":")
+                .append("{")
+                .append("\\\"expirationDate\\\":\\\"05/2012\\\"")
+                .append(",\\\"cvv\\\":\\\"999\\\"")
+                .append(",\\\"cardNumber\\\":\\\""+ Scrubber.SCRUBBED +"\\\"")
+                .append(",\\\"cardholderName\\\":\\\"John Q Ticketbuyer\\\"")
+                .append("}")
+                .append(",\\\"amount\\\":\\\"4.0\\\"}")
+                .toString();
+
+        String scrubbedString = Scrubber.scrubJson(testString, testFields);
+
+        System.out.println(targetString);
+        System.out.println(scrubbedString);
+
+        assertEquals(targetString, scrubbedString);
+    }
+
+    @Test
     public void testFilterTwoFields() {
         List<String> testFields = new ArrayList<String>();
         testFields.add("cardNumber");

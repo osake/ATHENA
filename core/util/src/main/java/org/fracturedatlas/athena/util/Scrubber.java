@@ -23,6 +23,8 @@ package org.fracturedatlas.athena.util;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Uses regular expressions to replace values of fields in JSON
@@ -40,21 +42,18 @@ public class Scrubber {
      * and group like so
      * (foo":")(some_value)(")
      *
-     * @param stringToScrub
-     * @param fieldsToScrub
-     * @return
+     * @param stringToScrub the string to scrub
+     * @param fieldsToScrub a List of fields in this JSON.  Their values will be replaced with SCRUBBED
+     * @return the scrubbed string.
      */
     public static String scrubJson(String stringToScrub, List<String> fieldsToScrub) {
+
         if(stringToScrub == null || fieldsToScrub == null || fieldsToScrub.size() == 0) {
             return stringToScrub;
         }
 
         for(String fieldName : fieldsToScrub) {
-            //for fieldName = foo, this pattern will match:
-            // foo":"some_value"
-            // and group like so
-            // (foo":")(some_value)(")
-            Pattern pattern = Pattern.compile("(" + fieldName + "[\"|'][\\s]*:[\\s]*[\"|'])([^\"]*)([\"|'])");
+            Pattern pattern = Pattern.compile("(" + fieldName + "[\\\\]*[\"|'][\\s]*:[\\s]*[\\\\]*[\"|'])([^\"|^\\\\]*)([\\\\]*[\"|'])");
             Matcher matcher = pattern.matcher(stringToScrub);
             stringToScrub = matcher.replaceAll("$1" + SCRUBBED + "$3");
         }
