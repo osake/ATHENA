@@ -5,12 +5,12 @@
     <artifactId>tix</artifactId>
     <name>tix</name>
     <packaging>war</packaging>
-    <version>0.4</version>
+    <version>1.0.0-beta-00-SNAPSHOT</version>
 
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
         <artifactId>components</artifactId>
-        <version>0.4</version>
+        <version>1.0.0-beta-00-SNAPSHOT</version>
     </parent>
 
     <build>
@@ -49,24 +49,24 @@
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>sdk</artifactId>
-            <version>0.4</version>
+            <version>1.0.0-beta-00-SNAPSHOT</version>
             <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>audit-client</artifactId>
-            <version>0.4</version>
+            <version>1.0.0-beta-00-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.fracturedatlas.athena.helper</groupId>
             <artifactId>lock</artifactId>
-            <version>0.4</version>
+            <version>1.0.0-beta-00-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena.helper</groupId>
             <artifactId>ticketfactory</artifactId>
-            <version>0.4</version>
+            <version>1.0.0-beta-00-SNAPSHOT</version>
         </dependency>
     </dependencies>
     <repositories>
