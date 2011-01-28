@@ -4,13 +4,13 @@
     <parent>
     <artifactId>components</artifactId>
     <groupId>org.fracturedatlas.athena</groupId>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.4</version>
   </parent>
     <groupId>org.fracturedatlas.athena</groupId>
     <artifactId>payments</artifactId>
     <name>payments</name>
     <packaging>war</packaging>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.4</version>
     <build>
         <finalName>payments</finalName>
         <plugins>
@@ -47,7 +47,7 @@
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>sdk</artifactId>
-            <version>0.4-SNAPSHOT</version>
+            <version>0.4</version>
             <type>pom</type>
               <exclusions>
                 <exclusion>
@@ -59,7 +59,7 @@
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>audit-client</artifactId>
-            <version>0.4-SNAPSHOT</version>
+            <version>0.4</version>
         </dependency>
 
 

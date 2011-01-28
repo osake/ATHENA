@@ -4,12 +4,12 @@
   <parent>
     <artifactId>athena</artifactId>
     <groupId>org.fracturedatlas.athena</groupId>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.4</version>
   </parent>
   <groupId>org.fracturedatlas.athena</groupId>
   <artifactId>components</artifactId>
   <name>components</name>
-  <version>0.4-SNAPSHOT</version>
+  <version>0.4</version>
   <packaging>pom</packaging>
   <modules>
     <module>audit-server</module>
@@ -23,7 +23,7 @@
 
     <properties>
         <jersey-version>1.4</jersey-version>
-        <athena-version>0.4-SNAPSHOT</athena-version>
+        <athena-version>0.4</athena-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>

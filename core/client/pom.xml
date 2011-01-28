@@ -3,13 +3,13 @@
     <groupId>org.fracturedatlas.athena</groupId>
     <artifactId>client</artifactId>
     <name>client</name>
-    <version>0.4-SNAPSHOT</version>
+    <version>0.4</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
         <artifactId>core</artifactId>
-        <version>0.4-SNAPSHOT</version>
+        <version>0.4</version>
     </parent>
     <properties>
         <jersey-version>1.4</jersey-version>
