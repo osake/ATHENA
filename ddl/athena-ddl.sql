@@ -2,7 +2,6 @@ DROP TABLE IF EXISTS `TICKET_PROPS`;
 DROP TABLE IF EXISTS `PROP_VALUES`;
 DROP TABLE IF EXISTS `PROP_FIELDS`;
 DROP TABLE IF EXISTS `TICKETS`;
-DROP TABLE IF EXISTS `MESSAGES`;
 
 -- -----------------------------------------------------
 -- Table `TICKETS`
@@ -69,17 +68,3 @@ CREATE INDEX `fk_PROP_FIELDS_valueType_id_to_ValueTypes_id` ON `PROP_FIELDS` (`v
 CREATE INDEX `fk_PropertyValues_PROP_FIELD_ID_to_PropertyFields_id` ON `PROP_VALUES` (`PROP_FIELD_ID` ASC);
 CREATE INDEX `fk_TICKET_PROPS_TICKET_ID_to_TICKETS_id` ON `TICKET_PROPS` (`TICKET_ID` ASC);
 CREATE INDEX `fk_TICKET_PROPS_PROP_FIELD_ID_to_PROP_FIELDS__id` ON `TICKET_PROPS` (`PROP_FIELD_ID` ASC);
-
--- -----------------------------------------------------
--- Table `MESSAGES`
--- -----------------------------------------------------
-
-CREATE  TABLE IF NOT EXISTS `MESSAGES` (
-  `id` BIGINT NOT NULL AUTO_INCREMENT ,
-  `datetime` BIGINT NOT NULL ,
-  `user` VARCHAR(45) NOT NULL ,
-  `action` VARCHAR(45) NOT NULL ,
-  `resource` VARCHAR(45) NOT NULL ,
-  `message` VARCHAR(200) NOT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
