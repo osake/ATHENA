@@ -87,7 +87,6 @@
   </dependencies>
 
     <repositories>
-        <!--
         <repository>
             <id>fractured-atlas-releases</id>
             <name>Fractured Atlas Releases</name>
@@ -115,7 +114,6 @@
                 <enabled>false</enabled>
             </releases>
         </repository>
-        -->
     </repositories>
     <scm>
         <connection>scm:git:git@github.com:fracturedatlas/ATHENA-Components.git</connection>
