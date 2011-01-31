@@ -28,7 +28,23 @@ import javax.ws.rs.WebApplicationException;
 import org.fracturedatlas.athena.payments.model.AuthorizationRequest;
 import org.fracturedatlas.athena.payments.model.AuthorizationResponse;
 
-
+/**
+ * A mock payment processor so that people can get up and running without signing up for
+ * an actual payment processor.  To use this mock processor, edit the value
+ *
+ * athena.payments.processor
+ *
+ * in src/main/resources/processor.properties
+ *
+ * This mock processor isn't entirely accurate.  All transactions are approved.  Customers
+ * and cards are stored in HashMaps and are not persisted across JVM sessions.
+ *
+ * With some work, this processor could be brought to better standing with:
+ * * approving or declining transactions based on card #
+ * * saving transactions to be retrieved later
+ *
+ * @author gary
+ */
 public class MockPaymentProcessor implements PaymentProcessor {
 
     HashMap<String, org.fracturedatlas.athena.payments.model.Customer> customers = 
