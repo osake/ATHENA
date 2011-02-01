@@ -47,7 +47,6 @@ public class AllowedCharacterCheck {
 	 * @return true if str does not contain characters other than [0-9a-zA-Z\_] 
 	 */  
 	public static boolean confirm(String str) {
-        logger.info("Confirming [{}]", str);
         
             if(str == null) {
                 logger.info("String is null");
@@ -61,14 +60,11 @@ public class AllowedCharacterCheck {
             }
 
             Matcher m = forbiddenChar.matcher(str);
-            logger.info("Checking against regex \\w");
             boolean worked = (!m.find() && !StringUtils.isBlank(str) && str.length() < MAX_STRING_LENGTH);
 
             if(!worked) {
                 logger.info("Regex failed to match");
-            } else {
-                logger.info("Field name check passed");
-            }
+            } 
 
             return worked;
 	}

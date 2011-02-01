@@ -10,6 +10,6 @@ CREATE  TABLE IF NOT EXISTS `MESSAGES` (
   `user` VARCHAR(45) NOT NULL ,
   `action` VARCHAR(10) NOT NULL ,
   `resource` VARCHAR(200) NOT NULL ,
-  `message` VARCHAR(2000) NOT NULL ,
+  `message` VARCHAR(5000) NOT NULL ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB;

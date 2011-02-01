@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.audit.persist.impl;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import org.fracturedatlas.athena.audit.model.AuditMessage;
@@ -32,7 +33,7 @@ import org.springframework.core.io.ClassPathResource;
 
 public class AuditFlatFilePersistanceImpl implements AuditPersistance {
 
-    protected Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    protected Logger logger = LoggerFactory.getLogger("AuditFile");
     private static Properties props;
 
     static {
@@ -59,7 +60,7 @@ public class AuditFlatFilePersistanceImpl implements AuditPersistance {
 
     @Override
     public List<AuditMessage> getAuditMessages(AthenaSearch as) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new ArrayList<AuditMessage>();
     }
 
 

@@ -32,6 +32,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.fracturedatlas.athena.client.audit.PublicAuditMessage;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.slf4j.Logger;
@@ -43,33 +45,37 @@ import org.springframework.core.io.ClassPathResource;
  * @author fintan
  */
 //@Component
+@SuppressWarnings("StaticNonFinalUsedInInitialization")
 public class AuditFilter implements ContainerRequestFilter {
 
-    protected static Properties props;
-    protected static WebResource component;
+//    protected static Properties props;
+//    protected static WebResource component;
     protected Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    protected Logger auditLog = LoggerFactory.getLogger("AuditFile");
 
     protected Gson gson = JsonUtil.getGson();
     protected static String uri = null;
+    static ExecutorService executor;
 
 
-     static {
-         props = new Properties();
-         ClassPathResource cpr = new ClassPathResource("athena-audit.properties");
-         try{
-             InputStream in = cpr.getInputStream();
-             props.load(in);
-             in.close();
-             uri = "http://" + props.getProperty("audit.hostname") + ":" + props.getProperty("audit.port") + "/" + props.getProperty("audit.componentName") + "/";
-             ClientConfig cc = new DefaultClientConfig();
-             Client c = Client.create(cc);
-             component = c.resource(uri);
-
-         } catch (Exception e) {
-             Logger log2 = LoggerFactory.getLogger(AuditFilter.class);
-             log2.error(e.getMessage(),e);
-         }
-     }
+//     static {
+//         props = new Properties();
+//         ClassPathResource cpr = new ClassPathResource("athena-audit.properties");
+//         try{
+//             InputStream in = cpr.getInputStream();
+//             props.load(in);
+//             in.close();
+//             executor = Executors.newFixedThreadPool( Integer.parseInt(props.getProperty("audit.numthreads", "10")));
+//             uri = "http://" + props.getProperty("audit.hostname") + ":" + props.getProperty("audit.port") + "/" + props.getProperty("audit.componentName") + "/";
+//             ClientConfig cc = new DefaultClientConfig();
+//             Client c = Client.create(cc);
+//             component = c.resource(uri);
+//
+//         } catch (Exception e) {
+//             Logger log2 = LoggerFactory.getLogger(AuditFilter.class);
+//             log2.error(e.getMessage(),e);
+//         }
+//     }
 
     @Override
     public ContainerRequest filter(ContainerRequest request) {
@@ -77,16 +83,6 @@ public class AuditFilter implements ContainerRequestFilter {
 
             String user = request.getUserPrincipal() + ":" ;
             //Action
-            logger.debug(request.getRequestHeaders().toString());
-            logger.debug(request.toString());
-            logger.debug(request.getMethod());
-            logger.debug(request.getPath());
-            logger.debug(request.getEntityInputStream().toString());
-            logger.debug(request.getProperties().toString());
-            logger.debug(request.getQueryParameters().toString());
-            logger.debug(request.getFormParameters().toString());
-            logger.debug(request.getRequestUri().toString());
-            logger.debug(ContainerRequest.CONTENT_ENCODING);
             String action = request.getMethod();
             //Resource
             String resource = request.getRequestUri().toString();
@@ -99,10 +95,10 @@ public class AuditFilter implements ContainerRequestFilter {
             message.append(new String(requestEntity));
             PublicAuditMessage pam = new PublicAuditMessage(user, action, resource, message.toString());                         
             request.setEntityInputStream(new ByteArrayInputStream(requestEntity));
-            String path = "audit/";
-            String recordJson = gson.toJson(pam);
-            component.path(path).type("application/json")
-                                .post(String.class, recordJson);
+            auditLog.info(pam.toString());
+//            Runnable worker = new SendAuditMessage(pam);
+//            worker.run();
+//            executor.execute(worker);
             return request;
         } catch (Exception ex) {
             logger.error(ex.getMessage(),ex);
@@ -110,4 +106,22 @@ public class AuditFilter implements ContainerRequestFilter {
         }
         
     }
+
+//    public class SendAuditMessage implements Runnable {
+//
+//        final String path = "audit/";
+//        PublicAuditMessage pam;
+//
+//        SendAuditMessage(PublicAuditMessage pam) {
+//            this.pam = pam;
+//        }
+//
+//        @Override
+//        public void run() {
+//            String recordJson = gson.toJson(pam);
+//            component.path(path).type("application/json").post(String.class, recordJson);
+//        }
+//    }
+
+
 }

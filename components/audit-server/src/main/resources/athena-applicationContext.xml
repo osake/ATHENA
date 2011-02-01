@@ -10,7 +10,7 @@
        http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
   <context:component-scan base-package="org.fracturedatlas.athena"/>
   <context:annotation-config />
-
+<!--
   <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
     <property name="persistenceUnitName" value="audit"/>
   </bean>
@@ -19,8 +19,9 @@
     <property name="entityManagerFactory" ref="entityManagerFactory"/>
   </bean>
 
-
+-->
   <!-- BEANS -->
+ <bean id="auditPersistance" class="org.fracturedatlas.athena.audit.persist.impl.AuditFlatFilePersistanceImpl"/>
 
   <import resource="beans.xml"/>
 
