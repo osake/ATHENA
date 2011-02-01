@@ -46,8 +46,8 @@ ATHENA Components are built from building blocks found in "core" and "helpers"
 
 ## Contact the Team
 
-* Project homepage: [http://athena.fracturedatlas.org/]
-* Google Group and mailing list: [http://groups.google.com/group/athena-tix-devel/]
+* Project homepage: (http://athena.fracturedatlas.org/)
+* Google Group and mailing list: (http://groups.google.com/group/athena-tix-devel/)
 * IRC channel: ##ATHENA on Freenode
 
 ## Reporting Problems
