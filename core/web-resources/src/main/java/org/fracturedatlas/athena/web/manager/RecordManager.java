@@ -39,6 +39,7 @@ import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
+import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,23 @@ public class RecordManager {
         }
 
         apa.deleteTicketProp(prop);
+    }
+    public Set<Ticket> findTicketsByRelationship(String parentType, Object id, String childType) {
+
+        Ticket ticket = apa.getTicket(parentType, id);
+        if(ticket == null) {
+            throw new NotFoundException(StringUtils.capitalize(parentType) + " witn id [" + id + "] was not found");
+        }
+
+        //TODO: move this somewhere sensible
+        String parentField = parentType + "Id";
+
+        AthenaSearch athenaSearch = new AthenaSearch
+                .Builder(new AthenaSearchConstraint(parentField, Operator.EQUALS, IdAdapter.toString(id)))
+                .type(childType)
+                .build();
+
+        return apa.findTickets(athenaSearch);
     }
 
     /**

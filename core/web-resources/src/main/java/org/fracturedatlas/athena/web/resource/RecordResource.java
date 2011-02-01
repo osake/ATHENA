@@ -120,6 +120,37 @@ public class RecordResource {
     }
 
     /**
+     * Return records of type {childType} who have a field in the format
+     *
+     * {parentType}Id
+     *
+     * and where the value of that field is
+     *
+     * {id}
+     *
+     * For example, to get all notes attached to a record of type ticket
+     *
+     * tickets/30/notes
+     *
+     * This method is shorthand for this search:
+     *
+     * /notes?ticketId={id}
+     *
+     * @param id
+     * @return
+     * @throws NotFoundException
+     */
+    @GET
+    @Path("{parentType}/{id}/{childType}")
+    public Collection<Ticket> search(@PathParam("parentType") String parentType,
+                                     @PathParam("id") String id,
+                                     @PathParam("childType") String childType) throws NotFoundException {
+        parentType = Inflector.getInstance().singularize(parentType);
+        childType = Inflector.getInstance().singularize(childType);
+        return recordManager.findTicketsByRelationship(parentType, id, childType);
+    }
+
+    /**
      * Get tickets based on criteria specified in ui.getQueryParameters()
      * All search parameters will be bundled together as AND queries
      * Calls to this method with blank query parameters (trying to get a list of all records)
