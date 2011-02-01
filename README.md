@@ -57,6 +57,6 @@ Public JIRA is coming soon
 ## Contributors
 
 * [Gary Moore](https://github.com/gmoore)
-* [Fintan Donaghy] (https://github.com/eeifdy)
-* [Micah Frost] (https://github.com/mfrost)
-* [Ian Guffy] (https://github.com/ianguffy)
+* [Fintan Donaghy](https://github.com/eeifdy)
+* [Micah Frost](https://github.com/mfrost)
+* [Ian Guffy](https://github.com/ianguffy)
