@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence">
+    <persistence-unit name="test" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <class>org.fracturedatlas.athena.apa.model.Ticket</class>
+        <class>org.fracturedatlas.athena.apa.model.TicketProp</class>
+        <class>org.fracturedatlas.athena.apa.model.BooleanTicketProp</class>
+        <class>org.fracturedatlas.athena.apa.model.StringTicketProp</class>
+        <class>org.fracturedatlas.athena.apa.model.IntegerTicketProp</class>
+        <class>org.fracturedatlas.athena.apa.model.DateTimeTicketProp</class>
+        <class>org.fracturedatlas.athena.apa.model.PropField</class>
+        <class>org.fracturedatlas.athena.apa.model.PropValue</class>
+        <properties>
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.ejb.autodetection" value="class"/>
+            <property name="hibernate.connection.url" value="jdbc:mysql://localhost/ATHENA-Test"/>
+            <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.connection.username" value="parakeetdb"/>
+            <property name="hibernate.connection.password" value="parakeetdb"/>
+        </properties>
+    </persistence-unit>
+</persistence>

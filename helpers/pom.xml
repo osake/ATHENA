@@ -21,5 +21,6 @@
     <modules>
         <module>lock</module>
         <module>ticketfactory</module>
+        <module>relationship-helper</module>
     </modules>
 </project>
