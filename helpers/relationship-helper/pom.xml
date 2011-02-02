@@ -1,38 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.fracturedatlas.athena.helper</groupId>
+    <artifactId>relatioship-helper</artifactId>
+    <name>relatioship-helper</name>
+    <packaging>jar</packaging>
+    <version>1.0.0-beta-00-SNAPSHOT</version>
+
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
-        <artifactId>core</artifactId>
+        <artifactId>helpers</artifactId>
         <version>1.0.0-beta-00-SNAPSHOT</version>
     </parent>
 
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.fracturedatlas.athena</groupId>
-    <artifactId>web-resources</artifactId>
-    <packaging>jar</packaging>
-    <version>1.0.0-beta-00-SNAPSHOT</version>
-    <name>web-resources</name>
     <build>
-        <finalName>web-resources</finalName>
+        <finalName>relatioship-helper</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.2-beta-5</version>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.0</version>
                 <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
+                    <warName>relatioship-helper</warName>
+                    <webResources>
+                        <resource>
+                            <directory>${basedir}/src/main/resources</directory>
+                        </resource>
+                    </webResources>
                 </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.glassfish</groupId>
+                <artifactId>maven-glassfish-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
             </plugin>
         </plugins>
+
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -41,30 +52,35 @@
         </resources>
     </build>
     <properties>
-        <jersey-version>1.4</jersey-version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
     <dependencies>
 
         <!-- ATHENA -->
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
-            <artifactId>util</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.fracturedatlas.athena</groupId>
-            <artifactId>client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.fracturedatlas.athena</groupId>
-            <artifactId>apa</artifactId>
+            <artifactId>sdk</artifactId>
+            <version>1.0.0-beta-00-SNAPSHOT</version>
+            <type>pom</type>
         </dependency>
 
         <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <version>2.2</version>
+            <groupId>org.glassfish.distributions</groupId>
+            <artifactId>web-all</artifactId>
+            <version>10.0-build-20080430</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.embedded</groupId>
+            <artifactId>gf-embedded-api</artifactId>
+            <version>1.0-alpha-4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- APACHE COMMONS -->
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
         </dependency>
 
         <!-- JERSEY -->
@@ -83,11 +99,7 @@
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
             <version>${jersey-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-bundle</artifactId>
-            <version>${jersey-version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey.contribs</groupId>
@@ -122,31 +134,14 @@
             <version>1.4</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-jaxrs</artifactId>
-            <version>1.5.3</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.5.3</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
-            <version>1.5.3</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-xc</artifactId>
-            <version>1.5.3</version>
-            <scope>test</scope>
-        </dependency>
         
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+
+        <!-- MOCKITO FOR TESTING -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
@@ -154,29 +149,15 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- DO NOT FEED THE BEARS -->
-        <dependency>
-            <groupId>com.sun.grizzly</groupId>
-            <artifactId>grizzly-servlet-webserver</artifactId>
-            <version>1.9.8</version>
-            <scope>test</scope>
-        </dependency>
 
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>1.5</version>
-        </dependency>
     </dependencies>
     <repositories>
         <repository>
             <id>gson</id>
             <url>http://google-gson.googlecode.com/svn/mavenrepo</url>
             <snapshots>
-                <enabled>true</enabled>
             </snapshots>
             <releases>
-                <enabled>true</enabled>
             </releases>
         </repository>
         <repository>
@@ -202,10 +183,6 @@
             <name>JBoss Repsitory</name>
             <layout>default</layout>
             <url>http://repository.jboss.org/maven2</url>
-        </repository>
-        <repository>
-          <id>jboss</id>
-          <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
         </repository>
         <repository>
             <id>OW2</id>
@@ -246,4 +223,16 @@
             </plugin>
         </plugins>
     </reporting>
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <name>Fractured Atlas Releases</name>
+            <url>http://maven2.fracturedatlas.org:8081/nexus/content/repositories/releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>Fractured Atlas Snapshots</name>
+            <url>http://maven2.fracturedatlas.org:8081/nexus/content/repositories/snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

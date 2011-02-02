@@ -200,4 +200,12 @@ public class RecordResource {
         Ticket ticket = recordManager.updateTicketFromClientTicket(type, pTicket, id);
         return ticket;
     }
+
+    public RecordManager getRecordManager() {
+        return recordManager;
+    }
+
+    public void setRecordManager(RecordManager recordManager) {
+        this.recordManager = recordManager;
+    }
 }
