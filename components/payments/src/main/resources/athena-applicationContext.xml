@@ -12,7 +12,7 @@
     <bean
         class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location">
-            <value>processor.properties</value>
+            <value>classpath:processor.properties</value>
         </property>
     </bean>
     <bean id="processor" class="${athena.payments.processor}" autowire="autodetect">

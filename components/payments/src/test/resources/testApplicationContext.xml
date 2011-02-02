@@ -9,13 +9,18 @@
        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
     <context:component-scan base-package="org.fracturedatlas.athena"/>
 
-    <!-- BEANS -->
-  <bean id="processor" class="org.fracturedatlas.athena.payments.processor.Braintree" autowire="autodetect">
-        <constructor-arg index="0" value="SANDBOX"/>
-        <constructor-arg index="1" value="bzy5dt9tm5x3jvys"/>
-        <constructor-arg index="2" value="n8xrkpmvkdmgxqgc"/>
-        <constructor-arg index="3" value="6gnq5wzg79rtbq4v"/>
-   </bean>
+    <bean
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location">
+            <value>classpath:processor.properties</value>
+        </property>
+    </bean>
+    <bean id="processor" class="${athena.payments.processor}" autowire="autodetect">
+        <constructor-arg index="0" value="${athena.payments.braintree.environment}"/>
+        <constructor-arg index="1" value="${athena.payments.braintree.merchantId}"/>
+        <constructor-arg index="2" value="${athena.payments.braintree.publicKey}"/>
+        <constructor-arg index="3" value="${athena.payments.braintree.privateKey}"/>
+    </bean>
 
     <bean id="transactionsManager" class="org.fracturedatlas.athena.payments.manager.TransactionsManager" autowire="autodetect"/>
     <bean id="transactionsResource" class="org.fracturedatlas.athena.payments.web.resource.TransactionsResource" autowire="autodetect"/>

@@ -6,3 +6,5 @@ logs/
 release.properties
 *.releaseBackup
 myApp.log
+nb-configuration.xml
+nbactions.xml

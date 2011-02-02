@@ -4,12 +4,12 @@
     <artifactId>audit</artifactId>
      <name>audit-server</name>
    <packaging>war</packaging>
-    <version>0.4-SNAPSHOT</version>
+    <version>1.0.0-beta-00-SNAPSHOT</version>
 
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
         <artifactId>components</artifactId>
-        <version>0.4-SNAPSHOT</version>
+        <version>1.0.0-beta-00-SNAPSHOT</version>
     </parent>
         <build>
         <finalName>audit-server</finalName>
@@ -44,7 +44,7 @@
     <properties>
         <spring-version>3.0.3.RELEASE</spring-version>
         <hibernate-version>3.3.2.GA</hibernate-version>
-        <athena-version>0.4-SNAPSHOT</athena-version>
+        <athena-version>1.0.0-beta-00-SNAPSHOT</athena-version>
         <jersey-version>1.4</jersey-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -55,13 +55,13 @@
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>sdk</artifactId>
-            <version>0.4-SNAPSHOT</version>
+            <version>1.0.0-beta-00-SNAPSHOT</version>
             <type>pom</type>
         </dependency>
        <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>audit-client</artifactId>
-            <version>0.4-SNAPSHOT</version>
+            <version>1.0.0-beta-00-SNAPSHOT</version>
         </dependency>
 
         <dependency>
