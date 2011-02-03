@@ -8,17 +8,21 @@
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
     <context:component-scan base-package="org.fracturedatlas.athena"/>
-
+<!--
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="test"/>
     </bean>
-    <bean id="auditPersistance" class="org.fracturedatlas.athena.audit.persist.impl.AuditPersistanceImpl">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-    </bean>
+ 
+
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
+    <bean id="auditPersistance" class="org.fracturedatlas.athena.audit.persist.impl.AuditFlatFilePersistanceImpl">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
 
+       -->
+    <bean id="auditPersistance" class="org.fracturedatlas.athena.audit.persist.impl.AuditFlatFilePersistanceImpl"/>
     <bean id="auditManager" class="org.fracturedatlas.athena.audit.manager.AuditManager" autowire="byName"/>
     <bean id="auditResource" class="org.fracturedatlas.athena.audit.resource.AuditResource" autowire="byName"/>
 

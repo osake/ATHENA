@@ -17,24 +17,29 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 import java.util.Properties;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+
 import org.fracturedatlas.athena.client.audit.PublicAuditMessage;
 import org.fracturedatlas.athena.util.Scrubber;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class AuditFilter implements ContainerRequestFilter {
 
-    protected static Properties props;
-    protected static WebResource component;
+//    protected static Properties props;
+//    protected static WebResource component;
     protected Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
     protected Gson gson = JsonUtil.getGson();
     protected static String uri = null;
     protected static List<String> fieldsToScrub = null;
     protected static String AUDIT_PATH = "/audit";
+    protected static WebResource component;
 
     static {
         try {
@@ -46,7 +51,6 @@ public class AuditFilter implements ContainerRequestFilter {
             ClientConfig cc = new DefaultClientConfig();
             Client c = Client.create(cc);
             component = c.resource(uri);
-
         } catch (ConfigurationException e) {
             Logger tempLog = LoggerFactory.getLogger(AuditFilter.class);
             tempLog.error(e.getMessage(), e);
@@ -63,8 +67,10 @@ public class AuditFilter implements ContainerRequestFilter {
             String message = out.toString();
             message = Scrubber.scrubJson(message, fieldsToScrub);
             request.setEntityInputStream(new ByteArrayInputStream(requestEntity));
+
             PublicAuditMessage pam = constructPublicAuditMessage(request, message);
             sendAuditMessage(pam);
+
         } catch (Exception ex) {
             logger.error(ex.getMessage(), ex);
         }
@@ -85,4 +91,6 @@ public class AuditFilter implements ContainerRequestFilter {
         String resource = request.getRequestUri().toString();
         return new PublicAuditMessage(user, action, resource, message);
     }
+
+
 }
