@@ -17,14 +17,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
  */
-package org.fracturedatlas.athena.helper.ticketfactory.manager;
+package org.fracturedatlas.athena.helper.relationships.manager;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
@@ -41,17 +44,36 @@ public class RelationshipHelperManager {
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     @Autowired
-    private RecordManager recordManager;
+    private ApaAdapter apa;
 
-    public RecordManager getRecordManager() {
-        return recordManager;
+    public Set<Ticket> findRelationships(String type, String id) {
+        Set<Ticket> tickets = new HashSet<Ticket>();
+
+        AthenaSearch athenaSearch = new AthenaSearch
+                .Builder(new AthenaSearchConstraint("leftSideId", Operator.EQUALS, IdAdapter.toString(id)))
+                .type(type)
+                .build();
+
+        tickets.addAll(apa.findTickets(athenaSearch));
+
+        athenaSearch = new AthenaSearch
+                .Builder(new AthenaSearchConstraint("rightSideId", Operator.EQUALS, IdAdapter.toString(id)))
+                .type(type)
+                .build();
+
+        tickets.addAll(apa.findTickets(athenaSearch));
+
+        return tickets;
+
     }
 
-    public void setRecordManager(RecordManager recordManager) {
-        this.recordManager = recordManager;
+    public ApaAdapter getApa() {
+        return apa;
+    }
+
+    public void setApa(ApaAdapter apa) {
+        this.apa = apa;
     }
 
 
-
-    
 }
