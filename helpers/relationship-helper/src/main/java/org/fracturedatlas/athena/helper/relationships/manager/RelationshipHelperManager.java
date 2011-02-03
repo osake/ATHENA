@@ -51,14 +51,14 @@ public class RelationshipHelperManager {
 
         AthenaSearch athenaSearch = new AthenaSearch
                 .Builder(new AthenaSearchConstraint("leftSideId", Operator.EQUALS, IdAdapter.toString(id)))
-                .type(type)
+                .type("relationship")
                 .build();
 
         tickets.addAll(apa.findTickets(athenaSearch));
 
         athenaSearch = new AthenaSearch
                 .Builder(new AthenaSearchConstraint("rightSideId", Operator.EQUALS, IdAdapter.toString(id)))
-                .type(type)
+                .type("relationship")
                 .build();
 
         tickets.addAll(apa.findTickets(athenaSearch));

@@ -89,6 +89,21 @@ public class RelationshipContainerTest extends BaseTixContainerTest {
         assertEquals(0, tickets.length);
     }
 
+    @Test
+    public void testFindTicketsUnknownRelationship() {
+        path = "/employees/" + IdAdapter.toString(t3.getId()) + "/NOT_A_REAL_RELATION";
+        String jsonString = tix.path(path).get(String.class);
+        PTicket[] tickets = gson.fromJson(jsonString, PTicket[].class);
+        assertEquals(0, tickets.length);
+    }
+
+    @Test
+    public void testFindTicketsUnknownRelationship2() {
+        path = "/FAKE/" + IdAdapter.toString(t3.getId()) + "/NOT_A_REAL_RELATION";
+        ClientResponse response = tix.path(path).get(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
     @Before
     public void addTickets() throws Exception {
         t1 = new Ticket();

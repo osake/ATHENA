@@ -8,7 +8,4 @@
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
-
-    <bean id="ticketFactoryManager" class="org.fracturedatlas.athena.helper.ticketfactory.manager.TicketFactoryManager" autowired="autodetect"/>
-    <bean id="ticketFactoryResource" class="org.fracturedatlas.athena.helper.ticketfactory.web.TicketFactoryResource" autowire="autodetect"/>
 </beans>

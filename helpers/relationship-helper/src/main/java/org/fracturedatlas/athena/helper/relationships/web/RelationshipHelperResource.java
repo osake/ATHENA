@@ -52,11 +52,11 @@ public class RelationshipHelperResource {
 
 
     @GET
-    @Path("{parentType}/{id}/relationships")
-    public Collection<Ticket> search(@PathParam("parentType") String parentType,
+    @Path("{type}/{id}")
+    public Collection<Ticket> search(@PathParam("type") String type,
                                      @PathParam("id") String id) throws NotFoundException {
-        parentType = Inflector.getInstance().singularize(parentType);
-        return relationshipHelperManager.findRelationships(parentType, id);
+        type = Inflector.getInstance().singularize(type);
+        return relationshipHelperManager.findRelationships(type, id);
     }
 
 }

@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 */
 
 package org.fracturedatlas.athena.helper.relationships.resource.container;
+import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
 import java.util.Arrays;
 import java.util.List;
@@ -36,99 +37,109 @@ import static org.junit.Assert.*;
 
 public class RelationshipHelperContainerTest extends BaseContainerTest {
 
+    Gson gson = new Gson();
+
     String path;
 
-    Ticket t1 = null;
-    Ticket t2 = null;
+    Ticket jimmy = null;
+    Ticket bobby = null;
     Ticket t3 = null;
     Ticket t4 = null;
+    Ticket t5 = null;
 
     @Test
     public void testFindTicketsByRelationship() {
-        path = "/companies/" + IdAdapter.toString(t1.getId()) + "/employees";
+        path = "/meta/relationships/people/" + IdAdapter.toString(jimmy.getId());
+        String jsonString = tix.path(path).get(String.class);
+        PTicket[] tickets = gson.fromJson(jsonString, PTicket[].class);
+        assertEquals(1, tickets.length);
+
+    }
+
+    @Test
+    public void testFindTicketsByRelationship2() {
+        path = "/meta/relationships/people/" + IdAdapter.toString(bobby.getId());
         String jsonString = tix.path(path).get(String.class);
         PTicket[] tickets = gson.fromJson(jsonString, PTicket[].class);
         assertEquals(3, tickets.length);
 
-        List<PTicket> ticketList = Arrays.asList(tickets);
-        for(PTicket t : ticketList) {
-            if("Jim".equals(t.get("name"))) {
-                assertTicketsEqual(t2, t);
-            } else if("Bill".equals(t.get("name"))) {
-                assertTicketsEqual(t3, t);
-            } else if("Joe".equals(t.get("name"))) {
-                assertTicketsEqual(t4, t);
-            } else {
-                fail("Found a ticket that I shouldn't have: " + t);
-            }
-        }
     }
 
-//    @Test
-//    public void testFindTicketsNotFound() {
-//        path = "/companies/0/employees";
-//        ClientResponse response = tix.path(path).get(ClientResponse.class);
-//        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
-//    }
+    @Test
+    public void testFindTicketsByRelationshipNone() {
+        path = "/meta/relationships/people/0";
+        String jsonString = tix.path(path).get(String.class);
+        PTicket[] tickets = gson.fromJson(jsonString, PTicket[].class);
+        assertEquals(0, tickets.length);
+    }
 
-//    @Test
-//    public void testFindTicketsNoRelationship() {
-//        path = "/employees/" + IdAdapter.toString(t3.getId()) + "/companies";
-//        String jsonString = tix.path(path).get(String.class);
-//        PTicket[] tickets = gson.fromJson(jsonString, PTicket[].class);
-//        assertEquals(0, tickets.length);
-//    }
+    @Test
+    public void testFindTicketsByRelationshipUnknownType() {
+        path = "/meta/relationships/monkeys/0";
+        String jsonString = tix.path(path).get(String.class);
+        PTicket[] tickets = gson.fromJson(jsonString, PTicket[].class);
+        assertEquals(0, tickets.length);
+    }
 
     @Before
     public void addTickets() throws Exception {
-        t1 = new Ticket();
-        t2 = new Ticket();
+        jimmy = new Ticket();
+        bobby = new Ticket();
         t3 = new Ticket();
         t4 = new Ticket();
+        t5 = new Ticket();
 
-        t1.setType("person");
-        t2.setType("person");
+        jimmy.setType("person");
+        bobby.setType("person");
         t3.setType("relationship");
         t4.setType("relationship");
+        t5.setType("relationship");
 
         PropField leftSideIdProp = apa.savePropField(new PropField(ValueType.STRING, "leftSideId", StrictType.NOT_STRICT));
         PropField relationshipTypeProp = apa.savePropField(new PropField(ValueType.STRING, "relationshipType", StrictType.NOT_STRICT));
         PropField rightSideIdProp = apa.savePropField(new PropField(ValueType.STRING, "rightSideId", StrictType.NOT_STRICT));
         PropField inverseTypeProp = apa.savePropField(new PropField(ValueType.STRING, "inverseType", StrictType.NOT_STRICT));
 
+        propFieldsToDelete.add(leftSideIdProp);
+        propFieldsToDelete.add(relationshipTypeProp);
+        propFieldsToDelete.add(rightSideIdProp);
+        propFieldsToDelete.add(inverseTypeProp);
 
-        propFieldsToDelete.add(nameProp);
-        propFieldsToDelete.add(companyIdProp);
+        jimmy = apa.saveTicket(jimmy);
+        bobby = apa.saveTicket(bobby);
 
-        t1.addTicketProp(new StringTicketProp(nameProp, "Initrode"));
-        t1 = apa.saveTicket(t1);
+        /*
+         * Jimmy is left side on one relationship
+         * Bobby is left isde on one relationship and right side on two
+         */
+        t3.addTicketProp(new StringTicketProp(leftSideIdProp, IdAdapter.toString(jimmy.getId())));
+        t3.addTicketProp(new StringTicketProp(relationshipTypeProp, "father"));
+        t3.addTicketProp(new StringTicketProp(rightSideIdProp, IdAdapter.toString(bobby.getId())));
+        t3.addTicketProp(new StringTicketProp(inverseTypeProp, "son"));
 
-        t2.addTicketProp(new StringTicketProp(nameProp, "Jim"));
-        t2.addTicketProp(new StringTicketProp(companyIdProp, IdAdapter.toString(t1.getId())));
+        t4.addTicketProp(new StringTicketProp(leftSideIdProp, "SOME_ID"));
+        t4.addTicketProp(new StringTicketProp(relationshipTypeProp, "boss"));
+        t4.addTicketProp(new StringTicketProp(rightSideIdProp, IdAdapter.toString(bobby.getId())));
+        t4.addTicketProp(new StringTicketProp(inverseTypeProp, "subordinate"));
 
-        t3.addTicketProp(new StringTicketProp(nameProp, "Bill"));
-        t3.addTicketProp(new StringTicketProp(companyIdProp, IdAdapter.toString(t1.getId())));
-        t4.addTicketProp(new StringTicketProp(nameProp, "Joe"));
-        t4.addTicketProp(new StringTicketProp(companyIdProp, IdAdapter.toString(t1.getId())));
+        t5.addTicketProp(new StringTicketProp(leftSideIdProp, IdAdapter.toString(bobby.getId())));
+        t5.addTicketProp(new StringTicketProp(relationshipTypeProp, "husband"));
+        t5.addTicketProp(new StringTicketProp(rightSideIdProp, "WIFEY"));
+        t5.addTicketProp(new StringTicketProp(inverseTypeProp, "wife"));
 
-        t2 = apa.saveTicket(t2);
         t3 = apa.saveTicket(t3);
         t4 = apa.saveTicket(t4);
+        t5 = apa.saveTicket(t5);
 
-        ticketsToDelete.add(t1);
-        ticketsToDelete.add(t2);
+        ticketsToDelete.add(jimmy);
+        ticketsToDelete.add(bobby);
         ticketsToDelete.add(t3);
         ticketsToDelete.add(t4);
+        ticketsToDelete.add(t5);
     }
 
     @After
     public void teardownTickets() {
         super.teardownTickets();
     }
-
-    @Test
-    public void testGetRelationships() throws Exception {
-
-    }
-
 }
