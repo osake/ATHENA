@@ -113,14 +113,4 @@
             <version>2.5</version>
         </dependency>
   </dependencies>
-  <repositories>
-
-  </repositories>
-
-  <pluginRepositories>
-
-  </pluginRepositories>
-  <reporting>
-
-  </reporting>
 </project>
