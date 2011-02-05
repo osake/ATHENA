@@ -39,10 +39,12 @@ import com.sun.jersey.core.impl.provider.entity.Inflector;
 import org.fracturedatlas.athena.helper.relationships.manager.RelationshipHelperManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 @Path("/meta/relationships")
 @Consumes({"application/json"})
 @Produces({"application/json"})
+@Component
 public class RelationshipHelperResource {
 
     Gson gson = JsonUtil.getGson();
