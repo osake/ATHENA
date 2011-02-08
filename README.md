@@ -25,7 +25,7 @@ Copyright 2011 Fractured Atlas.  See included LICENSE file.
 
 ATHENA builds war files which can (concievably) be deployed to any Java-compliant web container.  We've been testing with Glassfishv3 and that is the only one we're supporting at this moment.
 
-While we are bre-Beta, please see instructions for setting up ATHENA here: https://github.com/fracturedatlas/ATHENA/wiki/Setting-up-and-Deploying-ATHENA
+While we are bre-Beta, please see instructions for setting up ATHENA [https://github.com/fracturedatlas/ATHENA/wiki](on the wiki)
 
 ## Components
 
