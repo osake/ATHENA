@@ -14,9 +14,10 @@
     <properties>
         <spring-version>3.0.5.RELEASE</spring-version>
         <hibernate-version>3.3.2.GA</hibernate-version>
+        <athena-version>${version}</athena-version>
+        <jersey-version>1.4</jersey-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <athena-version>1.0.0-beta-00-SNAPSHOT</athena-version>
     </properties>
 
     <distributionManagement>
@@ -187,14 +188,8 @@
             <layout>default</layout>
         </repository>
         <repository>
-            <id>JBoss</id>
-            <name>JBoss Repsitory</name>
-            <layout>default</layout>
-            <url>http://repository.jboss.org/maven2</url>
-        </repository>
-        <repository>
             <id>jboss</id>
-            <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
+            <url>http://repository.jboss.org/nexus/content/groups/public-jboss/</url>
         </repository>
     </repositories>
 

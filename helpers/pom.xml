@@ -11,12 +11,6 @@
         <artifactId>athena</artifactId>
         <version>1.0.0-beta-00-SNAPSHOT</version>
     </parent>
-    
-    <properties>
-        <jersey-version>1.4</jersey-version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    </properties>
 
     <modules>
         <module>lock</module>

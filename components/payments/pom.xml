@@ -35,27 +35,25 @@
             </resource>
         </resources>
     </build>
-    <properties>
-    </properties>
     <dependencies>
 
         <!-- ATHENA -->
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>sdk</artifactId>
-            <version>1.0.0-beta-00-SNAPSHOT</version>
+            <version>${athena-version}</version>
             <type>pom</type>
               <exclusions>
                 <exclusion>
                   <groupId>org.fracturedatlas.athena</groupId>
-                  <artifactId>athena-web-resources</artifactId>
+                  <artifactId>web-resources</artifactId>
                 </exclusion>
               </exclusions>
         </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>audit-client</artifactId>
-            <version>1.0.0-beta-00-SNAPSHOT</version>
+            <version>${athena-version}</version>
         </dependency>
 
 

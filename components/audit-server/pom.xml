@@ -35,29 +35,19 @@
       </resource>
     </resources>
   </build>
-
-
-  <properties>
-    <spring-version>3.0.3.RELEASE</spring-version>
-    <hibernate-version>3.3.2.GA</hibernate-version>
-    <athena-version>1.0.0-beta-00-SNAPSHOT</athena-version>
-    <jersey-version>1.4</jersey-version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-  </properties>
   <dependencies>
 
 
     <dependency>
       <groupId>org.fracturedatlas.athena</groupId>
       <artifactId>sdk</artifactId>
-      <version>1.0.0-beta-00-SNAPSHOT</version>
+      <version>${athena-version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.fracturedatlas.athena</groupId>
       <artifactId>audit-client</artifactId>
-      <version>1.0.0-beta-00-SNAPSHOT</version>
+      <version>${athena-version}</version>
     </dependency>
 
     <dependency>

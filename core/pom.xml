@@ -21,14 +21,6 @@
         <module>sdk</module>
     </modules>
 
-    <properties>
-        <spring-version>3.0.5.RELEASE</spring-version>
-        <hibernate-version>3.3.2.GA</hibernate-version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <athena-version>1.0.0-beta-00-SNAPSHOT</athena-version>
-    </properties>
-
     <distributionManagement>
         <repository>
             <id>releases</id>

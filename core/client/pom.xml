@@ -11,9 +11,6 @@
         <artifactId>core</artifactId>
         <version>1.0.0-beta-00-SNAPSHOT</version>
     </parent>
-    <properties>
-        <jersey-version>1.4</jersey-version>
-    </properties>
 
     <dependencies>
         <dependency>
