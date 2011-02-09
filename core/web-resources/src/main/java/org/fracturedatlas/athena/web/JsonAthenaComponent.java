@@ -32,6 +32,7 @@ import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
+import org.fracturedatlas.athena.web.filter.AthenaDigestAuthFilter;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,13 +64,15 @@ public class JsonAthenaComponent implements AthenaComponent {
         this.contextHolderStrategy = contextHolderStrategy;
     }
 
-    /**
-     * The credentials for Digest autnetication
-     *
-     * @param credentials a Map of credentials with the keys "username" and "password"
-     */
-    public void addCredentials(Map<String, String> credentials) {
-        this.credentials = credentials;
+    private WebResource getComponent(Client c, String clientUri, SecurityContext securityContext) {
+        Authentication authentication = securityContext.getAuthentication();
+        if(authentication != null) {
+            User user = (User) authentication.getPrincipal();
+            String username = user.getUsername();
+            String password = user.getPassword();
+            c.addFilter(new AthenaDigestAuthFilter(username,password));
+        }
+        return c.resource(clientUri);
     }
 
     /**
@@ -80,18 +83,7 @@ public class JsonAthenaComponent implements AthenaComponent {
      * @return the record, null if not found
      */
     public PTicket get(String type, Object id) {
-
-        //TODO: needs to be cleaned up.  No need for t
-        //TODO: This needs to go on when we enable securityhis to create a new
-        //resource every time
-//        SecurityContext securityContext = this.contextHolderStrategy.getContext();
-//        Authentication authentication = securityContext.getAuthentication();
-//        User user = (User) authentication.getPrincipal();
-//        String username = user.getUsername();
-//        String password = user.getPassword();
-//        c.addFilter(new HTTPDigestAuthFilter(username,password));
-        component = c.resource(uri);
-
+        component = getComponent(c, uri, this.contextHolderStrategy.getContext());
         type = Inflector.getInstance().pluralize(type);
         String json = component.path(type + "/" + id).get(String.class);
         return gson.fromJson(json, PTicket.class);
@@ -105,11 +97,7 @@ public class JsonAthenaComponent implements AthenaComponent {
      * @return the saved record
      */
     public PTicket save(String type, PTicket record) {
-
-        //TODO: needs to be cleaned up.  No need for this to create a new
-        //resource every time
-        component = c.resource(uri);
-
+        component = getComponent(c, uri, this.contextHolderStrategy.getContext());
         type = Inflector.getInstance().pluralize(type);
         String jsonResponse;
         String path = type;
@@ -135,7 +123,7 @@ public class JsonAthenaComponent implements AthenaComponent {
      * @return the records
      */
     public Collection<PTicket> find(String type, AthenaSearch athenaSearch) {
-        component = c.resource(uri);
+        component = getComponent(c, uri, this.contextHolderStrategy.getContext());
         type = Inflector.getInstance().pluralize(type);
         component = component.path(type + "/");
 

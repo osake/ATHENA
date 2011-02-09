@@ -31,14 +31,6 @@ import org.fracturedatlas.athena.search.AthenaSearch;
 public interface AthenaComponent {
 
     /**
-     * If the underlying implementation requires authentication, this method should be called
-     * to supply the needed credentials.  Implementors should require that this method be called once only,
-     * likely before interacting with other methods
-     * @param credentials A Map containing the credentials (likely "username" and "password")
-     */
-    public void addCredentials(Map<String, String> credentials);
-
-    /**
      * Get the record of this type associated with this id
      * @param type the type of the record to get
      * @param id the id of the record to get
