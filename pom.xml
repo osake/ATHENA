@@ -38,53 +38,53 @@
             <dependency>
                 <groupId>org.fracturedatlas.athena</groupId>
                 <artifactId>util</artifactId>
-                <version>${athena-version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.fracturedatlas.athena</groupId>
                 <artifactId>client</artifactId>
-                <version>${athena-version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.fracturedatlas.athena</groupId>
                 <artifactId>audit</artifactId>
-                <version>${athena-version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.fracturedatlas.athena</groupId>
                 <artifactId>apa</artifactId>
-                <version>${athena-version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.fracturedatlas.athena</groupId>
                 <artifactId>web-resources</artifactId>
-                <version>${athena-version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.fracturedatlas.athena</groupId>
                 <artifactId>sdk</artifactId>
-                <version>${athena-version}</version>
+                <version>${project.version}</version>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.fracturedatlas.athena</groupId>
                 <artifactId>audit-client</artifactId>
-                <version>${athena-version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.fracturedatlas.athena.helper</groupId>
                 <artifactId>lock</artifactId>
-                <version>${athena-version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.fracturedatlas.athena.helper</groupId>
                 <artifactId>ticketfactory</artifactId>
-                <version>${athena-version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.fracturedatlas.athena.helper</groupId>
                 <artifactId>relationship-helper</artifactId>
-                <version>${athena-version}</version>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
