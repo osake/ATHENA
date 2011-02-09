@@ -57,36 +57,6 @@
         </plugins>
     </build>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.fracturedatlas.athena</groupId>
-                <artifactId>util</artifactId>
-                <version>${athena-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.fracturedatlas.athena</groupId>
-                <artifactId>client</artifactId>
-                <version>${athena-version}</version>
-            </dependency>
-             <dependency>
-                <groupId>org.fracturedatlas.athena</groupId>
-                <artifactId>audit</artifactId>
-                <version>${athena-version}</version>
-            </dependency>
-           <dependency>
-                <groupId>org.fracturedatlas.athena</groupId>
-                <artifactId>apa</artifactId>
-                <version>${athena-version}</version>
-            </dependency>
-           <dependency>
-                <groupId>org.fracturedatlas.athena</groupId>
-                <artifactId>web-resources</artifactId>
-                <version>${athena-version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
     </dependencies>
     <scm>

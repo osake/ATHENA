@@ -14,7 +14,7 @@
     <properties>
         <spring-version>3.0.5.RELEASE</spring-version>
         <hibernate-version>3.3.2.GA</hibernate-version>
-        <athena-version>${version}</athena-version>
+        <athena-version>${project.version}</athena-version>
         <jersey-version>1.4</jersey-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -32,6 +32,62 @@
             <url>http://maven2.fracturedatlas.org:8081/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.fracturedatlas.athena</groupId>
+                <artifactId>util</artifactId>
+                <version>${athena-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.fracturedatlas.athena</groupId>
+                <artifactId>client</artifactId>
+                <version>${athena-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.fracturedatlas.athena</groupId>
+                <artifactId>audit</artifactId>
+                <version>${athena-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.fracturedatlas.athena</groupId>
+                <artifactId>apa</artifactId>
+                <version>${athena-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.fracturedatlas.athena</groupId>
+                <artifactId>web-resources</artifactId>
+                <version>${athena-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.fracturedatlas.athena</groupId>
+                <artifactId>sdk</artifactId>
+                <version>${athena-version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.fracturedatlas.athena</groupId>
+                <artifactId>audit-client</artifactId>
+                <version>${athena-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.fracturedatlas.athena.helper</groupId>
+                <artifactId>lock</artifactId>
+                <version>${athena-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.fracturedatlas.athena.helper</groupId>
+                <artifactId>ticketfactory</artifactId>
+                <version>${athena-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.fracturedatlas.athena.helper</groupId>
+                <artifactId>relationship-helper</artifactId>
+                <version>${athena-version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>
@@ -88,16 +144,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.fracturedatlas.athena</groupId>
-                <artifactId>core</artifactId>
-                <version>${athena-version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <!-- APACHE COMMONS -->

@@ -41,13 +41,11 @@
     <dependency>
       <groupId>org.fracturedatlas.athena</groupId>
       <artifactId>sdk</artifactId>
-      <version>${athena-version}</version>
       <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.fracturedatlas.athena</groupId>
       <artifactId>audit-client</artifactId>
-      <version>${athena-version}</version>
     </dependency>
 
     <dependency>

@@ -49,14 +49,6 @@
     </build>
     <dependencies>
 
-        <!-- ATHENA -->
-        <dependency>
-            <groupId>org.fracturedatlas.athena</groupId>
-            <artifactId>sdk</artifactId>
-            <version>${athena-version}</version>
-            <type>pom</type>
-        </dependency>
-
         <!-- APACHE COMMONS -->
         <dependency>
             <groupId>commons-lang</groupId>

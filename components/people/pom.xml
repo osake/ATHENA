@@ -40,20 +40,12 @@
         <!-- ATHENA -->
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
-            <artifactId>sdk</artifactId>
-            <version>${athena-version}</version>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>audit-client</artifactId>
-            <version>${athena-version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.fracturedatlas.athena.helper</groupId>
             <artifactId>relationship-helper</artifactId>
-            <version>${athena-version}</version>
         </dependency>
     </dependencies>
 </project>

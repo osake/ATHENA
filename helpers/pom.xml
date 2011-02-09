@@ -17,4 +17,13 @@
         <module>ticketfactory</module>
         <module>relationship-helper</module>
     </modules>
+    <dependencies>
+
+        <!-- ATHENA -->
+        <dependency>
+            <groupId>org.fracturedatlas.athena</groupId>
+            <artifactId>sdk</artifactId>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
 </project>
