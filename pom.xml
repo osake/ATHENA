@@ -121,6 +121,7 @@
                         <srcFile>../../ddl/athena-audit.sql</srcFile>
                         <srcFile>../../ddl/athena-ddl.sql</srcFile>
                     </srcFiles>
+                    <skip>${skipTests}</skip>
                 </configuration>
                 <executions>
                     <execution>
