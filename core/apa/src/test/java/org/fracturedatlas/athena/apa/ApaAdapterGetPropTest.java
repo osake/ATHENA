@@ -122,6 +122,28 @@ public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
         ticket = apa.saveTicket(ticket);
         ticketsToDelete.add(ticket);
 
+        TicketProp prop = apa.getTicketProp("SEAT", ticket.getType(), 5665L);
+        assertNull(prop);
+    }
+
+    @Test
+    public void testFindPropNullTicket() {
+        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
+        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
+        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
+        propFieldsToDelete.add(field);
+        propFieldsToDelete.add(field1);
+        propFieldsToDelete.add(field2);
+
+        Ticket ticket = new Ticket();
+        ticket.setType("hockey");
+        ticket.addTicketProp(new StringTicketProp(field, "03"));
+        ticket.addTicketProp(new StringTicketProp(field1, "13"));
+        ticket.addTicketProp(new StringTicketProp(field2, "23"));
+
+        ticket = apa.saveTicket(ticket);
+        ticketsToDelete.add(ticket);
+
         TicketProp prop = apa.getTicketProp("SEAT", ticket.getType(), null);
         assertNull(prop);
     }

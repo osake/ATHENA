@@ -33,10 +33,12 @@ public class AthenaRunner {
         WebAppContext tix = new WebAppContext();
         tix.setContextPath("/tix");
         tix.setWar("/Users/gary/Documents/apps/ATHENA/components/tix/target/tix.war");
+        tix.setLogUrlOnStart(true);
 
         WebAppContext admin = new WebAppContext();
         admin.setContextPath("/audit");
         admin.setWar("/Users/gary/Documents/apps/ATHENA/components/audit-server/target/audit.war");
+        admin.setLogUrlOnStart(true);
 
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         contexts.setHandlers(new Handler[] { admin, tix });

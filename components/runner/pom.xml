@@ -56,5 +56,11 @@
       <artifactId>jetty-webapp</artifactId>
       <version>7.2.2.v20101205</version>
     </dependency>
+    <dependency>
+      <groupId>org.fracturedatlas.athena</groupId>
+      <artifactId>tix</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+    </dependency>
   </dependencies>
 </project>

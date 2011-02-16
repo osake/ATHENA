@@ -13,7 +13,7 @@
     <context:annotation-config />
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
-        <property name="persistenceUnitName" value="athena"/>
+        <property name="persistenceUnitName" value="derby"/>
     </bean>
 
     <bean id="apa" class="org.fracturedatlas.athena.apa.impl.JpaApaAdapter">

@@ -378,6 +378,11 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
     }
 
+    /**
+     * This method will not hydrate TicketProp.geTTicket because no type information is available
+     * @param id
+     * @return the ticketProp, null if not found
+     */
     @Override
     public TicketProp getTicketProp(Object id) {
         EntityManager em = this.emf.createEntityManager();
@@ -389,8 +394,25 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
     }
 
+    /**
+     * Return a ticketprop.  If ticketId is null, this method will return null.  If no ticket prop
+     * is found for the given conditions, this method will return null;
+     *
+     * This method WILL hydrate TicketProp.getTicket().  
+     *
+     * @param fieldName
+     * @param type
+     * @param ticketId
+     * @return the ticketprop, null if not found.
+     */
     @Override
     public TicketProp getTicketProp(String fieldName, String type, Object ticketId) {
+
+        //This is to get around a bug in Derby that prevents us selecting on a null
+        if(ticketId == null) {
+            return null;
+        }
+
         EntityManager em = this.emf.createEntityManager();
 
         try {
@@ -406,6 +428,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             //Using exceptions as flow control is kinda lame
             try {
                 TicketProp ticketProp = (TicketProp) query.getSingleResult();
+                //ticketProp.setTicket(getTicket(type, ticketId));
                 return ticketProp;
             } catch (javax.persistence.NoResultException nre) {
                 return null;

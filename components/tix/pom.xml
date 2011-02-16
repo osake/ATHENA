@@ -1,62 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.fracturedatlas.athena</groupId>
+  <artifactId>tix</artifactId>
+  <name>tix</name>
+  <packaging>war</packaging>
+  <version>1.0.0-beta-01-SNAPSHOT</version>
+
+  <parent>
     <groupId>org.fracturedatlas.athena</groupId>
-    <artifactId>tix</artifactId>
-    <name>tix</name>
-    <packaging>war</packaging>
+    <artifactId>components</artifactId>
     <version>1.0.0-beta-01-SNAPSHOT</version>
+  </parent>
 
-    <parent>
-        <groupId>org.fracturedatlas.athena</groupId>
-        <artifactId>components</artifactId>
-        <version>1.0.0-beta-01-SNAPSHOT</version>
-    </parent>
-
-    <build>
-        <finalName>tix</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.0</version>
-                <configuration>
-                    <warName>tix</warName>
-                    <webResources>
-                        <resource>
-                            <directory>${basedir}/src/main/resources</directory>
-                        </resource>
-                    </webResources>
-                </configuration>
-            </plugin>
-        </plugins>
-        <resources>
+  <build>
+    <finalName>tix</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.0</version>
+        <configuration>
+          <warName>tix</warName>
+          <webResources>
             <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
+              <directory>${basedir}/src/main/resources</directory>
             </resource>
-        </resources>
-    </build>
-    <dependencies>
+          </webResources>
+        </configuration>
+      </plugin>
+    </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+  </build>
+  <dependencies>
 
-        <!-- ATHENA -->
-        <dependency>
-            <groupId>org.fracturedatlas.athena</groupId>
-            <artifactId>sdk</artifactId>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.fracturedatlas.athena</groupId>
-            <artifactId>audit-client</artifactId>
-        </dependency>
+    <!-- ATHENA -->
+    <dependency>
+      <groupId>org.fracturedatlas.athena</groupId>
+      <artifactId>sdk</artifactId>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.fracturedatlas.athena</groupId>
+      <artifactId>audit-client</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.fracturedatlas.athena.helper</groupId>
-            <artifactId>lock</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.fracturedatlas.athena.helper</groupId>
-            <artifactId>ticketfactory</artifactId>
-        </dependency>
-    </dependencies>
+    <dependency>
+      <groupId>org.fracturedatlas.athena.helper</groupId>
+      <artifactId>lock</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.fracturedatlas.athena.helper</groupId>
+      <artifactId>ticketfactory</artifactId>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <version>10.7.1.1</version>
+    </dependency>
+  </dependencies>
 </project>

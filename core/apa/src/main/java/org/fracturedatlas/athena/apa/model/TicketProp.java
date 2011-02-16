@@ -42,6 +42,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.fracturedatlas.athena.id.IdAdapter;
+import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +73,7 @@ public abstract class TicketProp extends TixEntity implements Serializable, Comp
     Object id;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @Fetch(FetchMode.SELECT) //more JPA breakage, can be mitigated by unraveling all these EAGER associations
     @JoinColumn(name="PROP_FIELD_ID")
     PropField propField;
 
