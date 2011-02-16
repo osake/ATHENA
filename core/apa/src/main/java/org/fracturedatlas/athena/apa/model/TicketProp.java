@@ -73,7 +73,7 @@ public abstract class TicketProp extends TixEntity implements Serializable, Comp
     Object id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @Fetch(FetchMode.SELECT) //more JPA breakage, can be mitigated by unraveling all these EAGER associations
+    @Fetch(FetchMode.SELECT)            //TODO: more JPA breakage, can be mitigated by unraveling all these EAGER associations
     @JoinColumn(name="PROP_FIELD_ID")
     PropField propField;
 

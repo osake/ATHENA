@@ -48,9 +48,6 @@ public class PropField extends TixEntity implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     Object id;
 
-//    @OneToMany(mappedBy = "propField", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-//    Collection<TicketProp> ticketProps;
-
     @OneToMany(mappedBy = "propField", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     Collection<PropValue> propValues;
 
