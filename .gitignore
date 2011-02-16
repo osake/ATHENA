@@ -1,6 +1,7 @@
 target/
 generated/
 logs/
+*.log
 .DS_Store
 .swp
 release.properties
