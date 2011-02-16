@@ -109,10 +109,6 @@ public class TicketFactoryManager {
                 throw new RuntimeException(e);
             }
         }
-
-        //mark performance as "tickets_created"
-        performance.put("ticketsCreated", "true");
-        performance = athenaStage.save("performance", performance);
     }
 
     public AthenaComponent getAthenaStage() {
