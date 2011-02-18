@@ -13,7 +13,6 @@
         <constructor-arg value="localhost"/>
         <constructor-arg type="java.lang.Integer" value="27017"/>
         <constructor-arg value="test"/>
-        <constructor-arg value="records"/>
         <constructor-arg value="fields"/>
     </bean>
 </beans>
