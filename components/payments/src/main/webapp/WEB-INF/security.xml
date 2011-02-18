@@ -24,7 +24,6 @@
             <value>parakeetdb</value>
         </property>
     </bean>
-
     
     <bean class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" id="passwordEncoder">
     </bean>
