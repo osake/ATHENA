@@ -5,7 +5,10 @@
          metadata-complete="true">
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath*:athena*.xml</param-value>
+        <param-value>
+            classpath*:athena*.xml
+            /WEB-INF/security.xml
+        </param-value>
     </context-param>
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
