@@ -11,12 +11,10 @@
     <class>org.fracturedatlas.athena.apa.model.PropField</class>
     <class>org.fracturedatlas.athena.apa.model.PropValue</class>
     <properties>
-      <property name="hibernate.hbm2ddl.auto" value="validate"/>
       <property name="hibernate.ejb.autodetection" value="class"/>
-      <property name="hibernate.proxool.pool_alias" value="proxool-tix"/>
+      <property name="hibernate.proxool.pool_alias" value="athena-proxool-connection-pool"/>
+      <!-- Nomatter what, this property will look for proxool.properties so don't bother changing this here -->
       <property name="hibernate.proxool.properties" value="proxool.properties"/>
-      <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
-      <property name="hibernate.show_sql" value="false"/>
       <property name="hibernate.format_sql" value="true"/>
       <property name="hibernate.connection.provider_class" value="org.hibernate.connection.ProxoolConnectionProvider" />
     </properties>
@@ -42,6 +40,26 @@
     </properties>
   </persistence-unit>
   <persistence-unit name="derby" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <class>org.fracturedatlas.athena.apa.model.Ticket</class>
+    <class>org.fracturedatlas.athena.apa.model.TicketProp</class>
+    <class>org.fracturedatlas.athena.apa.model.BooleanTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.model.StringTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.model.IntegerTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.model.DateTimeTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.model.PropField</class>
+    <class>org.fracturedatlas.athena.apa.model.PropValue</class>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+    <properties>
+      <property name="hibernate.connection.url" value="jdbc:derby:/Users/gary/db/ATHENA;databaseName=tix;create=true"/>
+      <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver"/>
+      <property name="hibernate.dialect" value="org.hibernate.dialect.DerbyDialect"/>
+      <property name="hibernate.hbm2ddl.auto" value="update"/>
+      <property name="hibernate.connection.username" value=""/>
+      <property name="hibernate.connection.password" value=""/>
+    </properties>
+  </persistence-unit>
+  <persistence-unit name="derby-proxool" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <class>org.fracturedatlas.athena.apa.model.Ticket</class>
     <class>org.fracturedatlas.athena.apa.model.TicketProp</class>

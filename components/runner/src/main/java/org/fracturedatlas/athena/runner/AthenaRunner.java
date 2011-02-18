@@ -29,19 +29,26 @@ public class AthenaRunner {
     public static void main(String[] args) throws Exception {
 
         Server server = new Server(8080);
-
-        WebAppContext tix = new WebAppContext();
-        tix.setContextPath("/tix");
-        tix.setWar("/Users/gary/Documents/apps/ATHENA/components/tix/target/tix.war");
-        tix.setLogUrlOnStart(true);
-
-        WebAppContext admin = new WebAppContext();
-        admin.setContextPath("/audit");
-        admin.setWar("/Users/gary/Documents/apps/ATHENA/components/audit-server/target/audit.war");
-        admin.setLogUrlOnStart(true);
-
         ContextHandlerCollection contexts = new ContextHandlerCollection();
-        contexts.setHandlers(new Handler[] { admin, tix });
+        
+        String[] appNames = new String[] {"tix"
+                                          //,"stage"
+                                          //,"people"
+                                          //,"orders"
+                                          //,
+                                          //"payments"
+                                          ,"audit"
+                                          };
+        
+        for(String appName : appNames) {        
+            WebAppContext app = new WebAppContext();
+            app.setContextPath("/" + appName);
+            app.setExtraClasspath("/Users/gary/dev/runner-layout/athena/components/shared/config/;/Users/gary/dev/runner-layout/athena/components/" + appName + "/config/");
+            app.setWar("../components/" + appName + "/war/" + appName + ".war");
+            app.setLogUrlOnStart(true);
+            contexts.addHandler(app);
+        }
+
         server.setHandler(contexts);
 
         server.start();
