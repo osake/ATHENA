@@ -7,8 +7,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>core</module>
-        <module>components</module>
         <module>helpers</module>
+        <module>components</module>
     </modules>
 
     <properties>

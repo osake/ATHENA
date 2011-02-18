@@ -66,7 +66,6 @@ public class TicketFactoryManagerTest {
         verify(mockStage).find("section", athenaSearch);
         verify(mockTicketManager, times(totalNumberOfTickets)).saveTicketFromClientRequest(eq("ticket"), argThat(isAPTicket));
         samplePerformance.put("ticketsCreated", "true");
-        verify(mockStage).save("performance", samplePerformance);
     }
 
     /**
@@ -119,7 +118,6 @@ public class TicketFactoryManagerTest {
         }
 
         verify(mockStage, times(1)).get("performance", samplePerformance.getId());
-        verify(mockStage, never()).save("performance", samplePerformance);
     }
 
     /**
