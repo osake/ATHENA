@@ -55,10 +55,6 @@ public class TicketFactoryManager {
             throw new AthenaException("Performance with id [" + performanceId + "] was not found");
         }
 
-        if(Boolean.parseBoolean(performance.get("ticketsCreated"))) {
-            throw new AthenaException("Tickets have already been created for this performance");
-        }
-
         String chartId = performance.get("chartId");
         String eventId = performance.get("eventId");
         PTicket chart = athenaStage.get("chart", chartId);
