@@ -9,3 +9,4 @@ release.properties
 myApp.log
 nb-configuration.xml
 nbactions.xml
+runner.jar
