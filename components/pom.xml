@@ -81,8 +81,4 @@
             </releases>
         </repository>
     </repositories>
-    <scm>
-        <connection>scm:git:git@github.com:fracturedatlas/ATHENA-Components.git</connection>
-        <developerConnection>scm:git:git@github.com:fracturedatlas/ATHENA-Components.git</developerConnection>
-    </scm>
 </project>
