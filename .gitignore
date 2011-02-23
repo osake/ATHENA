@@ -10,3 +10,5 @@ myApp.log
 nb-configuration.xml
 nbactions.xml
 runner.jar
+*.war
+components/runner/src/main/skeleton/athena/components/*/config/*.properties*
