@@ -9,6 +9,7 @@
         <module>core</module>
         <module>helpers</module>
         <module>components</module>
+        <module>runner</module>
     </modules>
 
     <properties>
