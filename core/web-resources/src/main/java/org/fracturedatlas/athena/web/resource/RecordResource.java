@@ -161,12 +161,11 @@ public class RecordResource {
     @GET
     @Path("{type}/")
     public Collection<Ticket> search(@PathParam("type") String type, @Context UriInfo ui) {
-        type = Inflector.getInstance().singularize(type);
         MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
-
         if (queryParams.isEmpty()) {
-            throw new ForbiddenException("You must specify at least one query parameter when searching for tickets");
+            throw new ForbiddenException("You must specify at least one query parameter when searching for " + type);
         } 
+        type = Inflector.getInstance().singularize(type);
 
         return recordManager.findTickets(type, queryParams);
     }
