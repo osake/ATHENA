@@ -8,12 +8,6 @@
     <packaging>jar</packaging>
     <version>1.0.0-beta-01-SNAPSHOT</version>
 
-    <parent>
-        <groupId>org.fracturedatlas.athena</groupId>
-        <artifactId>athena</artifactId>
-        <version>1.0.0-beta-01-SNAPSHOT</version>
-    </parent>
-
     <profiles>
         <profile>
             <id>runner</id>
@@ -61,7 +55,8 @@
                                 <phase>install</phase>
                                 <configuration>
                                     <target>
-                                        <copy file="target/runner.jar" tofile="src/main/skeleton/athena/runner.jar"/>
+                                        <copy file="target/runner.jar" tofile="src/main/skeleton/athena/bin/runner.jar"/>
+                                        <!--
                                         <tar destfile="target/athena-${project.version}.tar"
                                              basedir="src/main/skeleton/athena"
                                              />
@@ -69,6 +64,7 @@
                                         <zip destfile="target/athena-${project.version}.zip"
                                              basedir="src/main/skeleton/athena"
                                              />
+                                        -->
                                     </target>
                                 </configuration>
                                 <goals>

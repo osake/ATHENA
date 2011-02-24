@@ -43,7 +43,9 @@ public class AthenaRunner {
         for(String appName : appNames) {        
             WebAppContext app = new WebAppContext();
             app.setContextPath("/" + appName);
-            app.setExtraClasspath("/Users/gary/dev/runner-layout/athena/components/shared/config/;/Users/gary/dev/runner-layout/athena/components/" + appName + "/config/");
+            //app.setExtraClasspath("../components/shared/config/;../components/" + appName + "/config/");
+            app.setExtraClasspath("/Users/gary/Documents/apps/ATHENA/runner/src/main/skeleton/athena/components/tix/config/");
+
             app.setWar("../components/" + appName + "/war/" + appName + ".war");
             app.setLogUrlOnStart(true);
             contexts.addHandler(app);

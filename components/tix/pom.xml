@@ -74,8 +74,8 @@
                                 <phase>install</phase>
                                 <configuration>
                                     <target>
-                                        <copy file="target/${project.name}-runner.war" tofile="../runner/src/main/skeleton/athena/components/${project.name}/war/${project.name}.war"/>
-                                        <copy todir="../runner/src/main/skeleton/athena/components/${project.name}/config">
+                                        <copy file="target/${project.name}-runner.war" tofile="../../runner/src/main/skeleton/athena/components/${project.name}/war/${project.name}.war"/>
+                                        <copy todir="../../runner/src/main/skeleton/athena/components/${project.name}/config">
                                             <fileset dir="src/main/resources" includes="**/*.properties*"/>
                                         </copy>
                                     </target>

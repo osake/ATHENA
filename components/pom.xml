@@ -62,7 +62,7 @@
                 <enabled>false</enabled>
             </snapshots>
             <releases>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
                 <updatePolicy>never</updatePolicy>
                 <checksumPolicy>ignore</checksumPolicy>
             </releases>
@@ -73,7 +73,7 @@
             <url>http://nexus.fracturedatlas.org:8081/nexus/content/repositories/snapshots/</url>
             <layout>default</layout>
             <snapshots>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
                 <checksumPolicy>ignore</checksumPolicy>
             </snapshots>
             <releases>
