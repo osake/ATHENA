@@ -11,6 +11,9 @@
     <profiles>
         <profile>
             <id>runner</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <finalName>runner</finalName>
                 <plugins>
@@ -56,7 +59,6 @@
                                 <configuration>
                                     <target>
                                         <copy file="target/runner.jar" tofile="src/main/skeleton/athena/bin/runner.jar"/>
-                                        <!--
                                         <tar destfile="target/athena-${project.version}.tar"
                                              basedir="src/main/skeleton/athena"
                                              />
@@ -64,7 +66,6 @@
                                         <zip destfile="target/athena-${project.version}.zip"
                                              basedir="src/main/skeleton/athena"
                                              />
-                                        -->
                                     </target>
                                 </configuration>
                                 <goals>

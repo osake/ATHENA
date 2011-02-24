@@ -11,10 +11,17 @@
     <artifactId>components</artifactId>
     <version>1.0.0-beta-01-SNAPSHOT</version>
   </parent>
+
     <profiles>
 
-        <!-- Generate a self-contanted war file that can be deployed to a container -->
 
+        <!--
+         *
+         *
+         * Generate a self-contanted war file that can be deployed to a container
+         *
+         *
+        -->
         <profile>
             <id>standard</id>
             <activation>
@@ -24,6 +31,23 @@
                 <finalName>${project.name}</finalName>
                 <plugins>
                     <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <phase>compile</phase>
+                                <configuration>
+                                    <target>
+                                        <copy file="src/main/resources/db.properties.mysql" tofile="src/main/resources/db.properties" overwrite="true"/>
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
                         <version>2.0</version>
@@ -32,6 +56,11 @@
                             <webResources>
                                 <resource>
                                     <directory>${basedir}/src/main/resources</directory>
+                                    <excludes>
+                                        <exclude>db.properties.derby</exclude>
+                                        <exclude>db.properties.derby-mem</exclude>
+                                        <exclude>db.properties.mysql</exclude>
+                                    </excludes>
                                 </resource>
                             </webResources>
                         </configuration>
@@ -40,7 +69,13 @@
             </build>
         </profile>
 
-        <!-- This profile is for generating Athena-runner artifacts -->
+        <!--
+         *
+         *
+         * Generate Athena-runner artifacts
+         *
+         *
+        -->
         <profile>
             <id>runner</id>
             <build>
@@ -69,12 +104,13 @@
                         <version>1.6</version>
                         <executions>
                             <execution>
+                                <id>copy-properties</id>
                                 <phase>install</phase>
                                 <configuration>
                                     <target>
                                         <copy file="target/${project.name}-runner.war" tofile="../../runner/src/main/skeleton/athena/components/${project.name}/war/${project.name}.war"/>
                                         <copy todir="../../runner/src/main/skeleton/athena/components/${project.name}/config">
-                                            <fileset dir="src/main/resources" includes="**/*.properties*"/>
+                                            <fileset dir="src/main/resources" includes="*.properties*"/>
                                         </copy>
                                     </target>
                                 </configuration>
@@ -88,6 +124,7 @@
             </build>
         </profile>
     </profiles>
+
   <dependencies>
 
 

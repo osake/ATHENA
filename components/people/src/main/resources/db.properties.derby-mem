@@ -1,6 +1,8 @@
 ############################
-# Connection properties for a flat-file Derby database.  Data saved to this database will be persisted to 
-# (athena_install_dir)/db
+# Connection properties for an in-memory Derby database.  Data saved to this database WILL NOT be persisted between 
+# shutdown and startup of Athena.  
+#
+# You will need to re-run your ATHENA schema each time you run Athena
 ############################
 
 #
@@ -12,7 +14,7 @@
 jdbc-athena.proxool.alias=athena-proxool-connection-pool
 
 # The JDBC connection string to your databasew
-jdbc-athena.proxool.driver-url=jdbc:derby:/Users/gary/dev/runner-layout/athena/db/ATHENA;databaseName=tix;create=true
+jdbc-athena.proxool.driver-url=jdbc:derby:memory:athena-people;create=true
 jdbc-athena.proxool.driver-class=org.apache.derby.jdbc.EmbeddedDriver
 jdbc-athena.user=
 jdbc-athena.password=

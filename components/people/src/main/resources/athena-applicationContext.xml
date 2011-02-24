@@ -8,25 +8,43 @@
            http://www.springframework.org/schema/tx
            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
     <context:component-scan base-package="org.fracturedatlas.athena"/>
+    <bean
+        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location">
+            <value>classpath:db.properties</value>
+        </property>
+    </bean>
 
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="athena"/>
+
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <!-- This should be set to the dialect class -->
+                <property name="databasePlatform" value="${athena.hibernate.dialect}"/>
+                <property name="showSql" value="${athena.hibernate.showSql}"/>
+            </bean>
+        </property>
+        <property name="jpaPropertyMap">
+          <map>
+            <entry key="hibernate.hbm2ddl.auto" value="${athena.hibernate.hbm2ddl.auto}"/>
+          </map>
+        </property>
+
     </bean>
 
     <bean id="apa" class="org.fracturedatlas.athena.apa.impl.JpaApaAdapter">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
-    
 
-<!-- BEANS -->
-
-    <import resource="beans.xml"/>
-
-<!-- JPA -->
-	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="entityManagerFactory"/>
-	</bean>
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
 
     <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
     <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!-- BEANS -->
+
+    <import resource="beans.xml"/>
 </beans>

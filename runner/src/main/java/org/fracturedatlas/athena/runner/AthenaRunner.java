@@ -32,11 +32,10 @@ public class AthenaRunner {
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         
         String[] appNames = new String[] {"tix"
-                                          //,"stage"
-                                          //,"people"
-                                          //,"orders"
-                                          //,
-                                          //"payments"
+                                          ,"stage"
+                                          ,"people"
+                                          ,"orders"
+                                          ,"payments"
                                           ,"audit"
                                           };
         

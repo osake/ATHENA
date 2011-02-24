@@ -13,8 +13,7 @@
     <properties>
       <property name="hibernate.ejb.autodetection" value="class"/>
       <property name="hibernate.proxool.pool_alias" value="athena-proxool-connection-pool"/>
-      <!-- No matter what, this property will look for proxool.properties so don't bother changing this here -->
-      <property name="hibernate.proxool.properties" value="proxool.properties"/>
+      <property name="hibernate.proxool.properties" value="db.properties"/>
       <property name="hibernate.format_sql" value="true"/>
       <property name="hibernate.connection.provider_class" value="org.hibernate.connection.ProxoolConnectionProvider" />
     </properties>
