@@ -19,7 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.runner;
 
-import org.eclipse.jetty.server.Handler;
+import java.io.InputStream;
+import java.util.Properties;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -27,8 +28,9 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class AthenaRunner {
     
     public static void main(String[] args) throws Exception {
+        String port = System.getProperty("port");
 
-        Server server = new Server(8080);
+        Server server = new Server(Integer.parseInt(port));
         ContextHandlerCollection contexts = new ContextHandlerCollection();
         
         String[] appNames = new String[] {"tix"
@@ -54,4 +56,5 @@ public class AthenaRunner {
         server.start();
         server.join();
     }
+
 }
