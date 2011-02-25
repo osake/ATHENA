@@ -31,23 +31,6 @@
                 <finalName>${project.name}</finalName>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <phase>validate</phase>
-                                <configuration>
-                                    <target>
-                                        <copy file="src/main/resources/db.properties.mysql" tofile="src/main/resources/db.properties" overwrite="true"/>
-                                    </target>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
                         <version>2.0</version>
