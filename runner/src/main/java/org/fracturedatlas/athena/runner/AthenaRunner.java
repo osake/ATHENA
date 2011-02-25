@@ -54,7 +54,16 @@ public class AthenaRunner {
         server.setHandler(contexts);
 
         server.start();
+
+        System.out.println("#");
+        System.out.println("#");
+        System.out.println("# Athena started on port " + port + ".  Have fun.");
+        System.out.println("#");
+        System.out.println("#");
+
         server.join();
+
+
     }
 
 }

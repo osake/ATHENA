@@ -35,7 +35,7 @@
                         <version>1.6</version>
                         <executions>
                             <execution>
-                                <phase>compile</phase>
+                                <phase>validate</phase>
                                 <configuration>
                                     <target>
                                         <copy file="src/main/resources/db.properties.mysql" tofile="src/main/resources/db.properties" overwrite="true"/>
@@ -105,7 +105,7 @@
                         <executions>
                             <execution>
                                 <id>copy-properties-to-derby</id>
-                                <phase>compile</phase>
+                                <phase>validate</phase>
                                 <configuration>
                                     <target>
                                         <copy file="src/main/resources/db.properties.derby" tofile="src/main/resources/db.properties" overwrite="true"/>
@@ -122,7 +122,10 @@
                                     <target>
                                         <copy file="target/${project.name}-runner.war" tofile="../../runner/src/main/skeleton/athena/components/${project.name}/war/${project.name}.war"/>
                                         <copy todir="../../runner/src/main/skeleton/athena/components/${project.name}/config">
-                                            <fileset dir="src/main/resources" includes="*.properties*"/>
+                                            <fileset dir="src/main/resources" includes="db.properties*"/>
+                                        </copy>
+                                        <copy todir="../../runner/src/main/skeleton/athena/components/shared/config">
+                                            <fileset dir="src/main/resources" includes="components.properties"/>
                                         </copy>
                                     </target>
                                 </configuration>

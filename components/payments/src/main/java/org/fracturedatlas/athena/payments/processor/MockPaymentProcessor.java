@@ -55,6 +55,10 @@ public class MockPaymentProcessor implements PaymentProcessor {
     public MockPaymentProcessor() {
     }
 
+    /* TODO: This is a hack workaround until I get the bean definitions sorted out. */
+    public MockPaymentProcessor(String environment, String merchantId, String publicKey, String privateKey) {
+    }
+
 
     @Override
     public AuthorizationResponse authorizePayment(AuthorizationRequest authorizationRequest) {

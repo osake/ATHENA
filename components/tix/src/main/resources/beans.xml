@@ -10,9 +10,9 @@
 
 
     <bean name="athenaStage" class="org.fracturedatlas.athena.web.JsonAthenaComponent">
-        <constructor-arg index="0" value="localhost"/>
-        <constructor-arg index="1" value="8080"/>
-        <constructor-arg index="2" value="stage"/>
+        <constructor-arg index="0" value="${athena.stage.hostname}"/>
+        <constructor-arg index="1" value="${athena.stage.port}"/>
+        <constructor-arg index="2" value="${athena.stage.deployedAs}"/>
         <constructor-arg index="3">
             <bean class="org.springframework.security.core.context.SecurityContextHolder"
                   factory-method="getContextHolderStrategy">

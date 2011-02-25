@@ -35,7 +35,7 @@
                         <version>1.6</version>
                         <executions>
                             <execution>
-                                <phase>compile</phase>
+                                <phase>validate</phase>
                                 <configuration>
                                     <target>
                                         <copy file="src/main/resources/db.properties.mysql" tofile="src/main/resources/db.properties" overwrite="true"/>

@@ -74,9 +74,7 @@
                                 <configuration>
                                     <target>
                                         <copy file="target/${project.name}-runner.war" tofile="../../runner/src/main/skeleton/athena/components/${project.name}/war/${project.name}.war"/>
-                                        <copy todir="../../runner/src/main/skeleton/athena/components/${project.name}/config">
-                                            <fileset dir="src/main/resources" includes="**/*.properties*"/>
-                                        </copy>
+                                        <copy file="src/main/resources/processor.properties.sample" tofile="../../runner/src/main/skeleton/athena/components/${project.name}/config/processor.properties"/>
                                     </target>
                                 </configuration>
                                 <goals>
