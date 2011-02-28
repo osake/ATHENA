@@ -4,13 +4,13 @@
     <parent>
     <artifactId>components</artifactId>
     <groupId>org.fracturedatlas.athena</groupId>
-    <version>1.0.0-beta-01</version>
+    <version>1.0.0-beta-01-SNAPSHOT</version>
   </parent>
     <groupId>org.fracturedatlas.athena</groupId>
     <artifactId>stage</artifactId>
     <name>stage</name>
     <packaging>war</packaging>
-    <version>1.0.0-beta-01</version>
+    <version>1.0.0-beta-01-SNAPSHOT</version>
 
     <profiles>
 
@@ -37,7 +37,7 @@
                                 <phase>validate</phase>
                                 <configuration>
                                     <target>
-                                        <copy file="src/main/resources/db.properties.mysql" tofile="src/main/resources/db.properties" overwrite="true" />
+                                        <copy file="src/main/resources/db.properties.mysql" tofile="src/main/resources/db.properties" overwrite="true"/>
                                     </target>
                                 </configuration>
                                 <goals>
@@ -107,7 +107,7 @@
                                 <phase>validate</phase>
                                 <configuration>
                                     <target>
-                                        <copy file="src/main/resources/db.properties.derby" tofile="src/main/resources/db.properties" overwrite="true" />
+                                        <copy file="src/main/resources/db.properties.derby" tofile="src/main/resources/db.properties" overwrite="true"/>
                                     </target>
                                 </configuration>
                                 <goals>
@@ -119,9 +119,9 @@
                                 <phase>install</phase>
                                 <configuration>
                                     <target>
-                                        <copy file="target/${project.name}-runner.war" tofile="../../runner/src/main/skeleton/athena/components/${project.name}/war/${project.name}.war" />
+                                        <copy file="target/${project.name}-runner.war" tofile="../../runner/src/main/skeleton/athena/components/${project.name}/war/${project.name}.war"/>
                                         <copy todir="../../runner/src/main/skeleton/athena/components/${project.name}/config">
-                                            <fileset dir="src/main/resources" includes="*.properties*" />
+                                            <fileset dir="src/main/resources" includes="*.properties*"/>
                                         </copy>
                                     </target>
                                 </configuration>
