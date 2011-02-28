@@ -64,9 +64,8 @@
                                 <configuration>
                                     <target>
                                         <copy file="target/runner.jar" tofile="src/main/skeleton/athena/bin/runner.jar" />
-                                        <tar destfile="target/athena-${project.version}.tar" basedir="src/main/skeleton/athena" />
-                                        <gzip src="target/athena-${project.version}.tar" destfile="target/athena-${project.version}.tar.gz" />
-                                        <zip destfile="target/athena-${project.version}.zip" basedir="src/main/skeleton/athena" />
+                                        <tar destfile="target/athena-${project.version}.tar" basedir="src/main/skeleton" />
+                                        <zip destfile="target/athena-${project.version}.zip" basedir="src/main/skeleton" />
                                     </target>
                                 </configuration>
                                 <goals>

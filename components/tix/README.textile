@@ -11,7 +11,7 @@ holder above.
 
 =====
 
-The end-points assume that you have deployed ATHENA-Tix as "tix" to an external glassfish container.  The application is available at:
+The end-points assume that you have deployed ATHENA-Tix as "tix".  The application is available at:
 
 http://hostname.com:port/tix/
 
