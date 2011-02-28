@@ -4,13 +4,13 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.fracturedatlas.athena</groupId>
-        <version>1.0.0-beta-01-SNAPSHOT</version>
+        <version>1.0.0-beta-01</version>
     </parent>
     <groupId>org.fracturedatlas.athena</groupId>
     <artifactId>payments</artifactId>
     <name>payments</name>
     <packaging>war</packaging>
-    <version>1.0.0-beta-01-SNAPSHOT</version>
+    <version>1.0.0-beta-01</version>
 
     <profiles>
 
@@ -73,8 +73,8 @@
                                 <phase>install</phase>
                                 <configuration>
                                     <target>
-                                        <copy file="target/${project.name}-runner.war" tofile="../../runner/src/main/skeleton/athena/components/${project.name}/war/${project.name}.war"/>
-                                        <copy file="src/main/resources/processor.properties.sample" tofile="../../runner/src/main/skeleton/athena/components/${project.name}/config/processor.properties"/>
+                                        <copy file="target/${project.name}-runner.war" tofile="../../runner/src/main/skeleton/athena/components/${project.name}/war/${project.name}.war" />
+                                        <copy file="src/main/resources/processor.properties.sample" tofile="../../runner/src/main/skeleton/athena/components/${project.name}/config/processor.properties" />
                                     </target>
                                 </configuration>
                                 <goals>

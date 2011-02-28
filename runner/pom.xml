@@ -6,7 +6,7 @@
     <artifactId>runner</artifactId>
     <name>runner</name>
     <packaging>jar</packaging>
-    <version>1.0.0-beta-01-SNAPSHOT</version>
+    <version>1.0.0-beta-01</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -63,14 +63,10 @@
                                 <phase>install</phase>
                                 <configuration>
                                     <target>
-                                        <copy file="target/runner.jar" tofile="src/main/skeleton/athena/bin/runner.jar"/>
-                                        <tar destfile="target/athena-${project.version}.tar"
-                                             basedir="src/main/skeleton/athena"
-                                             />
-                                        <gzip src="target/athena-${project.version}.tar" destfile="target/athena-${project.version}.tar.gz"/>
-                                        <zip destfile="target/athena-${project.version}.zip"
-                                             basedir="src/main/skeleton/athena"
-                                             />
+                                        <copy file="target/runner.jar" tofile="src/main/skeleton/athena/bin/runner.jar" />
+                                        <tar destfile="target/athena-${project.version}.tar" basedir="src/main/skeleton/athena" />
+                                        <gzip src="target/athena-${project.version}.tar" destfile="target/athena-${project.version}.tar.gz" />
+                                        <zip destfile="target/athena-${project.version}.zip" basedir="src/main/skeleton/athena" />
                                     </target>
                                 </configuration>
                                 <goals>
