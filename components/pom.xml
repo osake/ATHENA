@@ -4,12 +4,12 @@
     <parent>
         <artifactId>athena</artifactId>
         <groupId>org.fracturedatlas.athena</groupId>
-        <version>1.0.0-beta-01</version>
+        <version>1.0.0-beta-02-SNAPSHOT</version>
     </parent>
     <groupId>org.fracturedatlas.athena</groupId>
     <artifactId>components</artifactId>
     <name>components</name>
-    <version>1.0.0-beta-01</version>
+    <version>1.0.0-beta-02-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
         <module>audit-server</module>
