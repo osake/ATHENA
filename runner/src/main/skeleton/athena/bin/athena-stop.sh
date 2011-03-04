@@ -1,0 +1,1 @@
+start-stop-daemon --stop --pidfile /opt/athena/run/athena.pid

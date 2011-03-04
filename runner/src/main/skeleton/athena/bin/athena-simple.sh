@@ -1,0 +1,1 @@
+exec java -Dport=8080 -XX:MaxPermSize=200m -cp ../config -jar ./runner.jar
