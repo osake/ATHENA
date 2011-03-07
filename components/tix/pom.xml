@@ -5,12 +5,12 @@
     <artifactId>tix</artifactId>
     <name>tix</name>
     <packaging>war</packaging>
-    <version>1.0.0-beta-02-SNAPSHOT</version>
+    <version>1.0.0-beta-02</version>
 
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
         <artifactId>components</artifactId>
-        <version>1.0.0-beta-02-SNAPSHOT</version>
+        <version>1.0.0-beta-02</version>
     </parent>
 
     <profiles>

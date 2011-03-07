@@ -6,7 +6,7 @@
     <artifactId>runner</artifactId>
     <name>runner</name>
     <packaging>jar</packaging>
-    <version>1.0.0-beta-02-SNAPSHOT</version>
+    <version>1.0.0-beta-02</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -65,8 +65,8 @@
                                     <target>
                                         <copy file="target/runner.jar" tofile="src/main/skeleton/athena/bin/runner.jar" />
                                         <delete>
-                                            <fileset dir="src/main/skeleton/athena/db/" includes="**/*"/>
-                                            <fileset dir="src/main/skeleton/athena/log/" includes="**/*"/>
+                                            <fileset dir="src/main/skeleton/athena/db/" includes="**/*" />
+                                            <fileset dir="src/main/skeleton/athena/log/" includes="**/*" />
                                         </delete>
                                         <tar destfile="target/athena-${project.version}.tar" basedir="src/main/skeleton" />
                                     </target>

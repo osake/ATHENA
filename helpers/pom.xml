@@ -3,13 +3,13 @@
     <groupId>org.fracturedatlas.athena</groupId>
     <artifactId>helpers</artifactId>
     <name>helpers</name>
-    <version>1.0.0-beta-02-SNAPSHOT</version>
+    <version>1.0.0-beta-02</version>
     <packaging>pom</packaging>
 
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
         <artifactId>athena</artifactId>
-        <version>1.0.0-beta-02-SNAPSHOT</version>
+        <version>1.0.0-beta-02</version>
     </parent>
 
     <modules>

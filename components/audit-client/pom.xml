@@ -5,12 +5,12 @@
     <artifactId>audit-client</artifactId>
     <name>audit-client</name>
     <packaging>jar</packaging>
-    <version>1.0.0-beta-02-SNAPSHOT</version>
+    <version>1.0.0-beta-02</version>
 
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
         <artifactId>components</artifactId>
-        <version>1.0.0-beta-02-SNAPSHOT</version>
+        <version>1.0.0-beta-02</version>
     </parent>
 
     <dependencies>
