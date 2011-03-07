@@ -31,14 +31,12 @@ import org.slf4j.LoggerFactory;
 
 public class AuditFilter implements ContainerRequestFilter {
 
-//    protected static Properties props;
-//    protected static WebResource component;
     protected Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     protected Gson gson = JsonUtil.getGson();
     protected static String uri = null;
     protected static List<String> fieldsToScrub = null;
-    protected static String AUDIT_PATH = "/audit";
+    protected static String auditPath = null;
     protected static WebResource component;
 
     static {
@@ -51,6 +49,7 @@ public class AuditFilter implements ContainerRequestFilter {
             ClientConfig cc = new DefaultClientConfig();
             Client c = Client.create(cc);
             component = c.resource(uri);
+            auditPath = "/" + props.getString("audit.endpoint");
         } catch (ConfigurationException e) {
             Logger tempLog = LoggerFactory.getLogger(AuditFilter.class);
             tempLog.error(e.getMessage(), e);
@@ -79,7 +78,7 @@ public class AuditFilter implements ContainerRequestFilter {
 
     private void sendAuditMessage(PublicAuditMessage pam) {
         String recordJson = gson.toJson(pam);
-        component.path(AUDIT_PATH).type("application/json").post(String.class, recordJson);
+        component.path(auditPath).type("application/json").post(String.class, recordJson);
     }
 
     private PublicAuditMessage constructPublicAuditMessage(ContainerRequest request,

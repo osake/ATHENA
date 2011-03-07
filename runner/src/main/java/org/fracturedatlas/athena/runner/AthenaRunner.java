@@ -19,29 +19,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.runner;
 
-import java.io.InputStream;
-import java.util.Properties;
+import java.io.FileInputStream;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.xml.XmlConfiguration;
 
 public class AthenaRunner {
-    
+
     public static void main(String[] args) throws Exception {
         String port = System.getProperty("port");
 
         Server server = new Server(Integer.parseInt(port));
         ContextHandlerCollection contexts = new ContextHandlerCollection();
-        
-        String[] appNames = new String[] {"tix"
-                                          ,"stage"
-                                          ,"people"
-                                          ,"orders"
-                                          ,"payments"
-                                          ,"audit"
-                                          };
-        
-        for(String appName : appNames) {        
+
+        String[] appNames = new String[]{"tix", "stage", "people", "orders", "payments", "audit"
+        };
+
+        for (String appName : appNames) {
             WebAppContext app = new WebAppContext();
             app.setContextPath("/" + appName);
             app.setExtraClasspath("../components/shared/config/;../components/" + appName + "/config/");
@@ -52,6 +47,10 @@ public class AthenaRunner {
         }
 
         server.setHandler(contexts);
+
+        XmlConfiguration configuration = new XmlConfiguration(new FileInputStream("../config/jetty.xml"));
+        configuration.configure(server);
+        server.start();
 
         server.start();
 
@@ -65,5 +64,4 @@ public class AthenaRunner {
 
 
     }
-
 }
