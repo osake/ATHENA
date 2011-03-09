@@ -19,6 +19,7 @@
         <module>orders</module>
         <module>payments</module>
         <module>stage</module>
+        <module>admin</module>
     </modules>
     <build>
         <plugins>

@@ -3,36 +3,34 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
 
 
-<!-- ATHENA -->   
-  <appender name="Athena" class="org.apache.log4j.DailyRollingFileAppender">   
-    <errorHandler class="org.apache.log4j.DailyRollingFileAppender"/>   
-    <param name="File" value="../log/ATHENA.log"/>   
-    <param name="Threshold" value="INFO"/>   
-    <param name="Append" value="true"/>   
-    <param name="MaxFileSize" value="2MB"/>   
-    <param name="MaxBackupIndex" value="20"/>   
-    <layout class="org.apache.log4j.PatternLayout">      
-    <param name="ConversionPattern" value="%d{HH:mm:ss.SSS} %-5p [%t] %c{1} %m%n"/>
-    </layout>      
+    <!-- ATHENA -->
+    <appender name="Athena" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="../log/ATHENA.log"/>
+        <param name="Threshold" value="INFO"/>
+        <param name="Append" value="true"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d{HH:mm:ss.SSS} %-5p [%t] %c{1} %m%n"/>
+        </layout>
+
+    </appender>
+
     <logger name="org.springframework">
-    <!-- Print only messages of level warn or above in the package org.springframework -->
-    	<level value="WARN"/> 
-  	</logger>    
-    <logger name="org.hibernate">
-    	<level value="WARN"/> 
-  	</logger> 
-    <logger name="org.logicalcobwebs">
-    	<level value="WARN"/> 
+        <!-- Print only messages of level warn or above in the package org.springframework -->
+        <level value="WARN"/>
     </logger>
-    <logger name="org.springframework.security.web.authentication.www">
-        <level value="DEBUG"/>
+    <logger name="org.hibernate">
+        <level value="WARN"/>
+    </logger>
+    <logger name="org.logicalcobwebs">
+        <level value="WARN"/>
+    </logger>
+    <logger name="com.sun.jersey">
+        <level value="WARN"/>
     </logger>
 
-  </appender>   
- 
-  <root>
-    <!-- Set root logger level to DEBUG and its only appender to Athena -->
-    <priority value ="DEBUG" /> 
-    <appender-ref ref="Athena" /> 
-  </root>
+    <root>
+        <!-- Set root logger level to DEBUG and its only appender to Athena -->
+        <priority value ="DEBUG" />
+        <appender-ref ref="Athena" />
+    </root>
 </log4j:configuration>

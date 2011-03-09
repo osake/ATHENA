@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>components</artifactId>
+        <groupId>org.fracturedatlas.athena</groupId>
+        <version>1.0.0-beta-03-SNAPSHOT</version>
+    </parent>
+    <groupId>org.fracturedatlas.athena</groupId>
+    <artifactId>admin</artifactId>
+    <name>admin</name>
+    <packaging>jar</packaging>
+    <version>1.0.0-beta-03-SNAPSHOT</version>
 
-  <groupId>org.fracturedatlas.athena</groupId>
-  <artifactId>admin</artifactId>
-  <name>admin</name>
-  <packaging>jar</packaging>
-  <version>1.0.0-beta-02-SNAPSHOT</version>
-
-  <build>
-    <finalName>admin</finalName>
-    <plugins>
+    <build>
+        <finalName>admin</finalName>
+        <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -20,38 +24,38 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.2</version>
-      </plugin><plugin>
-  <groupId>org.apache.maven.plugins</groupId>
-  <artifactId>maven-shade-plugin</artifactId>
-  <executions>
-    <execution>
-      <phase>package</phase>
-      <goals>
-        <goal>shade</goal>
-      </goals>
-      <configuration>
-        <transformers>
-          <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-            <mainClass>org.fracturedatlas.athena.admin.AthenaAdmin</mainClass>
-          </transformer>
-          <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-            <resource>META-INF/spring.handlers</resource>
-          </transformer>
-          <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
-            <resource>META-INF/spring.schemas</resource>
-          </transformer>
-        </transformers>
-      </configuration>
-    </execution>
-  </executions>
-</plugin>
-    </plugins>
-  </build>
-  <dependencies>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.2</version>
+            </plugin><plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>org.fracturedatlas.athena.admin.AthenaAdmin</mainClass>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.handlers</resource>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.AppendingTransformer">
+                                    <resource>META-INF/spring.schemas</resource>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
 
         <dependency>
             <groupId>org.springframework.security</groupId>
@@ -107,5 +111,5 @@
             <artifactId>commons-lang</artifactId>
             <version>2.5</version>
         </dependency>
-  </dependencies>
+    </dependencies>
 </project>
