@@ -23,7 +23,10 @@
   	</logger> 
     <logger name="org.logicalcobwebs">
     	<level value="WARN"/> 
-  	</logger>
+    </logger>
+    <logger name="org.springframework.security.web.authentication.www">
+        <level value="DEBUG"/>
+    </logger>
 
   </appender>   
  

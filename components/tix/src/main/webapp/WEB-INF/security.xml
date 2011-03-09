@@ -6,22 +6,22 @@
        http://www.springframework.org/schema/security
        http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
     <sec:http entry-point-ref="digestEntryPoint">
-        <sec:intercept-url pattern="/**" access="ROLE_CLIENT_APPLICATION" />
+        <sec:intercept-url pattern="/**" access="${athena.security.role}" />
         <sec:custom-filter position="BASIC_AUTH_FILTER" ref="digestFilter" />
     </sec:http>
 
     <bean id="dataSourceUsers" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
         <property name="driverClassName">
-            <value>com.mysql.jdbc.Driver</value>
+            <value>${athena.security.jdbc.driver}</value>
         </property>
         <property name="url">
-            <value>jdbc:mysql://localhost/ATHENA-Security</value>
+            <value>${athena.security.jdbc.url}</value>
         </property>
         <property name="username">
-            <value>parakeetdb</value>
+            <value>${athena.security.jdbc.username}</value>
         </property>
         <property name="password">
-            <value>parakeetdb</value>
+            <value>${athena.security.jdbc.password}</value>
         </property>
     </bean>
 
@@ -37,18 +37,13 @@
 
     <bean id="digestEntryPoint" class=
           "org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
-        <!-- TODO: Realm needs to be moved to a properties file -->
         <property name="realmName" value="ATHENA"/>
         <property name="key" value="d1a5e26d0558c455d3860e26d0558c45585fad77d427"/>
         <property name="nonceValiditySeconds" value="10"/>
     </bean>
 
-    <!--
     <bean id="digestFilter" class=
-          "org.springframework.security.web.authentication.www.DigestAuthenticationFilter"> -->
-    <bean id="digestFilter" class=
-          "org.fracturedatlas.athena.web.filter.SwitchableDigestAuthenticationFilter">
-        <property name="securityEnabled" value="false"/>
+          "org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
         <property name="passwordAlreadyEncoded" value="true"/>
         <property name="userDetailsService" ref="jdbcUserService"/>
         <property name="authenticationEntryPoint" ref="digestEntryPoint"/>

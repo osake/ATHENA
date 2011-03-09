@@ -6,29 +6,25 @@
        http://www.springframework.org/schema/security
        http://www.springframework.org/schema/security/spring-security-3.0.3.xsd">
     <sec:http entry-point-ref="digestEntryPoint">
-        <sec:intercept-url pattern="/**" access="ROLE_CLIENT_APPLICATION" />
+        <sec:intercept-url pattern="/**" access="${athena.security.role}" />
         <sec:custom-filter position="BASIC_AUTH_FILTER" ref="digestFilter" />
     </sec:http>
 
     <bean id="dataSourceUsers" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
         <property name="driverClassName">
-            <value>com.mysql.jdbc.Driver</value>
+            <value>${athena.security.jdbc.driver}</value>
         </property>
         <property name="url">
-            <value>jdbc:mysql://localhost/ATHENA-Security</value>
+            <value>${athena.security.jdbc.url}</value>
         </property>
         <property name="username">
-            <value>parakeetdb</value>
+            <value>${athena.security.jdbc.username}</value>
         </property>
         <property name="password">
-            <value>parakeetdb</value>
+            <value>${athena.security.jdbc.password}</value>
         </property>
     </bean>
 
-    <bean class="org.springframework.security.authentication.dao.ReflectionSaltSource" id="saltSource">
-        <property name="userPropertyToUse" value="username"/>
-    </bean>
-    
     <bean class="org.springframework.security.authentication.encoding.Md5PasswordEncoder" id="passwordEncoder">
     </bean>
 
@@ -36,13 +32,6 @@
         <sec:authentication-provider user-service-ref="jdbcUserService">
         </sec:authentication-provider>
     </sec:authentication-manager>
-
-    <!-- This is unused -->
-  <!--
-  <user-service id="userService">
-    <user name="completely" password="ignored" authorities="ROLE_USER" />
-  </user-service>
-  -->
 
     <sec:jdbc-user-service id="jdbcUserService" data-source-ref="dataSourceUsers"/>
 

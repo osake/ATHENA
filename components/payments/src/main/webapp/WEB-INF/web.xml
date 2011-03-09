@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
-                       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                       xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-                       metadata-complete="true">
-
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         metadata-complete="true">
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>
@@ -23,15 +22,15 @@
         <servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
         <init-param>
             <param-name>javax.ws.rs.Application</param-name>
-            <param-value>org.fracturedatlas.athena.payments.web.config.PaymentsConfig</param-value>
+            <param-value>org.fracturedatlas.athena.web.config.AthenaWebConfig</param-value>
         </init-param>
         <init-param>
-          <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
-      <param-value>com.sun.jersey.api.container.filter.LoggingFilter;org.fracturedatlas.athena.filter.AuditFilter</param-value>
+            <param-name>com.sun.jersey.spi.container.ContainerRequestFilters</param-name>
+            <param-value>com.sun.jersey.api.container.filter.LoggingFilter;org.fracturedatlas.athena.filter.AuditFilter</param-value>
         </init-param>
         <init-param>
-          <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
-          <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
+            <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
+            <param-value>com.sun.jersey.api.container.filter.LoggingFilter</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
@@ -45,10 +44,8 @@
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
     </filter>
 
-<!-- UNCOMMENT THIS TO TURN SECURITY ON
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
--->
 </web-app>

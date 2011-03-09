@@ -63,10 +63,21 @@
                                 <phase>install</phase>
                                 <configuration>
                                     <target>
-                                        <copy file="target/runner.jar" tofile="src/main/skeleton/athena/bin/runner.jar" />
-                                        <delete>
-                                            <fileset dir="src/main/skeleton/athena/db/" includes="**/*" />
-                                            <fileset dir="src/main/skeleton/athena/log/" includes="**/*" />
+                                        <copy file="target/runner.jar"
+                                              tofile="src/main/skeleton/athena/bin/runner.jar" />
+                                        <copy file="../core/web-resources/target/web-resources-jar-with-dependencies.jar"
+                                              tofile="src/main/skeleton/athena/components/shared/lib/web-resources.jar" />
+                                        <delete includeemptydirs="true">
+                                            <fileset dir="src/main/skeleton/athena/log/" defaultexcludes="true">
+                                               <exclude name=".gitignore"/>
+                                               <include name="**/*" />
+                                            </fileset>
+                                        </delete>
+                                        <delete includeemptydirs="true">
+                                            <fileset dir="src/main/skeleton/athena/db/" defaultexcludes="true">
+                                               <exclude name=".gitignore"/>
+                                               <include name="**/*" />
+                                            </fileset>
                                         </delete>
                                         <tar destfile="target/athena-${project.version}.tar" basedir="src/main/skeleton" />
                                     </target>

@@ -33,13 +33,14 @@ public class AthenaRunner {
         Server server = new Server(Integer.parseInt(port));
         ContextHandlerCollection contexts = new ContextHandlerCollection();
 
-        String[] appNames = new String[]{"tix", "stage", "people", "orders", "payments", "audit"
-        };
+        String[] appNames = new String[]{"tix", 
+        //"stage", "people", "orders", "payments",
+        "audit"};
 
         for (String appName : appNames) {
             WebAppContext app = new WebAppContext();
             app.setContextPath("/" + appName);
-            app.setExtraClasspath("../components/shared/config/;../components/" + appName + "/config/");
+            app.setExtraClasspath("../components/shared/config/;../components/shared/lib/web-resources.jar;../components/shared/lib/util.jar;../components/shared/lib/apa.jar;../components/shared/lib/client.jar;../components/" + appName + "/config/");
 
             app.setWar("../components/" + appName + "/war/" + appName + ".war");
             app.setLogUrlOnStart(true);

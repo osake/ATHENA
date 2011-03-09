@@ -126,6 +126,7 @@
                                         </copy>
                                         <copy todir="../../runner/src/main/skeleton/athena/components/shared/config">
                                             <fileset dir="src/main/resources" includes="components.properties" />
+                                            <fileset dir="src/main/resources" includes="security.properties" />
                                         </copy>
                                     </target>
                                 </configuration>
@@ -137,6 +138,16 @@
                     </plugin>
                 </plugins>
             </build>
+            <dependencies>
+
+                <!-- ATHENA -->
+                <dependency>
+                    <groupId>org.fracturedatlas.athena</groupId>
+                    <artifactId>sdk</artifactId>
+                    <type>pom</type>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 

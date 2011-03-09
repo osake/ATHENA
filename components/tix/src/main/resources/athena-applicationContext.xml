@@ -18,6 +18,7 @@
             <list>
                 <value>classpath:db.properties</value>
                 <value>classpath:components.properties</value>
+                <value>classpath:security.properties</value>
             </list>
         </property>
     </bean>
