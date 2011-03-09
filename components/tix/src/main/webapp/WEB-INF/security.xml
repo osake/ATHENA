@@ -33,13 +33,6 @@
         </sec:authentication-provider>
     </sec:authentication-manager>
 
-    <!-- This is unused -->
-  <!--
-  <user-service id="userService">
-    <user name="completely" password="ignored" authorities="ROLE_USER" />
-  </user-service>
-  -->
-
     <sec:jdbc-user-service id="jdbcUserService" data-source-ref="dataSourceUsers"/>
 
     <bean id="digestEntryPoint" class=
@@ -50,8 +43,12 @@
         <property name="nonceValiditySeconds" value="10"/>
     </bean>
 
+    <!--
     <bean id="digestFilter" class=
-          "org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
+          "org.springframework.security.web.authentication.www.DigestAuthenticationFilter"> -->
+    <bean id="digestFilter" class=
+          "org.fracturedatlas.athena.web.filter.SwitchableDigestAuthenticationFilter">
+        <property name="securityEnabled" value="false"/>
         <property name="passwordAlreadyEncoded" value="true"/>
         <property name="userDetailsService" ref="jdbcUserService"/>
         <property name="authenticationEntryPoint" ref="digestEntryPoint"/>

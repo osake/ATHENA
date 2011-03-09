@@ -173,5 +173,12 @@
       <artifactId>gson</artifactId>
       <version>1.5</version>
     </dependency>
+
+    <!-- Java servlet, needed because of the DigestAuthenticationFilter override -->
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.4</version>
+    </dependency>
   </dependencies>
 </project>
