@@ -11,10 +11,12 @@
 
     <bean
         class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="location">
-            <value>classpath:db.properties</value>
-            <value>classpath:components.properties</value>
-            <value>classpath:security.properties</value>
+        <property name="locations">
+            <list>
+                <value>classpath:db.properties</value>
+                <value>classpath:components.properties</value>
+                <value>classpath:security.properties</value>
+            </list>
         </property>
     </bean>
 
