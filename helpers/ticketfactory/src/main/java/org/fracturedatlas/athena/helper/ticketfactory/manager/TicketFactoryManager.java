@@ -43,6 +43,7 @@ public class TicketFactoryManager {
 
     @Autowired
     private RecordManager ticketManager;
+    private static String INITIAL_STATE = "off_sale";
 
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -83,6 +84,7 @@ public class TicketFactoryManager {
                 ticket.put("venue", event.get("venue"));
                 ticket.put("event", event.get("name"));
                 ticket.put("eventId", eventId);
+                ticket.put("state", INITIAL_STATE);
 
                 logger.info("Creating ticket, save below: ");
                 logger.info(ticket.toString());
