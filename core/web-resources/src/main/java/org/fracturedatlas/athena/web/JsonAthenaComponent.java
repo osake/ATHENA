@@ -66,7 +66,11 @@ public class JsonAthenaComponent implements AthenaComponent {
 
     private WebResource getComponent(Client c, String clientUri, SecurityContext securityContext) {
         Authentication authentication = securityContext.getAuthentication();
-        if(authentication != null) {
+        
+        //This is a little weird.  In an IS_AUTHENTICATED_ANONYMOUS setting, authentication.getPrincipal()
+        //returns a String.  However, any ROLE based will cause getPrincipal() to return a User object
+        if(authentication != null && authentication.getPrincipal() != null 
+                                  && User.class.isAssignableFrom(authentication.getPrincipal().getClass()) ) {
             User user = (User) authentication.getPrincipal();
             String username = user.getUsername();
             String password = user.getPassword();
