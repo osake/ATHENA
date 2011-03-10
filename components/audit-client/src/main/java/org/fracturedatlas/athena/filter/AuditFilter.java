@@ -16,7 +16,6 @@ import com.sun.jersey.core.util.ReaderWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -27,6 +26,8 @@ import org.fracturedatlas.athena.util.Scrubber;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.User;
 
 
 public class AuditFilter implements ContainerRequestFilter {
@@ -84,11 +85,17 @@ public class AuditFilter implements ContainerRequestFilter {
     private PublicAuditMessage constructPublicAuditMessage(ContainerRequest request,
                                                            String message) {
 
-        //TODO: Update this to work with security
-        String user = request.getUserPrincipal() + ":";
+        String userName = "";
+        UsernamePasswordAuthenticationToken authToken = (UsernamePasswordAuthenticationToken)request.getUserPrincipal();
+        if(authToken == null) {
+            userName = "[NONE]";
+        } else {
+            User user = (User)authToken.getPrincipal();
+            userName = user.getUsername();
+        }
         String action = request.getMethod();
         String resource = request.getRequestUri().toString();
-        return new PublicAuditMessage(user, action, resource, message);
+        return new PublicAuditMessage(userName, action, resource, message);
     }
 
 
