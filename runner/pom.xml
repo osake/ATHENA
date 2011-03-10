@@ -65,6 +65,8 @@
                                     <target>
                                         <copy file="target/runner.jar"
                                               tofile="src/main/skeleton/athena/bin/runner.jar" />
+                                        <copy file="../components/admin/target/admin.jar"
+                                              tofile="src/main/skeleton/athena/bin/admin.jar" />
                                         <copy file="../core/web-resources/target/web-resources-jar-with-dependencies.jar"
                                               tofile="src/main/skeleton/athena/components/shared/lib/web-resources.jar" />
                                         <delete includeemptydirs="true">
