@@ -5,12 +5,12 @@
     <artifactId>lock</artifactId>
     <name>lock</name>
     <packaging>jar</packaging>
-    <version>1.0.0-beta-03</version>
+    <version>1.0.0-rc-00-SNAPSHOT</version>
 
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
         <artifactId>helpers</artifactId>
-        <version>1.0.0-beta-03</version>
+        <version>1.0.0-rc-00-SNAPSHOT</version>
     </parent>
 
     <build>
