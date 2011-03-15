@@ -51,6 +51,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -64,8 +67,13 @@ public class AthenaLockManager {
     public static final String LOCK_EXPIRES = "lockExpires";
     public static final String LOCK_TIMES = "lockTimes";
 
+    public static final String NO_USER = "[NONE]";
+
     @Autowired
     ApaAdapter apa;
+
+    @Autowired
+    SecurityContextHolderStrategy contextHolderStrategy;
 
     static Properties props;
     
@@ -88,7 +96,7 @@ public class AthenaLockManager {
 
         AthenaSearch apaSearch = new AthenaSearch
                                   .Builder(new AthenaSearchConstraint(AthenaLockManager.LOCK_ID, Operator.EQUALS, id))
-                                  .and(new AthenaSearchConstraint(AthenaLockManager.LOCKED_BY_API_KEY, Operator.EQUALS, request.getHeader("X-ATHENA-Key")))
+                                  .and(new AthenaSearchConstraint(AthenaLockManager.LOCKED_BY_API_KEY, Operator.EQUALS, getCurrentUsername()))
                                   .build();
 
         Collection<Ticket> tickets = apa.findTickets(apaSearch);
@@ -129,8 +137,7 @@ public class AthenaLockManager {
         }
 
         tran.setId(UUID.randomUUID().toString());
-        //TODO: This header name *must* be defined in a props file somewhere
-        tran.setLockedByApi(request.getHeader("X-ATHENA-Key"));
+        tran.setLockedByApi(getCurrentUsername());
         tran.setLockedByIp(request.getRemoteAddr());
         tran.setStatus(AthenaLockStatus.OK);
 
@@ -140,6 +147,17 @@ public class AthenaLockManager {
 
         lockTickets(ticketIds, tran);
         return tran;
+    }
+
+    private String getCurrentUsername() {
+        Authentication authentication = contextHolderStrategy.getContext().getAuthentication();
+        if(authentication != null && authentication.getPrincipal() != null
+                                  && User.class.isAssignableFrom(authentication.getPrincipal().getClass()) ) {
+            User user = (User) authentication.getPrincipal();
+            return user.getUsername();
+        }
+
+        return NO_USER;
     }
 
     private void lockTickets(Set<String> ticketIds, AthenaLock tran) throws Exception {
@@ -352,7 +370,7 @@ public class AthenaLockManager {
 
         }
         logger.info("Checking API KEY");
-        logger.info("Request key  [{}]", request.getHeader("X-ATHENA-Key"));
+        logger.info("Request key  [{}]", getCurrentUsername());
         logger.info("Key on tix   [{}]", tran.getLockedByApi());
 
         if (request.getHeader("X-ATHENA-Key") == null) {
