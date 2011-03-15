@@ -57,12 +57,8 @@ public class AuditResource {
     Gson gson = gb.create();
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-
-
     /**
-     * Add a new value to this propField.
-     *
-     * You cannot update a specific propValue from this endpoint.  You must first delete the value then add the new one.
+     * Save an audit message.
      */
     @POST
     @Path("")
@@ -76,21 +72,5 @@ public class AuditResource {
             throw ex;
         }
     }
-
-    @GET
-    @Path("")
-    public AuditMessage[] getAuditMessages(@Context UriInfo ui) {
-        MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
-
-        if (queryParams.isEmpty()) {
-            throw new WebApplicationException(Response.status(Response.Status.FORBIDDEN)
-               .entity("You must specify at least one query parameter when searching for Audit Messages")
-               .type("text/plain")
-               .build());
-        }
-
-        return auditManager.getAuditMessages(queryParams);
-    }
- 
 }
 

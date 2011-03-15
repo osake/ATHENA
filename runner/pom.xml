@@ -69,6 +69,11 @@
                                               tofile="src/main/skeleton/athena/bin/admin.jar" />
                                         <copy file="../core/web-resources/target/web-resources-jar-with-dependencies.jar"
                                               tofile="src/main/skeleton/athena/components/shared/lib/web-resources.jar" />
+                                        <copy todir="src/main/skeleton/athena/ddl">
+                                            <fileset dir="../ddl" defaultexcludes="true">
+                                               <include name="**/*" />
+                                            </fileset>
+                                        </copy>
                                         <delete includeemptydirs="true">
                                             <fileset dir="src/main/skeleton/athena/log/" defaultexcludes="true">
                                                <exclude name=".gitignore"/>
