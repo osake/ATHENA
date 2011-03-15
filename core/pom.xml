@@ -13,7 +13,6 @@
     </parent>
 
     <modules>
-        <module>security</module>
         <module>util</module>
         <module>client</module>
         <module>apa</module>
