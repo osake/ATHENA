@@ -6,7 +6,7 @@
     <artifactId>runner</artifactId>
     <name>runner</name>
     <packaging>jar</packaging>
-    <version>1.0.0-beta-03-SNAPSHOT</version>
+    <version>1.0.0-beta-03</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -63,12 +63,9 @@
                                 <phase>install</phase>
                                 <configuration>
                                     <target>
-                                        <copy file="target/runner.jar"
-                                              tofile="src/main/skeleton/athena/bin/runner.jar" />
-                                        <copy file="../components/admin/target/admin.jar"
-                                              tofile="src/main/skeleton/athena/bin/admin.jar" />
-                                        <copy file="../core/web-resources/target/web-resources-jar-with-dependencies.jar"
-                                              tofile="src/main/skeleton/athena/components/shared/lib/web-resources.jar" />
+                                        <copy file="target/runner.jar" tofile="src/main/skeleton/athena/bin/runner.jar" />
+                                        <copy file="../components/admin/target/admin.jar" tofile="src/main/skeleton/athena/bin/admin.jar" />
+                                        <copy file="../core/web-resources/target/web-resources-jar-with-dependencies.jar" tofile="src/main/skeleton/athena/components/shared/lib/web-resources.jar" />
                                         <copy todir="src/main/skeleton/athena/ddl">
                                             <fileset dir="../ddl" defaultexcludes="true">
                                                <include name="**/*" />
@@ -76,13 +73,13 @@
                                         </copy>
                                         <delete includeemptydirs="true">
                                             <fileset dir="src/main/skeleton/athena/log/" defaultexcludes="true">
-                                               <exclude name=".gitignore"/>
+                                               <exclude name=".gitignore" />
                                                <include name="**/*" />
                                             </fileset>
                                         </delete>
                                         <delete includeemptydirs="true">
                                             <fileset dir="src/main/skeleton/athena/db/" defaultexcludes="true">
-                                               <exclude name=".gitignore"/>
+                                               <exclude name=".gitignore" />
                                                <include name="**/*" />
                                             </fileset>
                                         </delete>
