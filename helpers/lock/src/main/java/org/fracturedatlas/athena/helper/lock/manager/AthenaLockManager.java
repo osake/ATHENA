@@ -258,18 +258,18 @@ public class AthenaLockManager {
     private void completeTicketPurchase(AthenaLock tran) throws Exception {
         Set<String> ticketIds = tran.getTickets();
         for(String ticketId : ticketIds) {
-            TicketProp lockExpiresProp = apa.getTicketProp("sold", LOCK_TYPE, ticketId);
+            PropField statusField = apa.getPropField("status");
 
-            if(lockExpiresProp == null) {
-                PropField soldProp = apa.getPropField("sold");
-                lockExpiresProp = new BooleanTicketProp(soldProp, Boolean.TRUE);
-                lockExpiresProp.setTicket(apa.getTicket(LOCK_TYPE, ticketId));
+            if(statusField != null) {
+                TicketProp statusProp = apa.getTicketProp("status", LOCK_TYPE, ticketId);
+
+                if(statusProp == null) {
+                    statusProp = new StringTicketProp(statusField, "sold");
+                    statusProp.setTicket(apa.getTicket(LOCK_TYPE, ticketId));
+                }
+                statusProp.setValue("sold");
+                apa.saveTicketProp(statusProp);
             }
-
-            lockExpiresProp.setValue(true);
-            apa.saveTicketProp(lockExpiresProp);
-
-            //TODO: ORder number, people record
         }
 
 
@@ -361,22 +361,24 @@ public class AthenaLockManager {
     }
 
     private Boolean isOwnerOfTransaction(HttpServletRequest request, AthenaLock tran) {
-        Boolean checkApiKey = Boolean.parseBoolean(props.getProperty("athena.lock.api_key_check_enabled"));
+        Boolean checkApiKey = Boolean.parseBoolean(props.getProperty("athena.lock.username_check_enabled"));
 
         if(!checkApiKey) {
 
-            logger.info("API KEY check is OFF");
+            logger.info("username check is OFF");
             return true;
 
         }
+        String username = getCurrentUsername();
+        
         logger.info("Checking API KEY");
-        logger.info("Request key  [{}]", getCurrentUsername());
+        logger.info("Request key  [{}]", username);
         logger.info("Key on tix   [{}]", tran.getLockedByApi());
 
-        if (request.getHeader("X-ATHENA-Key") == null) {
+        if (username == null) {
             return false;
         } else {
-            return request.getHeader("X-ATHENA-Key").equals(tran.getLockedByApi());
+            return username.equals(tran.getLockedByApi());
         }
     }
 
@@ -407,5 +409,21 @@ public class AthenaLockManager {
             ids.add(t.getId().toString());
         }
         return ids;
+    }
+
+    public SecurityContextHolderStrategy getContextHolderStrategy() {
+        return contextHolderStrategy;
+    }
+
+    public void setContextHolderStrategy(SecurityContextHolderStrategy contextHolderStrategy) {
+        this.contextHolderStrategy = contextHolderStrategy;
+    }
+
+    public ApaAdapter getApa() {
+        return apa;
+    }
+
+    public void setApa(ApaAdapter apa) {
+        this.apa = apa;
     }
 }
