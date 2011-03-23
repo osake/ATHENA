@@ -78,8 +78,6 @@ public class TicketFactoryManager {
                 ticket.put("price", section.get("price"));
                 ticket.put("performanceId", performanceId);
                 ticket.put("performance", performance.get("datetime"));
-                ticket.put("onSale", "false");
-                ticket.put("sold", "false");
                 ticket.put("section", section.get("name"));
                 ticket.put("venue", event.get("venue"));
                 ticket.put("event", event.get("name"));
