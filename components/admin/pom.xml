@@ -4,13 +4,13 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.fracturedatlas.athena</groupId>
-        <version>1.0.0-rc-01-SNAPSHOT</version>
+        <version>1.0.0-rc-01</version>
     </parent>
     <groupId>org.fracturedatlas.athena</groupId>
     <artifactId>admin</artifactId>
     <name>admin</name>
     <packaging>jar</packaging>
-    <version>1.0.0-rc-01-SNAPSHOT</version>
+    <version>1.0.0-rc-01</version>
 
     <build>
         <finalName>admin</finalName>
