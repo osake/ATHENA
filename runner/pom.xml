@@ -6,7 +6,7 @@
     <artifactId>runner</artifactId>
     <name>runner</name>
     <packaging>jar</packaging>
-    <version>1.0.0-rc-00-SNAPSHOT</version>
+    <version>1.0.0-rc-00</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -83,7 +83,7 @@
                                                <include name="**/*" />
                                             </fileset>
                                         </delete>
-                                        <tar destfile="target/athena-${project.version}.tar" basedir="src/main/skeleton" excludes="**/.gitignore"/>
+                                        <tar destfile="target/athena-${project.version}.tar" basedir="src/main/skeleton" excludes="**/.gitignore" />
                                     </target>
                                 </configuration>
                                 <goals>
