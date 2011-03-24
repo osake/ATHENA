@@ -11,11 +11,11 @@ holder above.
 
 ========
 
-The lock helper provides a RESTFul lock object to assist client applications with locking tickets while customers are deciding to purchase.  While tickets are locked, no other application can lock those tickets.
+The lock helper provides a RESTful lock object to assist client applications with locking tickets while customers are deciding to purchase.  While tickets are locked, no other application can lock those tickets.
 
 #Installing the lock helper
 
-Add this snipped to your athena component:
+Add this in the dependencies section of your pom.xml:
 
         <dependency>
             <groupId>org.fracturedatlas.athena.helper</groupId>
@@ -25,7 +25,7 @@ Add this snipped to your athena component:
 
 Of course, you'll need to specify the athena.version somewhere in your pom file
 
-The lock helper is included in already ATHENA-Tix <https://github.com/fracturedatlas/ATHENA-Tix>
+The lock helper is included in already Tix <https://github.com/fracturedatlas/ATHENA/tree/master/components/tix>
 
 #Usage
 
@@ -35,18 +35,14 @@ The lock helper will be using the following properties on tickets
 
 * sold
 * lockId
-* lockedByIp
-* lockedByApiKey
+* lockedByIp - Poorly named, this actually records the user nae of your client application when security is enabled
+* lockedByApiKey (unused and will be removed)
 * lockExpires
 * lockTimes
 
-## Setup
-
-You'll need to include an API key in the header value X-ATHENA-Key
-
 ## Obtaining a lock on tickets
 
-POST a new lock to /locks
+POST a new lock to {component_name}/meta/locks
 
     1 > POST http://localhost:9998/test/locks
     1 > Content-Type: application/json
@@ -65,13 +61,13 @@ Sample response
     {"id":"3753ad0c-fa22-4977-80f4-d01aa4d1cf40",
      "tickets":["62","63"],
      "lockExpires":"Oct 12, 2010 7:41:49 PM",
-     "lockedByApi":"SAMPLEAPIKEYfowihe9338833wehhfhf",
+     "lockedByApi":"[Your client applcation username]",
      "lockedByIp":"127.0.0.1",
      "status":"OK"}
 
 ## Renewing a lock on tickets (Optional)
 
-PUT the lock to /locks/{lockId}
+PUT the lock to {component_name}/meta/locks/{lockId}
 
     2 > PUT http://localhost:9998/test/locks/3753ad0c-fa22-4977-80f4-d01aa4d1cf40
     2 > Content-Type: application/json
@@ -80,7 +76,7 @@ PUT the lock to /locks/{lockId}
     {"tickets":["62","63"],
      "lockExpires":"Oct 12, 2010 7:41:49 PM",
      "id":"3753ad0c-fa22-4977-80f4-d01aa4d1cf40",
-     "lockedByApi":"SAMPLEAPIKEYfowihe9338833wehhfhf",
+     "lockedByApi":"[Your client applcation username]",
      "lockedByIp":"127.0.0.1",
      "status":"RENEW"}
 
@@ -97,13 +93,13 @@ Sample response
     {"tickets":["62","63"],
      "lockExpires":"Oct 12, 2010 7:42:49 PM",
      "id":"3753ad0c-fa22-4977-80f4-d01aa4d1cf40",
-     "lockedByApi":"SAMPLEAPIKEYfowihe9338833wehhfhf",
+     "lockedByApi":"[Your client applcation username]",
      "lockedByIp":"127.0.0.1",
      "status":"OK"}
 
 ## Selling the tickets and close the lock
 
-PUT the lock to /locks/{lockId}
+PUT the lock to {component_name}/meta/locks/{lockId}
 
     3 > PUT http://localhost:9998/test/locks/3753ad0c-fa22-4977-80f4-d01aa4d1cf40
     3 > Content-Type: application/json
@@ -112,7 +108,7 @@ PUT the lock to /locks/{lockId}
     {"tickets":["62","63"],
      "lockExpires":"Oct 12, 2010 7:42:49 PM",
      "id":"3753ad0c-fa22-4977-80f4-d01aa4d1cf40",
-     "lockedByApi":"SAMPLEAPIKEYfowihe9338833wehhfhf",
+     "lockedByApi":"[Your client applcation username]",
      "lockedByIp":"127.0.0.1",
      "status":"COMPLETE"}
 
@@ -127,14 +123,14 @@ Sample response
     {"tickets":["62","63"],
      "lockExpires":"Oct 12, 2010 7:42:49 PM",
      "id":"3753ad0c-fa22-4977-80f4-d01aa4d1cf40",
-     "lockedByApi":"SAMPLEAPIKEYfowihe9338833wehhfhf",
+     "lockedByApi":"[Your client applcation username]",
      "lockedByIp":"127.0.0.1",
      "status":"OK"}
 
 ## Delete the lock without checking out (optional)
 
-DELETE /locks/{lockId}
+DELETE {component_name}/meta/locks/{lockId}
 
 ## Getting information about the lock (optional)
 
-GET /locks/{lockId}
+GET {component_name}/meta/locks/{lockId}
