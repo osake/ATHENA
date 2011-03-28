@@ -13,7 +13,7 @@ holder above.
 
 The codes helper provides a RESTFul resource for setting codes on tickets.  A "code" allows a certain ticket price to be made available to a user.
 
-#Installing the lock helper
+#Installing the helper
 
 Add this in the dependencies section of your pom.xml:
 
