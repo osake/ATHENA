@@ -44,7 +44,7 @@ The lock helper will be using the following properties on tickets
 
 POST a new lock to {component_name}/meta/locks
 
-    1 > POST http://localhost:9998/test/locks
+    1 > POST http://localhost/tix/meta/locks
     1 > Content-Type: application/json
     1 > X-ATHENA-Key: SAMPLEAPIKEYfowihe9338833wehhfhf
     1 >
