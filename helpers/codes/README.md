@@ -82,5 +82,73 @@ Example response:
       "eligibleUsers": []
       "enabled": 
     }
+    
+## Getting information about a code
 
+    GET http://localhost/tix/meta/codes/{code_id}
+    
+Response:
+
+    {
+      "id": 39029
+      "code": "festivalpass1"
+      "description": "A human readable description"
+      "tickets": [(An array of tickets that this code has been applied to)]
+      "startDate": "2010-03-04T05:05:30-04:00"
+      "endDate":"2010-03-04T05:05:30-04:00"
+      "price": 50
+      "eligibleUsers": []
+      "enabled": 
+    }    
+    
+## Updating a code
+
+Make a PUT request similar to the POST request above.
+
+    PUT http://localhost/tix/meta/codes
+    {
+      "code": "festivalpass1"
+      "description": "A human readable description"
+      "performances": []
+      "events": []
+      "tickets": []
+      "startDate": "2010-03-04T05:05:30-04:00"
+      "endDate":"2010-03-04T05:05:30-04:00"
+      "price": 50
+      "eligibleUsers": []
+      "enabled": 
+    }
+    
+All fields will be updated EXCEPT: performances, events, and tickets.  Any tickets in this list will have this code applied to them.  Tickets not in this list will not be updated.
+
+Example response:
+
+    {
+      "id": 39029
+      "code": "festivalpass1"
+      "description": "A human readable description"
+      "tickets": [(An array of tickets that this code has been applied to)]
+      "startDate": "2010-03-04T05:05:30-04:00"
+      "endDate":"2010-03-04T05:05:30-04:00"
+      "price": 50
+      "eligibleUsers": []
+      "enabled": 
+    }
+    
+## Removing a code from ticket
+
+    DELETE http://localhost/tix/meta/codes/{code_id}/{ticket_id}
+    
+Example response:
+
+    204 - No content
+    
+## Deleting a code entirely
+
+    DELETE http://localhost/tix/meta/codes/{code_id}
+    
+Example response:
+
+    204 - No content
+    
 
