@@ -151,4 +151,12 @@ Example response:
 
     204 - No content
     
+## Retrieving tickets with a code
+
+    GET http://localhost/tix/tickets?code=festivalpass11&...
+    
+ATHENA will respond with eligible tickets if any are found.  Both the "price" field and the coded price will be returned.
+
+If no tickets are found, an empty array will be returned.
+    
 
