@@ -1,0 +1,7 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="codesManager" class="org.fracturedatlas.athena.helper.codes.manager.CodesManager" autowired="byName"/>
+    <bean id="codesResource" class="org.fracturedatlas.athena.helper.codes.resource.CodesResource" autowire="byName"/>
+</beans>
