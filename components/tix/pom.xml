@@ -168,6 +168,11 @@
             <groupId>org.fracturedatlas.athena.helper</groupId>
             <artifactId>lock</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.fracturedatlas.athena.helper</groupId>
+            <artifactId>codes</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena.helper</groupId>
             <artifactId>ticketfactory</artifactId>
