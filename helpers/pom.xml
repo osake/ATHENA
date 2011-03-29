@@ -16,6 +16,7 @@
         <module>lock</module>
         <module>ticketfactory</module>
         <module>relationship-helper</module>
+        <module>codes</module>
     </modules>
     <dependencies>
 

@@ -37,8 +37,8 @@ The codes helper relies on the following fields in Tix
 * description - A human-readable description of the code
 * startDate - A datetime.  Codes will not be considered valid before this date.
 * endDate - A datetime.  Codes will not be considered valid after this date.
-* eligibleUsers - An array of usernames that are allowed to see this price
-* enabled - Boolean.  True if this code is enabled, false otherwise.  Codes that are false are considered not valid regardless of startDate and endDate
+* eligibleClients - An array of usernames that are allowed to see this price
+* enabled - Boolean.  True if this code is enabled, false otherwise.  Codes that have enabled set to false are considered not valid regardless of startDate and endDate
 
 ## Creating a code
 
@@ -54,7 +54,7 @@ POST a code to /tix/meta/codes.  Include the following information.  performance
       "startDate": "2010-03-04T05:05:30-04:00"
       "endDate":"2010-03-04T05:05:30-04:00"
       "price": 50
-      "eligibleUsers": []
+      "eligibleClients": []
       "enabled": 
     }
     
@@ -79,7 +79,7 @@ Example response:
       "startDate": "2010-03-04T05:05:30-04:00"
       "endDate":"2010-03-04T05:05:30-04:00"
       "price": 50
-      "eligibleUsers": []
+      "eligibleClients": []
       "enabled": 
     }
     
@@ -97,7 +97,7 @@ Response:
       "startDate": "2010-03-04T05:05:30-04:00"
       "endDate":"2010-03-04T05:05:30-04:00"
       "price": 50
-      "eligibleUsers": []
+      "eligibleClients": []
       "enabled": 
     }    
     
@@ -115,7 +115,7 @@ Make a PUT request similar to the POST request above.
       "startDate": "2010-03-04T05:05:30-04:00"
       "endDate":"2010-03-04T05:05:30-04:00"
       "price": 50
-      "eligibleUsers": []
+      "eligibleClients": []
       "enabled": 
     }
     
@@ -131,7 +131,7 @@ Example response:
       "startDate": "2010-03-04T05:05:30-04:00"
       "endDate":"2010-03-04T05:05:30-04:00"
       "price": 50
-      "eligibleUsers": []
+      "eligibleClients": []
       "enabled": 
     }
     
@@ -158,5 +158,3 @@ Example response:
 ATHENA will respond with eligible tickets if any are found.  Both the "price" field and the coded price will be returned.
 
 If no tickets are found, an empty array will be returned.
-    
-
