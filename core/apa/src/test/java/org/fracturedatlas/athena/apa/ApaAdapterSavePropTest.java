@@ -23,12 +23,12 @@ package org.fracturedatlas.athena.apa;
 import java.text.ParseException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -49,7 +49,7 @@ public class ApaAdapterSavePropTest extends BaseApaAdapterTest {
     public void testSaveProp() throws ParseException {
 
 
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("TEST");
         PropField pf3 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT", Boolean.FALSE));
         propFieldsToDelete.add(pf3);
@@ -64,7 +64,7 @@ public class ApaAdapterSavePropTest extends BaseApaAdapterTest {
         newProp.setTicket(t);
         apa.saveTicketProp(newProp);
 
-        Ticket saveTicket = apa.getTicket(t.getType(), t.getId());
+        JpaRecord saveTicket = apa.getTicket(t.getType(), t.getId());
         PTicket savedPTicket = saveTicket.toClientTicket();
         assertEquals("103", savedPTicket.get("TESTINT2"));
         assertEquals("3", savedPTicket.get("TESTINT"));
@@ -76,7 +76,7 @@ public class ApaAdapterSavePropTest extends BaseApaAdapterTest {
     public void testSavePropWrongType() throws ParseException {
 
 
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("TEST");
         PropField pf3 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT", Boolean.FALSE));
         propFieldsToDelete.add(pf3);
@@ -102,7 +102,7 @@ public class ApaAdapterSavePropTest extends BaseApaAdapterTest {
     public void testSavePropWrongType2() throws ParseException {
 
 
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("TEST");
         PropField pf3 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT", Boolean.FALSE));
         propFieldsToDelete.add(pf3);

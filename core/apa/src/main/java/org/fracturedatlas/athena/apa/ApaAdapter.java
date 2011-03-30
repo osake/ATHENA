@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.Set;
 import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.PropValue;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.TicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.PropValue;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.search.AthenaSearch;
 
 /**
@@ -53,7 +53,7 @@ public interface ApaAdapter {
      * @param id
      * @return the ticket or null if the ticket is not found
      */
-    public Ticket getTicket(String type, Object id);
+    public JpaRecord getTicket(String type, Object id);
 
     /**
      * Save a ticket to the database.  This method can be used to save new tickets and update existing tickets.
@@ -62,7 +62,7 @@ public interface ApaAdapter {
      * @return the ticket that was just saved
      * @throws InvalidValueException
      */
-    public Ticket saveTicket(Ticket t) throws InvalidValueException;
+    public JpaRecord saveTicket(JpaRecord t) throws InvalidValueException;
 
     /**
      * Delete a ticket from the database.  Implementors should delete all props associated with this ticket.
@@ -81,7 +81,7 @@ public interface ApaAdapter {
      * @param t the ticket to delete
      * @return true if the delete succeeded, false otherwise
      */
-    public Boolean deleteTicket(Ticket t);
+    public Boolean deleteTicket(JpaRecord t);
     
     /**
      * Search for tickets that match all criteria in search.
@@ -91,7 +91,7 @@ public interface ApaAdapter {
      * @param searchParams the search criteria.  Criteria should be in the format: key = prop, value = prop value
      * @return matching tickets, empty List if no tickets found
      */
-    public Set<Ticket> findTickets(AthenaSearch search);
+    public Set<JpaRecord> findTickets(AthenaSearch search);
 
     /**
      * Save the ticketProps contained in this list

@@ -23,11 +23,11 @@ package org.fracturedatlas.athena.apa;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.text.ParseException;
-import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
 
 public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
 
-    Ticket testTicket = new Ticket();
+    JpaRecord testTicket = new JpaRecord();
     Logger logger = LoggerFactory.getLogger(ApaAdapterDeleteTicketsTest.class);
 
     public ApaAdapterDeleteTicketsTest() throws Exception {
@@ -56,7 +56,7 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
 
     @Test
     public void testDeleteTicketPassingObjectId() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("clown");    
 
         PropField field = new PropField();
@@ -76,14 +76,14 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
 
         assertTrue(apa.deleteTicket(t.getType(), t.getId()));
 
-        Ticket shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
+        JpaRecord shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
         assertNull(shouldBeDeleted);
     }
 
 
     @Test
     public void testDeleteTicketPassingTicket() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("foo");
 
         PropField field = new PropField();
@@ -103,7 +103,7 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
 
         assertTrue(apa.deleteTicket(t));
 
-        Ticket shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
+        JpaRecord shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
         assertNull(shouldBeDeleted);
     }
 
@@ -111,10 +111,10 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
     public void testDeleteTicket2() throws ParseException {
 
 
-        Ticket t = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
+        JpaRecord t = new JpaRecord();
+        JpaRecord t2 = new JpaRecord();
+        JpaRecord t3 = new JpaRecord();
+        JpaRecord t4 = new JpaRecord();
 
         t.setType("ticket");
         t2.setType("ticket");
@@ -143,9 +143,9 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
         ticketsToDelete.add(t4);
         assertTrue(apa.deleteTicket(t2.getType(), t2.getId()));
 
-        Ticket shouldBeDeleted = apa.getTicket(t2.getType(), t2.getId());
+        JpaRecord shouldBeDeleted = apa.getTicket(t2.getType(), t2.getId());
         assertNull(shouldBeDeleted);
-        Ticket expected = apa.getTicket(t.getType(), t.getId());
+        JpaRecord expected = apa.getTicket(t.getType(), t.getId());
         assertEquals(expected, t);
         expected = apa.getTicket(t3.getType(), t3.getId());
         assertEquals(expected, t3);
@@ -157,10 +157,10 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
     public void testDeleteAFewTickets() throws ParseException {
 
 
-        Ticket t = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
+        JpaRecord t = new JpaRecord();
+        JpaRecord t2 = new JpaRecord();
+        JpaRecord t3 = new JpaRecord();
+        JpaRecord t4 = new JpaRecord();
 
         t.setType("ticket");
         t2.setType("ticket");
@@ -192,21 +192,21 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
         assertTrue(apa.deleteTicket(t2.getType(), t2.getId()));
         assertTrue(apa.deleteTicket(t3.getType(), t3.getId()));
 
-        Ticket shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
+        JpaRecord shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
         assertNull(shouldBeDeleted);
         shouldBeDeleted = apa.getTicket(t2.getType(), t2.getId());
         assertNull(shouldBeDeleted);
         shouldBeDeleted = apa.getTicket(t3.getType(), t3.getId());
         assertNull(shouldBeDeleted);
 
-        Ticket expected = apa.getTicket(t4.getType(), t4.getId());
+        JpaRecord expected = apa.getTicket(t4.getType(), t4.getId());
         assertEquals(expected, t4);
 
     }
 
     @Test
     public void testDeleteTicketNullTicket() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("clown");    
 
         PropField field = new PropField();
@@ -234,7 +234,7 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
 
     @Test
     public void testDeleteTicketNotYetPersisted() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("clown");
 
         PropField field = new PropField();

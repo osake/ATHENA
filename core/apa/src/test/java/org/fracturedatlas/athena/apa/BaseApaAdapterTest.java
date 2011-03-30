@@ -19,12 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.apa;
 
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.fracturedatlas.athena.apa.model.*;
+import org.fracturedatlas.athena.apa.impl.jpa.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.junit.Assert.*;
@@ -32,7 +34,7 @@ import static org.junit.Assert.*;
 public abstract class BaseApaAdapterTest {
 
     protected ApaAdapter apa;
-    protected List<Ticket> ticketsToDelete = new ArrayList<Ticket>();
+    protected List<JpaRecord> ticketsToDelete = new ArrayList<JpaRecord>();
     protected List<PropField> propFieldsToDelete = new ArrayList<PropField>();
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -42,7 +44,7 @@ public abstract class BaseApaAdapterTest {
     }
 
     public void teardownTickets() {
-        for (Ticket t : ticketsToDelete) {
+        for (JpaRecord t : ticketsToDelete) {
             try {
                 apa.deleteTicket(t);
             } catch (Exception ignored) {

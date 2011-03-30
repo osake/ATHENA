@@ -20,12 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.apa;
 
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.TicketProp;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -50,7 +50,7 @@ public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket = new JpaRecord();
         ticket.setType("hockey");
         ticket.addTicketProp(new StringTicketProp(field, "03"));
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
@@ -91,7 +91,7 @@ public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket = new JpaRecord();
         ticket.setType("hockey");
         ticket.addTicketProp(new StringTicketProp(field, "03"));
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
@@ -113,7 +113,7 @@ public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket = new JpaRecord();
         ticket.setType("hockey");
         ticket.addTicketProp(new StringTicketProp(field, "03"));
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
@@ -135,7 +135,7 @@ public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket = new JpaRecord();
         ticket.setType("hockey");
         ticket.addTicketProp(new StringTicketProp(field, "03"));
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
