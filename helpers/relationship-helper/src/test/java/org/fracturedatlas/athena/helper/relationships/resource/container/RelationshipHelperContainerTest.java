@@ -23,11 +23,11 @@ import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
 import java.util.Arrays;
 import java.util.List;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.junit.After;
@@ -41,11 +41,11 @@ public class RelationshipHelperContainerTest extends BaseContainerTest {
 
     String path;
 
-    Ticket jimmy = null;
-    Ticket bobby = null;
-    Ticket t3 = null;
-    Ticket t4 = null;
-    Ticket t5 = null;
+    JpaRecord jimmy = null;
+    JpaRecord bobby = null;
+    JpaRecord t3 = null;
+    JpaRecord t4 = null;
+    JpaRecord t5 = null;
 
     @Test
     public void testFindTicketsByRelationship() {
@@ -83,11 +83,11 @@ public class RelationshipHelperContainerTest extends BaseContainerTest {
 
     @Before
     public void addTickets() throws Exception {
-        jimmy = new Ticket();
-        bobby = new Ticket();
-        t3 = new Ticket();
-        t4 = new Ticket();
-        t5 = new Ticket();
+        jimmy = new JpaRecord();
+        bobby = new JpaRecord();
+        t3 = new JpaRecord();
+        t4 = new JpaRecord();
+        t5 = new JpaRecord();
 
         jimmy.setType("person");
         bobby.setType("person");

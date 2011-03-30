@@ -22,14 +22,12 @@ package org.fracturedatlas.athena.helper.relationships.web;
 
 import com.google.gson.Gson;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.fracturedatlas.athena.web.manager.RecordManager;
-import org.fracturedatlas.athena.apa.model.Ticket;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sun.jersey.api.NotFoundException;
@@ -52,10 +50,9 @@ public class RelationshipHelperResource {
     @Autowired
     RelationshipHelperManager relationshipHelperManager;
 
-
     @GET
     @Path("{type}/{id}")
-    public Collection<Ticket> search(@PathParam("type") String type,
+    public Collection<JpaRecord> search(@PathParam("type") String type,
                                      @PathParam("id") String id) throws NotFoundException {
         type = Inflector.getInstance().singularize(type);
         return relationshipHelperManager.findRelationships(type, id);

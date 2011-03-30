@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.helper;
 
 import java.util.List;
-import org.fracturedatlas.athena.apa.model.Ticket;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.client.PTicket;
 import org.mockito.ArgumentMatcher;
 

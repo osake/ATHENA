@@ -19,20 +19,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.helper.relationships.manager;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import org.fracturedatlas.athena.apa.ApaAdapter;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.client.AthenaComponent;
-import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
-import org.fracturedatlas.athena.web.exception.AthenaException;
-import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +40,8 @@ public class RelationshipHelperManager {
     @Autowired
     private ApaAdapter apa;
 
-    public Set<Ticket> findRelationships(String type, String id) {
-        Set<Ticket> tickets = new HashSet<Ticket>();
+    public Set<JpaRecord> findRelationships(String type, String id) {
+        Set<JpaRecord> tickets = new HashSet<JpaRecord>();
 
         AthenaSearch athenaSearch = new AthenaSearch
                 .Builder(new AthenaSearchConstraint("leftSideId", Operator.EQUALS, IdAdapter.toString(id)))

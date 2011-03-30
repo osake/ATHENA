@@ -28,15 +28,14 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.fracturedatlas.athena.apa.ApaAdapter;
-import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.TicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.lock.exception.TicketsLockedException;
 import org.fracturedatlas.athena.helper.lock.model.AthenaLock;
@@ -99,7 +98,7 @@ public class AthenaLockManager {
                                   .and(new AthenaSearchConstraint(AthenaLockManager.LOCKED_BY_API_KEY, Operator.EQUALS, getCurrentUsername()))
                                   .build();
 
-        Collection<Ticket> tickets = apa.findTickets(apaSearch);
+        Collection<JpaRecord> tickets = apa.findTickets(apaSearch);
 
         if(tickets == null || tickets.size() == 0) {
             throw new NotFoundException("Transaction with id [" + id + "] was not found");
@@ -122,11 +121,11 @@ public class AthenaLockManager {
 
     public AthenaLock createLock(HttpServletRequest request, AthenaLock tran) throws Exception {
         //Load all the tickets
-        Set<Ticket> tickets = new HashSet<Ticket>();
+        Set<JpaRecord> tickets = new HashSet<JpaRecord>();
         Set<String> ticketIds = tran.getTickets();
         for(String id : ticketIds) {
 
-            Ticket t = apa.getTicket(LOCK_TYPE, id);
+            JpaRecord t = apa.getTicket(LOCK_TYPE, id);
             if(t == null) {
                 throw new TicketsLockedException("Invalid ticket involved with transaction");
             }
@@ -168,7 +167,7 @@ public class AthenaLockManager {
         PropField lockTimesField = apa.getPropField(AthenaLockManager.LOCK_TIMES);
 
         for(String id : ticketIds) {
-            Ticket t = apa.getTicket(LOCK_TYPE, id);
+            JpaRecord t = apa.getTicket(LOCK_TYPE, id);
 
             //TODO: This might not work
             t.setTicketProp(new StringTicketProp(lockId, tran.getId()));
@@ -183,12 +182,12 @@ public class AthenaLockManager {
     public AthenaLock updateLock(String id, HttpServletRequest request, AthenaLock tran) throws Exception {
         //Load all the tickets
         Set<String> ticketIds = new HashSet<String>();
-        Set<Ticket> ticketsInTransaction = getTicketsInTransaction(tran.getId());
+        Set<JpaRecord> ticketsInTransaction = getTicketsInTransaction(tran.getId());
 
         //This looks a little stupid: loading the tickets from apa even though the client is sending us
         //an array of tickets.  We do this though to prevent the client from adding in extra tickets
         //beyond those that were locked with the initial lock
-        for(Ticket ticket : ticketsInTransaction) {
+        for(JpaRecord ticket : ticketsInTransaction) {
             ticketIds.add(ticket.getId().toString());
         }
 
@@ -197,7 +196,7 @@ public class AthenaLockManager {
         AthenaLock transactionFromTickets = null;
 
         for(String ticketId : ticketIds) {
-            Ticket t = apa.getTicket(LOCK_TYPE, ticketId);
+            JpaRecord t = apa.getTicket(LOCK_TYPE, ticketId);
 
             if(t == null) {
                 throw new TicketsLockedException("Invalid ticket involved with transaction");
@@ -292,7 +291,7 @@ public class AthenaLockManager {
 
     public void deleteLock(String id, HttpServletRequest request) throws Exception {
         //get the tickets on the tran
-        Set<Ticket> ticketsInTransaction = getTicketsInTransaction(id);
+        Set<JpaRecord> ticketsInTransaction = getTicketsInTransaction(id);
 
         logger.info("TICKETS IN THIS TRANSACTION: {}", ticketsInTransaction);
 
@@ -314,7 +313,7 @@ public class AthenaLockManager {
 
 
 
-        for(Ticket ticket : ticketsInTransaction) {
+        for(JpaRecord ticket : ticketsInTransaction) {
             TicketProp prop = apa.getTicketProp(AthenaLockManager.LOCK_ID, LOCK_TYPE, ticket.getId());
             prop.setValue(null);
             apa.saveTicketProp(prop);
@@ -337,14 +336,14 @@ public class AthenaLockManager {
         }
     }
 
-    private Set<Ticket> getTicketsInTransaction(String lockId) {
+    private Set<JpaRecord> getTicketsInTransaction(String lockId) {
         AthenaSearch search = new AthenaSearch();
         search.addConstraint(AthenaLockManager.LOCK_ID, Operator.EQUALS, lockId);
-        Set<Ticket> ticketsInTransaction = apa.findTickets(search);
+        Set<JpaRecord> ticketsInTransaction = apa.findTickets(search);
         return ticketsInTransaction;
     }
 
-    private AthenaLock loadTransactionFromTicket(Ticket t) {
+    private AthenaLock loadTransactionFromTicket(JpaRecord t) {
 
         logger.info("LOADING FROM TICKET: {}", t);
 
@@ -387,7 +386,7 @@ public class AthenaLockManager {
      *
      * @param ticket the ticket
      */
-    private Boolean isInvolvedInActiveTransaction(Ticket ticket) {
+    private Boolean isInvolvedInActiveTransaction(JpaRecord ticket) {
         TicketProp prop = ticket.getTicketProp(AthenaLockManager.LOCK_ID);
 
         if(prop == null) {
@@ -403,9 +402,9 @@ public class AthenaLockManager {
         return false;
     }
 
-    private Set<String> getTicketIds(Collection<Ticket> tickets) {
+    private Set<String> getTicketIds(Collection<JpaRecord> tickets) {
         Set<String> ids = new HashSet<String>();
-        for(Ticket t : tickets) {
+        for(JpaRecord t : tickets) {
             ids.add(t.getId().toString());
         }
         return ids;
