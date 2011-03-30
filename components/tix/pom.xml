@@ -69,11 +69,11 @@
             </build>
         </profile>
 
-        <!-- 
+        <!--
          *
-         * 
-         * Generate Athena-runner artifacts 
-         * 
+         *
+         * Generate Athena-runner artifacts
+         *
          *
         -->
         <profile>
