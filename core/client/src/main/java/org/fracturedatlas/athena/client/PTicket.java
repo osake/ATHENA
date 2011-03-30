@@ -32,10 +32,15 @@ import org.fracturedatlas.athena.id.*;
 public class PTicket {
 
     private Object id;
+    private String type;
     private Map<String, String> props;
 
     public PTicket() {
         props = new HashMap<String, String>();
+    }
+    public PTicket(String type) {
+        this();
+        this.type = type;
     }
 
     public Object getId() {
@@ -44,6 +49,14 @@ public class PTicket {
 
     public void setId(Object id) {
         this.id = id;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public Map<String, String> getProps() {
@@ -86,6 +99,9 @@ public class PTicket {
         if (this.id != other.id && (this.id == null || !IdAdapter.isEqual(this.id, other.id))) {
             return false;
         }
+        if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
+            return false;
+        }
         if (this.props != other.props && (this.props == null || !this.props.equals(other.props))) {
             return false;
         }
@@ -94,9 +110,10 @@ public class PTicket {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 67 * hash + (this.id != null ? this.id.hashCode() : 0);
-        hash = 67 * hash + (this.props != null ? this.props.hashCode() : 0);
+        int hash = 5;
+        hash = 79 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 79 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 79 * hash + (this.props != null ? this.props.hashCode() : 0);
         return hash;
     }
 

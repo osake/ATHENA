@@ -80,9 +80,8 @@ public class StrictPropertyTest extends BaseManagerTest {
 
         PTicket expectedPTicket = t.toClientTicket();
         expectedPTicket.put(pf.getName(), "UPDATED");
-        JpaRecord savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
-        PTicket actualPTicket = savedTicket.toClientTicket();
-        assertTrue(expectedPTicket.equals(actualPTicket));
+        PTicket savedTicket = manager.createRecord("ticket", expectedPTicket);
+        assertTrue(expectedPTicket.equals(savedTicket));
     }
 
     @Test
@@ -105,7 +104,7 @@ public class StrictPropertyTest extends BaseManagerTest {
         PTicket expectedPTicket = t.toClientTicket();
         expectedPTicket.put(pf.getName(), "THIS_SHOULD_FAIL");
         try {
-            JpaRecord savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
+            PTicket savedTicket = manager.createRecord("ticket", expectedPTicket);
             fail("Should have gotten an InvalidValueException");
         } catch (InvalidValueException ive) {
             //pass
@@ -133,9 +132,8 @@ public class StrictPropertyTest extends BaseManagerTest {
 
         PTicket expectedPTicket = t.toClientTicket();
         expectedPTicket.put(pf.getName(), "5");
-        JpaRecord savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
-        PTicket actualPTicket = savedTicket.toClientTicket();
-        assertTrue(expectedPTicket.equals(actualPTicket));
+        PTicket savedTicket = manager.createRecord("ticket", expectedPTicket);
+        assertTrue(expectedPTicket.equals(savedTicket));
     }
 
     @Test
@@ -160,7 +158,7 @@ public class StrictPropertyTest extends BaseManagerTest {
         PTicket expectedPTicket = t.toClientTicket();
         expectedPTicket.put(pf.getName(), "6");
         try {
-            JpaRecord savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
+            PTicket savedTicket = manager.createRecord("ticket", expectedPTicket);
             fail("Should have gotten an InvalidValueException");
         } catch (InvalidValueException ive) {
             //pass

@@ -24,7 +24,7 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
+import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 
 @Entity
 @DiscriminatorValue("INTEGER")
@@ -52,7 +52,11 @@ public class IntegerTicketProp extends TicketProp implements Serializable {
     }
 
     public void setValue(String s) {
-        setValue(Integer.parseInt(s));
+        try {
+            setValue(Integer.parseInt(s));
+        } catch (NumberFormatException nfe) {
+            throw new InvalidValueException(buildExceptionMessage(s, propField), nfe);
+        }
     }
 
     public void setValue(Integer value) {

@@ -181,7 +181,7 @@ public class RecordResource {
     @Path("{type}/")
     public Object save(@PathParam("type") String type, PTicket pTicket) throws Exception {
         type = Inflector.getInstance().singularize(type);
-        JpaRecord ticket  = recordManager.saveTicketFromClientRequest(type, pTicket);
+        PTicket ticket  = recordManager.createRecord(type, pTicket);
         return ticket;
     }
 
@@ -196,7 +196,7 @@ public class RecordResource {
     @Path("{type}/{id}")
     public Object update(@PathParam("type") String type, @PathParam("id") String id, PTicket pTicket) throws Exception {
         type = Inflector.getInstance().singularize(type);
-        JpaRecord ticket  = recordManager.updateTicketFromClientTicket(type, pTicket, id);
+        PTicket ticket  = recordManager.updateRecord(type, pTicket, id);
         return ticket;
     }
 
