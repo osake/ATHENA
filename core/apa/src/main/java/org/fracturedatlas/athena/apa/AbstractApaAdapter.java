@@ -25,10 +25,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.PropValue;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.TicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.PropValue;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.search.AthenaSearch;
 
 /**
@@ -42,12 +42,12 @@ import org.fracturedatlas.athena.search.AthenaSearch;
 public abstract class AbstractApaAdapter implements ApaAdapter {
     
     @Override
-    public Ticket getTicket(String type, Object id) {
+    public JpaRecord getTicket(String type, Object id) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
     
     @Override
-    public Ticket saveTicket(Ticket t) throws InvalidValueException {
+    public JpaRecord saveTicket(JpaRecord t) throws InvalidValueException {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
@@ -57,7 +57,7 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Boolean deleteTicket(Ticket t) {
+    public Boolean deleteTicket(JpaRecord t) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
@@ -67,8 +67,8 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Set<Ticket> findTickets(AthenaSearch search) {
-        return new HashSet<Ticket>();
+    public Set<JpaRecord> findTickets(AthenaSearch search) {
+        return new HashSet<JpaRecord>();
     }
 
     @Override

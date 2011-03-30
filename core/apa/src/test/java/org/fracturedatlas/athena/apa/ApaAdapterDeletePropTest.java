@@ -21,12 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import org.fracturedatlas.athena.apa.exception.ApaException;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.TicketProp;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -50,7 +50,7 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket = new JpaRecord();
         ticket.setType("hockey");
         TicketProp seatProp = new StringTicketProp(field, "03");
 
@@ -93,7 +93,7 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
         PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket = new JpaRecord();
         ticket.setType("hockey");
         TicketProp seatProp = new StringTicketProp(field, "03");
 
@@ -108,7 +108,7 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         ticket = apa.saveTicket(ticket);
 
 
-        Ticket ticket2 = new Ticket();
+        JpaRecord ticket2 = new JpaRecord();
         ticket2.setType("dos");
         ticket2.addTicketProp(new StringTicketProp(field, "ddd"));
         ticket2.addTicketProp(new StringTicketProp(field1, "fff"));
@@ -174,7 +174,7 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
         PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket = new JpaRecord();
         ticket.setType("hockey");
         TicketProp seatProp = new StringTicketProp(field, "03");
         ticket.addTicketProp(seatProp);

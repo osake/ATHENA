@@ -21,14 +21,14 @@ package org.fracturedatlas.athena.apa;
 
 import java.util.Collection;
 import org.fracturedatlas.athena.apa.exception.ApaException;
-import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
-import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.util.date.DateUtil;
@@ -51,7 +51,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     public void testFindTicketsOneStringProp() {
 
         search.addConstraint("SECTION", Operator.EQUALS, "A");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(5, tickets.size());
 
@@ -73,7 +73,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     public void testFindTicketsGreaterThan() {
         search = getSearcher();
         search.addConstraint("PRICE", Operator.GREATER_THAN, "0");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(10, tickets.size());
 
@@ -95,7 +95,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
     public void testFindTicketsLessThan() {
         search = getSearcher();
         search.addConstraint("PRICE", Operator.LESS_THAN, "0");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(0, tickets.size());
 
@@ -119,7 +119,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
         search = getSearcher();
         search.addConstraint("PRICE", Operator.GREATER_THAN, "49");
         search.addConstraint("PRICE", Operator.LESS_THAN, "151");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(7, tickets.size());
 
@@ -130,7 +130,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
         search = getSearcher();
         search.addConstraint("PERFORMANCE", Operator.EQUALS, "2010-10-02T13:33:50-04:00");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(1, tickets.size());
     }
@@ -139,7 +139,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
         search = getSearcher();
         search.addConstraint("PERFORMANCE", Operator.GREATER_THAN, "2010-10-05");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(6, tickets.size());
 
@@ -162,7 +162,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
         search = getSearcher();
         search.addConstraint("PERFORMANCE", Operator.LESS_THAN, "2010-10-05");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(4, tickets.size());
 
@@ -186,7 +186,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
         search = getSearcher();
         search.addConstraint("PERFORMANCE", Operator.LESS_THAN, "2010-10-07");
         search.addConstraint("PERFORMANCE", Operator.GREATER_THAN, "2010-10-05");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(2, tickets.size());
 
@@ -197,7 +197,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
         search = getSearcher();
         search.addConstraint("PRICE", Operator.GREATER_THAN, "0");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(10, tickets.size());
 
@@ -214,7 +214,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
         search = getSearcher();
         search.addConstraint("PRICE", Operator.GREATER_THAN, "-40");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(10, tickets.size());
 
@@ -226,7 +226,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
         search = getSearcher();
         search.addConstraint("PRICE", Operator.GREATER_THAN, "OHNOES");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(0, tickets.size());
 
@@ -237,7 +237,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
         search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(7, tickets.size());
 
@@ -266,7 +266,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
         search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier(AthenaSearch.LIMIT, "6");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(6, tickets.size());
     }
@@ -276,7 +276,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
         search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier(AthenaSearch.LIMIT, "7");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(7, tickets.size());
     }
@@ -286,7 +286,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
         search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier(AthenaSearch.LIMIT, "8");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(7, tickets.size());
     }
@@ -296,7 +296,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
         search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier(AthenaSearch.LIMIT, "0");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(0, tickets.size());
     }
@@ -306,7 +306,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
         search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier(AthenaSearch.LIMIT, "1");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(1, tickets.size());
 
@@ -317,7 +317,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
         search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "false");
         search.setSearchModifier(AthenaSearch.LIMIT, "dog");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(7, tickets.size());
     }
@@ -327,7 +327,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
         search = getSearcher();
         search.addConstraint("PRICE", Operator.GREATER_THAN, "26");
         search.addConstraint("SOLD", Operator.EQUALS, "FALSE");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(3, tickets.size());
     }
@@ -337,7 +337,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
         search = getSearcher();
         search.addConstraint("LOCKED", Operator.EQUALS, "FALSE");
         search.addConstraint("SOLD", Operator.EQUALS, "FALSE");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(4, tickets.size());
     }
@@ -347,7 +347,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
         search = getSearcher();
         search.addConstraint("TIER", Operator.EQUALS, "SILVER");
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(2, tickets.size());
 
@@ -359,7 +359,7 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
         search = new AthenaSearch();
         search.addConstraint("TIER", Operator.EQUALS, "SILVER");
         try{
-            Collection<Ticket> tickets = apa.findTickets(search);
+            Collection<JpaRecord> tickets = apa.findTickets(search);
             fail("Should have thrown ApaException");
         } catch (ApaException ae) {
             //pass
@@ -369,16 +369,16 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
     @Before
     public void addTickets() throws Exception {
-        Ticket t1 = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
-        Ticket t5 = new Ticket();
-        Ticket t6 = new Ticket();
-        Ticket t7 = new Ticket();
-        Ticket t8 = new Ticket();
-        Ticket t9 = new Ticket();
-        Ticket t10 = new Ticket();
+        JpaRecord t1 = new JpaRecord();
+        JpaRecord t2 = new JpaRecord();
+        JpaRecord t3 = new JpaRecord();
+        JpaRecord t4 = new JpaRecord();
+        JpaRecord t5 = new JpaRecord();
+        JpaRecord t6 = new JpaRecord();
+        JpaRecord t7 = new JpaRecord();
+        JpaRecord t8 = new JpaRecord();
+        JpaRecord t9 = new JpaRecord();
+        JpaRecord t10 = new JpaRecord();
 
         t1.setType("ticket");
         t2.setType("ticket");

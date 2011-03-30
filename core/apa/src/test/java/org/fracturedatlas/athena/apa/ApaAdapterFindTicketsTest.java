@@ -26,14 +26,14 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map.Entry;
-import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
-import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.util.date.DateUtil;
@@ -61,7 +61,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         as.addConstraint("SEAT NUMBER", Operator.EQUALS, "");
         as.setType("ticket");
 
-        Collection<Ticket> tickets = apa.findTickets(as);
+        Collection<JpaRecord> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
     }
 
@@ -70,7 +70,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("UNKNOWN_PROP_NAME15", Operator.EQUALS, "ABCDEFG");
         as.setType("ticket");
-        Collection<Ticket> tickets = apa.findTickets(as);
+        Collection<JpaRecord> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
     }
 
@@ -79,13 +79,13 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("Seat Number", Operator.EQUALS, "ABCDEFG");
         as.setType("ticket");
-        Collection<Ticket> tickets = apa.findTickets(as);
+        Collection<JpaRecord> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
     }
 
     @Test
     public void testFindTicketsOneBooleanProperty() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField field = new PropField();
@@ -106,13 +106,13 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("BOOLEAN_PROP", Operator.EQUALS, "true");
         as.setType("ticket");
-        Collection<Ticket> tickets = apa.findTickets(as);
+        Collection<JpaRecord> tickets = apa.findTickets(as);
         assertEquals(1, tickets.size());
     }
 
     @Test
     public void testFindTicketsOneIntegerProperty() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField field = new PropField();
@@ -133,10 +133,10 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("INTEGER_PROP", Operator.EQUALS, "2");
         as.setType("ticket");
-        Collection<Ticket> tickets = apa.findTickets(as);
+        Collection<JpaRecord> tickets = apa.findTickets(as);
         assertEquals(1, tickets.size());
 
-        for (Ticket ticket : tickets) {
+        for (JpaRecord ticket : tickets) {
             PTicket pTicket = t.toClientTicket();
             for (Entry<String, String> entry : pTicket.getProps().entrySet()) {
                 assertEquals(entry.getKey(), "INTEGER_PROP");
@@ -148,7 +148,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsTwoProperties() {
 
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", StrictType.NOT_STRICT));
@@ -166,14 +166,14 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         as.addConstraint("SEAT_NUMBER", Operator.EQUALS, "3");
         as.addConstraint("LOCKED", Operator.EQUALS, "true");
         as.setType("ticket");
-        Collection<Ticket> tickets = apa.findTickets(as);
+        Collection<JpaRecord> tickets = apa.findTickets(as);
         assertEquals(1, tickets.size());
     }
 
     //@Test
     public void testFindTicketsMultipleProperties() throws ParseException {
 
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField field = new PropField();
@@ -216,7 +216,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         as.addConstraint("Artist", Operator.EQUALS, "ACDC");
         as.addConstraint("Date", Operator.EQUALS, "\'2010-10-14T13:33:50-04:00\'");
         as.setType("ticket");
-        Collection<Ticket> tickets = apa.findTickets(as);
+        Collection<JpaRecord> tickets = apa.findTickets(as);
         assertEquals(1, tickets.size());
     }
 
@@ -224,7 +224,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsMultipleProperties2() throws ParseException {
 
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField field = new PropField();
@@ -265,7 +265,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         as.addConstraint("locked", Operator.EQUALS, "true");
         as.addConstraint("Artist", Operator.EQUALS, "Foo");
         as.setType("ticket");
-        Collection<Ticket> tickets = apa.findTickets(as);
+        Collection<JpaRecord> tickets = apa.findTickets(as);
 
         assertEquals(0, tickets.size());
     }
@@ -277,14 +277,14 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testFindMultipleTickets2() {
 
-        List<Ticket> winners = new ArrayList<Ticket>();
+        List<JpaRecord> winners = new ArrayList<JpaRecord>();
 
-        Ticket t = new Ticket("ticket");
-        Ticket t2 = new Ticket("ticket");
-        Ticket t3 = new Ticket("ticket");
-        Ticket t4 = new Ticket("ticket");
-        Ticket t5 = new Ticket("ticket");
-        Ticket t6 = new Ticket("ticket");
+        JpaRecord t = new JpaRecord("ticket");
+        JpaRecord t2 = new JpaRecord("ticket");
+        JpaRecord t3 = new JpaRecord("ticket");
+        JpaRecord t4 = new JpaRecord("ticket");
+        JpaRecord t5 = new JpaRecord("ticket");
+        JpaRecord t6 = new JpaRecord("ticket");
 
         PropField field = new PropField(ValueType.STRING, "Artist", Boolean.FALSE);
         PropField pf3 = apa.savePropField(field);
@@ -324,7 +324,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         AthenaSearch as = new AthenaSearch.Builder().type("ticket")
                                                     .and(new AthenaSearchConstraint("Artist", Operator.EQUALS, "ACDC"))
                                                     .build();
-        Collection<Ticket> tickets = apa.findTickets(as);
+        Collection<JpaRecord> tickets = apa.findTickets(as);
         assertEquals(4, tickets.size());
 
         doCollectionsContainSameElements(winners, tickets);
@@ -336,14 +336,14 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testFindMultipleTickets3() {
 
-        List<Ticket> winners = new ArrayList<Ticket>();
+        List<JpaRecord> winners = new ArrayList<JpaRecord>();
 
-        Ticket t = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
-        Ticket t5 = new Ticket();
-        Ticket t6 = new Ticket();
+        JpaRecord t = new JpaRecord();
+        JpaRecord t2 = new JpaRecord();
+        JpaRecord t3 = new JpaRecord();
+        JpaRecord t4 = new JpaRecord();
+        JpaRecord t5 = new JpaRecord();
+        JpaRecord t6 = new JpaRecord();
 
         PropField pf3 = apa.savePropField(new PropField(ValueType.STRING, "Artist", Boolean.FALSE));
         PropField pf4 = apa.savePropField(new PropField(ValueType.INTEGER, "PRICE", Boolean.FALSE));
@@ -395,7 +395,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
                                                     .and(new AthenaSearchConstraint("Artist", Operator.EQUALS, "ACDC"))
                                                     .and(new AthenaSearchConstraint("PRICE", Operator.EQUALS, "50"))
                                                     .build();
-        Collection<Ticket> tickets = apa.findTickets(as);
+        Collection<JpaRecord> tickets = apa.findTickets(as);
         assertEquals(3, tickets.size());
 
         doCollectionsContainSameElements(winners, tickets);
@@ -407,14 +407,14 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testFindMultipleTickets4() {
 
-        List<Ticket> winners = new ArrayList<Ticket>();
+        List<JpaRecord> winners = new ArrayList<JpaRecord>();
         
-        Ticket t = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
-        Ticket t5 = new Ticket();
-        Ticket t6 = new Ticket();
+        JpaRecord t = new JpaRecord();
+        JpaRecord t2 = new JpaRecord();
+        JpaRecord t3 = new JpaRecord();
+        JpaRecord t4 = new JpaRecord();
+        JpaRecord t5 = new JpaRecord();
+        JpaRecord t6 = new JpaRecord();
 
         PropField pf3 = apa.savePropField(new PropField(ValueType.STRING, "Artist", Boolean.FALSE));
         PropField pf4 = apa.savePropField(new PropField(ValueType.INTEGER, "PRICE", Boolean.FALSE));
@@ -464,7 +464,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
                                                     .and(new AthenaSearchConstraint("Artist", Operator.EQUALS, "Warrant"))
                                                     .and(new AthenaSearchConstraint("PRICE", Operator.EQUALS, "100"))
                                                     .build();
-        Collection<Ticket> tickets = apa.findTickets(as);
+        Collection<JpaRecord> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
         doCollectionsContainSameElements(winners, tickets);
 
@@ -476,14 +476,14 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testFindMultipleTickets5() {
 
-        List<Ticket> winners = new ArrayList<Ticket>();
+        List<JpaRecord> winners = new ArrayList<JpaRecord>();
 
-        Ticket t = new Ticket("ticket");
-        Ticket t2 = new Ticket("ticket");
-        Ticket t3 = new Ticket("ticket");
-        Ticket t4 = new Ticket("ticket");
-        Ticket t5 = new Ticket("ticket");
-        Ticket t6 = new Ticket("ticket");
+        JpaRecord t = new JpaRecord("ticket");
+        JpaRecord t2 = new JpaRecord("ticket");
+        JpaRecord t3 = new JpaRecord("ticket");
+        JpaRecord t4 = new JpaRecord("ticket");
+        JpaRecord t5 = new JpaRecord("ticket");
+        JpaRecord t6 = new JpaRecord("ticket");
 
         PropField pf3 = apa.savePropField(new PropField(ValueType.STRING, "Artist", Boolean.FALSE));
         PropField pf4 = apa.savePropField(new PropField(ValueType.INTEGER, "PRICE", Boolean.FALSE));
@@ -530,7 +530,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         AthenaSearch as = new AthenaSearch.Builder().type("ticket")
                                                     .and(new AthenaSearchConstraint("PRICE", Operator.EQUALS, "50"))
                                                     .build();
-        Collection<Ticket> tickets = apa.findTickets(as);
+        Collection<JpaRecord> tickets = apa.findTickets(as);
         assertEquals(4, tickets.size());
         doCollectionsContainSameElements(winners, tickets);
     }
@@ -538,10 +538,10 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     @Test
     public void testFindTicketsWithoutTime() throws ParseException {
 
-        Ticket t = new Ticket("ticket");
-        Ticket t2 = new Ticket("ticket");
-        Ticket t3 = new Ticket("ticket");
-        Ticket t4 = new Ticket("ticket");
+        JpaRecord t = new JpaRecord("ticket");
+        JpaRecord t2 = new JpaRecord("ticket");
+        JpaRecord t3 = new JpaRecord("ticket");
+        JpaRecord t4 = new JpaRecord("ticket");
 
         PropField field = new PropField();
         field = new PropField();
@@ -572,7 +572,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("Date", Operator.EQUALS, "2010-10-09");
         as.setType("ticket");
-        Collection<Ticket> tickets = apa.findTickets(as);
+        Collection<JpaRecord> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
     }
 
@@ -580,10 +580,10 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     public void testFindTicketsWithoutDate() throws ParseException {
 
 
-        Ticket t = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
+        JpaRecord t = new JpaRecord();
+        JpaRecord t2 = new JpaRecord();
+        JpaRecord t3 = new JpaRecord();
+        JpaRecord t4 = new JpaRecord();
 
         PropField field = new PropField();
         field = new PropField();
@@ -614,7 +614,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("Date", Operator.EQUALS, "16:00:00");
         as.setType("ticket");
-        Collection<Ticket> tickets = apa.findTickets(as);
+        Collection<JpaRecord> tickets = apa.findTickets(as);
         assertEquals(0, tickets.size());
     }
 }

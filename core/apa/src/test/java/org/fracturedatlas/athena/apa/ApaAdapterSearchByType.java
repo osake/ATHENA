@@ -21,14 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import java.util.Collection;
-import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
-import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
@@ -52,7 +52,7 @@ public class ApaAdapterSearchByType extends BaseApaAdapterTest {
                               .type("event")
                               .and(new AthenaSearchConstraint("HALF_PRICE_AVAILABLE", Operator.EQUALS, "true"))
                               .build();
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(4, tickets.size());
     }
@@ -64,23 +64,23 @@ public class ApaAdapterSearchByType extends BaseApaAdapterTest {
                               .type("performance")
                               .and(new AthenaSearchConstraint("HALF_PRICE_AVAILABLE", Operator.EQUALS, "true"))
                               .build();
-        Collection<Ticket> tickets = apa.findTickets(search);
+        Collection<JpaRecord> tickets = apa.findTickets(search);
         assertNotNull(tickets);
         assertEquals(1, tickets.size());
     }
 
     @Before
     public void addTickets() throws Exception {
-        Ticket t1 = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
-        Ticket t5 = new Ticket();
-        Ticket t6 = new Ticket();
-        Ticket t7 = new Ticket();
-        Ticket t8 = new Ticket();
-        Ticket t9 = new Ticket();
-        Ticket t10 = new Ticket();
+        JpaRecord t1 = new JpaRecord();
+        JpaRecord t2 = new JpaRecord();
+        JpaRecord t3 = new JpaRecord();
+        JpaRecord t4 = new JpaRecord();
+        JpaRecord t5 = new JpaRecord();
+        JpaRecord t6 = new JpaRecord();
+        JpaRecord t7 = new JpaRecord();
+        JpaRecord t8 = new JpaRecord();
+        JpaRecord t9 = new JpaRecord();
+        JpaRecord t10 = new JpaRecord();
 
         /*
          * Five of type red

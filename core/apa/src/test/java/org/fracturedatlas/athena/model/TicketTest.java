@@ -21,12 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.model;
 
 import org.fracturedatlas.athena.apa.BaseApaAdapterTest;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.TicketProp;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.PTicket;
 import org.junit.After;
 import org.junit.Test;
@@ -52,7 +52,7 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket = new JpaRecord();
         ticket.setType("record");
         ticket.addTicketProp(new StringTicketProp(field, "03"));
         ticket.addTicketProp(new StringTicketProp(field1, "13"));
@@ -74,7 +74,7 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket = new JpaRecord();
         ticket.setType("record");
         TicketProp testProp = new StringTicketProp(field1, "13");
         ticket.addTicketProp(new StringTicketProp(field, "03"));
@@ -112,7 +112,7 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket = new JpaRecord();
         ticket.setType("record");
         TicketProp testProp = new StringTicketProp(field1, "13");
         ticket.setTicketProp(new StringTicketProp(field, "03"));
@@ -121,7 +121,7 @@ public class TicketTest extends BaseApaAdapterTest {
 
         ticket = apa.saveTicket(ticket);
         ticketsToDelete.add(ticket);
-        Ticket ticket2 = apa.getTicket(ticket.getType(), ticket.getId());
+        JpaRecord ticket2 = apa.getTicket(ticket.getType(), ticket.getId());
         assertTrue(ticket.equals(ticket2));
         assertTrue(ticket2.equals(ticket));
 
@@ -136,14 +136,14 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket = new JpaRecord();
         ticket.setType("record");
         TicketProp testProp = new StringTicketProp(field1, "13");
         ticket.setTicketProp(new StringTicketProp(field, "03"));
         ticket.setTicketProp(testProp);
         ticket.setTicketProp(new StringTicketProp(field2, "23"));
 
-        Ticket ticket2 = new Ticket();
+        JpaRecord ticket2 = new JpaRecord();
         ticket2.setType("record");
         ticket2.setTicketProp(new StringTicketProp(field, "03"));
         ticket2.setTicketProp(testProp);
@@ -163,10 +163,10 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket = new JpaRecord();
         ticket.setType("record");
 
-        Ticket ticket2 = new Ticket();
+        JpaRecord ticket2 = new JpaRecord();
         ticket2.setType("record");
 
         ticket = apa.saveTicket(ticket);
@@ -187,14 +187,14 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket = new JpaRecord();
         ticket.setType("record");
         TicketProp testProp = new StringTicketProp(field1, "13");
         ticket.setTicketProp(new StringTicketProp(field, "03"));
         ticket.setTicketProp(testProp);
         ticket.setTicketProp(new StringTicketProp(field2, "23"));
 
-        Ticket ticket2 = new Ticket();
+        JpaRecord ticket2 = new JpaRecord();
         ticket2.setType("record");
         ticket2.setTicketProp(new StringTicketProp(field, "03"));
         ticket2.setTicketProp(testProp);
@@ -218,7 +218,7 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket = new JpaRecord();
         ticket.setType("record");
         TicketProp testProp = new StringTicketProp(field1, "13");
         ticket.setTicketProp(new StringTicketProp(field, "03"));
@@ -226,13 +226,13 @@ public class TicketTest extends BaseApaAdapterTest {
         ticket.setTicketProp(new StringTicketProp(field2, "23"));
 
         ticket = apa.saveTicket(ticket);
-        Ticket savedTicket = apa.getTicket(ticket.getType(), ticket.getId());
+        JpaRecord savedTicket = apa.getTicket(ticket.getType(), ticket.getId());
         ticketsToDelete.add(savedTicket);
         ticket.setType("foo");
         assertFalse(ticket.equals(savedTicket));
         assertFalse(savedTicket.equals(ticket));
 
-        Ticket newTicket = apa.saveTicket(ticket);
+        JpaRecord newTicket = apa.saveTicket(ticket);
 
         assertTrue(newTicket.equals(ticket));
         assertTrue(ticket.equals(newTicket));
@@ -248,7 +248,7 @@ public class TicketTest extends BaseApaAdapterTest {
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket = new JpaRecord();
         ticket.setType("record");
         TicketProp testProp = new StringTicketProp(field1, "13");
         ticket.setTicketProp(new StringTicketProp(field, "03"));
@@ -256,13 +256,13 @@ public class TicketTest extends BaseApaAdapterTest {
         ticket.setTicketProp(new StringTicketProp(field2, "23"));
 
         ticket = apa.saveTicket(ticket);
-        Ticket savedTicket = apa.getTicket(ticket.getType(), ticket.getId());
+        JpaRecord savedTicket = apa.getTicket(ticket.getType(), ticket.getId());
         ticketsToDelete.add(savedTicket);
         ticket.setTicketProp(new StringTicketProp(field2, "123"));
         assertFalse(ticket.equals(savedTicket));
         assertFalse(savedTicket.equals(ticket));
 
-        Ticket newTicket = apa.saveTicket(ticket);
+        JpaRecord newTicket = apa.saveTicket(ticket);
 
         assertTrue(newTicket.equals(ticket));
         assertTrue(ticket.equals(newTicket));
