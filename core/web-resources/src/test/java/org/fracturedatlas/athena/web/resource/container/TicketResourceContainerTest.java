@@ -28,13 +28,13 @@ import static org.junit.Assert.*;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
-import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.fracturedatlas.athena.util.date.DateUtil;
@@ -46,7 +46,7 @@ import org.junit.Test;
 
 public class TicketResourceContainerTest extends BaseTixContainerTest {
 
-    Ticket testTicket = new Ticket();
+    JpaRecord testTicket = new JpaRecord();
     String testTicketJson = "";
     ObjectMapper mapper = new ObjectMapper();
     Gson gson = JsonUtil.getGson();
@@ -62,7 +62,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testGetTicketJson() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField field = new PropField();
@@ -103,7 +103,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testGetTicketBooleanProp() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField pf = apa.savePropField(new PropField(ValueType.STRING, "SEAT_NUMBER", Boolean.FALSE));
@@ -135,7 +135,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testGetTicketDateTimeProp() throws Exception {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField pf = apa.savePropField(new PropField(ValueType.DATETIME, "PERFORMANCE", Boolean.FALSE));
@@ -168,7 +168,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testGetTicketIntegerProp() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", Boolean.FALSE));
         PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
@@ -199,7 +199,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testGetTicketProps() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", Boolean.FALSE));
         propFieldsToDelete.add(pf);
@@ -236,7 +236,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testGetTicketPropsNoProps() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", Boolean.FALSE));
         propFieldsToDelete.add(pf);
@@ -256,7 +256,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testGetTicketWithNoProps() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         t = apa.saveTicket(t);
@@ -288,7 +288,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testDeleteTicket() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField field = new PropField();
@@ -311,7 +311,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.NO_CONTENT,
                 ClientResponse.Status.fromStatusCode(response.getStatus()));
 
-        Ticket shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
+        JpaRecord shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
         assertNull(shouldBeDeleted);
 
         path = "tickets/" + t.getId() + ".json";
@@ -323,10 +323,10 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     public void testDeleteTicket2() throws ParseException {
 
 
-        Ticket t = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
+        JpaRecord t = new JpaRecord();
+        JpaRecord t2 = new JpaRecord();
+        JpaRecord t3 = new JpaRecord();
+        JpaRecord t4 = new JpaRecord();
 
         PropField field = new PropField();
         field = new PropField();
@@ -363,9 +363,9 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.NO_CONTENT,
                 ClientResponse.Status.fromStatusCode(response.getStatus()));
 
-        Ticket shouldBeDeleted = apa.getTicket(t3.getType(), t3.getId());
+        JpaRecord shouldBeDeleted = apa.getTicket(t3.getType(), t3.getId());
         assertNull(shouldBeDeleted);
-        Ticket expected = apa.getTicket(t.getType(), t.getId());
+        JpaRecord expected = apa.getTicket(t.getType(), t.getId());
         assertEquals(expected, t);
         expected = apa.getTicket(t2.getType(), t2.getId());
         assertEquals(expected, t2);
@@ -381,10 +381,10 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     public void testDeleteAFewTickets() throws ParseException {
 
 
-        Ticket t = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
+        JpaRecord t = new JpaRecord();
+        JpaRecord t2 = new JpaRecord();
+        JpaRecord t3 = new JpaRecord();
+        JpaRecord t4 = new JpaRecord();
 
         PropField field = new PropField();
         field = new PropField();
@@ -426,9 +426,9 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.NO_CONTENT,
                 ClientResponse.Status.fromStatusCode(response.getStatus()));
 
-        Ticket shouldBeDeleted = apa.getTicket(t3.getType(), t3.getId());
+        JpaRecord shouldBeDeleted = apa.getTicket(t3.getType(), t3.getId());
         assertNull(shouldBeDeleted);
-        Ticket expected = apa.getTicket(t.getType(), t.getId());
+        JpaRecord expected = apa.getTicket(t.getType(), t.getId());
         assertEquals(expected, t);
         expected = apa.getTicket(t2.getType(), t2.getId());
         assertEquals(expected, t2);
@@ -444,7 +444,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testDeleteTicketDoesntExist() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField field = new PropField();
@@ -467,7 +467,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.NOT_FOUND,
                 ClientResponse.Status.fromStatusCode(response.getStatus()));
 
-        Ticket shouldStillExist = apa.getTicket(t.getType(), t.getId());
+        JpaRecord shouldStillExist = apa.getTicket(t.getType(), t.getId());
         assertEquals(t, shouldStillExist);
     }
 }

@@ -33,13 +33,13 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
-import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.fracturedatlas.athena.util.date.DateUtil;
@@ -63,7 +63,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateThenUpdateNoPropsNoChange() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
         PTicket pTicket = t.toClientTicket();
 
@@ -83,7 +83,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateThenUpdate2NoPropsNoChange() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
         PTicket pTicket = t.toClientTicket();
 
@@ -107,7 +107,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateThenUpdateName() {
-        Ticket t = createSampleTicket(true);
+        JpaRecord t = createSampleTicket(true);
         ticketsToDelete.add(t);
         t.setType("updated ticket");
         PTicket pTicket = t.toClientTicket();
@@ -122,7 +122,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testUpdateAddNewProp() {
 
-        Ticket t = createSampleTicket(true);
+        JpaRecord t = createSampleTicket(true);
         ticketsToDelete.add(t);
 
         PropField field = new PropField();
@@ -148,7 +148,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testUpdateAddNewPropButDontSendOtherProps() {
 
-        Ticket t = createSampleTicket(true);
+        JpaRecord t = createSampleTicket(true);
         ticketsToDelete.add(t);
 
         PropField field = new PropField();
@@ -176,7 +176,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testUpdateProp() {
 
-        Ticket t = createSampleTicket(true);
+        JpaRecord t = createSampleTicket(true);
         ticketsToDelete.add(t);
 
         t.setType("updated ticket");
@@ -193,7 +193,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testUpdateAllProps() {
 
-        Ticket t = createSampleTicket(true);
+        JpaRecord t = createSampleTicket(true);
         ticketsToDelete.add(t);
 
         t.setType("updated ticket");
@@ -211,7 +211,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testUpdateTicketBlankRequest() {
 
-        Ticket t = createSampleTicket(false);
+        JpaRecord t = createSampleTicket(false);
         ticketsToDelete.add(t);
 
         String ticketJson = "";
@@ -223,7 +223,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testUpdateTicketBadJson() {
 
-        Ticket t = createSampleTicket(false);
+        JpaRecord t = createSampleTicket(false);
         ticketsToDelete.add(t);
 
         String ticketJson = "{BAD_JSON:BAD}";
@@ -235,7 +235,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testUpdateTicketNotExist() {
 
-        Ticket t = createSampleTicket(false);
+        JpaRecord t = createSampleTicket(false);
         ticketsToDelete.add(t);
 
         t.setType("updated ticket");
@@ -251,7 +251,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testUpdateDateTimeProp() throws Exception {
 
-        Ticket t = createSampleTicket(false);
+        JpaRecord t = createSampleTicket(false);
 
         PropField field = new PropField(ValueType.DATETIME, "PERFORMANCE", Boolean.FALSE);
         PropField pf = apa.savePropField(field);
@@ -278,7 +278,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testUpdateDateTimePropNotADate() throws Exception {
 
-        Ticket t = createSampleTicket(false);
+        JpaRecord t = createSampleTicket(false);
 
         PropField field = new PropField(ValueType.DATETIME, "PERFORMANCE", Boolean.FALSE);
         PropField pf = apa.savePropField(field);
@@ -302,7 +302,7 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testUpdateIntegerPropNotAnInteger() {
 
-        Ticket t = createSampleTicket(false);
+        JpaRecord t = createSampleTicket(false);
 
         PropField field = new PropField(ValueType.INTEGER, "PERFORMANCE", Boolean.FALSE);
         PropField pf = apa.savePropField(field);
@@ -322,8 +322,8 @@ public class UpdateTicketContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
     }
 
-    public Ticket createSampleTicket(Boolean saveItToo) {
-        Ticket t = new Ticket();
+    public JpaRecord createSampleTicket(Boolean saveItToo) {
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField field = new PropField();

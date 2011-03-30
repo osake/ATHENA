@@ -29,14 +29,14 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
-import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
@@ -61,7 +61,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void postRecordWithNullId() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
         PTicket pTicket = t.toClientTicket();
         
@@ -79,7 +79,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void postRecordWithNullValue() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
         PTicket pTicket = t.toClientTicket();
 
@@ -97,7 +97,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketWithNoProps() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
         PTicket pTicket = t.toClientTicket();
 
@@ -112,7 +112,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testCreateTicketBadIntegerValue() {
 
-        Ticket t = createSampleTicket(false);
+        JpaRecord t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "FOO_INT", Boolean.FALSE));
@@ -128,7 +128,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testCreateTicketBadDateTimeValue() {
 
-        Ticket t = createSampleTicket(false);
+        JpaRecord t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
         PropField pf = apa.savePropField(new PropField(ValueType.DATETIME, "FOO_DATE", Boolean.FALSE));
@@ -144,7 +144,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testCreateTicketBadBooleanValue() {
 
-        Ticket t = createSampleTicket(false);
+        JpaRecord t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
         PropField pf = apa.savePropField(new PropField(ValueType.BOOLEAN, "FOO_BOOL", Boolean.FALSE));
@@ -155,14 +155,14 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
         PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
         assertEquals("false", savedPTicket.get("FOO_BOOL"));
-        Ticket savedTicket = apa.getTicket(t.getType(), savedPTicket.getId());
+        JpaRecord savedTicket = apa.getTicket(t.getType(), savedPTicket.getId());
         ticketsToDelete.add(savedTicket);
     }
 
     @Test
     public void testCreateTicket() {
 
-        Ticket t = createSampleTicket(false);
+        JpaRecord t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
 
         String ticketJson = gson.toJson(pTicket);
@@ -173,7 +173,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         assertNotNull(savedPTicket.getId());
         assertTicketsEqual(t, savedPTicket, false);
 
-        Ticket savedTicket = apa.getTicket(t.getType(), savedPTicket.getId());
+        JpaRecord savedTicket = apa.getTicket(t.getType(), savedPTicket.getId());
         assertTicketsEqual(savedTicket, savedPTicket);
         ticketsToDelete.add(savedTicket);
     }
@@ -181,7 +181,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testUpdateTicketUnknownField() {
 
-        Ticket t = createSampleTicket(true);
+        JpaRecord t = createSampleTicket(true);
         PTicket pTicket = t.toClientTicket();
         pTicket.put("BAD_FIELD", "BAD_FISH");
 
@@ -197,7 +197,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
     @Test
     public void testCreateTicketUnknownField() {
 
-        Ticket t = createSampleTicket(false);
+        JpaRecord t = createSampleTicket(false);
         PTicket pTicket = t.toClientTicket();
         pTicket.put("BAD_FIELD", "BAD_FISH");
 
@@ -217,7 +217,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketBooleanProp() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField field = new PropField();
@@ -252,7 +252,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         assertNotNull(savedPTicket.getId());
         assertTicketsEqual(t, savedPTicket, false);
 
-        Ticket savedTicket = apa.getTicket(t.getType(), savedPTicket.getId());
+        JpaRecord savedTicket = apa.getTicket(t.getType(), savedPTicket.getId());
         assertTicketsEqual(savedTicket, savedPTicket);
 
         ticketsToDelete.add(savedTicket);
@@ -262,7 +262,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketDateTimeProp() throws Exception {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField field = new PropField();
@@ -297,7 +297,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         assertNotNull(savedPTicket.getId());
         assertTicketsEqual(t, savedPTicket, false);
 
-        Ticket savedTicket = apa.getTicket(t.getType(), savedPTicket.getId());
+        JpaRecord savedTicket = apa.getTicket(t.getType(), savedPTicket.getId());
         assertTicketsEqual(savedTicket, savedPTicket);
 
         ticketsToDelete.add(savedTicket);
@@ -354,7 +354,7 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         pTicket.setId(savedPTicket.getId());
         assertTrue(pTicket.equals(savedPTicket));
 
-        Ticket savedTicket = apa.getTicket("ticket", savedPTicket.getId());
+        JpaRecord savedTicket = apa.getTicket("ticket", savedPTicket.getId());
         assertTicketsEqual(savedTicket, savedPTicket);
 
         ticketsToDelete.add(savedTicket);
@@ -430,14 +430,14 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         pTicket.setId(savedPTicket.getId());
         assertTrue(pTicket.equals(savedPTicket));
 
-        Ticket savedTicket = apa.getTicket("ticket", savedPTicket.getId());
+        JpaRecord savedTicket = apa.getTicket("ticket", savedPTicket.getId());
         assertTicketsEqual(savedTicket, savedPTicket);
 
         ticketsToDelete.add(savedTicket);
     }
 
-    public Ticket createSampleTicket(Boolean saveItToo) {
-        Ticket t = new Ticket();
+    public JpaRecord createSampleTicket(Boolean saveItToo) {
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField field = new PropField();

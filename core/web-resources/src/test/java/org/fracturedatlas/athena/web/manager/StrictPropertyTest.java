@@ -24,13 +24,13 @@ import com.google.gson.Gson;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
-import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.PropValue;
-import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.PropValue;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.web.util.BaseManagerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.junit.After;
@@ -66,7 +66,7 @@ public class StrictPropertyTest extends BaseManagerTest {
     @Test
     public void testUpdateTicketStrictProperty() throws Exception {
 
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
 
         PropField pf = apa.savePropField(new PropField(ValueType.STRING, "STRICT_PROP", StrictType.STRICT));
         PropValue v1 = apa.savePropValue(new PropValue(pf, "WXYZ"));
@@ -80,7 +80,7 @@ public class StrictPropertyTest extends BaseManagerTest {
 
         PTicket expectedPTicket = t.toClientTicket();
         expectedPTicket.put(pf.getName(), "UPDATED");
-        Ticket savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
+        JpaRecord savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
         PTicket actualPTicket = savedTicket.toClientTicket();
         assertTrue(expectedPTicket.equals(actualPTicket));
     }
@@ -88,7 +88,7 @@ public class StrictPropertyTest extends BaseManagerTest {
     @Test
     public void testUpdateTicketStrictPropertyInvalid() throws Exception {
 
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
 
         PropField pf = apa.savePropField(new PropField(ValueType.STRING, "STRICT_PROP", StrictType.STRICT));
         PropValue v1 = apa.savePropValue(new PropValue(pf, "WXYZ"));
@@ -105,7 +105,7 @@ public class StrictPropertyTest extends BaseManagerTest {
         PTicket expectedPTicket = t.toClientTicket();
         expectedPTicket.put(pf.getName(), "THIS_SHOULD_FAIL");
         try {
-            Ticket savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
+            JpaRecord savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
             fail("Should have gotten an InvalidValueException");
         } catch (InvalidValueException ive) {
             //pass
@@ -115,7 +115,7 @@ public class StrictPropertyTest extends BaseManagerTest {
     @Test
     public void testUpdateTicketStrictPropertyInteger() throws Exception {
 
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
 
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "NUM", StrictType.STRICT));
         PropValue v1 = apa.savePropValue(new PropValue(pf, "1"));
@@ -133,7 +133,7 @@ public class StrictPropertyTest extends BaseManagerTest {
 
         PTicket expectedPTicket = t.toClientTicket();
         expectedPTicket.put(pf.getName(), "5");
-        Ticket savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
+        JpaRecord savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
         PTicket actualPTicket = savedTicket.toClientTicket();
         assertTrue(expectedPTicket.equals(actualPTicket));
     }
@@ -141,7 +141,7 @@ public class StrictPropertyTest extends BaseManagerTest {
     @Test
     public void testUpdateTicketStrictPropertyInvalidInteger() throws Exception {
 
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
 
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "NUM", StrictType.STRICT));
         PropValue v1 = apa.savePropValue(new PropValue(pf, "1"));
@@ -160,7 +160,7 @@ public class StrictPropertyTest extends BaseManagerTest {
         PTicket expectedPTicket = t.toClientTicket();
         expectedPTicket.put(pf.getName(), "6");
         try {
-            Ticket savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
+            JpaRecord savedTicket = manager.saveTicketFromClientRequest("ticket", expectedPTicket);
             fail("Should have gotten an InvalidValueException");
         } catch (InvalidValueException ive) {
             //pass
