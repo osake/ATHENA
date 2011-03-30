@@ -36,10 +36,10 @@ import org.fracturedatlas.athena.web.util.JsonUtil;
 
 @Provider
 @Produces({"application/json"})
-public class JsonTicketCollectionSerializer implements MessageBodyWriter<Collection<JpaRecord>> {
+public class JsonTicketCollectionSerializer implements MessageBodyWriter<Collection<PTicket>> {
 
     @Override
-    public long getSize(Collection<JpaRecord> t, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType) {
+    public long getSize(Collection<PTicket> t, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType) {
         return -1L;
     }
 
@@ -49,11 +49,7 @@ public class JsonTicketCollectionSerializer implements MessageBodyWriter<Collect
     }
 
     @Override
-    public void writeTo(Collection<JpaRecord> tickets, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream out) throws IOException, WebApplicationException {
-        List<PTicket> pTickets = new ArrayList<PTicket>();
-        for (JpaRecord t : tickets) {
-            pTickets.add(t.toClientTicket());
-        }
-        out.write(JsonUtil.getGson().toJson(pTickets).getBytes());
+    public void writeTo(Collection<PTicket> tickets, Class<?> type, Type type1, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream out) throws IOException, WebApplicationException {
+        out.write(JsonUtil.getGson().toJson(tickets).getBytes());
     }
 }

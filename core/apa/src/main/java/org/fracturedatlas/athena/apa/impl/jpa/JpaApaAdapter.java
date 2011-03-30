@@ -14,14 +14,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.apa.impl.jpa;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
@@ -34,12 +27,14 @@ import org.fracturedatlas.athena.apa.AbstractApaAdapter;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
+import org.fracturedatlas.athena.apa.exception.InvalidPropException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.impl.LongUserType;
 import org.fracturedatlas.athena.search.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
+import org.fracturedatlas.athena.client.PTicket;
 
 public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
@@ -99,6 +94,103 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             cleanup(em);
         }
     }
+
+    @Override
+    public PTicket saveRecord(String type, PTicket record) {
+        //if this ticket has an id
+        if (record.getId() != null) {
+            return updateTicketFromClientTicket(type, record, record.getId()).toClientTicket();
+        } else {
+            return createAndSaveTicketFromClientTicket(type, record).toClientTicket();
+        }
+    }
+
+    /*
+     * updateTicketFromClientTicket assumes that PTicket has been sent with an ID.
+     * updateTicketFromClientTicket will load a ticket with that ID.
+     */
+    public JpaRecord updateTicketFromClientTicket(String type, PTicket clientTicket, Object idToUpdate) throws InvalidPropException, InvalidValueException {
+        JpaRecord ticket  = getTicket(type, idToUpdate);
+
+        /*
+         * for all props on this pTicket
+         * if apa has a prop for it, update it
+         * otherwise, create a new one
+         */
+        Map<String, String> propMap = clientTicket.getProps();
+        Set<String> keys = propMap.keySet();
+        List<TicketProp> propsToSave = new ArrayList<TicketProp>();
+        for (String key : keys) {
+            String val = propMap.get(key);
+
+            TicketProp ticketProp = getTicketProp(key, type, ticket.getId());
+
+            if (ticketProp == null) {
+                PropField propField = getPropField(key);
+                validatePropField(propField, key, val);
+
+                ticketProp = propField.getValueType().newTicketProp();
+                ticketProp.setPropField(propField);
+                ticketProp.setTicket(ticket);
+            }
+
+            ticketProp.setValue(val);
+            
+            //saving these outside of this loop ensures that all propFields exist before
+            //we go saving values.  Sort of a hack transactionality.
+            propsToSave.add(ticketProp);
+        }
+
+        for (TicketProp ticketProp : propsToSave) {
+            saveTicketProp(ticketProp);
+        }
+
+        ticket = getTicket(type, clientTicket.getId());
+        ticket = saveTicket(ticket);
+        return ticket;
+    }
+
+    /*
+     * createAndSaveTicketFromClientTicket assumes that PTicket has been sent WITHOUT an ID.
+     * createAndSaveTicketFromClientTicket will create a new ticket using magic and wizardry
+     */
+    private JpaRecord createAndSaveTicketFromClientTicket(String type, PTicket clientTicket) throws InvalidPropException, InvalidValueException {
+
+        JpaRecord ticket  = new JpaRecord();
+
+        //for all props on this pTicket, create new props with apa
+        Map<String, String> propMap = clientTicket.getProps();
+        Set<String> keys = propMap.keySet();
+        for (String key : keys) {
+
+            String val = propMap.get(key);
+            PropField propField = getPropField(key);
+            validatePropField(propField, key, val);
+            TicketProp ticketProp = propField.getValueType().newTicketProp();
+            ticketProp.setPropField(propField);
+            ticketProp.setValue(val);
+            ticketProp.setTicket(ticket);
+            ticket.addTicketProp(ticketProp);
+        }
+        ticket.setType(type);
+        ticket = saveTicket(ticket);
+        return ticket;
+    }
+
+    /**
+     * This method will throw ObjectNotFoundException if propField is null.
+     *
+     * @param propField the prop field to validate
+     * @param key the name of the propField.  Used to validate that propField exists and is correct.
+     * @param value the value that will be validated if propField is strict
+     * @throws PropFieldNotFoundException
+     */
+    private void validatePropField(PropField propField, String key, String value) throws InvalidPropException {
+        if (propField == null) {
+            throw new InvalidPropException("Field with name [" + key + "] does not exist");
+        }
+    }
+
 
     private void enforceCorrectValueType(PropField propField, TicketProp prop) throws InvalidValueException {
 

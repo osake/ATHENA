@@ -192,6 +192,8 @@ public class JpaRecord extends TixEntity implements Serializable {
             pTicket.setId(null);
         }
 
+        pTicket.setType(getType());
+
 
         for(TicketProp prop : this.getTicketProps()) {
             pTicket.getProps().put(prop.getPropField().getName(), prop.getValueAsString());

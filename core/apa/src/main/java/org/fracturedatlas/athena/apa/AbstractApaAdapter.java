@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,15 +28,13 @@ import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.PropValue;
 import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
+import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.search.AthenaSearch;
 
 /**
  * Abstract implementation of ApaAdapter as a convenience for developers seeking
  * to implement only a sub-set of features of ApaAdapter.  Also handy during development
  * so you don't need to stub a bunch of methods.
- *
- * If this were Scala, and interfaces were allowed to also define methods, we'd be
- * on the beach drinking rum by now.
  */
 public abstract class AbstractApaAdapter implements ApaAdapter {
     
@@ -48,6 +45,11 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     
     @Override
     public JpaRecord saveTicket(JpaRecord t) throws InvalidValueException {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+
+    @Override
+    public PTicket saveRecord(String type, PTicket record) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 

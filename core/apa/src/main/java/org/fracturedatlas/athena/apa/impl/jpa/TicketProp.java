@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa.impl.jpa;
 
 import java.io.Serializable;
-import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -41,7 +40,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.fracturedatlas.athena.id.IdAdapter;
+import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.Type;
@@ -116,10 +115,10 @@ public abstract class TicketProp extends TixEntity implements Serializable, Comp
     public abstract Object getValue();
 
     @Transient
-    public abstract void setValue(String s) throws Exception;
+    public abstract void setValue(String s) throws InvalidValueException;
 
     @Transient
-    public abstract void setValue(Object o) throws Exception;
+    public abstract void setValue(Object o) throws InvalidValueException;
 
 
     public abstract int compareTo(Object o) throws ClassCastException,
@@ -171,5 +170,10 @@ public abstract class TicketProp extends TixEntity implements Serializable, Comp
         return hash;
     }
 
+    protected String buildExceptionMessage(String val, PropField propField) {
+        String err = "Value [" + val + "] is not a valid value for the field [" + propField.getName() + "].  ";
+        err += "Field is of type [" + propField.getValueType().name() + "].";
+        return err;
+    }
  
 }

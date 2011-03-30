@@ -28,6 +28,7 @@ import javax.persistence.Entity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,8 +66,12 @@ public class DateTimeTicketProp extends TicketProp implements Serializable {
         this.value = value;
     }
 
-    public void setValue(String s) throws Exception {
-        setValue(DateUtil.parseDate(s));
+    public void setValue(String s) throws InvalidValueException {
+        try {
+            setValue(DateUtil.parseDate(s));
+        } catch (ParseException pe) {
+            throw new InvalidValueException(buildExceptionMessage(s, propField), pe);
+        }
     }
 
     public String getValueAsString() {

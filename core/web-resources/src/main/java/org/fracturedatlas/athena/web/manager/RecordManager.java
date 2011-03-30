@@ -182,135 +182,23 @@ public class RecordManager {
         return values;
     }
 
-    /*
-     * TODO: The fact that this throws Exception (and not something more specific)
-     * is a crime against humanity
-     */
-    public JpaRecord saveTicketFromClientRequest(String type, PTicket pTicket) throws Exception {
-        //if this ticket has an id
-        if (pTicket.getId() != null) {
-            return updateTicketFromClientTicket(type, pTicket, pTicket.getId());
-        } else {
-            return createAndSaveTicketFromClientTicket(type, pTicket);
-        }
+    public PTicket createRecord(String type, PTicket record) {
+        return apa.saveRecord(type, record);
     }
 
-    /*
-     * updateTicketFromClientTicket assumes that PTicket has been sent with an ID.
-     * updateTicketFromClientTicket will load a ticket with that ID.
-     */
-    public JpaRecord updateTicketFromClientTicket(String type, PTicket clientTicket, Object idToUpdate) throws Exception {
+    public PTicket updateRecord(String type, PTicket record, String idToUpdate) {
+
         JpaRecord ticket  = apa.getTicket(type, idToUpdate);
 
-        /*
-         * If the client ID on the url but we didn't find the ticket, toss back
-         * a ticket not found exception
-         */
-        if (ticket == null) {
+        if (idToUpdate == null) {
             throw new NotFoundException();
         }
 
-        if (!IdAdapter.isEqual(ticket.getId(), clientTicket.getId())) {
-            throw new AthenaException("Requested update to [" + idToUpdate + "] but sent record with id [" + clientTicket.getId() + "]");
+        if (!IdAdapter.isEqual(ticket.getId(), record.getId())) {
+            throw new AthenaException("Requested update to [" + idToUpdate + "] but sent record with id [" + record.getId() + "]");
         }
 
-        /*
-         * for all props on this pTicket
-         * if apa has a prop for it, update it
-         * otherwise, create a new one
-         */
-        Map<String, String> propMap = clientTicket.getProps();
-        Set<String> keys = propMap.keySet();
-        List<TicketProp> propsToSave = new ArrayList<TicketProp>();
-        for (String key : keys) {
-            String val = propMap.get(key);
-
-            TicketProp ticketProp = apa.getTicketProp(key, type, ticket.getId());
-
-            if (ticketProp == null) {
-                PropField propField = apa.getPropField(key);
-                validatePropField(propField, key, val);
-
-                ticketProp = propField.getValueType().newTicketProp();
-                ticketProp.setPropField(propField);
-                ticketProp.setTicket(ticket);
-            }
-
-            try {
-                ticketProp.setValue(val);
-            } catch (ParseException re) {
-                throw new InvalidValueException(buildExceptionMessage(val, ticketProp.getPropField()));
-            } catch (RuntimeException re) {
-                throw new InvalidValueException(buildExceptionMessage(val, ticketProp.getPropField()));
-            }
-
-            //saving these outside of this loop ensures that all propFields exist before
-            //we go saving values.  Sort of a hack transactionality.
-            propsToSave.add(ticketProp);
-        }
-
-        for (TicketProp ticketProp : propsToSave) {
-            apa.saveTicketProp(ticketProp);
-        }
-
-        ticket = apa.getTicket(type, clientTicket.getId());
-        ticket = apa.saveTicket(ticket);
-        return ticket;
-    }
-
-    private String buildExceptionMessage(String val, PropField propField) {
-        String err = "Value [" + val + "] is not a valid value for the field [" + propField.getName() + "].  ";
-        err += "Field is of type [" + propField.getValueType().name() + "].";
-        return err;
-    }
-
-    /*
-     * createAndSaveTicketFromClientTicket assumes that PTicket has been sent WITHOUT an ID.
-     * createAndSaveTicketFromClientTicket will create a new ticket using magic and wizardry
-     */
-    private JpaRecord createAndSaveTicketFromClientTicket(String type, PTicket clientTicket) throws Exception {
-
-        JpaRecord ticket  = new JpaRecord();
-
-        //for all props on this pTicket, create new props with apa
-        Map<String, String> propMap = clientTicket.getProps();
-        Set<String> keys = propMap.keySet();
-        for (String key : keys) {
-
-            String val = propMap.get(key);
-            PropField propField = apa.getPropField(key);
-            validatePropField(propField, key, val);
-            TicketProp ticketProp = propField.getValueType().newTicketProp();
-
-            try {
-                ticketProp.setValue(val);
-            } catch (ParseException re) {
-                throw new InvalidValueException(buildExceptionMessage(val, propField));
-            } catch (RuntimeException re) {
-                throw new InvalidValueException(buildExceptionMessage(val, propField));
-            }
-
-            ticketProp.setPropField(propField);
-            ticketProp.setTicket(ticket);
-            ticket.addTicketProp(ticketProp);
-        }
-        ticket.setType(type);
-        ticket = apa.saveTicket(ticket);
-        return ticket;
-    }
-
-    /**
-     * This method will throw ObjectNotFoundException if propField is null.
-     *
-     * @param propField the prop field to validate
-     * @param key the name of the propField.  Used to validate that propField exists and is correct.
-     * @param value the value that will be validated if propField is strict
-     * @throws PropFieldNotFoundException
-     */
-    private void validatePropField(PropField propField, String key, String value) throws ObjectNotFoundException {
-        if (propField == null) {
-            throw new ObjectNotFoundException("Field with name [" + key + "] does not exist");
-        }
+        return apa.saveRecord(type, record);
     }
 
     public ApaAdapter getApa() {
