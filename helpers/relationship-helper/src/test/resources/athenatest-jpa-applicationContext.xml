@@ -13,7 +13,7 @@
         <property name="persistenceUnitName" value="test"/>
     </bean>
 
-    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.JpaApaAdapter">
+    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.jpa.JpaApaAdapter">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 

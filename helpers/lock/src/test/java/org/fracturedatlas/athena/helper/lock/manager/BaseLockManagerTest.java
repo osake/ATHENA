@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import static org.junit.Assert.*;
-import org.fracturedatlas.athena.apa.model.*;
+import org.fracturedatlas.athena.apa.impl.jpa.*;
 import org.fracturedatlas.athena.client.*;
 import org.fracturedatlas.athena.id.*;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ public abstract class BaseLockManagerTest {
 
     protected ApaAdapter apa;
 
-    protected List<Ticket> ticketsToDelete = new ArrayList<Ticket>();
+    protected List<JpaRecord> ticketsToDelete = new ArrayList<JpaRecord>();
     protected List<PropField> propFieldsToDelete = new ArrayList<PropField>();
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -42,7 +42,7 @@ public abstract class BaseLockManagerTest {
     }
 
     public void teardownTickets() {
-        for (Ticket t : ticketsToDelete) {
+        for (JpaRecord t : ticketsToDelete) {
             try {
                 apa.deleteTicket(t);
             } catch (Exception ignored) {
@@ -59,7 +59,7 @@ public abstract class BaseLockManagerTest {
         }
     }
 
-    public void assertTicketsEqual(Ticket t, PTicket pTicket, Boolean includeId) {
+    public void assertTicketsEqual(JpaRecord t, PTicket pTicket, Boolean includeId) {
         if(includeId) {
             assertTrue(IdAdapter.isEqual(t.getId(), pTicket.getId()));
         }
@@ -72,7 +72,7 @@ public abstract class BaseLockManagerTest {
         }
     }
 
-    public void assertTicketsEqual(Ticket t, PTicket pTicket) {
+    public void assertTicketsEqual(JpaRecord t, PTicket pTicket) {
         assertTicketsEqual(t, pTicket, Boolean.TRUE);
     }
 }
