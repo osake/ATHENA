@@ -35,7 +35,7 @@ import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import static org.junit.Assert.*;
-import org.fracturedatlas.athena.apa.model.*;
+import org.fracturedatlas.athena.apa.impl.jpa.*;
 import org.fracturedatlas.athena.client.*;
 import org.fracturedatlas.athena.id.*;
 import org.junit.After;
@@ -51,7 +51,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
     protected final static String RECORDS_PATH = "/tickets/";
     protected final static String FIELDS_PATH = "/meta/fields/";
 
-    protected List<Ticket> ticketsToDelete = new ArrayList<Ticket>();
+    protected List<JpaRecord> ticketsToDelete = new ArrayList<JpaRecord>();
     protected List<PropField> propFieldsToDelete = new ArrayList<PropField>();
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -75,7 +75,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
     }
 
     public void teardownTickets() {
-        for (Ticket t : ticketsToDelete) {
+        for (JpaRecord t : ticketsToDelete) {
             try {
                 apa.deleteTicket(t);
             } catch (Exception ignored) {
@@ -92,7 +92,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
         }
     }
 
-    public void assertTicketsEqual(Ticket t, PTicket pTicket, Boolean includeId) {
+    public void assertTicketsEqual(JpaRecord t, PTicket pTicket, Boolean includeId) {
         if(includeId) {
             assertTrue(IdAdapter.isEqual(t.getId(), pTicket.getId()));
         }
@@ -105,7 +105,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
         }
     }
 
-    public void assertTicketsEqual(Ticket t, PTicket pTicket) {
+    public void assertTicketsEqual(JpaRecord t, PTicket pTicket) {
         assertTicketsEqual(t, pTicket, Boolean.TRUE);
     }
     

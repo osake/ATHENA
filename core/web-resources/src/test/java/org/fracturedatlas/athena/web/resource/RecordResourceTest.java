@@ -22,7 +22,7 @@ package org.fracturedatlas.athena.web.resource;
 
 import java.util.ArrayList;
 import java.util.TreeSet;
-import org.fracturedatlas.athena.apa.model.Ticket;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.junit.After;
@@ -46,7 +46,7 @@ public class RecordResourceTest {
 
     @Test
     public void testSearchRelationships() {
-        when(mockRecordManager.findTicketsByRelationship("company", "1", "employee")).thenReturn(new TreeSet<Ticket>());
+        when(mockRecordManager.findTicketsByRelationship("company", "1", "employee")).thenReturn(new TreeSet<JpaRecord>());
         resource.search("companies", "1", "employees");
         verify(mockRecordManager, times(1)).findTicketsByRelationship("company", "1", "employee");
     }

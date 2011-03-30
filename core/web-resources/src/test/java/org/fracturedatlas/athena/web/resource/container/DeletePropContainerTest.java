@@ -25,10 +25,10 @@ import com.sun.jersey.api.client.ClientResponse;
 import java.util.ArrayList;
 import java.util.List;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.junit.After;
@@ -50,7 +50,7 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testDeletePropDoesntExist() throws Exception {
-        Ticket t = createSampleTicket(true);
+        JpaRecord t = createSampleTicket(true);
         String path = RECORDS_PATH + t.getId() +"/props/FAKE_PROP.json";
 
         ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
@@ -59,7 +59,7 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testDeletePropTicketDoesntExist() throws Exception {
-        Ticket t = createSampleTicket(true);
+        JpaRecord t = createSampleTicket(true);
         String path = RECORDS_PATH + "0/props/SEAT_NUMBER.json";
 
         ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
@@ -68,7 +68,7 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testDeleteProp() throws Exception {
-        Ticket t = createSampleTicket(true);
+        JpaRecord t = createSampleTicket(true);
         String path = RECORDS_PATH + t.getId() +"/props/SEAT_NUMBER.json";
 
         ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
@@ -83,7 +83,7 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testDeleteTwoProps() throws Exception {
-        Ticket t = createSampleTicket(true);
+        JpaRecord t = createSampleTicket(true);
         String path = RECORDS_PATH + t.getId() +"/props/SEAT_NUMBER.json";
 
         ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
@@ -101,8 +101,8 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
 
     }
     
-    public Ticket createSampleTicket(Boolean saveItToo) {
-        Ticket t = new Ticket();
+    public JpaRecord createSampleTicket(Boolean saveItToo) {
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField field = new PropField();

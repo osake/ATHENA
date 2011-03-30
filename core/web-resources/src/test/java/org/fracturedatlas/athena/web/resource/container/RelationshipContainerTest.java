@@ -26,11 +26,11 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.core.MultivaluedMap;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
@@ -48,10 +48,10 @@ public class RelationshipContainerTest extends BaseTixContainerTest {
 
     String path = RECORDS_PATH;
     Gson gson = JsonUtil.getGson();
-    Ticket t1 = null;
-    Ticket t2 = null;
-    Ticket t3 = null;
-    Ticket t4 = null;
+    JpaRecord t1 = null;
+    JpaRecord t2 = null;
+    JpaRecord t3 = null;
+    JpaRecord t4 = null;
 
     @Test
     public void testFindTicketsByRelationship() {
@@ -106,10 +106,10 @@ public class RelationshipContainerTest extends BaseTixContainerTest {
 
     @Before
     public void addTickets() throws Exception {
-        t1 = new Ticket();
-        t2 = new Ticket();
-        t3 = new Ticket();
-        t4 = new Ticket();
+        t1 = new JpaRecord();
+        t2 = new JpaRecord();
+        t3 = new JpaRecord();
+        t4 = new JpaRecord();
 
         t1.setType("company");
         t2.setType("employee");

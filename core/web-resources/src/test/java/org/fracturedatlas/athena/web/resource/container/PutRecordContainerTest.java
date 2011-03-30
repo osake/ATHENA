@@ -30,13 +30,13 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
-import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.fracturedatlas.athena.util.date.DateUtil;
@@ -60,7 +60,7 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateTicket() {
-        Ticket t = createSampleTicket();
+        JpaRecord t = createSampleTicket();
 
         String path = RECORDS_PATH + t.getId() + ".json";
 
@@ -70,13 +70,13 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
         PTicket updatedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
         assertTrue(pTicket.equals(updatedPTicket));
 
-        Ticket updatedTicket = apa.getTicket(t.getType(), updatedPTicket.getId());
+        JpaRecord updatedTicket = apa.getTicket(t.getType(), updatedPTicket.getId());
         assertTicketsEqual(updatedTicket, updatedPTicket);
     }
 
     @Test
     public void testUpdateTicketWithPostIdInUrl() {
-        Ticket t = createSampleTicket();
+        JpaRecord t = createSampleTicket();
 
         String path = RECORDS_PATH + t.getId() + ".json";
 
@@ -89,7 +89,7 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
     //For now, this should pass.  Eventually we should turn this support off, return a 409 or maybe a OMFG
     @Test
     public void testUpdateTicketWithPost() {
-        Ticket t = createSampleTicket();
+        JpaRecord t = createSampleTicket();
 
         String path = RECORDS_PATH;
 
@@ -103,7 +103,7 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testCreateTicketWithPut() {
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "PRICE", Boolean.FALSE));
         PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
@@ -119,7 +119,7 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testUpdateTicketWithPutNoIdInBody() {
-        Ticket t = createSampleTicket();
+        JpaRecord t = createSampleTicket();
 
         String path = RECORDS_PATH + t.getId() + ".json";
 
@@ -135,7 +135,7 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
 
         String path = RECORDS_PATH + "0.json";
 
-        Ticket t = new Ticket();
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "PRICE", Boolean.FALSE));
         PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
@@ -152,7 +152,7 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
     //this is not allowed
     @Test
     public void testUpdateAndChangeId() {
-        Ticket t = createSampleTicket();
+        JpaRecord t = createSampleTicket();
 
         String path = RECORDS_PATH + t.getId() + ".json";
 
@@ -162,14 +162,14 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
         //make sure nothing got updated
-        Ticket savedTicket = apa.getTicket(t.getType(), t.getId());
+        JpaRecord savedTicket = apa.getTicket(t.getType(), t.getId());
         assertTicketsEqual(t, savedTicket.toClientTicket());
     }
 
     //You should be able to put as much as you want and receive the same response
     @Test
     public void testPutSeveralTimes() {
-        Ticket t = createSampleTicket();
+        JpaRecord t = createSampleTicket();
 
         String path = RECORDS_PATH + t.getId() + ".json";
 
@@ -193,8 +193,8 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
 
     }
 
-    public Ticket createSampleTicket() {
-        Ticket t = new Ticket();
+    public JpaRecord createSampleTicket() {
+        JpaRecord t = new JpaRecord();
         t.setType("ticket");
 
         PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "PRICE", Boolean.FALSE));

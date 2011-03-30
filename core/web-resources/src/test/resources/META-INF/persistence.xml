@@ -2,14 +2,14 @@
 <persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence">
   <persistence-unit name="tix" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-    <class>org.fracturedatlas.athena.apa.model.Ticket</class>
-    <class>org.fracturedatlas.athena.apa.model.TicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.BooleanTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.StringTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.IntegerTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.DateTimeTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.PropField</class>
-    <class>org.fracturedatlas.athena.apa.model.PropValue</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.JpaRecord</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.TicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.PropField</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.PropValue</class>
     <properties>
       <property name="hibernate.hbm2ddl.auto" value="validate"/>
       <property name="hibernate.ejb.autodetection" value="class"/>
@@ -23,14 +23,14 @@
   </persistence-unit>
   <persistence-unit name="test" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-    <class>org.fracturedatlas.athena.apa.model.Ticket</class>
-    <class>org.fracturedatlas.athena.apa.model.TicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.BooleanTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.StringTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.IntegerTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.DateTimeTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.PropField</class>
-    <class>org.fracturedatlas.athena.apa.model.PropValue</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.JpaRecord</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.TicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.PropField</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.PropValue</class>
     <properties>
       <property name="hibernate.hbm2ddl.auto" value="validate"/>
       <property name="hibernate.ejb.autodetection" value="class"/>
@@ -45,14 +45,14 @@
   </persistence-unit>
   <persistence-unit name="hsql" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-    <class>org.fracturedatlas.athena.apa.model.Ticket</class>
-    <class>org.fracturedatlas.athena.apa.model.TicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.BooleanTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.StringTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.IntegerTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.DateTimeTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.PropField</class>
-    <class>org.fracturedatlas.athena.apa.model.PropValue</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.JpaRecord</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.TicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.PropField</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.PropValue</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="hibernate.connection.url" value="jdbc:hsqldb:mem:unit-testing-jpa"/>
@@ -65,14 +65,14 @@
   </persistence-unit>
   <persistence-unit name="test-derby" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-    <class>org.fracturedatlas.athena.apa.model.Ticket</class>
-    <class>org.fracturedatlas.athena.apa.model.TicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.BooleanTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.StringTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.IntegerTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.DateTimeTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.PropField</class>
-    <class>org.fracturedatlas.athena.apa.model.PropValue</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.JpaRecord</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.TicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.PropField</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.PropValue</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="hibernate.connection.url" value="jdbc:derby:memory:athena-test;create=true"/>

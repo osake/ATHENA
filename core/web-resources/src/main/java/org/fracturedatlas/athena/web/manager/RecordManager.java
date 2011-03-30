@@ -34,9 +34,9 @@ import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.TicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
@@ -49,11 +49,11 @@ public class RecordManager {
     @Autowired
     ApaAdapter apa;
 
-    public Ticket getTicket(String type, Object id) {
+    public JpaRecord getTicket(String type, Object id) {
         return apa.getTicket(type, id);
     }
 
-    public void deleteTicket(Ticket t) {
+    public void deleteTicket(JpaRecord t) {
         apa.deleteTicket(t);
     }
 
@@ -67,9 +67,9 @@ public class RecordManager {
 
         if (prop == null) {
             //no prop found, try and figure out why so we can return a sensible 404
-            Ticket t = apa.getTicket(type, ticketId);
+            JpaRecord t = apa.getTicket(type, ticketId);
             if (t == null) {
-                throw new ObjectNotFoundException("Ticket with id [" + ticketId + "] was not found");
+                throw new ObjectNotFoundException("JpaRecord with id [" + ticketId + "] was not found");
             } else {
                 throw new ObjectNotFoundException("Property with name [" + propName + "] was not found on ticket with id [" + ticketId + "]");
             }
@@ -77,9 +77,9 @@ public class RecordManager {
 
         apa.deleteTicketProp(prop);
     }
-    public Set<Ticket> findTicketsByRelationship(String parentType, Object id, String childType) {
+    public Set<JpaRecord> findTicketsByRelationship(String parentType, Object id, String childType) {
 
-        Ticket ticket = apa.getTicket(parentType, id);
+        JpaRecord ticket  = apa.getTicket(parentType, id);
         if(ticket == null) {
             throw new NotFoundException(StringUtils.capitalize(parentType) + " witn id [" + id + "] was not found");
         }
@@ -99,7 +99,7 @@ public class RecordManager {
      * @param queryParams
      * @return
      */
-    public Set<Ticket> findTickets(String type, MultivaluedMap<String, String> queryParams) {
+    public Set<JpaRecord> findTickets(String type, MultivaluedMap<String, String> queryParams) {
 
         List<String> values = null;
         Operator operator;
@@ -186,7 +186,7 @@ public class RecordManager {
      * TODO: The fact that this throws Exception (and not something more specific)
      * is a crime against humanity
      */
-    public Ticket saveTicketFromClientRequest(String type, PTicket pTicket) throws Exception {
+    public JpaRecord saveTicketFromClientRequest(String type, PTicket pTicket) throws Exception {
         //if this ticket has an id
         if (pTicket.getId() != null) {
             return updateTicketFromClientTicket(type, pTicket, pTicket.getId());
@@ -199,8 +199,8 @@ public class RecordManager {
      * updateTicketFromClientTicket assumes that PTicket has been sent with an ID.
      * updateTicketFromClientTicket will load a ticket with that ID.
      */
-    public Ticket updateTicketFromClientTicket(String type, PTicket clientTicket, Object idToUpdate) throws Exception {
-        Ticket ticket = apa.getTicket(type, idToUpdate);
+    public JpaRecord updateTicketFromClientTicket(String type, PTicket clientTicket, Object idToUpdate) throws Exception {
+        JpaRecord ticket  = apa.getTicket(type, idToUpdate);
 
         /*
          * If the client ID on the url but we didn't find the ticket, toss back
@@ -268,9 +268,9 @@ public class RecordManager {
      * createAndSaveTicketFromClientTicket assumes that PTicket has been sent WITHOUT an ID.
      * createAndSaveTicketFromClientTicket will create a new ticket using magic and wizardry
      */
-    private Ticket createAndSaveTicketFromClientTicket(String type, PTicket clientTicket) throws Exception {
+    private JpaRecord createAndSaveTicketFromClientTicket(String type, PTicket clientTicket) throws Exception {
 
-        Ticket ticket = new Ticket();
+        JpaRecord ticket  = new JpaRecord();
 
         //for all props on this pTicket, create new props with apa
         Map<String, String> propMap = clientTicket.getProps();

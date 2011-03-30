@@ -23,14 +23,14 @@ package org.fracturedatlas.athena.web.resource.container;
 import com.google.gson.Gson;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import javax.ws.rs.core.MultivaluedMap;
-import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
-import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
@@ -48,14 +48,14 @@ public class SearchByTypeContainerTest extends BaseTixContainerTest {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
         queryParams.add("SOLD", "eqfalse");
         String jsonString = tix.path(bottlesPath).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+         JpaRecord[] tickets = gson.fromJson(jsonString,  JpaRecord[].class);
         assertNotNull(tickets);
         assertEquals(0, tickets.length);
 
         queryParams = new MultivaluedMapImpl();
         queryParams.add("SOLD", "eqfalse");
         jsonString = tix.path(casesPath).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
+        tickets = gson.fromJson(jsonString,  JpaRecord[].class);
         assertNotNull(tickets);
         assertEquals(5, tickets.length);
     }
@@ -65,30 +65,30 @@ public class SearchByTypeContainerTest extends BaseTixContainerTest {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
         queryParams.add("TIER", "eqSILVER");
         String jsonString = tix.path(bottlesPath).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+         JpaRecord[] tickets = gson.fromJson(jsonString,  JpaRecord[].class);
         assertNotNull(tickets);
         assertEquals(2, tickets.length);
 
         queryParams = new MultivaluedMapImpl();
         queryParams.add("TIER", "eqSILVER");
         jsonString = tix.path(casesPath).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
+        tickets = gson.fromJson(jsonString,  JpaRecord[].class);
         assertNotNull(tickets);
         assertEquals(0, tickets.length);
     }
 
     @Before
     public void addTickets() throws Exception {
-        Ticket t1 = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
-        Ticket t5 = new Ticket();
-        Ticket t6 = new Ticket();
-        Ticket t7 = new Ticket();
-        Ticket t8 = new Ticket();
-        Ticket t9 = new Ticket();
-        Ticket t10 = new Ticket();
+        JpaRecord t1 = new JpaRecord();
+        JpaRecord t2 = new JpaRecord();
+        JpaRecord t3 = new JpaRecord();
+        JpaRecord t4 = new JpaRecord();
+        JpaRecord t5 = new JpaRecord();
+        JpaRecord t6 = new JpaRecord();
+        JpaRecord t7 = new JpaRecord();
+        JpaRecord t8 = new JpaRecord();
+        JpaRecord t9 = new JpaRecord();
+        JpaRecord t10 = new JpaRecord();
 
         t1.setType("bottle");
         t2.setType("bottle");

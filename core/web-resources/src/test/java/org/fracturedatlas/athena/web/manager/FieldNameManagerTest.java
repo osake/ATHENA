@@ -22,9 +22,9 @@ package org.fracturedatlas.athena.web.manager;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.fracturedatlas.athena.web.exception.InvalidFieldNameException;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.PropValue;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.PropValue;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.web.util.BaseManagerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.junit.After;
