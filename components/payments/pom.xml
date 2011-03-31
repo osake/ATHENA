@@ -4,13 +4,13 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.fracturedatlas.athena</groupId>
-        <version>1.0.0-rc-02-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
     </parent>
     <groupId>org.fracturedatlas.athena</groupId>
     <artifactId>payments</artifactId>
     <name>payments</name>
     <packaging>war</packaging>
-    <version>1.0.0-rc-02-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
 
     <profiles>
 
