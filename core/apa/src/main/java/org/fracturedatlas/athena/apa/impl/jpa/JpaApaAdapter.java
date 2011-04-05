@@ -67,8 +67,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
     }
 
-    @Override
-    public JpaRecord saveTicket(JpaRecord t) {
+    private JpaRecord saveJpaRecord(JpaRecord t) {
         EntityManager em = this.emf.createEntityManager();
         try {
             em.getTransaction().begin();
@@ -95,8 +94,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
     }
 
-    @Override
-    public PTicket saveRecord(String type, PTicket record) {
+    private PTicket saveJpaRecord(String type, PTicket record) {
         //if this ticket has an id
         if (record.getId() != null) {
             return updateTicketFromClientTicket(type, record, record.getId()).toClientTicket();
