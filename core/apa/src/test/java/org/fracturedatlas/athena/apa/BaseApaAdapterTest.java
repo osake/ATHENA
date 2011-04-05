@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.fracturedatlas.athena.apa.impl.jpa.*;
+import org.fracturedatlas.athena.client.PTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import static org.junit.Assert.*;
@@ -34,7 +35,7 @@ import static org.junit.Assert.*;
 public abstract class BaseApaAdapterTest {
 
     protected ApaAdapter apa;
-    protected List<JpaRecord> ticketsToDelete = new ArrayList<JpaRecord>();
+    protected List<PTicket> ticketsToDelete = new ArrayList<PTicket>();
     protected List<PropField> propFieldsToDelete = new ArrayList<PropField>();
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -44,9 +45,9 @@ public abstract class BaseApaAdapterTest {
     }
 
     public void teardownTickets() {
-        for (JpaRecord t : ticketsToDelete) {
+        for (PTicket t : ticketsToDelete) {
             try {
-                apa.deleteTicket(t);
+                apa.deleteTicket(t.getType(), t.getId());
             } catch (Exception ignored) {
                     logger.error(ignored.getMessage(), ignored);
             }

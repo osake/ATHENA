@@ -28,6 +28,7 @@ import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
 import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
+import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -56,47 +57,32 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
 
     @Test
     public void testDeleteTicketPassingObjectId() {
-        JpaRecord t = new JpaRecord();
-        t.setType("clown");    
-
-        PropField field = new PropField();
-        field.setValueType(ValueType.STRING);
-        field.setName("WXYZ");
-        field.setStrict(Boolean.FALSE);
+        PropField field = new PropField(ValueType.STRING, "WXYZ", Boolean.FALSE);
         PropField pf = apa.savePropField(field);
+        PTicket ticket = new PTicket();
+        ticket.put("WXYZ", "WXYZ");
+        ticket = apa.saveRecord("record", ticket);
 
-        StringTicketProp prop = new StringTicketProp();
-        prop.setPropField(pf);
-        prop.setValue("WXYZ");
-        t.addTicketProp(prop);
-        t = apa.saveTicket(t);
-
-        ticketsToDelete.add(t);
+        ticketsToDelete.add(ticket);
         propFieldsToDelete.add(pf);
 
-        assertTrue(apa.deleteTicket(t.getType(), t.getId()));
+        assertTrue(apa.deleteTicket(ticket.getType(), ticket.getId()));
 
         JpaRecord shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
         assertNull(shouldBeDeleted);
     }
 
 
-    @Test
+    //@Test
     public void testDeleteTicketPassingTicket() {
         JpaRecord t = new JpaRecord();
         t.setType("foo");
 
-        PropField field = new PropField();
-        field.setValueType(ValueType.STRING);
-        field.setName("WXYZ");
-        field.setStrict(Boolean.FALSE);
+        PropField field = new PropField(ValueType.STRING, "WXYZ", Boolean.FALSE);
         PropField pf = apa.savePropField(field);
-
-        StringTicketProp prop = new StringTicketProp();
-        prop.setPropField(pf);
-        prop.setValue("WXYZ");
-        t.addTicketProp(prop);
-        t = apa.saveTicket(t);
+        PTicket ticket = new PTicket();
+        ticket.put("WXYZ", "WXYZ");
+        ticket = apa.saveRecord("record", ticket);
 
         ticketsToDelete.add(t);
         propFieldsToDelete.add(pf);
