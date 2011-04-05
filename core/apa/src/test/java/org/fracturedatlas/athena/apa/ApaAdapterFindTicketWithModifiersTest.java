@@ -44,297 +44,297 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
     /*
      * Add 15 tickets
      */
-    @Before
-    public void setupTickets() {
-        JpaRecord t = new JpaRecord();
-
-        PropField field = new PropField(ValueType.STRING, "Performance", Boolean.FALSE);
-        PropField pf1 = apa.savePropField(field);
-        propFieldsToDelete.add(pf1);
-
-        field = new PropField(ValueType.INTEGER, "SeatNum", Boolean.FALSE);
-        PropField pf2 = apa.savePropField(field);
-        propFieldsToDelete.add(pf2);
-
-
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 1));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        t = new JpaRecord();
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 2));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        t = new JpaRecord();
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 3));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        t = new JpaRecord();
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 4));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        t = new JpaRecord();
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 5));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        t = new JpaRecord();
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 6));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        t = new JpaRecord();
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 7));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        t = new JpaRecord();
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 8));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        t = new JpaRecord();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 1));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        t = new JpaRecord();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 2));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        t = new JpaRecord();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 3));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        t = new JpaRecord();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 4));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        t = new JpaRecord();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 5));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        t = new JpaRecord();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 6));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        t = new JpaRecord();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 7));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        t = new JpaRecord();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 8));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-    }
-
-    @After
-    public void teardownTickets() {
-        super.teardownTickets();
-    }
-
-    @Test
-    public void testStartOnly() {
-
-        AthenaSearch search = new AthenaSearch();
-        search.setType("ticket");
-        search.setSearchModifier(AthenaSearch.START, "3");
-
-        Set results = apa.findTickets(search);
-        assertEquals(13, results.size());
-    }
-
-    @Test
-    public void testStartAndConstraints() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-
-        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(3).type("ticket").build();
-
-        Set results = apa.findTickets(search);
-        assertEquals(4, results.size());
-
-
-    }
-
-    @Test
-    public void testStartLimitAndConstraints() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-
-        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(3).limit(2).type("ticket").build();
-
-        Set results = apa.findTickets(search);
-        assertEquals(2, results.size());
-
-    }
-
-    @Test
-    public void testStartGreaterThanReturn() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-
-        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(8).type("ticket").build();
-
-        Set results = apa.findTickets(search);
-        assertEquals(0, results.size());
-
-    }
-
-    @Test
-    public void testStartEqualReturn() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-
-        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(7).type("ticket").build();
-
-        Set results = apa.findTickets(search);
-        assertEquals(0, results.size());
-
-    }
-
-    @Test
-    public void testInvalidStart() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-        AthenaSearch search = new AthenaSearch();
-        search.setSearchModifier(AthenaSearch.START, "dog");
-        search.addConstraint(con1);
-        search.addConstraint(con2);
-        search.setType("ticket");
-        Set results = apa.findTickets(search);
-        assertEquals(7, results.size());
-
-    }
-
-    @Test
-    public void testStartWithLimitGreaterThanReturn() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-
-        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(3).limit(5).type("ticket").build();
-
-        Set results = apa.findTickets(search);
-        assertEquals(4, results.size());
-
-    }
-
-     @Test
-   public void testStartofZerotoReturnSize() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-        Set results = null;
-        AthenaSearch search = null;
-
-        for (int start = 0; start <= 7; start++) {
-            search = new AthenaSearch.Builder(con1).and(con2).start(start).type("ticket").build();
-            results = apa.findTickets(search);
-            assertEquals(7 - start, results.size());
-        }
-    }
-
-    @Test
-    public void testStartofZerotoReturnSizeAndLimitofZero() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-        Set results = null;
-        AthenaSearch search = null;
-
-        int limit = 0;
-
-        for (int start = 0; start <= 7; start++) {
-            search = new AthenaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
-            results = apa.findTickets(search);
-            assertEquals(0, results.size());
-        }
-    }
-
-    @Test
-    public void testStartofZerotoReturnSizeAndLimitofOne() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-        Set<JpaRecord> results = null;
-        AthenaSearch search = null;
-        JpaRecord t = null;
-
-        int limit = 1;
-
-        for (int start = 0; start <= 6; start++) {
-            search = new AthenaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
-            results = apa.findTickets(search);
-            assertEquals(1, results.size());
-        }
-        search = new AthenaSearch.Builder(con1).and(con2).start(7).limit(limit).type("ticket").build();
-        results = apa.findTickets(search);
-        assertEquals(0, results.size());
-
-
-    }
-
-    @Test
-    public void testStartofZerotoReturnSizeAndLimitofTwo() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-        Set results = null;
-        AthenaSearch search = null;
-        int limit = 2;
-
-        for (int start = 0; start <= 5; start++) {
-            search = new AthenaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
-            results = apa.findTickets(search);
-            assertEquals(2, results.size());
-        }
-        search = new AthenaSearch.Builder(con1).and(con2).start(6).limit(limit).type("ticket").build();
-        results = apa.findTickets(search);
-        assertEquals(1, results.size());
-
-        search = new AthenaSearch.Builder(con1).and(con2).start(7).limit(limit).type("ticket").build();
-        results = apa.findTickets(search);
-        assertEquals(0, results.size());
-
-
-
-    }
+//    @Before
+//    public void setupTickets() {
+//        JpaRecord t = new JpaRecord();
+//
+//        PropField field = new PropField(ValueType.STRING, "Performance", Boolean.FALSE);
+//        PropField pf1 = apa.savePropField(field);
+//        propFieldsToDelete.add(pf1);
+//
+//        field = new PropField(ValueType.INTEGER, "SeatNum", Boolean.FALSE);
+//        PropField pf2 = apa.savePropField(field);
+//        propFieldsToDelete.add(pf2);
+//
+//
+//        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 1));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        t = new JpaRecord();
+//        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 2));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        t = new JpaRecord();
+//        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 3));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        t = new JpaRecord();
+//        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 4));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        t = new JpaRecord();
+//        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 5));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        t = new JpaRecord();
+//        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 6));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        t = new JpaRecord();
+//        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 7));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        t = new JpaRecord();
+//        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 8));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        t = new JpaRecord();
+//        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 1));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        t = new JpaRecord();
+//        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 2));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        t = new JpaRecord();
+//        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 3));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        t = new JpaRecord();
+//        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 4));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        t = new JpaRecord();
+//        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 5));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        t = new JpaRecord();
+//        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 6));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        t = new JpaRecord();
+//        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 7));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        t = new JpaRecord();
+//        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
+//        t.addTicketProp(new IntegerTicketProp(pf2, 8));
+//        t.setType("ticket");
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//    }
+//
+//    @After
+//    public void teardownTickets() {
+//        super.teardownTickets();
+//    }
+//
+//    @Test
+//    public void testStartOnly() {
+//
+//        AthenaSearch search = new AthenaSearch();
+//        search.setType("ticket");
+//        search.setSearchModifier(AthenaSearch.START, "3");
+//
+//        Set results = apa.findTickets(search);
+//        assertEquals(13, results.size());
+//    }
+//
+//    @Test
+//    public void testStartAndConstraints() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//
+//        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(3).type("ticket").build();
+//
+//        Set results = apa.findTickets(search);
+//        assertEquals(4, results.size());
+//
+//
+//    }
+//
+//    @Test
+//    public void testStartLimitAndConstraints() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//
+//        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(3).limit(2).type("ticket").build();
+//
+//        Set results = apa.findTickets(search);
+//        assertEquals(2, results.size());
+//
+//    }
+//
+//    @Test
+//    public void testStartGreaterThanReturn() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//
+//        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(8).type("ticket").build();
+//
+//        Set results = apa.findTickets(search);
+//        assertEquals(0, results.size());
+//
+//    }
+//
+//    @Test
+//    public void testStartEqualReturn() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//
+//        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(7).type("ticket").build();
+//
+//        Set results = apa.findTickets(search);
+//        assertEquals(0, results.size());
+//
+//    }
+//
+//    @Test
+//    public void testInvalidStart() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//        AthenaSearch search = new AthenaSearch();
+//        search.setSearchModifier(AthenaSearch.START, "dog");
+//        search.addConstraint(con1);
+//        search.addConstraint(con2);
+//        search.setType("ticket");
+//        Set results = apa.findTickets(search);
+//        assertEquals(7, results.size());
+//
+//    }
+//
+//    @Test
+//    public void testStartWithLimitGreaterThanReturn() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//
+//        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(3).limit(5).type("ticket").build();
+//
+//        Set results = apa.findTickets(search);
+//        assertEquals(4, results.size());
+//
+//    }
+//
+//     @Test
+//   public void testStartofZerotoReturnSize() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//        Set results = null;
+//        AthenaSearch search = null;
+//
+//        for (int start = 0; start <= 7; start++) {
+//            search = new AthenaSearch.Builder(con1).and(con2).start(start).type("ticket").build();
+//            results = apa.findTickets(search);
+//            assertEquals(7 - start, results.size());
+//        }
+//    }
+//
+//    @Test
+//    public void testStartofZerotoReturnSizeAndLimitofZero() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//        Set results = null;
+//        AthenaSearch search = null;
+//
+//        int limit = 0;
+//
+//        for (int start = 0; start <= 7; start++) {
+//            search = new AthenaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
+//            results = apa.findTickets(search);
+//            assertEquals(0, results.size());
+//        }
+//    }
+//
+//    @Test
+//    public void testStartofZerotoReturnSizeAndLimitofOne() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//        Set<JpaRecord> results = null;
+//        AthenaSearch search = null;
+//        JpaRecord t = null;
+//
+//        int limit = 1;
+//
+//        for (int start = 0; start <= 6; start++) {
+//            search = new AthenaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
+//            results = apa.findTickets(search);
+//            assertEquals(1, results.size());
+//        }
+//        search = new AthenaSearch.Builder(con1).and(con2).start(7).limit(limit).type("ticket").build();
+//        results = apa.findTickets(search);
+//        assertEquals(0, results.size());
+//
+//
+//    }
+//
+//    @Test
+//    public void testStartofZerotoReturnSizeAndLimitofTwo() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//        Set results = null;
+//        AthenaSearch search = null;
+//        int limit = 2;
+//
+//        for (int start = 0; start <= 5; start++) {
+//            search = new AthenaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
+//            results = apa.findTickets(search);
+//            assertEquals(2, results.size());
+//        }
+//        search = new AthenaSearch.Builder(con1).and(con2).start(6).limit(limit).type("ticket").build();
+//        results = apa.findTickets(search);
+//        assertEquals(1, results.size());
+//
+//        search = new AthenaSearch.Builder(con1).and(con2).start(7).limit(limit).type("ticket").build();
+//        results = apa.findTickets(search);
+//        assertEquals(0, results.size());
+//
+//
+//
+//    }
 }

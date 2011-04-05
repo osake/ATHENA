@@ -45,11 +45,16 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     
     @Override
     public JpaRecord saveTicket(JpaRecord t) throws InvalidValueException {
-        throw new UnsupportedOperationException("Unsupported operation");
+        throw new UnsupportedOperationException("Gone.  Use saveRecord(JpaRecord) instead.");
     }
 
     @Override
     public PTicket saveRecord(String type, PTicket record) {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+
+    @Override
+    public PTicket saveRecord(PTicket record) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
@@ -69,8 +74,8 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Set<JpaRecord> findTickets(AthenaSearch search) {
-        return new HashSet<JpaRecord>();
+    public Set<PTicket> findTickets(AthenaSearch search) {
+        throw new UnsupportedOperationException("Unsupported operation");
     }
 
     @Override

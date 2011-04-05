@@ -65,7 +65,15 @@ public interface ApaAdapter {
     public JpaRecord saveTicket(JpaRecord t) throws InvalidValueException;
 
     /**
-     * Save a ticket to the data store
+     * Save a record to the data store
+     * @param record
+     * @return the saved record
+     * @throws InvalidValueExcepion if this record contains a field/value pairing that is invalid
+     */
+    public PTicket saveRecord(PTicket record);
+
+    /**
+     * Save a record to the data store
      * @param record
      * @return the saved record
      * @throws InvalidValueExcepion if this record contains a field/value pairing that is invalid
@@ -99,7 +107,7 @@ public interface ApaAdapter {
      * @param searchParams the search criteria.  Criteria should be in the format: key = prop, value = prop value
      * @return matching tickets, empty List if no tickets found
      */
-    public Set<JpaRecord> findTickets(AthenaSearch search);
+    public Set<PTicket> findTickets(AthenaSearch search);
 
     /**
      * Save the ticketProps contained in this list
