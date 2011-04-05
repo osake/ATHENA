@@ -19,14 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.apa;
 
-import org.fracturedatlas.athena.apa.impl.jpa.PropField;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.fracturedatlas.athena.apa.impl.jpa.*;
+import org.fracturedatlas.athena.client.PField;
 import org.fracturedatlas.athena.client.PTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,15 +48,15 @@ public abstract class BaseApaAdapterTest {
             try {
                 apa.deleteTicket(t.getType(), t.getId());
             } catch (Exception ignored) {
-                    logger.error(ignored.getMessage(), ignored);
+                logger.error(ignored.getMessage(), ignored);
             }
         }
 
         for (PropField pf : propFieldsToDelete) {
             try {
-                    apa.deletePropField(pf);
+                apa.deletePropField(pf);
             } catch (Exception ignored) {
-                    logger.error(ignored.getMessage(), ignored);
+                //ignored
             }
         }
     }
@@ -67,9 +66,9 @@ public abstract class BaseApaAdapterTest {
      * @param col1
      * @param col2
      */
-    public void  doCollectionsContainSameElements(Collection col1, Collection col2) {
+    public void doCollectionsContainSameElements(Collection col1, Collection col2) {
 
-        if(col1 == null) {
+        if (col1 == null) {
             assertNull(col2);
         } else if (col2 == null) {
             fail("One list is null and the other is not");
@@ -77,10 +76,16 @@ public abstract class BaseApaAdapterTest {
 
         assertEquals(col1.size(), col2.size());
 
-        for(Object o : col2) {
+        for (Object o : col2) {
             col1.remove(o);
         }
 
         assertEquals(0, col1.size());
+    }
+
+    public PField addPropField(ValueType valueType, String name, Boolean strict) {
+        PropField pf = apa.savePropField(new PropField(valueType, name, strict));
+        propFieldsToDelete.add(pf);
+        return pf.toClientField();
     }
 }
