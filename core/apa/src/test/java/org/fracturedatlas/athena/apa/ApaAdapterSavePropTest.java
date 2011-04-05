@@ -40,86 +40,86 @@ public class ApaAdapterSavePropTest extends BaseApaAdapterTest {
         super();
     }
 
-    @After
-    public void teardownTickets() {
-        super.teardownTickets();
-    }
-
-    @Test
-    public void testSaveProp() throws ParseException {
-
-
-        JpaRecord t = new JpaRecord();
-        t.setType("TEST");
-        PropField pf3 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT", Boolean.FALSE));
-        propFieldsToDelete.add(pf3);
-        PropField pf4 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT2", Boolean.FALSE));
-        propFieldsToDelete.add(pf4);
-
-        t.addTicketProp(new IntegerTicketProp(pf3, 3));
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        IntegerTicketProp newProp = new IntegerTicketProp(pf4, 103);
-        newProp.setTicket(t);
-        apa.saveTicketProp(newProp);
-
-        JpaRecord saveTicket = apa.getTicket(t.getType(), t.getId());
-        PTicket savedPTicket = saveTicket.toClientTicket();
-        assertEquals("103", savedPTicket.get("TESTINT2"));
-        assertEquals("3", savedPTicket.get("TESTINT"));
-        assertEquals(2, savedPTicket.getProps().entrySet().size());
-    }
-
-
-    @Test
-    public void testSavePropWrongType() throws ParseException {
-
-
-        JpaRecord t = new JpaRecord();
-        t.setType("TEST");
-        PropField pf3 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT", Boolean.FALSE));
-        propFieldsToDelete.add(pf3);
-        PropField pf4 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT2", Boolean.FALSE));
-        propFieldsToDelete.add(pf4);
-
-        t.addTicketProp(new IntegerTicketProp(pf3, 3));
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        StringTicketProp newProp = new StringTicketProp(pf4, "103");
-        newProp.setTicket(t);
-        try{
-            apa.saveTicketProp(newProp);
-            fail("Should have thrown InvalidValueException");
-        } catch (InvalidValueException ive) {
-            //pass
-        }
-    }
-
-
-    @Test
-    public void testSavePropWrongType2() throws ParseException {
-
-
-        JpaRecord t = new JpaRecord();
-        t.setType("TEST");
-        PropField pf3 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT", Boolean.FALSE));
-        propFieldsToDelete.add(pf3);
-        PropField pf4 = apa.savePropField(new PropField(ValueType.STRING, "TESTINT2", Boolean.FALSE));
-        propFieldsToDelete.add(pf4);
-
-        t.addTicketProp(new IntegerTicketProp(pf3, 3));
-        t = apa.saveTicket(t);
-        ticketsToDelete.add(t);
-
-        DateTimeTicketProp newProp = new DateTimeTicketProp(pf4, DateUtil.parseDate("2010-10-10T11:34:33-04:00"));
-        newProp.setTicket(t);
-        try{
-            apa.saveTicketProp(newProp);
-            fail("Should have thrown InvalidValueException");
-        } catch (InvalidValueException ive) {
-            //pass
-        }
-    }
+//    @After
+//    public void teardownTickets() {
+//        super.teardownTickets();
+//    }
+//
+//    @Test
+//    public void testSaveProp() throws ParseException {
+//
+//
+//        JpaRecord t = new JpaRecord();
+//        t.setType("TEST");
+//        PropField pf3 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT", Boolean.FALSE));
+//        propFieldsToDelete.add(pf3);
+//        PropField pf4 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT2", Boolean.FALSE));
+//        propFieldsToDelete.add(pf4);
+//
+//        t.addTicketProp(new IntegerTicketProp(pf3, 3));
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        IntegerTicketProp newProp = new IntegerTicketProp(pf4, 103);
+//        newProp.setTicket(t);
+//        apa.saveTicketProp(newProp);
+//
+//        JpaRecord saveTicket = apa.getTicket(t.getType(), t.getId());
+//        PTicket savedPTicket = saveTicket.toClientTicket();
+//        assertEquals("103", savedPTicket.get("TESTINT2"));
+//        assertEquals("3", savedPTicket.get("TESTINT"));
+//        assertEquals(2, savedPTicket.getProps().entrySet().size());
+//    }
+//
+//
+//    @Test
+//    public void testSavePropWrongType() throws ParseException {
+//
+//
+//        JpaRecord t = new JpaRecord();
+//        t.setType("TEST");
+//        PropField pf3 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT", Boolean.FALSE));
+//        propFieldsToDelete.add(pf3);
+//        PropField pf4 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT2", Boolean.FALSE));
+//        propFieldsToDelete.add(pf4);
+//
+//        t.addTicketProp(new IntegerTicketProp(pf3, 3));
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        StringTicketProp newProp = new StringTicketProp(pf4, "103");
+//        newProp.setTicket(t);
+//        try{
+//            apa.saveTicketProp(newProp);
+//            fail("Should have thrown InvalidValueException");
+//        } catch (InvalidValueException ive) {
+//            //pass
+//        }
+//    }
+//
+//
+//    @Test
+//    public void testSavePropWrongType2() throws ParseException {
+//
+//
+//        JpaRecord t = new JpaRecord();
+//        t.setType("TEST");
+//        PropField pf3 = apa.savePropField(new PropField(ValueType.INTEGER, "TESTINT", Boolean.FALSE));
+//        propFieldsToDelete.add(pf3);
+//        PropField pf4 = apa.savePropField(new PropField(ValueType.STRING, "TESTINT2", Boolean.FALSE));
+//        propFieldsToDelete.add(pf4);
+//
+//        t.addTicketProp(new IntegerTicketProp(pf3, 3));
+//        t = apa.saveTicket(t);
+//        ticketsToDelete.add(t);
+//
+//        DateTimeTicketProp newProp = new DateTimeTicketProp(pf4, DateUtil.parseDate("2010-10-10T11:34:33-04:00"));
+//        newProp.setTicket(t);
+//        try{
+//            apa.saveTicketProp(newProp);
+//            fail("Should have thrown InvalidValueException");
+//        } catch (InvalidValueException ive) {
+//            //pass
+//        }
+//    }
 }

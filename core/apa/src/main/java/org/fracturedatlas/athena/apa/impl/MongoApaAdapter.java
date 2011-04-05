@@ -45,6 +45,7 @@ import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
+import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
@@ -71,11 +72,11 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     @Override
     public JpaRecord getTicket(String type, Object id) {
-        return toRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), true);
+        return toJpaRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), true);
     }
 
     public JpaRecord getTicket(String type, Object id, Boolean includeProps) {
-        return toRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), includeProps);
+        return toJpaRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), includeProps);
     }
 
     @Override
@@ -106,12 +107,12 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Set<JpaRecord> findTickets(AthenaSearch athenaSearch) {
+    public Set<PTicket> findTickets(AthenaSearch athenaSearch) {
         if(athenaSearch.getType() == null) {
             throw new ApaException("You must specify a record type when doing a search");
         }
 
-        Set<JpaRecord> tickets = new HashSet<JpaRecord>();
+        Set<PTicket> tickets = new HashSet<PTicket>();
         DBObject currentQuery = new BasicDBObject();
 
         if("0".equals(athenaSearch.getSearchModifiers().get(AthenaSearch.LIMIT))) {
@@ -455,11 +456,40 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return db.getCollection(type).findOne(query);
     }
 
-    private JpaRecord toRecord(DBObject recordObject) {
-        return toRecord(recordObject, true);
+    private PTicket toRecord(DBObject recordObject) {
+        PTicket t = null;
+
+        if(recordObject != null) {
+            t = new PTicket();
+            t.setId(recordObject.get("_id"));
+            t.setType((String)recordObject.get("type"));
+
+            DBObject propsObj = (DBObject)recordObject.get("props");
+            for(String key : propsObj.keySet()) {
+                Object val = propsObj.get(key);
+                PropField field = getPropField(key);
+                TicketProp ticketProp = field.getValueType().newTicketProp();
+                ticketProp.setPropField(field);
+
+                try {
+                    ticketProp.setValue(val);
+                } catch (Exception e) {
+                    logger.error(e.getMessage(),e);
+                    throw new ApaException("Problem converting DBObject to record:", e);
+                }
+
+                t.put(key, ticketProp.getValueAsString());
+            }
+        }
+
+        return t;
     }
 
-    private JpaRecord toRecord(DBObject recordObject, Boolean includeProps) {
+    private JpaRecord toJpaRecord(DBObject recordObject) {
+        return toJpaRecord(recordObject, true);
+    }
+
+    private JpaRecord toJpaRecord(DBObject recordObject, Boolean includeProps) {
         JpaRecord t = null;
 
         if(recordObject != null) {

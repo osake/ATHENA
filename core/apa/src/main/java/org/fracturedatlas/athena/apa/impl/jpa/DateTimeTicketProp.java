@@ -59,7 +59,11 @@ public class DateTimeTicketProp extends TicketProp implements Serializable {
     }
 
     public void setValue(Object o) {
-        setValue((Date)o);
+        try {
+            setValue((Date)o);
+        } catch (Exception e) {
+            throw new InvalidValueException(buildExceptionMessage(o.toString(), propField), e);
+        }
     }
 
     public void setValue(Date value) {
@@ -69,7 +73,7 @@ public class DateTimeTicketProp extends TicketProp implements Serializable {
     public void setValue(String s) throws InvalidValueException {
         try {
             setValue(DateUtil.parseDate(s));
-        } catch (ParseException pe) {
+        } catch (Exception pe) {
             throw new InvalidValueException(buildExceptionMessage(s, propField), pe);
         }
     }

@@ -171,8 +171,16 @@ public abstract class TicketProp extends TixEntity implements Serializable, Comp
     }
 
     protected String buildExceptionMessage(String val, PropField propField) {
-        String err = "Value [" + val + "] is not a valid value for the field [" + propField.getName() + "].  ";
-        err += "Field is of type [" + propField.getValueType().name() + "].";
+        String propName = "";
+        String err = "";
+        if(propField != null) {
+            propName = propField.getName();
+            err = "Value [" + val + "] is not a valid value for the field [" + propField.getName() + "].  ";
+            err += "Field is of type [" + propField.getValueType().name() + "].";
+        } else {
+            err = "Value [" + val + "] is not a valid value for this field";
+        }
+
         return err;
     }
  

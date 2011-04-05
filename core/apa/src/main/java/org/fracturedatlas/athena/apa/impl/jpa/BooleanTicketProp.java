@@ -46,7 +46,15 @@ public class BooleanTicketProp extends TicketProp implements Serializable {
     public Boolean getValue() {
         return value;
     }
-    
+
+    /**
+     * Set the value of this prop to the value represented by s
+     *
+     * This method adheres by the contract outlines in Boolean.parseBoolean:
+     * this prov will contain the value true if the string argument is not null and is equal, ignoring case, to the string "true"
+     *
+     * @param s a string representation for this prop's value
+     */
     public void setValue(String s) {
         setValue(Boolean.parseBoolean(s));
     }
