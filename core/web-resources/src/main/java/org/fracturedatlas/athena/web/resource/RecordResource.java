@@ -63,7 +63,7 @@ public class RecordResource {
     @Path("{type}/{id}")
     public Object get(@PathParam("type") String type, @PathParam("id") String id) throws NotFoundException {
         type = Inflector.getInstance().singularize(type);
-        JpaRecord ticket  = recordManager.getTicket(type, id);
+        PTicket ticket  = recordManager.getTicket(type, id);
         if (ticket == null) {
             type = StringUtils.capitalize(type);
             throw new NotFoundException(type + " with id [" + id + "] was not found");
@@ -72,30 +72,11 @@ public class RecordResource {
         }
     }
 
-    /**
-     * This returns TicketProp[] mostly because of Java TypeErasure + Jersey's MessageBodyWriter
-     * See: JsonTicketCollectionSerializer, JsonPropsSerializer
-     * @param id
-     * @return
-     * @throws NotFoundException
-     */
-    @GET
-    @Path("{type}/{id}/props")
-    public TicketProp[] getProps(@PathParam("type") String type, @PathParam("id") String id) throws NotFoundException {
-        type = Inflector.getInstance().singularize(type);
-        JpaRecord ticket  = recordManager.getTicket(type, id);
-        if (ticket == null) {
-            throw new NotFoundException("JpaRecord with id [" + id + "] was not found");
-        } else {
-            return (TicketProp[])ticket.getTicketProps().toArray(new TicketProp[0]);
-        }
-    }
-
     @DELETE
     @Path("{type}/{id}")
     public void delete(@PathParam("type") String type, @PathParam("id") String id) throws NotFoundException {
         type = Inflector.getInstance().singularize(type);
-        JpaRecord ticket  = recordManager.getTicket(type, id);
+        PTicket ticket  = recordManager.getTicket(type, id);
         if (ticket == null) {
             throw new NotFoundException("JpaRecord with id [" + id + "] was not found");
         } else {
@@ -142,7 +123,7 @@ public class RecordResource {
      */
     @GET
     @Path("{parentType}/{id}/{childType}")
-    public Collection<JpaRecord> search(@PathParam("parentType") String parentType,
+    public Collection<PTicket> search(@PathParam("parentType") String parentType,
                                      @PathParam("id") String id,
                                      @PathParam("childType") String childType) throws NotFoundException {
         parentType = Inflector.getInstance().singularize(parentType);
@@ -160,7 +141,7 @@ public class RecordResource {
      */
     @GET
     @Path("{type}/")
-    public Collection<JpaRecord> search(@PathParam("type") String type, @Context UriInfo ui) {
+    public Collection<PTicket> search(@PathParam("type") String type, @Context UriInfo ui) {
         MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
         if (queryParams.isEmpty()) {
             throw new ForbiddenException("You must specify at least one query parameter when searching for " + type);
