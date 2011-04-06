@@ -49,16 +49,16 @@ public class RecordManager {
     @Autowired
     ApaAdapter apa;
 
-    public JpaRecord getTicket(String type, Object id) {
-        return apa.getTicket(type, id);
+    public PTicket getTicket(String type, Object id) {
+        return apa.getRecord(type, id);
     }
 
-    public void deleteTicket(JpaRecord t) {
-        apa.deleteTicket(t);
+    public void deleteTicket(PTicket t) {
+        apa.deleteRecord(t);
     }
 
     public void deleteTicket(String type, Object id) {
-        apa.deleteTicket(type, id);
+        apa.deleteRecord(type, id);
     }
 
     public void deletePropertyFromTicket(String type, String propName, Object ticketId)
@@ -67,7 +67,7 @@ public class RecordManager {
 
         if (prop == null) {
             //no prop found, try and figure out why so we can return a sensible 404
-            JpaRecord t = apa.getTicket(type, ticketId);
+            PTicket t = apa.getRecord(type, ticketId);
             if (t == null) {
                 throw new ObjectNotFoundException("JpaRecord with id [" + ticketId + "] was not found");
             } else {
@@ -77,9 +77,9 @@ public class RecordManager {
 
         apa.deleteTicketProp(prop);
     }
-    public Set<JpaRecord> findTicketsByRelationship(String parentType, Object id, String childType) {
+    public Set<PTicket> findTicketsByRelationship(String parentType, Object id, String childType) {
 
-        JpaRecord ticket  = apa.getTicket(parentType, id);
+        PTicket ticket  = apa.getRecord(parentType, id);
         if(ticket == null) {
             throw new NotFoundException(StringUtils.capitalize(parentType) + " witn id [" + id + "] was not found");
         }
@@ -99,7 +99,7 @@ public class RecordManager {
      * @param queryParams
      * @return
      */
-    public Set<JpaRecord> findTickets(String type, MultivaluedMap<String, String> queryParams) {
+    public Set<PTicket> findTickets(String type, MultivaluedMap<String, String> queryParams) {
 
         List<String> values = null;
         Operator operator;
@@ -113,15 +113,23 @@ public class RecordManager {
                 if (fieldName.startsWith("_")) {
                     apaSearch.setSearchModifier(fieldName, operatorPrefixedValue);
                 } else {
+                    int start = 0;
 
-                    //If the operator isn't found, this defaults to equals
-                    operator = Operator.fromType(operatorPrefixedValue.substring(0, 2));
-                    int start = 2;
-                    if(operator == null) {
+                    if(operatorPrefixedValue.length() < 2) { 
                         operator = Operator.EQUALS;
-                        start = 0;
+                        value = operatorPrefixedValue;
+                    } else {
+                        //If the operator isn't found, this defaults to equals
+                        operator = Operator.fromType(operatorPrefixedValue.substring(0, 2));
+                        start = 2;
+
+                        if(operator == null) {
+                            operator = Operator.EQUALS;
+                            start = 0;
+                        }
+                        value = operatorPrefixedValue.substring(start, operatorPrefixedValue.length());
                     }
-                    value = operatorPrefixedValue.substring(start, operatorPrefixedValue.length());
+                    
                     valueSet = parseValues(value);
                     apaSearch.addConstraint(fieldName, operator, valueSet);
                 }
@@ -188,7 +196,7 @@ public class RecordManager {
 
     public PTicket updateRecord(String type, PTicket record, String idToUpdate) {
 
-        JpaRecord ticket  = apa.getTicket(type, idToUpdate);
+        PTicket ticket  = apa.getRecord(type, idToUpdate);
 
         if (idToUpdate == null) {
             throw new NotFoundException();
