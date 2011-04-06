@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,6 +131,11 @@ public class AthenaSearch {
             return this;
         }
 
+        public AthenaSearch.Builder and(String param, Operator operator, String value) {
+            search.addConstraint(new AthenaSearchConstraint(param, operator, value));
+            return this;
+        }
+
         public AthenaSearch.Builder limit(Integer limit) {
             search.setSearchModifier(AthenaSearch.LIMIT, limit.toString());
             return this;
@@ -178,6 +184,20 @@ public class AthenaSearch {
     }
 
 
+    public String toString() {
+        StringBuffer buf = new StringBuffer();
+        buf.append("type [").append(getType()).append("]\n");
+
+        for(Entry<String, String> entry : searchModifiers.entrySet()) {
+           buf.append(entry.getKey()).append(" [").append(getType()).append("]\n");
+        }
+
+        for(AthenaSearchConstraint con : getConstraints()) {
+            buf.append(con.toString()).append("\n");
+        }
+
+        return buf.toString();
+    }
 
 
 }
