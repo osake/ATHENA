@@ -77,16 +77,6 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     public Set<PTicket> findTickets(AthenaSearch search) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
-
-    @Override
-    public TicketProp saveTicketProp(TicketProp tp)  throws InvalidValueException {
-        throw new UnsupportedOperationException("Unsupported operation");
-    }
-
-    @Override
-    public List<TicketProp> saveTicketProps(List<TicketProp> props) throws InvalidValueException {
-        throw new UnsupportedOperationException("Unsupported operation");
-    }
     
     @Override
     public TicketProp getTicketProp(Object id) {

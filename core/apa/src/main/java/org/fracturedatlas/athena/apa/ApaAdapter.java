@@ -110,24 +110,6 @@ public interface ApaAdapter {
     public Set<PTicket> findTickets(AthenaSearch search);
 
     /**
-     * Save the ticketProps contained in this list
-     * @param prop the ticketProps to save
-     * @return the list of saved ticketProps
-     * @throws InvalidValueException if one of the props int he list has been amrked strict and its value is not valid
-     */
-    public List<TicketProp> saveTicketProps(List<TicketProp> prop) throws InvalidValueException;
-
-
-
-    /**
-     * Save the ticketProp
-     * @param prop the ticketProp to save
-     * @return the saved ticketProp
-     * @throws InvalidValueException if one of the props int he list has been amrked strict and its value is not valid
-     */
-    public TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException;
-
-    /**
      * get the ticketProp for the given id
      * @param id the id
      * @return the ticket prop if found, null otherwise

@@ -20,13 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.apa;
 
+import java.util.Map.Entry;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
 import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
+import org.fracturedatlas.athena.client.PTicket;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -41,182 +42,165 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         super.teardownTickets();
     }
 
-//    @Test
-//    public void testDeleteProp() {
-//        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
-//        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
-//        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
-//        propFieldsToDelete.add(field);
-//        propFieldsToDelete.add(field1);
-//        propFieldsToDelete.add(field2);
-//
-//        JpaRecord ticket = new JpaRecord();
-//        ticket.setType("hockey");
-//        TicketProp seatProp = new StringTicketProp(field, "03");
-//
-//        //deleting SEAT
-//        ticket.addTicketProp(seatProp);
-//        ticket.addTicketProp(new StringTicketProp(field1, "13"));
-//        ticket.addTicketProp(new StringTicketProp(field2, "23"));
-//
-//        ticket = apa.saveTicket(ticket);
-//        ticketsToDelete.add(ticket);
-//
-//        seatProp = apa.getTicketProp("SEAT", ticket.getType(), ticket.getId());
-//        apa.deleteTicketProp(seatProp);
-//
-//        ticket = apa.getTicket(ticket.getType(), ticket.getId());
-//        assertEquals(2, ticket.getTicketProps().size());
-//
-//        for(TicketProp prop : ticket.getTicketProps()) {
-//            if(seatProp.getPropField().getName().equals(prop.getPropField().getName())) {
-//                fail("Should have been deleted");
-//            } else if ("SEAT1".equals(prop.getPropField().getName())) {
-//                assertEquals(field1.getName(), prop.getPropField().getName());
-//                assertEquals(field1.getValueType(), prop.getPropField().getValueType());
-//                assertEquals("13", prop.getValue());
-//                assertEquals(ticket.getId(), prop.getTicket().getId());
-//            } else if ("SEAT2".equals(prop.getPropField().getName())) {
-//                assertEquals(field2.getName(), prop.getPropField().getName());
-//                assertEquals(field2.getValueType(), prop.getPropField().getValueType());
-//                assertEquals("23", prop.getValue());
-//                assertEquals(ticket.getId(), prop.getTicket().getId());
-//            } else {
-//                fail("Found a prop that should not be here");
-//            }
-//        }
-//    }
-//
-//    @Test
-//    public void testDeleteProp2() {
-//        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
-//        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
-//        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
-//
-//        JpaRecord ticket = new JpaRecord();
-//        ticket.setType("hockey");
-//        TicketProp seatProp = new StringTicketProp(field, "03");
-//
-//        //deleting SEAT
-//        ticket.addTicketProp(seatProp);
-//        ticket.addTicketProp(new StringTicketProp(field1, "13"));
-//        ticket.addTicketProp(new StringTicketProp(field2, "23"));
-//        propFieldsToDelete.add(field);
-//        propFieldsToDelete.add(field1);
-//        propFieldsToDelete.add(field2);
-//
-//        ticket = apa.saveTicket(ticket);
-//
-//
-//        JpaRecord ticket2 = new JpaRecord();
-//        ticket2.setType("dos");
-//        ticket2.addTicketProp(new StringTicketProp(field, "ddd"));
-//        ticket2.addTicketProp(new StringTicketProp(field1, "fff"));
-//        ticket2.addTicketProp(new StringTicketProp(field2, "ggg"));
-//
-//        ticket = apa.saveTicket(ticket);
-//        ticketsToDelete.add(ticket);
-//        ticket2 = apa.saveTicket(ticket2);
-//        ticketsToDelete.add(ticket2);
-//
-//        seatProp = apa.getTicketProp("SEAT", ticket.getType(), ticket.getId());
-//        apa.deleteTicketProp(seatProp);
-//
-//        ticket = apa.getTicket(ticket.getType(), ticket.getId());
-//        assertEquals(2, ticket.getTicketProps().size());
-//
-//        for(TicketProp prop : ticket.getTicketProps()) {
-//            if(seatProp.getPropField().getName().equals(prop.getPropField().getName())) {
-//                fail("Should have been deleted");
-//            } else if ("SEAT1".equals(prop.getPropField().getName())) {
-//                assertEquals(field1.getName(), prop.getPropField().getName());
-//                assertEquals(field1.getValueType(), prop.getPropField().getValueType());
-//                assertEquals("13", prop.getValue());
-//                assertEquals(ticket.getId(), prop.getTicket().getId());
-//            } else if ("SEAT2".equals(prop.getPropField().getName())) {
-//                assertEquals(field2.getName(), prop.getPropField().getName());
-//                assertEquals(field2.getValueType(), prop.getPropField().getValueType());
-//                assertEquals("23", prop.getValue());
-//                assertEquals(ticket.getId(), prop.getTicket().getId());
-//            } else {
-//                fail("Found a prop that should not be here");
-//            }
-//        }
-//
-//        ticket2 = apa.getTicket(ticket2.getType(), ticket2.getId());
-//        assertEquals(3, ticket2.getTicketProps().size());
-//
-//        for(TicketProp prop : ticket2.getTicketProps()) {
-//             if ("SEAT".equals(prop.getPropField().getName())) {
-//                assertEquals(field.getName(), prop.getPropField().getName());
-//                assertEquals(field.getValueType(), prop.getPropField().getValueType());
-//                assertEquals("ddd", prop.getValue());
-//                assertEquals(ticket2.getId(), prop.getTicket().getId());
-//            }else if ("SEAT1".equals(prop.getPropField().getName())) {
-//                assertEquals(field1.getName(), prop.getPropField().getName());
-//                assertEquals(field1.getValueType(), prop.getPropField().getValueType());
-//                assertEquals("fff", prop.getValue());
-//                assertEquals(ticket2.getId(), prop.getTicket().getId());
-//            } else if ("SEAT2".equals(prop.getPropField().getName())) {
-//                assertEquals(field2.getName(), prop.getPropField().getName());
-//                assertEquals(field2.getValueType(), prop.getPropField().getValueType());
-//                assertEquals("ggg", prop.getValue());
-//                assertEquals(ticket2.getId(), prop.getTicket().getId());
-//            } else {
-//                fail("Found a prop that should not be here");
-//            }
-//        }
-//    }
-//
-//    @Test
-//    public void testDeletePropDoesntExist() {
-//        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
-//        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
-//        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
-//
-//        JpaRecord ticket = new JpaRecord();
-//        ticket.setType("hockey");
-//        TicketProp seatProp = new StringTicketProp(field, "03");
-//        ticket.addTicketProp(seatProp);
-//        ticket.addTicketProp(new StringTicketProp(field1, "13"));
-//        ticket.addTicketProp(new StringTicketProp(field2, "23"));
-//        propFieldsToDelete.add(field);
-//        propFieldsToDelete.add(field1);
-//        propFieldsToDelete.add(field2);
-//
-//        ticket = apa.saveTicket(ticket);
-//        ticketsToDelete.add(ticket);
-//
-//        TicketProp fakeProp = new StringTicketProp(field, "49949");
-//
-//        try{
-//            apa.deleteTicketProp(fakeProp);
-//        } catch (ApaException toe) {
-//            //this is cool.  Hibernate is complaining that we're deleting an unsaved transient blah blah blah...
-//        }
-//
-//        ticket = apa.getTicket(ticket.getType(), ticket.getId());
-//        assertEquals(3, ticket.getTicketProps().size());
-//
-//        for(TicketProp prop : ticket.getTicketProps()) {
-//             if ("SEAT".equals(prop.getPropField().getName())) {
-//                assertEquals(field.getName(), prop.getPropField().getName());
-//                assertEquals(field.getValueType(), prop.getPropField().getValueType());
-//                assertEquals("03", prop.getValue());
-//                assertEquals(ticket.getId(), prop.getTicket().getId());
-//            }else if ("SEAT1".equals(prop.getPropField().getName())) {
-//                assertEquals(field1.getName(), prop.getPropField().getName());
-//                assertEquals(field1.getValueType(), prop.getPropField().getValueType());
-//                assertEquals("13", prop.getValue());
-//                assertEquals(ticket.getId(), prop.getTicket().getId());
-//            } else if ("SEAT2".equals(prop.getPropField().getName())) {
-//                assertEquals(field2.getName(), prop.getPropField().getName());
-//                assertEquals(field2.getValueType(), prop.getPropField().getValueType());
-//                assertEquals("23", prop.getValue());
-//                assertEquals(ticket.getId(), prop.getTicket().getId());
-//            } else {
-//                fail("Found a prop that should not be here");
-//            }
-//        }
-//    }
+    @Test
+    public void testDeleteProp() {
+        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
+        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
+        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
+        propFieldsToDelete.add(field);
+        propFieldsToDelete.add(field1);
+        propFieldsToDelete.add(field2);
+
+        PTicket ticket = new PTicket();
+        ticket.setType("hockey");
+        TicketProp seatProp = new StringTicketProp(field, "03");
+
+        //deleting SEAT
+        ticket.put("SEAT", "03");
+        ticket.put("SEAT1", "13");
+        ticket.put("SEAT2", "23");
+
+        ticket = apa.saveRecord(ticket);
+        ticketsToDelete.add(ticket);
+
+        seatProp = apa.getTicketProp("SEAT", ticket.getType(), ticket.getId());
+        apa.deleteTicketProp(seatProp);
+
+        ticket = apa.getRecord(ticket.getType(), ticket.getId());
+        assertEquals(2, ticket.getProps().size());
+
+        for(Entry<String, String> prop : ticket.getProps().entrySet()) {
+            if("SEAT".equals(prop.getKey())) {
+                fail("Should have been deleted");
+            } else if ("SEAT1".equals(prop.getKey())) {
+                assertEquals(field1.getName(), prop.getKey());
+                assertEquals("13", prop.getValue());
+            } else if ("SEAT2".equals(prop.getKey())) {
+                assertEquals(field2.getName(), prop.getKey());
+                assertEquals("23", prop.getValue());
+            } else {
+                fail("Found a prop that should not be here");
+            }
+        }
+    }
+
+    @Test
+    public void testDeleteProp2() {
+        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
+        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
+        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
+
+        PTicket ticket = new PTicket();
+        ticket.setType("hockey");
+        TicketProp seatProp = new StringTicketProp(field, "03");
+
+        //deleting SEAT
+        ticket.put("SEAT", "03");
+        ticket.put("SEAT1", "13");
+        ticket.put("SEAT2", "23");
+        propFieldsToDelete.add(field);
+        propFieldsToDelete.add(field1);
+        propFieldsToDelete.add(field2);
+
+        PTicket ticket2 = new PTicket();
+        ticket2.setType("dos");
+        ticket2.put("SEAT", "ddd");
+        ticket2.put("SEAT1", "fff");
+        ticket2.put("SEAT2", "ggg");
+
+        ticket = apa.saveRecord(ticket);
+        ticketsToDelete.add(ticket);
+        ticket2 = apa.saveRecord(ticket2);
+        ticketsToDelete.add(ticket2);
+
+        seatProp = apa.getTicketProp("SEAT", ticket.getType(), ticket.getId());
+        apa.deleteTicketProp(seatProp);
+
+        ticket = apa.getRecord(ticket.getType(), ticket.getId());
+        assertEquals(2, ticket.getProps().size());
+
+        for(Entry<String, String> prop : ticket.getProps().entrySet()) {
+            if("SEAT".equals(prop.getKey())) {
+                fail("Should have been deleted");
+            } else if ("SEAT1".equals(prop.getKey())) {
+                assertEquals(field1.getName(), prop.getKey());
+                assertEquals("13", prop.getValue());
+            } else if ("SEAT2".equals(prop.getKey())) {
+                assertEquals(field2.getName(), prop.getKey());
+                assertEquals("23", prop.getValue());
+            } else {
+                fail("Found a prop that should not be here");
+            }
+        }
+
+        ticket2 = apa.getRecord(ticket2.getType(), ticket2.getId());
+        assertEquals(3, ticket2.getProps().size());
+
+        for(Entry<String, String> prop : ticket2.getProps().entrySet()) {
+            if("SEAT".equals(prop.getKey())) {
+                assertEquals(field.getName(), prop.getKey());
+                assertEquals("ddd", prop.getValue());
+            } else if ("SEAT1".equals(prop.getKey())) {
+                assertEquals(field1.getName(), prop.getKey());
+                assertEquals("fff", prop.getValue());
+            } else if ("SEAT2".equals(prop.getKey())) {
+                assertEquals(field2.getName(), prop.getKey());
+                assertEquals("ggg", prop.getValue());
+            } else {
+                fail("Found a prop that should not be here");
+            }
+        }
+    }
+
+    @Test
+    public void testDeletePropDoesntExist() {
+        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
+        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
+        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
+        propFieldsToDelete.add(field);
+        propFieldsToDelete.add(field1);
+        propFieldsToDelete.add(field2);
+
+        PTicket ticket = new PTicket();
+        ticket.setType("hockey");
+        TicketProp seatProp = new StringTicketProp(field, "03");
+
+        //deleting SEAT
+        ticket.put("SEAT", "03");
+        ticket.put("SEAT1", "13");
+        ticket.put("SEAT2", "23");
+
+        ticket = apa.saveRecord(ticket);
+        ticketsToDelete.add(ticket);
+
+        TicketProp fakeProp = new StringTicketProp(field, "49949");
+
+        try{
+            apa.deleteTicketProp(fakeProp);
+        } catch (ApaException toe) {
+            //this is cool.  Hibernate is complaining that we're deleting an unsaved transient blah blah blah...
+        }
+
+        seatProp = apa.getTicketProp("SEAT", ticket.getType(), ticket.getId());
+        apa.deleteTicketProp(seatProp);
+
+        ticket = apa.getRecord(ticket.getType(), ticket.getId());
+        assertEquals(2, ticket.getProps().size());
+
+        for(Entry<String, String> prop : ticket.getProps().entrySet()) {
+            if("SEAT".equals(prop.getKey())) {
+                assertEquals(field.getName(), prop.getKey());
+                assertEquals("03", prop.getValue());
+            } else if ("SEAT1".equals(prop.getKey())) {
+                assertEquals(field1.getName(), prop.getKey());
+                assertEquals("13", prop.getValue());
+            } else if ("SEAT2".equals(prop.getKey())) {
+                assertEquals(field2.getName(), prop.getKey());
+                assertEquals("23", prop.getValue());
+            } else {
+                fail("Found a prop that should not be here");
+            }
+        }
+
+    }
 }
