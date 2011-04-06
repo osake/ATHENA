@@ -46,7 +46,7 @@ public abstract class BaseApaAdapterTest {
     public void teardownTickets() {
         for (PTicket t : ticketsToDelete) {
             try {
-                apa.deleteTicket(t.getType(), t.getId());
+                apa.deleteRecord(t.getType(), t.getId());
             } catch (Exception ignored) {
                 logger.error(ignored.getMessage(), ignored);
             }

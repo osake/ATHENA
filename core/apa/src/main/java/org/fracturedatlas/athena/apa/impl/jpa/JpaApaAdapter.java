@@ -48,7 +48,16 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public JpaRecord getTicket(String type, Object id) {
+    public PTicket getRecord(String type, Object id) {
+        JpaRecord r = getTicket(type, id);
+        if(r != null) {
+            return r.toClientTicket();
+        } else {
+            return null;
+        }
+    }
+
+    private  JpaRecord getTicket(String type, Object id) {
         EntityManager em = this.emf.createEntityManager();
         try {
             Long longId = LongUserType.massageToLong(id);
@@ -233,7 +242,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Boolean deleteTicket(String type, Object id) {
+    public Boolean deleteRecord(String type, Object id) {
         logger.debug("Deleting ticket: " + id);
         if (id == null) {
             return false;
@@ -251,11 +260,6 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         } finally {
             cleanup(em);
         }
-    }
-
-    @Override
-    public Boolean deleteTicket(JpaRecord t) {
-        return deleteTicket(t.getType(), t.getId());
     }
 
     /**
