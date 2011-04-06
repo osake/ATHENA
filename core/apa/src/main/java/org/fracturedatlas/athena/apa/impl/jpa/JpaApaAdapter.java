@@ -490,8 +490,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return query;
     }
 
-    @Override
-    public List<TicketProp> saveTicketProps(List<TicketProp> props) {
+    private List<TicketProp> saveTicketProps(List<TicketProp> props) {
         List<TicketProp> outProps = new ArrayList<TicketProp>();
         EntityManager em = this.emf.createEntityManager();
         try {
@@ -515,8 +514,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     }
 
-    @Override
-    public TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException {
+    private TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException {
         EntityManager em = this.emf.createEntityManager();
         try {
             em.getTransaction().begin();

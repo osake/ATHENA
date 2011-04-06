@@ -28,9 +28,7 @@ import org.junit.runners.Suite;
   ApaAdapterDeleteTicketsTest.class,
   ApaAdapterFindTicketsTest.class,
   ApaAdapterSavePropFieldTest.class,
-  ApaAdapterSavePropTest.class,
   ApaAdapterGetPropTest.class,
-  ApaAdapterSavePropTest.class,
   ApaAdapterComplexSearchTest.class,
   ApaAdapterSaveTicketsTest.class
 })

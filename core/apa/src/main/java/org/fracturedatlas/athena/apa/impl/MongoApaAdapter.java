@@ -70,7 +70,6 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         fields = db.getCollection(fieldsCollectionName);
     }
 
-    @Override
     public JpaRecord getTicket(String type, Object id) {
         return toJpaRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), true);
     }
@@ -298,8 +297,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return getPropField(propField.getId());
     }
 
-    @Override
-    public TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException {
+    private TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException {
         enforceStrict(prop.getPropField(), prop.getValueAsString());
         enforceCorrectValueType(prop.getPropField(), prop);
         JpaRecord t = getTicket(prop.getTicket().getType(), prop.getTicket().getId());
@@ -308,7 +306,6 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return null;
     }
 
-    @Override
     public Boolean deleteTicket(String type, Object id) {
         JpaRecord t = getTicket(type, id);
 
@@ -324,7 +321,6 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
     }
 
-    @Override
     public Boolean deleteTicket(JpaRecord t) {
         return deleteTicket(t.getType(), t.getId());
     }
