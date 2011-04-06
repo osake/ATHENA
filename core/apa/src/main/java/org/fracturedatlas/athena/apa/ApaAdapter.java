@@ -49,14 +49,14 @@ import org.fracturedatlas.athena.search.AthenaSearch;
 public interface ApaAdapter {
 
     /**
-     * Get a ticket from the data store
-     * @param id
-     * @return the ticket or null if the ticket is not found
+     * Get a record from the data store
+     * @param id the id of the record
+     * @return the record or null if the record is not found
      */
-    public JpaRecord getTicket(String type, Object id);
+    public PTicket getRecord(String type, Object id);
 
     /**
-     * Save a ticket to the data store.  This method can be used to save new tickets and update existing tickets.
+     * Save a record to the data store.  This method can be used to save new records and update existing tickets.
      *
      * @param t
      * @return the ticket that was just saved
@@ -86,19 +86,19 @@ public interface ApaAdapter {
      * @param id the id to delete
      * @return true if the delete succeeded, false otherwise
      */
-    public Boolean deleteTicket(String type, Object id);
+    public Boolean deleteRecord(String type, Object id);
 
     /**
-     * Delete a ticket from the data store.  This is a convenience method to call deleteTicket(Object).
-     * Any contracts made in deleteTicket(id) should also be enforced here.
+     * Delete a ticket from the data store.  This is a convenience method to call deleteTicket(type, id).
+     * Any contracts made in deleteTicket(type, id) should also be enforced here.
      *
      * Passing null to this method will result in a NullPointerException
      *
      * @param t the ticket to delete
      * @return true if the delete succeeded, false otherwise
      */
-    public Boolean deleteTicket(JpaRecord t);
-    
+    public Boolean deleteRecord(PTicket t);
+
     /**
      * Search for tickets that match all criteria in search.
      *

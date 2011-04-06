@@ -39,7 +39,7 @@ import org.fracturedatlas.athena.search.AthenaSearch;
 public abstract class AbstractApaAdapter implements ApaAdapter {
     
     @Override
-    public JpaRecord getTicket(String type, Object id) {
+    public PTicket getRecord(String type, Object id) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
     
@@ -59,13 +59,13 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Boolean deleteTicket(String type, Object id) {
+    public Boolean deleteRecord(String type, Object id) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
     @Override
-    public Boolean deleteTicket(JpaRecord t) {
-        throw new UnsupportedOperationException("Unsupported operation");
+    public Boolean deleteRecord(PTicket t) {
+        return deleteRecord(t.getType(), t.getId());
     }
 
     @Override
