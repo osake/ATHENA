@@ -343,9 +343,18 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         //otherwise, set "to" to limit+start
         to = (limit == null || limit + from > ticketSet.size()) ? ticketSet.size() : limit + from;
 
-        //short circuit all of this if we can
+        logger.debug("Enforcing limit:");
+        logger.debug("FROM: {}", from);
+        logger.debug("TO:   {}", to);
+
+        //short circuit all of this if we can.  If they've asked for more tickets than we found, punch out
         if(from == 0 && to >= ticketSet.size()) {
             return ticketSet;
+        }
+
+        //if the start is greater than the number of tickets we've found, return nothing
+        if(from > to) {
+            return new HashSet<JpaRecord>();
         }
 
         JpaRecord[] ticketArray = new JpaRecord[ticketSet.size()];
