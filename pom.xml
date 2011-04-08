@@ -3,7 +3,7 @@
     <groupId>org.fracturedatlas.athena</groupId>
     <artifactId>athena</artifactId>
     <name>athena</name>
-    <version>1.0.0-rc-02-SNAPSHOT</version>
+    <version>1.0.0-rc-02</version>
     <packaging>pom</packaging>
     <modules>
         <module>core</module>
