@@ -99,11 +99,12 @@ Save that credit card token for future use.
     POST /payments/transactions/authorize
     {
         "amount":"10.00",
-        "orderId":"order id",
         "creditCard":{
             "token":"j2rt"
         }
     }
+
+Both amount and creditCard.token are required
 
 # Settle a payment
 
@@ -222,7 +223,9 @@ You can send the entire customer if needed, but only the id is necessary
 *Request*
 
     PUT /payments/cards/{id}
-    {"cardNumber":"411111******1111","expirationDate":"12/2012","cardholderName":"Joe Cool","token":"9f9p","id":"9f9p","customer":{"id":"485254"}}
+    {"expirationDate":"12/2012","cardholderName":"Joe Cool","token":"9f9p","id":"9f9p","customer":{"id":"485254"}}
+
+**You cannot update a card number for a saved credit card** so do the cardNumber field in your PUT request.  If you include a number, updated or otherwise, ATHENA will return a 400 - Bad Request.
 
 *Response*
 
