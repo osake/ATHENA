@@ -22,17 +22,11 @@ package org.fracturedatlas.athena.web.resource.container;
 
 import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
-import java.util.ArrayList;
-import java.util.List;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.apa.impl.jpa.PropField;
-import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.junit.After;
-import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -50,7 +44,7 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testDeletePropDoesntExist() throws Exception {
-        JpaRecord t = createSampleTicket(true);
+        PTicket t = createSampleTicket(true);
         String path = RECORDS_PATH + t.getId() +"/props/FAKE_PROP.json";
 
         ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
@@ -59,7 +53,7 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testDeletePropTicketDoesntExist() throws Exception {
-        JpaRecord t = createSampleTicket(true);
+        PTicket t = createSampleTicket(true);
         String path = RECORDS_PATH + "0/props/SEAT_NUMBER.json";
 
         ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
@@ -68,22 +62,21 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testDeleteProp() throws Exception {
-        JpaRecord t = createSampleTicket(true);
+        PTicket t = createSampleTicket(true);
         String path = RECORDS_PATH + t.getId() +"/props/SEAT_NUMBER.json";
 
         ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
         assertEquals(ClientResponse.Status.NO_CONTENT, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
         //check and make sure the prop is deleted
-        t = apa.getTicket(t.getType(), t.getId());
-        PTicket pTicket = t.toClientTicket();
-        assertEquals(1, pTicket.getProps().size());
-        assertEquals("ORCHESTRA", pTicket.get("SECTION"));
+        t = apa.getRecord(t.getType(), t.getId());
+        assertEquals(1, t.getProps().size());
+        assertEquals("ORCHESTRA", t.get("SECTION"));
     }
 
     @Test
     public void testDeleteTwoProps() throws Exception {
-        JpaRecord t = createSampleTicket(true);
+        PTicket t = createSampleTicket(true);
         String path = RECORDS_PATH + t.getId() +"/props/SEAT_NUMBER.json";
 
         ClientResponse response = tix.path(path).type("application/json").delete(ClientResponse.class);
@@ -95,45 +88,23 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
         assertEquals(ClientResponse.Status.NO_CONTENT, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
         //check and make sure the prop is deleted
-        t = apa.getTicket(t.getType(), t.getId());
-        PTicket pTicket = t.toClientTicket();
-        assertEquals(0, pTicket.getProps().size());
+        t = apa.getRecord(t.getType(), t.getId());
+        assertEquals(0, t.getProps().size());
 
     }
     
-    public JpaRecord createSampleTicket(Boolean saveItToo) {
-        JpaRecord t = new JpaRecord();
+    public PTicket createSampleTicket(Boolean saveItToo) {
+        PTicket t = new PTicket();
         t.setType("ticket");
 
-        PropField field = new PropField();
-        field.setValueType(ValueType.STRING);
-        field.setName("SEAT_NUMBER");
-        field.setStrict(Boolean.FALSE);
-        PropField pf = apa.savePropField(field);
-
-        field = new PropField();
-        field.setValueType(ValueType.STRING);
-        field.setName("SECTION");
-        field.setStrict(Boolean.FALSE);
-        PropField pf2 = apa.savePropField(field);
-
-        StringTicketProp prop = new StringTicketProp();
-        prop.setPropField(pf);
-        prop.setValue("3D");
-        t.addTicketProp(prop);
-
-        StringTicketProp prop2 = new StringTicketProp();
-        prop2.setPropField(pf2);
-        prop2.setValue("ORCHESTRA");
-        t.addTicketProp(prop2);
-
+        addPropField(ValueType.STRING,"SEAT_NUMBER",Boolean.FALSE);
+        addPropField(ValueType.STRING,"SECTION",Boolean.FALSE);
+        t.put("SEAT_NUMBER", "3D");
+        t.put("SECTION", "ORCHESTRA");
         if(saveItToo) {
-            t = apa.saveTicket(t);
-            ticketsToDelete.add(t);
+            t = apa.saveRecord(t);
+            recordsToDelete.add(t);
         }
-        
-        propFieldsToDelete.add(pf);
-        propFieldsToDelete.add(pf2);
 
         return t;
     }

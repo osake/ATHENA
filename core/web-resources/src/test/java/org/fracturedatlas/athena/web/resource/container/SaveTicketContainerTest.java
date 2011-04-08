@@ -59,99 +59,99 @@ public class SaveTicketContainerTest extends BaseTixContainerTest {
         super.teardownTickets();
     }
 
-    @Test
-    public void postRecordWithNullId() {
-        PTicket pTicket = new PTicket("ticket");
-        
-        PropField pf = apa.savePropField(new PropField(ValueType.STRING, "temp", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(pf);
-
-        String ticketJson = "{\"id\":null,\"temp\":\"34\"}";
-        
-        String updatedTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
-        PTicket savedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
-        assertNotNull(savedPTicket.getId());
-        assertEquals(savedPTicket.get("temp"), "34");
-        apa.deleteTicket(pTicket.getType(), savedPTicket.getId());
-    }
-    
-    @Test
-    public void testCreateTicketWithNoProps() {
-        PTicket pTicket = new PTicket("ticket");
-        String ticketJson = gson.toJson(pTicket);
-        String updatedTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
-        PTicket savedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
-        assertNotNull(savedPTicket.getId());
-        assertRecordsEqual(pTicket, savedPTicket, false);
-        apa.deleteTicket(savedPTicket.getType(), savedPTicket.getId());
-    }
-
-    @Test
-    public void testCreateTicketBadIntegerValue() {
-        PTicket pTicket = createSampleTicket(false);
-        PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "FOO_INT", Boolean.FALSE));
-        propFieldsToDelete.add(pf);
-        pTicket.put("FOO_INT", "NaN");
-
-        String ticketJson = gson.toJson(pTicket);
-
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, ticketJson);
-        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
-    }
-
-    @Test
-    public void testCreateTicketBadDateTimeValue() {
-        PTicket pTicket = createSampleTicket(false);
-        PropField pf = apa.savePropField(new PropField(ValueType.DATETIME, "FOO_DATE", Boolean.FALSE));
-        propFieldsToDelete.add(pf);
-        pTicket.put("FOO_INT", "NaD");
-
-        String ticketJson = gson.toJson(pTicket);
-
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, ticketJson);
-        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
-    }
-
-    @Test
-    public void testCreateTicketBadBooleanValue() {
-        PTicket pTicket = createSampleTicket(false);
-        PropField pf = apa.savePropField(new PropField(ValueType.BOOLEAN, "FOO_BOOL", Boolean.FALSE));
-        propFieldsToDelete.add(pf);
-        pTicket.put("FOO_BOOL", "notabool");
-
-        String ticketJson = gson.toJson(pTicket);
-        String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
-        PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
-        assertEquals("false", savedPTicket.get("FOO_BOOL"));
-        recordsToDelete.add(savedPTicket);
-    }
-
-    @Test
-    public void testCreateTicket() {
-        PTicket pTicket = createSampleTicket(false);
-        String ticketJson = gson.toJson(pTicket);
-        String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
-        PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
-        assertNotNull(savedPTicket.getId());
-        assertRecordsEqual(pTicket, savedPTicket, false);
-        recordsToDelete.add(savedPTicket);
-    }
-
-    //TODO: Makes no sense
-    //@Test
-    public void testUpdateTicketUnknownField() {
-        PTicket pTicket = createSampleTicket(false);
-        pTicket.put("BAD_FIELD", "BAD_FISH");
-
-        String ticketJson = gson.toJson(pTicket);
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, ticketJson);
-        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
-
-        //make sure the ticket hasn't changed
-        PTicket savedTicket = apa.getTicket(pTicket.getType(), pTicket.getId()).toClientTicket();
-        recordsToDelete.add(savedTicket);
-        assertRecordsEqual(pTicket, savedTicket, false);
-    }
+//    @Test
+//    public void postRecordWithNullId() {
+//        PTicket pTicket = new PTicket("ticket");
+//
+//        PropField pf = apa.savePropField(new PropField(ValueType.STRING, "temp", StrictType.NOT_STRICT));
+//        propFieldsToDelete.add(pf);
+//
+//        String ticketJson = "{\"id\":null,\"temp\":\"34\"}";
+//
+//        String updatedTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
+//        PTicket savedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
+//        assertNotNull(savedPTicket.getId());
+//        assertEquals(savedPTicket.get("temp"), "34");
+//        apa.deleteTicket(pTicket.getType(), savedPTicket.getId());
+//    }
+//
+//    @Test
+//    public void testCreateTicketWithNoProps() {
+//        PTicket pTicket = new PTicket("ticket");
+//        String ticketJson = gson.toJson(pTicket);
+//        String updatedTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
+//        PTicket savedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
+//        assertNotNull(savedPTicket.getId());
+//        assertRecordsEqual(pTicket, savedPTicket, false);
+//        apa.deleteTicket(savedPTicket.getType(), savedPTicket.getId());
+//    }
+//
+//    @Test
+//    public void testCreateTicketBadIntegerValue() {
+//        PTicket pTicket = createSampleTicket(false);
+//        PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "FOO_INT", Boolean.FALSE));
+//        propFieldsToDelete.add(pf);
+//        pTicket.put("FOO_INT", "NaN");
+//
+//        String ticketJson = gson.toJson(pTicket);
+//
+//        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, ticketJson);
+//        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+//    }
+//
+//    @Test
+//    public void testCreateTicketBadDateTimeValue() {
+//        PTicket pTicket = createSampleTicket(false);
+//        PropField pf = apa.savePropField(new PropField(ValueType.DATETIME, "FOO_DATE", Boolean.FALSE));
+//        propFieldsToDelete.add(pf);
+//        pTicket.put("FOO_INT", "NaD");
+//
+//        String ticketJson = gson.toJson(pTicket);
+//
+//        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, ticketJson);
+//        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+//    }
+//
+//    @Test
+//    public void testCreateTicketBadBooleanValue() {
+//        PTicket pTicket = createSampleTicket(false);
+//        PropField pf = apa.savePropField(new PropField(ValueType.BOOLEAN, "FOO_BOOL", Boolean.FALSE));
+//        propFieldsToDelete.add(pf);
+//        pTicket.put("FOO_BOOL", "notabool");
+//
+//        String ticketJson = gson.toJson(pTicket);
+//        String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
+//        PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
+//        assertEquals("false", savedPTicket.get("FOO_BOOL"));
+//        recordsToDelete.add(savedPTicket);
+//    }
+//
+//    @Test
+//    public void testCreateTicket() {
+//        PTicket pTicket = createSampleTicket(false);
+//        String ticketJson = gson.toJson(pTicket);
+//        String createdTicketJson = tix.path(path).type("application/json").post(String.class, ticketJson);
+//        PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
+//        assertNotNull(savedPTicket.getId());
+//        assertRecordsEqual(pTicket, savedPTicket, false);
+//        recordsToDelete.add(savedPTicket);
+//    }
+//
+//    //TODO: Makes no sense
+//    //@Test
+//    public void testUpdateTicketUnknownField() {
+//        PTicket pTicket = createSampleTicket(false);
+//        pTicket.put("BAD_FIELD", "BAD_FISH");
+//
+//        String ticketJson = gson.toJson(pTicket);
+//        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, ticketJson);
+//        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+//
+//        //make sure the ticket hasn't changed
+//        PTicket savedTicket = apa.getTicket(pTicket.getType(), pTicket.getId()).toClientTicket();
+//        recordsToDelete.add(savedTicket);
+//        assertRecordsEqual(pTicket, savedTicket, false);
+//    }
 //
 //    @Test
 //    public void testCreateTicketUnknownField() {

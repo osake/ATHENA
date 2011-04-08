@@ -51,7 +51,6 @@ public abstract class BaseTixContainerTest extends JerseyTest {
     protected final static String RECORDS_PATH = "/tickets/";
     protected final static String FIELDS_PATH = "/meta/fields/";
 
-    protected List<JpaRecord> ticketsToDelete = new ArrayList<JpaRecord>();
     protected List<PTicket> recordsToDelete = new ArrayList<PTicket>();
     protected List<PropField> propFieldsToDelete = new ArrayList<PropField>();
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -76,17 +75,9 @@ public abstract class BaseTixContainerTest extends JerseyTest {
     }
 
     public void teardownTickets() {
-        for (JpaRecord t : ticketsToDelete) {
-            try {
-                apa.deleteTicket(t);
-            } catch (Exception ignored) {
-                ignored.printStackTrace();
-            }
-        }
-
         for (PTicket t : recordsToDelete) {
             try {
-                apa.deleteTicket(t.getType(), t.getId());
+                apa.deleteRecord(t.getType(), t.getId());
             } catch (Exception ignored) {
                 ignored.printStackTrace();
             }
@@ -150,5 +141,11 @@ public abstract class BaseTixContainerTest extends JerseyTest {
                 fail("Fields are not equals, values differ");
             }
         }
+    }
+
+    public PField addPropField(ValueType valueType, String name, Boolean strict) {
+        PropField pf = apa.savePropField(new PropField(valueType, name, strict));
+        propFieldsToDelete.add(pf);
+        return pf.toClientField();
     }
 }
