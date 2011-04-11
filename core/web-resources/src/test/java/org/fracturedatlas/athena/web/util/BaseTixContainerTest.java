@@ -93,6 +93,11 @@ public abstract class BaseTixContainerTest extends JerseyTest {
         }
     }
 
+    public void assertNotFound(String path) {
+        ClientResponse response = tix.path(path).get(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
     public void assertRecordsEqual(PTicket t, PTicket pTicket, Boolean includeId) {
         if(includeId) {
             assertTrue(IdAdapter.isEqual(t.getId(), pTicket.getId()));
