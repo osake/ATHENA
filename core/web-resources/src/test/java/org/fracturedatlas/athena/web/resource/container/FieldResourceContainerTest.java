@@ -74,8 +74,8 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
     }
 
     @After
-    public void teardownTickets() {
-        super.teardownTickets();
+    public void teardownRecords() {
+        super.teardownRecords();
     }
 
 //    @Test

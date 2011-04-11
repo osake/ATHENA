@@ -75,7 +75,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
         apa = (ApaAdapter)context.getBean("apa");
     }
 
-    public void teardownTickets() {
+    public void teardownRecords() {
         for (PTicket t : recordsToDelete) {
             try {
                 apa.deleteRecord(t.getType(), t.getId());
