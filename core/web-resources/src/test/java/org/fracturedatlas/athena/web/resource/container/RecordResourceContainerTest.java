@@ -38,24 +38,24 @@ import org.junit.After;
 import org.junit.Test;
 
 
-public class TicketResourceContainerTest extends BaseTixContainerTest {
+public class RecordResourceContainerTest extends BaseTixContainerTest {
 
     JpaRecord testTicket = new JpaRecord();
     String testTicketJson = "";
     ObjectMapper mapper = new ObjectMapper();
     Gson gson = JsonUtil.getGson();
 
-    public TicketResourceContainerTest() throws Exception {
+    public RecordResourceContainerTest() throws Exception {
         super();
     }
 
     @After
-    public void teardownTickets() {
-        super.teardownTickets();
+    public void teardown() {
+        super.teardownRecords();
     }
 
     @Test
-    public void testGetTicketJson() {
+    public void testGetRecordJson() {
 
         addPropField(ValueType.STRING,"SEAT_NUMBER",Boolean.FALSE);
         addPropField(ValueType.STRING,"SECTION",Boolean.FALSE);
@@ -72,7 +72,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     }
 
     @Test
-    public void testGetTicketBooleanProp() {
+    public void testGetRecordBooleanProp() {
         addPropField(ValueType.STRING,"SEAT_NUMBER",Boolean.FALSE);
         addPropField(ValueType.BOOLEAN,"SECTION",Boolean.FALSE);
 
@@ -89,7 +89,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     }
 
     @Test
-    public void testGetTicketDateTimeProp() throws Exception {
+    public void testGetRecordDateTimeProp() throws Exception {
         addPropField(ValueType.DATETIME,"PERFORMANCE",Boolean.FALSE);
         addPropField(ValueType.BOOLEAN,"SECTION",Boolean.FALSE);
         DateTime dt = new DateTime();
@@ -106,7 +106,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     }
 
     @Test
-    public void testGetTicketIntegerProp() {
+    public void testGetRecordIntegerProp() {
         addPropField(ValueType.INTEGER,"SEAT_NUMBER",Boolean.FALSE);
         addPropField(ValueType.BOOLEAN,"SECTION",Boolean.FALSE);
 
@@ -123,7 +123,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     }
 
     @Test
-    public void testGetTicketThatDoesntExist() {
+    public void testGetRecordThatDoesntExist() {
         String path = RECORDS_PATH + "0.json";
         ClientResponse response = tix.path(path).get(ClientResponse.class);
         assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
@@ -138,7 +138,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     }
 
     @Test
-    public void testDeleteTicket() {
+    public void testDeleteRecord() {
         addPropField(ValueType.INTEGER,"SEAT_NUMBER",Boolean.FALSE);
         addPropField(ValueType.BOOLEAN,"SECTION",Boolean.FALSE);
 
@@ -160,7 +160,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     }
 
     @Test
-    public void testDeleteAFewTickets() throws ParseException {
+    public void testDeleteAFewRecords() throws ParseException {
         addPropField(ValueType.INTEGER,"SEAT_NUMBER",Boolean.FALSE);
         addPropField(ValueType.BOOLEAN,"SECTION",Boolean.FALSE);
 
@@ -207,7 +207,7 @@ public class TicketResourceContainerTest extends BaseTixContainerTest {
     }
 
     @Test
-    public void testDeleteTicketDoesntExist() {
+    public void testDeleteRecordDoesntExist() {
 
         addPropField(ValueType.INTEGER,"SEAT_NUMBER",Boolean.FALSE);
         addPropField(ValueType.BOOLEAN,"SECTION",Boolean.FALSE);

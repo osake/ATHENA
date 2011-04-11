@@ -38,8 +38,8 @@ public class DeletePropContainerTest extends BaseTixContainerTest {
     }
 
     @After
-    public void teardownTickets() {
-        super.teardownTickets();
+    public void teardownRecords() {
+        super.teardownRecords();
     }
 
     @Test
