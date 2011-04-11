@@ -28,6 +28,7 @@ import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import javax.persistence.EntityManagerFactory;
@@ -147,5 +148,16 @@ public abstract class BaseTixContainerTest extends JerseyTest {
         PropField pf = apa.savePropField(new PropField(valueType, name, strict));
         propFieldsToDelete.add(pf);
         return pf.toClientField();
+    }
+
+    public PTicket addRecord(String type, String... keyValues) {
+        PTicket t = new PTicket(type);
+        for(int i=0; i < keyValues.length; i+=2) {
+            System.out.println(keyValues[i]);
+            t.put(keyValues[i], keyValues[i+1]);
+        }
+        t = apa.saveRecord(t);
+        recordsToDelete.add(t);
+        return t;
     }
 }
