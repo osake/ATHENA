@@ -27,10 +27,10 @@ import org.fracturedatlas.athena.apa.AbstractApaAdapter;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
+import org.fracturedatlas.athena.apa.exception.InvalidFieldException;
 import org.fracturedatlas.athena.apa.exception.InvalidPropException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.impl.LongUserType;
-import org.fracturedatlas.athena.search.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
@@ -314,10 +314,10 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
             logger.debug("Returning {} tickets", finishedTicketsSet.size());
             return convert(finishedTicketsSet);
-        } catch (Exception ex) {
+        } catch (ApaException ex) {
             logger.error("Error While searching [{}]", athenaSearch.getConstraints());
             logger.error(ex.getMessage(), ex);
-            throw new ApaException("Error while searching: ", ex);
+            throw ex;
         } finally {
             cleanup(em);
         }
@@ -364,7 +364,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return ticketSet;
     }
 
-    private Set<JpaRecord> getRecordsByType(AthenaSearch athenaSearch, EntityManager em) throws Exception {
+    private Set<JpaRecord> getRecordsByType(AthenaSearch athenaSearch, EntityManager em) {
         Set<JpaRecord> finishedTicketsSet = null;
 
         Query query = em.createQuery("from JpaRecord as ticket where type=:ticketType").setParameter("ticketType", athenaSearch.getType());
@@ -381,7 +381,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return finishedTicketsSet;
     }
 
-    private Collection<JpaRecord> getRecordsForConstraint(String type, AthenaSearchConstraint apc, EntityManager em) throws Exception {
+    private Collection<JpaRecord> getRecordsForConstraint(String type, AthenaSearchConstraint apc, EntityManager em) {
 
         PropField pf = null;
         ValueType vt = null;
@@ -395,7 +395,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         if (pf != null) {
             vt = pf.getValueType();
         } else {
-            throw new ApaException("No Property Field called " + fieldName + " exists.");
+            throw new InvalidFieldException("No Property Field called " + fieldName + " exists.");
         }
 
         logger.debug("{}", apc);
