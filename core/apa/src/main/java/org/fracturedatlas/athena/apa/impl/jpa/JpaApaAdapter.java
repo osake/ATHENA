@@ -163,7 +163,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
 
         ticket = getTicket(type, clientTicket.getId());
-        ticket = saveTicket(ticket);
+        ticket = saveRecord(ticket);
         return ticket;
     }
 
