@@ -28,7 +28,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.fracturedatlas.athena.web.manager.RecordManager;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sun.jersey.api.NotFoundException;
@@ -42,9 +41,9 @@ import org.apache.commons.lang.StringUtils;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.web.exception.ForbiddenException;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
-import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import com.sun.jersey.core.impl.provider.entity.Inflector;
+import org.fracturedatlas.athena.apa.exception.InvalidFieldException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,7 +127,11 @@ public class RecordResource {
                                      @PathParam("childType") String childType) throws NotFoundException {
         parentType = Inflector.getInstance().singularize(parentType);
         childType = Inflector.getInstance().singularize(childType);
-        return recordManager.findTicketsByRelationship(parentType, id, childType);
+        try{
+            return recordManager.findTicketsByRelationship(parentType, id, childType);
+        } catch (InvalidFieldException ife) {
+            throw new NotFoundException();
+        }
     }
 
     /**

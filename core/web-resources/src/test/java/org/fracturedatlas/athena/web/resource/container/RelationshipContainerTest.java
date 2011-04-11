@@ -16,8 +16,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
-*/
-
+ */
 package org.fracturedatlas.athena.web.resource.container;
 
 import com.google.gson.Gson;
@@ -48,105 +47,83 @@ public class RelationshipContainerTest extends BaseTixContainerTest {
 
     String path = RECORDS_PATH;
     Gson gson = JsonUtil.getGson();
-    JpaRecord t1 = null;
-    JpaRecord t2 = null;
-    JpaRecord t3 = null;
-    JpaRecord t4 = null;
+    PTicket t1 = null;
+    PTicket t2 = null;
+    PTicket t3 = null;
+    PTicket t4 = null;
 
-//    @Test
-//    public void testFindTicketsByRelationship() {
-//        path = "/companies/" + IdAdapter.toString(t1.getId()) + "/employees";
-//        String jsonString = tix.path(path).get(String.class);
-//        PTicket[] tickets = gson.fromJson(jsonString, PTicket[].class);
-//        assertEquals(3, tickets.length);
-//
-//        List<PTicket> ticketList = Arrays.asList(tickets);
-//        for(PTicket t : ticketList) {
-//            if("Jim".equals(t.get("name"))) {
-//                assertTicketsEqual(t2, t);
-//            } else if("Bill".equals(t.get("name"))) {
-//                assertTicketsEqual(t3, t);
-//            } else if("Joe".equals(t.get("name"))) {
-//                assertTicketsEqual(t4, t);
-//            } else {
-//                fail("Found a ticket that I shouldn't have: " + t);
-//            }
-//        }
-//    }
-//
-//    @Test
-//    public void testFindTicketsNotFound() {
-//        path = "/companies/0/employees";
-//        ClientResponse response = tix.path(path).get(ClientResponse.class);
-//        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
-//    }
-//
-//    @Test
-//    public void testFindTicketsNoRelationship() {
-//        path = "/employees/" + IdAdapter.toString(t3.getId()) + "/companies";
-//        String jsonString = tix.path(path).get(String.class);
-//        PTicket[] tickets = gson.fromJson(jsonString, PTicket[].class);
-//        assertEquals(0, tickets.length);
-//    }
-//
-//    @Test
-//    public void testFindTicketsUnknownRelationship() {
-//        path = "/employees/" + IdAdapter.toString(t3.getId()) + "/NOT_A_REAL_RELATION";
-//        String jsonString = tix.path(path).get(String.class);
-//        PTicket[] tickets = gson.fromJson(jsonString, PTicket[].class);
-//        assertEquals(0, tickets.length);
-//    }
-//
-//    @Test
-//    public void testFindTicketsUnknownRelationship2() {
-//        path = "/FAKE/" + IdAdapter.toString(t3.getId()) + "/NOT_A_REAL_RELATION";
-//        ClientResponse response = tix.path(path).get(ClientResponse.class);
-//        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
-//    }
-//
-//    @Before
-//    public void addTickets() throws Exception {
-//        t1 = new JpaRecord();
-//        t2 = new JpaRecord();
-//        t3 = new JpaRecord();
-//        t4 = new JpaRecord();
-//
-//        t1.setType("company");
-//        t2.setType("employee");
-//        t3.setType("employee");
-//        t4.setType("employee");
-//
-//        PropField nameProp = apa.savePropField(new PropField(ValueType.STRING, "name", StrictType.NOT_STRICT));
-//        PropField companyIdProp = apa.savePropField(new PropField(ValueType.STRING, "companyId", StrictType.NOT_STRICT));
-//
-//
-//        propFieldsToDelete.add(nameProp);
-//        propFieldsToDelete.add(companyIdProp);
-//
-//        t1.addTicketProp(new StringTicketProp(nameProp, "Initrode"));
-//        t1 = apa.saveTicket(t1);
-//
-//        t2.addTicketProp(new StringTicketProp(nameProp, "Jim"));
-//        t2.addTicketProp(new StringTicketProp(companyIdProp, IdAdapter.toString(t1.getId())));
-//
-//        t3.addTicketProp(new StringTicketProp(nameProp, "Bill"));
-//        t3.addTicketProp(new StringTicketProp(companyIdProp, IdAdapter.toString(t1.getId())));
-//        t4.addTicketProp(new StringTicketProp(nameProp, "Joe"));
-//        t4.addTicketProp(new StringTicketProp(companyIdProp, IdAdapter.toString(t1.getId())));
-//
-//        t2 = apa.saveTicket(t2);
-//        t3 = apa.saveTicket(t3);
-//        t4 = apa.saveTicket(t4);
-//
-//        ticketsToDelete.add(t1);
-//        ticketsToDelete.add(t2);
-//        ticketsToDelete.add(t3);
-//        ticketsToDelete.add(t4);
-//    }
+    @Test
+    public void testFindTicketsByRelationship() {
+        path = "/companies/" + IdAdapter.toString(t1.getId()) + "/employees";
+        String jsonString = tix.path(path).get(String.class);
+        PTicket[] tickets = gson.fromJson(jsonString, PTicket[].class);
+        assertEquals(3, tickets.length);
+
+        List<PTicket> ticketList = Arrays.asList(tickets);
+        for(PTicket t : ticketList) {
+            if("Jim".equals(t.get("name"))) {
+                assertRecordsEqual(t2, t, true);
+            } else if("Bill".equals(t.get("name"))) {
+                assertRecordsEqual(t3, t, true);
+            } else if("Joe".equals(t.get("name"))) {
+                assertRecordsEqual(t4, t, true);
+            } else {
+                fail("Found a ticket that I shouldn't have: " + t);
+            }
+        }
+    }
+
+    @Test
+    public void testFindTicketsNotFound() {
+        assertNotFound("/companies/0/employees");
+    }
+
+    @Test
+    public void testFindTicketsNoRelationship() {
+        assertNotFound("/employees/" + IdAdapter.toString(t3.getId()) + "/companies");
+    }
+
+    @Test
+    public void testFindTicketsUnknownRelationship() {
+        assertNotFound("/employees/" + IdAdapter.toString(t3.getId()) + "/NOT_A_REAL_RELATION");
+    }
+
+    @Test
+    public void testFindTicketsUnknownRelationship2() {
+        assertNotFound("/FAKE/" + IdAdapter.toString(t3.getId()) + "/NOT_A_REAL_RELATION");
+    }
+
+    @Before
+    public void addTickets() throws Exception {
+        t1 = new PTicket();
+        t2 = new PTicket();
+        t3 = new PTicket();
+        t4 = new PTicket();
+
+        t1.setType("company");
+        t2.setType("employee");
+        t3.setType("employee");
+        t4.setType("employee");
+
+        addPropField(ValueType.STRING, "name", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "companyId", StrictType.NOT_STRICT);
+
+
+        t1 = addRecord("company",
+                       "name", "Initrode");
+        t2 = addRecord("employee",
+                       "name", "Jim",
+                       "companyId", IdAdapter.toString(t1.getId()));
+        t3 = addRecord("employee",
+                       "name", "Bill",
+                       "companyId", IdAdapter.toString(t1.getId()));
+        t4 = addRecord("employee",
+                       "name", "Joe",
+                       "companyId", IdAdapter.toString(t1.getId()));
+    }
 
     @After
     public void teardownRecords() {
         super.teardownRecords();
     }
-
 }
