@@ -77,7 +77,7 @@ public class RecordResource {
         type = Inflector.getInstance().singularize(type);
         PTicket ticket  = recordManager.getTicket(type, id);
         if (ticket == null) {
-            throw new NotFoundException("JpaRecord with id [" + id + "] was not found");
+            throw new NotFoundException(type + " with id [" + id + "] was not found");
         } else {
             recordManager.deleteTicket(ticket);
         }
