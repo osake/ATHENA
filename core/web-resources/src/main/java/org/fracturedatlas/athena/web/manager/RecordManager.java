@@ -194,6 +194,17 @@ public class RecordManager {
         return apa.saveRecord(type, record);
     }
 
+    public PTicket updateRecord(String type, PTicket record) {
+
+        PTicket ticket  = apa.getRecord(type, record.getId());
+
+        if (ticket == null) {
+            throw new NotFoundException();
+        }
+
+        return apa.saveRecord(type, record);
+    }
+
     public PTicket updateRecord(String type, PTicket record, String idToUpdate) {
 
         PTicket ticket  = apa.getRecord(type, idToUpdate);
