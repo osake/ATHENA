@@ -20,18 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.web.resource;
 
-import java.util.ArrayList;
 import java.util.TreeSet;
-import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.web.manager.RecordManager;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
 
 public class RecordResourceTest {
     RecordResource resource = new RecordResource();
@@ -46,7 +42,7 @@ public class RecordResourceTest {
 
     @Test
     public void testSearchRelationships() {
-        when(mockRecordManager.findTicketsByRelationship("company", "1", "employee")).thenReturn(new TreeSet<Ticket>());
+        when(mockRecordManager.findTicketsByRelationship("company", "1", "employee")).thenReturn(new TreeSet<PTicket>());
         resource.search("companies", "1", "employees");
         verify(mockRecordManager, times(1)).findTicketsByRelationship("company", "1", "employee");
     }

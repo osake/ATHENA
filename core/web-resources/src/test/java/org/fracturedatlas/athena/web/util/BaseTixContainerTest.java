@@ -28,17 +28,18 @@ import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import javax.persistence.EntityManagerFactory;
 import org.springframework.context.ApplicationContext;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import static org.junit.Assert.*;
-import org.fracturedatlas.athena.apa.model.*;
+import org.fracturedatlas.athena.apa.impl.jpa.*;
 import org.fracturedatlas.athena.client.*;
 import org.fracturedatlas.athena.id.*;
-import org.junit.After;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +52,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
     protected final static String RECORDS_PATH = "/tickets/";
     protected final static String FIELDS_PATH = "/meta/fields/";
 
-    protected List<Ticket> ticketsToDelete = new ArrayList<Ticket>();
+    protected List<PTicket> recordsToDelete = new ArrayList<PTicket>();
     protected List<PropField> propFieldsToDelete = new ArrayList<PropField>();
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -74,12 +75,12 @@ public abstract class BaseTixContainerTest extends JerseyTest {
         apa = (ApaAdapter)context.getBean("apa");
     }
 
-    public void teardownTickets() {
-        for (Ticket t : ticketsToDelete) {
+    public void teardownRecords() {
+        for (PTicket t : recordsToDelete) {
             try {
-                apa.deleteTicket(t);
+                apa.deleteRecord(t.getType(), t.getId());
             } catch (Exception ignored) {
-                    logger.error(ignored.getMessage(), ignored);
+                ignored.printStackTrace();
             }
         }
 
@@ -87,12 +88,29 @@ public abstract class BaseTixContainerTest extends JerseyTest {
             try {
                     apa.deletePropField(pf);
             } catch (Exception ignored) {
-                    logger.error(ignored.getMessage(), ignored);
+                ignored.printStackTrace();
             }
         }
     }
 
-    public void assertTicketsEqual(Ticket t, PTicket pTicket, Boolean includeId) {
+    public void assertNotFound(String path) {
+        ClientResponse response = tix.path(path).get(ClientResponse.class);
+        assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
+    public void assertRecordsEqual(PTicket t, PTicket pTicket, Boolean includeId) {
+        if(includeId) {
+            assertTrue(IdAdapter.isEqual(t.getId(), pTicket.getId()));
+        }
+
+        assertEquals(t.getProps().size(), pTicket.getProps().size());
+
+        for(Entry<String, String> prop : t.getProps().entrySet()) {
+            assertTrue(pTicket.get(prop.getKey()).equals(prop.getValue()));
+        }
+    }
+
+    public void assertTicketsEqual(JpaRecord t, PTicket pTicket, Boolean includeId) {
         if(includeId) {
             assertTrue(IdAdapter.isEqual(t.getId(), pTicket.getId()));
         }
@@ -105,7 +123,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
         }
     }
 
-    public void assertTicketsEqual(Ticket t, PTicket pTicket) {
+    public void assertTicketsEqual(JpaRecord t, PTicket pTicket) {
         assertTicketsEqual(t, pTicket, Boolean.TRUE);
     }
     
@@ -129,5 +147,22 @@ public abstract class BaseTixContainerTest extends JerseyTest {
                 fail("Fields are not equals, values differ");
             }
         }
+    }
+
+    public PField addPropField(ValueType valueType, String name, Boolean strict) {
+        PropField pf = apa.savePropField(new PropField(valueType, name, strict));
+        propFieldsToDelete.add(pf);
+        return pf.toClientField();
+    }
+
+    public PTicket addRecord(String type, String... keyValues) {
+        PTicket t = new PTicket(type);
+        for(int i=0; i < keyValues.length; i+=2) {
+            System.out.println(keyValues[i]);
+            t.put(keyValues[i], keyValues[i+1]);
+        }
+        t = apa.saveRecord(t);
+        recordsToDelete.add(t);
+        return t;
     }
 }

@@ -22,24 +22,12 @@ package org.fracturedatlas.athena.web.resource.container;
 
 import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
-import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
+import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
-import org.fracturedatlas.athena.util.date.DateUtil;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -47,41 +35,35 @@ import static org.junit.Assert.*;
 public class PutRecordContainerTest extends BaseTixContainerTest {
 
     Gson gson = JsonUtil.getGson();
-    String path = "/";
 
     public PutRecordContainerTest() throws Exception {
         super();
     }
 
     @After
-    public void teardownTickets() {
-        super.teardownTickets();
+    public void teardown() {
+        super.teardownRecords();
     }
 
     @Test
     public void testUpdateTicket() {
-        Ticket t = createSampleTicket();
-
+        PTicket t = createSampleRecord();
         String path = RECORDS_PATH + t.getId() + ".json";
-
-        PTicket pTicket = t.toClientTicket();
-        pTicket.put("PRICE", "2000");
-        String updatedTicketJson = tix.path(path).type("application/json").put(String.class, gson.toJson(pTicket));
-        PTicket updatedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
-        assertTrue(pTicket.equals(updatedPTicket));
-
-        Ticket updatedTicket = apa.getTicket(t.getType(), updatedPTicket.getId());
-        assertTicketsEqual(updatedTicket, updatedPTicket);
+        t.setType(null);
+        t.put("PRICE", "2000");
+        String updatedTicketJson = tix.path(path).type("application/json").put(String.class, gson.toJson(t));
+        PTicket updatedTicket = gson.fromJson(updatedTicketJson, PTicket.class);
+        assertTrue(t.equals(updatedTicket));
+        PTicket savedTicket = apa.getRecord("ticket", updatedTicket.getId());
+        System.out.println(savedTicket);
+        assertRecordsEqual(updatedTicket, savedTicket, true);
     }
 
     @Test
     public void testUpdateTicketWithPostIdInUrl() {
-        Ticket t = createSampleTicket();
-
+        PTicket t = createSampleRecord();
         String path = RECORDS_PATH + t.getId() + ".json";
-
-        PTicket savedPTicket = t.toClientTicket();
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, gson.toJson(t.toClientTicket()));
+        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, gson.toJson(t));
         assertEquals(ClientResponse.Status.METHOD_NOT_ALLOWED, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
     }
@@ -89,129 +71,174 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
     //For now, this should pass.  Eventually we should turn this support off, return a 409 or maybe a OMFG
     @Test
     public void testUpdateTicketWithPost() {
-        Ticket t = createSampleTicket();
 
         String path = RECORDS_PATH;
-
-        PTicket savedPTicket = t.toClientTicket();
-        String updatedTicketJson = tix.path(path).type("application/json").post(String.class, gson.toJson(savedPTicket));
+        PTicket t = createSampleRecord();
+        String updatedTicketJson = tix.path(path).type("application/json").post(String.class, gson.toJson(t));
         PTicket updatedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
-        assertTrue(savedPTicket.equals(updatedPTicket));
-        assertTicketsEqual(t, updatedPTicket, false);
+        updatedPTicket.setType("ticket");
+        assertTrue(t.equals(updatedPTicket));
 
     }
 
     @Test
     public void testCreateTicketWithPut() {
-        Ticket t = new Ticket();
-        t.setType("ticket");
-        PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "PRICE", Boolean.FALSE));
-        PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
-        IntegerTicketProp prop = new IntegerTicketProp(pf, 4);
-        t.addTicketProp(prop);
-        BooleanTicketProp prop2 = new BooleanTicketProp(pf2, Boolean.TRUE);
-        t.addTicketProp(prop2);
-        propFieldsToDelete.add(pf);
-        propFieldsToDelete.add(pf2);
-        ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, gson.toJson(t.toClientTicket()));
+        PTicket t = createSampleRecord();
+        ClientResponse response = tix.path("/").type("application/json").put(ClientResponse.class, gson.toJson(t));
         assertEquals(ClientResponse.Status.METHOD_NOT_ALLOWED, ClientResponse.Status.fromStatusCode(response.getStatus()));
     }
 
     @Test
     public void testUpdateTicketWithPutNoIdInBody() {
-        Ticket t = createSampleTicket();
+        PTicket t = createSampleRecord();
 
         String path = RECORDS_PATH + t.getId() + ".json";
-
-        PTicket savedPTicket = t.toClientTicket();
-        String json = "{\"name\":\"ticket\",\"props\":{\"PRICE\":\"4\",\"SECTION\":\"true\"}}";
+        String json = "{\"type\":\"ticket\",\"PRICE\":\"4\",\"SECTION\":\"true\"}";
         ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, gson.toJson(json));
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
     }
 
     @Test
-    public void testCreateTicketWithPutAndBadId() {
+    public void testUpdateTicketWithBadValue() {
+        PTicket t = createSampleRecord();
+        t.put("PRICE", "Nan");
+        String path = RECORDS_PATH + t.getId() + ".json";
+        ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, gson.toJson(t));
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
+    }
+
+
+    @Test
+    public void testUpdateTicketWithNullValue() {
+        PTicket t = createSampleRecord();
+        t.put("PRICE", null);
+        String path = RECORDS_PATH + t.getId() + ".json";
+        ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, gson.toJson(t));
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+    }
+
+    @Test
+    public void testPutBadId() {
         String path = RECORDS_PATH + "0.json";
+        assertNotFound(path);
+    }
 
-        Ticket t = new Ticket();
-        t.setType("ticket");
-        PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "PRICE", Boolean.FALSE));
-        PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
-        IntegerTicketProp prop = new IntegerTicketProp(pf, 4);
-        t.addTicketProp(prop);
-        BooleanTicketProp prop2 = new BooleanTicketProp(pf2, Boolean.TRUE);
-        t.addTicketProp(prop2);
-        propFieldsToDelete.add(pf);
-        propFieldsToDelete.add(pf2);
-        ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, gson.toJson(t.toClientTicket()));
+    //this is not allowed
+    @Test
+    public void testUpdateToIdNotFound() {
+        PTicket t = createSampleRecord();
+
+        String path = RECORDS_PATH + "4.json";
+
+        ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, gson.toJson(t));
         assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+        //make sure nothing got updated
+        PTicket savedTicket = apa.getRecord("ticket", t.getId());
+        savedTicket.setType(t.getType());
+        assertRecordsEqual(t, savedTicket, false);
+    }
+
+    //We're updating a ticket but only sending one property.  Other properties should remain
+    @Test
+    public void testUpdateAddNewPropButDontSendOtherProps() {
+        addPropField(ValueType.INTEGER, "NEWPROP", Boolean.FALSE);
+        PTicket t = createSampleRecord();
+
+        PTicket updatedCopy = new PTicket("ticket");
+        updatedCopy.setId(t.getId());
+        updatedCopy.put("NEWPROP", "4");
+        t.put("NEWPROP", "4");
+
+        String path = RECORDS_PATH + t.getId() + ".json";
+        t.setType(null);
+        String updatedTicketJson = tix.path(path).type("application/json").put(String.class, gson.toJson(updatedCopy));
+        PTicket updatedTicket = gson.fromJson(updatedTicketJson, PTicket.class);
+        assertTrue(t.equals(updatedTicket));
+
+        PTicket savedTicket = apa.getRecord("ticket", updatedTicket.getId());
+        System.out.println(savedTicket);
+        assertRecordsEqual(updatedTicket, savedTicket, true);
+    }
+
+
+    @Test
+    public void testUpdateTicketBlankRequest() {
+        PTicket t = createSampleRecord();
+        String ticketJson = "";
+        String path = RECORDS_PATH + t.getId() + ".json";
+        ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, ticketJson);
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
+    @Test
+    public void testUpdateTicketBadRequest() {
+        PTicket t = createSampleRecord();
+        String ticketJson = "{\"WHAT\":\"EVER\"}";
+        String path = RECORDS_PATH + t.getId() + ".json";
+        ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, ticketJson);
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
     }
 
     //this is not allowed
     @Test
     public void testUpdateAndChangeId() {
-        Ticket t = createSampleTicket();
+        PTicket t = createSampleRecord();
+        String originalId = IdAdapter.toString(t.getId());
 
         String path = RECORDS_PATH + t.getId() + ".json";
-
-        PTicket savedPTicket = t.toClientTicket();
-        savedPTicket.setId(40000L);
-        ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, gson.toJson(savedPTicket));
+        t.setId(4005L);
+        ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, gson.toJson(t));
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
         //make sure nothing got updated
-        Ticket savedTicket = apa.getTicket(t.getType(), t.getId());
-        assertTicketsEqual(t, savedTicket.toClientTicket());
+        PTicket savedTicket = apa.getRecord("ticket", originalId);
+        savedTicket.setType(t.getType());
+        t.setId(originalId);
+        assertRecordsEqual(t, savedTicket, false);
     }
 
     //You should be able to put as much as you want and receive the same response
     @Test
     public void testPutSeveralTimes() {
-        Ticket t = createSampleTicket();
+        PTicket pTicket = createSampleRecord();
 
-        String path = RECORDS_PATH + t.getId() + ".json";
+        String path = RECORDS_PATH + pTicket.getId() + ".json";
 
-        PTicket pTicket = t.toClientTicket();
         pTicket.put("PRICE", "2000");
         String updatedTicketJson = tix.path(path).type("application/json").put(String.class, gson.toJson(pTicket));
         PTicket updatedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
+        updatedPTicket.setType("ticket");
         assertTrue(pTicket.equals(updatedPTicket));
 
         updatedTicketJson = tix.path(path).type("application/json").put(String.class, gson.toJson(pTicket));
         updatedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
+        updatedPTicket.setType("ticket");
         assertTrue(pTicket.equals(updatedPTicket));
 
         updatedTicketJson = tix.path(path).type("application/json").put(String.class, gson.toJson(pTicket));
         updatedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
+        updatedPTicket.setType("ticket");
         assertTrue(pTicket.equals(updatedPTicket));
 
         updatedTicketJson = tix.path(path).type("application/json").put(String.class, gson.toJson(pTicket));
         updatedPTicket = gson.fromJson(updatedTicketJson, PTicket.class);
+        updatedPTicket.setType("ticket");
         assertTrue(pTicket.equals(updatedPTicket));
 
     }
 
-    public Ticket createSampleTicket() {
-        Ticket t = new Ticket();
-        t.setType("ticket");
+    public PTicket createSampleRecord() {
+        PTicket t = new PTicket();
 
-        PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "PRICE", Boolean.FALSE));
-        PropField pf2 = apa.savePropField(new PropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE));
+        addPropField(ValueType.INTEGER, "PRICE", Boolean.FALSE);
+        addPropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE);
 
-        IntegerTicketProp prop = new IntegerTicketProp(pf, 4);
-        t.addTicketProp(prop);
-
-        BooleanTicketProp prop2 = new BooleanTicketProp(pf2, Boolean.TRUE);
-        t.addTicketProp(prop2);
-
-        t = apa.saveTicket(t);
-
-        ticketsToDelete.add(t);
-        propFieldsToDelete.add(pf);
-        propFieldsToDelete.add(pf2);
-
-        return t;
+        return addRecord("ticket",
+                          "PRICE", "4",
+                          "SECTION", "true");
     }
 }

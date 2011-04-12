@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
-package org.fracturedatlas.athena.apa.model;
+package org.fracturedatlas.athena.apa.impl.jpa;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -28,6 +28,7 @@ import javax.persistence.Entity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,15 +59,23 @@ public class DateTimeTicketProp extends TicketProp implements Serializable {
     }
 
     public void setValue(Object o) {
-        setValue((Date)o);
+        try {
+            setValue((Date)o);
+        } catch (Exception e) {
+            throw new InvalidValueException(buildExceptionMessage(o.toString(), propField), e);
+        }
     }
 
     public void setValue(Date value) {
         this.value = value;
     }
 
-    public void setValue(String s) throws Exception {
-        setValue(DateUtil.parseDate(s));
+    public void setValue(String s) throws InvalidValueException {
+        try {
+            setValue(DateUtil.parseDate(s));
+        } catch (Exception pe) {
+            throw new InvalidValueException(buildExceptionMessage(s, propField), pe);
+        }
     }
 
     public String getValueAsString() {

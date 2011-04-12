@@ -23,11 +23,12 @@ package org.fracturedatlas.athena.apa;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.text.ParseException;
-import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
+import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -37,7 +38,7 @@ import static org.junit.Assert.*;
 
 public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
 
-    Ticket testTicket = new Ticket();
+    JpaRecord testTicket = new JpaRecord();
     Logger logger = LoggerFactory.getLogger(ApaAdapterDeleteTicketsTest.class);
 
     public ApaAdapterDeleteTicketsTest() throws Exception {
@@ -53,179 +54,73 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
         super.teardownTickets();
     }
 
-
-    @Test
-    public void testDeleteTicketPassingObjectId() {
-        Ticket t = new Ticket();
-        t.setType("clown");    
-
-        PropField field = new PropField();
-        field.setValueType(ValueType.STRING);
-        field.setName("WXYZ");
-        field.setStrict(Boolean.FALSE);
-        PropField pf = apa.savePropField(field);
-
-        StringTicketProp prop = new StringTicketProp();
-        prop.setPropField(pf);
-        prop.setValue("WXYZ");
-        t.addTicketProp(prop);
-        t = apa.saveTicket(t);
-
-        ticketsToDelete.add(t);
-        propFieldsToDelete.add(pf);
-
-        assertTrue(apa.deleteTicket(t.getType(), t.getId()));
-
-        Ticket shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
-        assertNull(shouldBeDeleted);
-    }
-
-
     @Test
     public void testDeleteTicketPassingTicket() {
-        Ticket t = new Ticket();
-        t.setType("foo");
+        addPropField(ValueType.STRING,"WXYZ",Boolean.FALSE);
+        PTicket ticket = new PTicket();
+        ticket.setType("foo");
+        ticket.put("WXYZ", "WXYZ");
+        ticket = apa.saveRecord(ticket);
 
-        PropField field = new PropField();
-        field.setValueType(ValueType.STRING);
-        field.setName("WXYZ");
-        field.setStrict(Boolean.FALSE);
-        PropField pf = apa.savePropField(field);
+        assertTrue(apa.deleteRecord(ticket));
 
-        StringTicketProp prop = new StringTicketProp();
-        prop.setPropField(pf);
-        prop.setValue("WXYZ");
-        t.addTicketProp(prop);
-        t = apa.saveTicket(t);
-
-        ticketsToDelete.add(t);
-        propFieldsToDelete.add(pf);
-
-        assertTrue(apa.deleteTicket(t));
-
-        Ticket shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
+        PTicket shouldBeDeleted = apa.getRecord(ticket.getType(), ticket.getId());
         assertNull(shouldBeDeleted);
     }
 
     @Test
-    public void testDeleteTicket2() throws ParseException {
+    public void testDeleteTicketPassingTypeId() {
+        addPropField(ValueType.STRING,"WXYZ",Boolean.FALSE);
+        PTicket ticket = new PTicket();
+        ticket.setType("foo");
+        ticket.put("WXYZ", "WXYZ");
+        ticket = apa.saveRecord(ticket);
 
+        assertTrue(apa.deleteRecord(ticket.getType(), ticket.getId()));
 
-        Ticket t = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
-
-        t.setType("ticket");
-        t2.setType("ticket");
-        t3.setType("ticket");
-        t4.setType("ticket");
-
-        PropField pf3 = apa.savePropField(new PropField(ValueType.DATETIME, "Date", Boolean.FALSE));
-        propFieldsToDelete.add(pf3);
-
-        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t = apa.saveTicket(t);
-
-        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t2 = apa.saveTicket(t2);
-
-        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t3 = apa.saveTicket(t3);
-
-        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t4 = apa.saveTicket(t4);
-
-
-        ticketsToDelete.add(t);
-        ticketsToDelete.add(t2);
-        ticketsToDelete.add(t3);
-        ticketsToDelete.add(t4);
-        assertTrue(apa.deleteTicket(t2.getType(), t2.getId()));
-
-        Ticket shouldBeDeleted = apa.getTicket(t2.getType(), t2.getId());
+        PTicket shouldBeDeleted = apa.getRecord(ticket.getType(), ticket.getId());
         assertNull(shouldBeDeleted);
-        Ticket expected = apa.getTicket(t.getType(), t.getId());
-        assertEquals(expected, t);
-        expected = apa.getTicket(t3.getType(), t3.getId());
-        assertEquals(expected, t3);
-        expected = apa.getTicket(t4.getType(), t4.getId());
-        assertEquals(expected, t4);
     }
 
     @Test
     public void testDeleteAFewTickets() throws ParseException {
 
 
-        Ticket t = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
+        PTicket t = new PTicket("ticket");
+        PTicket t2 = new PTicket("ticket");
+        PTicket t3 = new PTicket("ticket");
+        PTicket t4 = new PTicket("ticket");
 
         t.setType("ticket");
         t2.setType("ticket");
         t3.setType("ticket");
         t4.setType("ticket");
-        
-        PropField pf3 = apa.savePropField(new PropField(ValueType.DATETIME, "Date", Boolean.FALSE));
-        propFieldsToDelete.add(pf3);
 
-        t.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t = apa.saveTicket(t);
+        t = apa.saveRecord(t);
+        t2 = apa.saveRecord(t2);
+        t3 = apa.saveRecord(t3);
+        t4 = apa.saveRecord(t4);
 
-        t2.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t2 = apa.saveTicket(t2);
+        assertTrue(apa.deleteRecord(t.getType(), t.getId()));
+        assertTrue(apa.deleteRecord(t2.getType(), t2.getId()));
+        assertTrue(apa.deleteRecord(t3.getType(), t3.getId()));
 
-        t3.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t3 = apa.saveTicket(t3);
-
-        t4.addTicketProp(new DateTimeTicketProp(pf3, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t4 = apa.saveTicket(t4);
-
-
-        ticketsToDelete.add(t);
-        ticketsToDelete.add(t2);
-        ticketsToDelete.add(t3);
-        ticketsToDelete.add(t4);
-
-        assertTrue(apa.deleteTicket(t.getType(), t.getId()));
-        assertTrue(apa.deleteTicket(t2.getType(), t2.getId()));
-        assertTrue(apa.deleteTicket(t3.getType(), t3.getId()));
-
-        Ticket shouldBeDeleted = apa.getTicket(t.getType(), t.getId());
+        PTicket shouldBeDeleted = apa.getRecord(t.getType(), t.getId());
         assertNull(shouldBeDeleted);
-        shouldBeDeleted = apa.getTicket(t2.getType(), t2.getId());
+        shouldBeDeleted = apa.getRecord(t2.getType(), t2.getId());
         assertNull(shouldBeDeleted);
-        shouldBeDeleted = apa.getTicket(t3.getType(), t3.getId());
+        shouldBeDeleted = apa.getRecord(t3.getType(), t3.getId());
         assertNull(shouldBeDeleted);
 
-        Ticket expected = apa.getTicket(t4.getType(), t4.getId());
+        PTicket expected = apa.getRecord(t4.getType(), t4.getId());
         assertEquals(expected, t4);
 
     }
 
     @Test
     public void testDeleteTicketNullTicket() {
-        Ticket t = new Ticket();
-        t.setType("clown");    
-
-        PropField field = new PropField();
-        field.setValueType(ValueType.STRING);
-        field.setName("WXYZ");
-        field.setStrict(Boolean.FALSE);
-        PropField pf = apa.savePropField(field);
-
-        StringTicketProp prop = new StringTicketProp();
-        prop.setPropField(pf);
-        prop.setValue("WXYZ");
-        t.addTicketProp(prop);
-        t = apa.saveTicket(t);
-
-        ticketsToDelete.add(t);
-        propFieldsToDelete.add(pf);
-
         try{
-            apa.deleteTicket(null);
+            apa.deleteRecord(null);
             fail("Should have thrown NPE");
         } catch (NullPointerException pass) {
             //pass!
@@ -234,22 +129,10 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
 
     @Test
     public void testDeleteTicketNotYetPersisted() {
-        Ticket t = new Ticket();
-        t.setType("clown");
+        addPropField(ValueType.STRING,"WXYZ",Boolean.FALSE);
 
-        PropField field = new PropField();
-        field.setValueType(ValueType.STRING);
-        field.setName("WXYZ");
-        field.setStrict(Boolean.FALSE);
-        PropField pf = apa.savePropField(field);
-
-        StringTicketProp prop = new StringTicketProp();
-        prop.setPropField(pf);
-        prop.setValue("WXYZ");
-        t.addTicketProp(prop);
-
-        propFieldsToDelete.add(pf);
-
-        assertFalse(apa.deleteTicket(t));
+        PTicket t = new PTicket();
+        t.put("WXYZ", "something");
+        assertFalse(apa.deleteRecord(t));
     }
 }

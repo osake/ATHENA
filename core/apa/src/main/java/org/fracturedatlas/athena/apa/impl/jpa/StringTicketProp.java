@@ -18,55 +18,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
 
-package org.fracturedatlas.athena.apa.model;
+package org.fracturedatlas.athena.apa.impl.jpa;
 
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 @Entity
-@DiscriminatorValue("INTEGER")
-public class IntegerTicketProp extends TicketProp implements Serializable {
+@DiscriminatorValue("STRING")
+public class StringTicketProp extends TicketProp implements Serializable {
 
-    @Column(name="valueInteger")
-    Integer value;
+    @Column(name="valueString")
+    String value;
 
-    public IntegerTicketProp() {
+    public StringTicketProp() {
       super();
     }
 
-    public IntegerTicketProp(PropField propField, Integer value) {
+    public StringTicketProp(PropField propField, String value) {
       super();
       setValue(value);
       setPropField(propField);
     }
 
-    public Integer getValue() {
+    public String getValue() {
         return value;
     }
 
     public void setValue(Object o) {
-        setValue((Integer)o);
+        setValue((String)o);
     }
 
-    public void setValue(String s) {
-        setValue(Integer.parseInt(s));
-    }
-
-    public void setValue(Integer value) {
+    public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getValueAsString() {
+        return value;
     }
 
     @Override
     public int compareTo(Object o) throws ClassCastException {
-        Integer i = Integer.parseInt((String)o);
-        return value.compareTo(i);
-    }
-
-    public String getValueAsString() {
-        return value.toString();
+        String s = (String)o;
+        return value.compareTo(s);
     }
 
     @Override
@@ -77,7 +72,7 @@ public class IntegerTicketProp extends TicketProp implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final IntegerTicketProp other = (IntegerTicketProp) obj;
+        final StringTicketProp other = (StringTicketProp) obj;
         if (this.value != other.value && (this.value == null || !this.value.equals(other.value))) {
             return false;
         }
@@ -90,5 +85,6 @@ public class IntegerTicketProp extends TicketProp implements Serializable {
         hash = 79 * hash + (this.value != null ? this.value.hashCode() : 0);
         return hash;
     }
+
 
 }

@@ -20,15 +20,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.PropValue;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.TicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.PropValue;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
+import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.search.AthenaSearch;
 
 /**
@@ -49,40 +49,56 @@ import org.fracturedatlas.athena.search.AthenaSearch;
 public interface ApaAdapter {
 
     /**
-     * Get a ticket from the database
-     * @param id
-     * @return the ticket or null if the ticket is not found
+     * Get a record from the data store
+     * @param id the id of the record
+     * @return the record or null if the record is not found
      */
-    public Ticket getTicket(String type, Object id);
+    public PTicket getRecord(String type, Object id);
 
     /**
-     * Save a ticket to the database.  This method can be used to save new tickets and update existing tickets.
+     * Save a record to the data store.  This method can be used to save new records and update existing tickets.
      *
      * @param t
      * @return the ticket that was just saved
      * @throws InvalidValueException
      */
-    public Ticket saveTicket(Ticket t) throws InvalidValueException;
+    public JpaRecord saveTicket(JpaRecord t) throws InvalidValueException;
 
     /**
-     * Delete a ticket from the database.  Implementors should delete all props associated with this ticket.
+     * Save a record to the data store
+     * @param record
+     * @return the saved record
+     * @throws InvalidValueExcepion if this record contains a field/value pairing that is invalid
+     */
+    public PTicket saveRecord(PTicket record);
+
+    /**
+     * Save a record to the data store
+     * @param record
+     * @return the saved record
+     * @throws InvalidValueExcepion if this record contains a field/value pairing that is invalid
+     */
+    public PTicket saveRecord(String type, PTicket record);
+
+    /**
+     * Delete a ticket from the data store.  Implementors should delete all props associated with this ticket.
      * Passing null to this method will return false
      * @param id the id to delete
      * @return true if the delete succeeded, false otherwise
      */
-    public Boolean deleteTicket(String type, Object id);
+    public Boolean deleteRecord(String type, Object id);
 
     /**
-     * Delete a ticket from the database.  This is a convenience method to call deleteTicket(Object).
-     * Any contracts made in deleteTicket(id) should also be enforced here.
+     * Delete a ticket from the data store.  This is a convenience method to call deleteTicket(type, id).
+     * Any contracts made in deleteTicket(type, id) should also be enforced here.
      *
      * Passing null to this method will result in a NullPointerException
      *
      * @param t the ticket to delete
      * @return true if the delete succeeded, false otherwise
      */
-    public Boolean deleteTicket(Ticket t);
-    
+    public Boolean deleteRecord(PTicket t);
+
     /**
      * Search for tickets that match all criteria in search.
      *
@@ -91,25 +107,7 @@ public interface ApaAdapter {
      * @param searchParams the search criteria.  Criteria should be in the format: key = prop, value = prop value
      * @return matching tickets, empty List if no tickets found
      */
-    public Set<Ticket> findTickets(AthenaSearch search);
-
-    /**
-     * Save the ticketProps contained in this list
-     * @param prop the ticketProps to save
-     * @return the list of saved ticketProps
-     * @throws InvalidValueException if one of the props int he list has been amrked strict and its value is not valid
-     */
-    public List<TicketProp> saveTicketProps(List<TicketProp> prop) throws InvalidValueException;
-
-
-
-    /**
-     * Save the ticketProp
-     * @param prop the ticketProp to save
-     * @return the saved ticketProp
-     * @throws InvalidValueException if one of the props int he list has been amrked strict and its value is not valid
-     */
-    public TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException;
+    public Set<PTicket> findTickets(AthenaSearch search);
 
     /**
      * get the ticketProp for the given id
@@ -182,7 +180,7 @@ public interface ApaAdapter {
 
     /*
      * This may need to be refactored to (Ticket t, TicketProp ticketProp)
-     * to make it easier on non-relational databases
+     * to make it easier on non-relational data stores
      */
     public void deleteTicketProp(TicketProp prop);
 

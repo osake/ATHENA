@@ -30,14 +30,14 @@ import java.util.List;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.fracturedatlas.athena.apa.ApaAdapter;
-import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
-import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.lock.exception.TicketsLockedException;
 import org.fracturedatlas.athena.helper.lock.model.AthenaLock;
@@ -64,11 +64,11 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
     Gson gson = JsonUtil.getGson();
     String path = "/";
 
-    Ticket t1 = null;
-    Ticket t2 = null;
-    Ticket t3 = null;
-    Ticket t4 = null;
-    Ticket t5 = null;
+    JpaRecord t1 = null;
+    JpaRecord t2 = null;
+    JpaRecord t3 = null;
+    JpaRecord t4 = null;
+    JpaRecord t5 = null;
 
     PropField seatNumberProp = null;
     PropField lockIdProp = null;
@@ -108,7 +108,7 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
         /* SETUP THE TRANSACTION IN THE DB */
         List<String> ticketIdsInTransaction = new ArrayList<String>();
         int i=0;
-        for(Ticket t : ticketsToDelete) {
+        for(JpaRecord t : ticketsToDelete) {
 
             //put three tickets in this transaction, one ticket in another transaction, and another ticket just hanging out
             if(i<3) {
@@ -673,11 +673,11 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
     }
 
     public void addTickets() throws Exception {
-        t1 = new Ticket();
-        t2 = new Ticket();
-        t3 = new Ticket();
-        t4 = new Ticket();
-        t5 = new Ticket();
+        t1 = new JpaRecord();
+        t2 = new JpaRecord();
+        t3 = new JpaRecord();
+        t4 = new JpaRecord();
+        t5 = new JpaRecord();
 
         seatNumberProp = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", StrictType.NOT_STRICT));
         lockIdProp = apa.savePropField(new PropField(ValueType.STRING, AthenaLockManager.LOCK_ID, StrictType.NOT_STRICT));

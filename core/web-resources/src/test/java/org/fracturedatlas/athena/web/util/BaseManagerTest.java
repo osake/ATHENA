@@ -23,19 +23,18 @@ package org.fracturedatlas.athena.web.util;
 import java.util.ArrayList;
 import java.util.List;
 import org.fracturedatlas.athena.apa.ApaAdapter;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.Ticket;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.client.PTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.web.context.ContextLoaderListener;
 
 public abstract class BaseManagerTest {
     protected ApaAdapter apa;
     protected ApplicationContext context;
 
-    protected List<Ticket> ticketsToDelete = new ArrayList<Ticket>();
+    protected List<PTicket> ticketsToDelete = new ArrayList<PTicket>();
     protected List<PropField> propFieldsToDelete = new ArrayList<PropField>();
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -45,11 +44,11 @@ public abstract class BaseManagerTest {
     }
 
     public void teardownTickets() {
-        for (Ticket t : ticketsToDelete) {
+        for (PTicket t : ticketsToDelete) {
             try {
-                apa.deleteTicket(t);
+                apa.deleteRecord(t.getType(), t.getId());
             } catch (Exception ignored) {
-                    logger.error(ignored.getMessage(), ignored);
+                logger.error(ignored.getMessage(), ignored);
             }
         }
 
@@ -57,8 +56,8 @@ public abstract class BaseManagerTest {
             try {
                 apa.deletePropField(pf);
             } catch (Exception ignored) {
-                     logger.error(ignored.getMessage(), ignored);
-           }
+                //ignored
+            }
         }
     }
 }

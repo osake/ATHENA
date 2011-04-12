@@ -18,12 +18,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
 
-package org.fracturedatlas.athena.apa.model;
+package org.fracturedatlas.athena.apa.exception;
 
-/*
- * TODO: Enum this?
- */
-public class StrictType {
-    public static final Boolean STRICT = Boolean.TRUE;
-    public static final Boolean NOT_STRICT = Boolean.FALSE;
+public class InvalidPropException extends ApaException {
+
+    public InvalidPropException(String message) {
+        super(message);
+    }
+
+    public InvalidPropException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

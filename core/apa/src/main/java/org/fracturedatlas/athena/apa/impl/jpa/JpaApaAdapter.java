@@ -12,16 +12,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/
  */
-package org.fracturedatlas.athena.apa.impl;
+package org.fracturedatlas.athena.apa.impl.jpa;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
@@ -34,16 +27,14 @@ import org.fracturedatlas.athena.apa.AbstractApaAdapter;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
+import org.fracturedatlas.athena.apa.exception.InvalidFieldException;
+import org.fracturedatlas.athena.apa.exception.InvalidPropException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.PropValue;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.TicketProp;
-import org.fracturedatlas.athena.apa.model.ValueType;
-import org.fracturedatlas.athena.search.Operator;
+import org.fracturedatlas.athena.apa.impl.LongUserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
+import org.fracturedatlas.athena.client.PTicket;
 
 public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
@@ -57,7 +48,16 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Ticket getTicket(String type, Object id) {
+    public PTicket getRecord(String type, Object id) {
+        JpaRecord r = getTicket(type, id);
+        if(r != null) {
+            return r.toClientTicket();
+        } else {
+            return null;
+        }
+    }
+
+    private  JpaRecord getTicket(String type, Object id) {
         EntityManager em = this.emf.createEntityManager();
         try {
             Long longId = LongUserType.massageToLong(id);
@@ -65,7 +65,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 return null;
             } else {
                 try {
-                    Ticket t = (Ticket) em.createQuery("from Ticket as ticket where id=:id AND type=:ticketType").setParameter("id", longId).setParameter("ticketType", type).getSingleResult();
+                    JpaRecord t = (JpaRecord) em.createQuery("from JpaRecord as ticket where id=:id AND type=:ticketType").setParameter("id", longId).setParameter("ticketType", type).getSingleResult();
                     return t;
                 } catch (NoResultException nre) {
                     return null;
@@ -76,8 +76,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
     }
 
-    @Override
-    public Ticket saveTicket(Ticket t) {
+    private JpaRecord saveRecord(JpaRecord t) {
         EntityManager em = this.emf.createEntityManager();
         try {
             em.getTransaction().begin();
@@ -92,7 +91,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                     prop.setTicket(t);
                 }
             }
-            t = (Ticket) em.merge(t);
+            t = (JpaRecord) em.merge(t);
             em.getTransaction().commit();
             return t;
         } catch (ApaException e) {
@@ -103,6 +102,115 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             cleanup(em);
         }
     }
+
+    @Override
+    public PTicket saveRecord(PTicket record) {
+        return saveRecord(record.getType(), record);
+    }
+
+    @Override
+    public PTicket saveRecord(String type, PTicket record) {
+        if(type == null) {
+            throw new ApaException("Cannot save a record without a type");
+        }
+
+        //if this ticket has an id
+        if (record.getId() != null) {
+            return updateTicketFromClientTicket(type, record, record.getId()).toClientTicket();
+        } else {
+            return createAndSaveTicketFromClientTicket(type, record).toClientTicket();
+        }
+    }
+
+    /*
+     * updateTicketFromClientTicket assumes that PTicket has been sent with an ID.
+     * updateTicketFromClientTicket will load a ticket with that ID.
+     */
+    public JpaRecord updateTicketFromClientTicket(String type, PTicket clientTicket, Object idToUpdate) throws InvalidPropException, InvalidValueException {
+        JpaRecord ticket  = getTicket(type, idToUpdate);
+
+        /*
+         * for all props on this pTicket
+         * if apa has a prop for it, update it
+         * otherwise, create a new one
+         */
+        Map<String, String> propMap = clientTicket.getProps();
+        Set<String> keys = propMap.keySet();
+        List<TicketProp> propsToSave = new ArrayList<TicketProp>();
+        for (String key : keys) {
+            String val = propMap.get(key);
+
+            TicketProp ticketProp = getTicketProp(key, type, ticket.getId());
+
+            if (ticketProp == null) {
+                PropField propField = getPropField(key);
+                validatePropField(propField, key, val);
+
+                ticketProp = propField.getValueType().newTicketProp();
+                ticketProp.setPropField(propField);
+                ticketProp.setTicket(ticket);
+            }
+
+            ticketProp.setValue(val);
+            
+            //saving these outside of this loop ensures that all propFields exist before
+            //we go saving values.  Sort of a hack transactionality.
+            propsToSave.add(ticketProp);
+        }
+
+        for (TicketProp ticketProp : propsToSave) {
+            saveTicketProp(ticketProp);
+        }
+
+        ticket = getTicket(type, clientTicket.getId());
+        ticket = saveRecord(ticket);
+        return ticket;
+    }
+
+    /*
+     * createAndSaveTicketFromClientTicket assumes that PTicket has been sent WITHOUT an ID.
+     * createAndSaveTicketFromClientTicket will create a new ticket using magic and wizardry
+     */
+    private JpaRecord createAndSaveTicketFromClientTicket(String type, PTicket clientTicket) throws InvalidPropException, InvalidValueException {
+
+        JpaRecord ticket  = new JpaRecord();
+
+        //for all props on this pTicket, create new props with apa
+        Map<String, String> propMap = clientTicket.getProps();
+        Set<String> keys = propMap.keySet();
+        for (String key : keys) {
+            String val = propMap.get(key);
+            logger.debug("Creating property: {}={}", key, val);
+            PropField propField = getPropField(key);
+            logger.debug("Found PropField: {}", propField);
+            validatePropField(propField, key, val);
+            TicketProp ticketProp = propField.getValueType().newTicketProp();
+            ticketProp.setPropField(propField);
+            ticketProp.setValue(val);
+            ticketProp.setTicket(ticket);
+            logger.debug("Creating TicketProp: [{}]", ticketProp.getClass().getName());
+            logger.debug("{}={}", ticketProp.getPropField().getName(), ticketProp.getValueAsString());
+            ticket.addTicketProp(ticketProp);
+        }
+        ticket.setType(type);
+        ticket = saveRecord(ticket);
+        return ticket;
+    }
+
+    /**
+     * This method will throw ObjectNotFoundException if propField is null.
+     *
+     * @param propField the prop field to validate
+     * @param key the name of the propField.  Used to validate that propField exists and is correct.
+     * @param value the value that will be validated if propField is strict
+     * @throws PropFieldNotFoundException
+     */
+    private void validatePropField(PropField propField, String key, String value) throws InvalidPropException {
+        if (propField == null) {
+            throw new InvalidPropException("Field with name [" + key + "] does not exist");
+        }
+    }
+
 
     private void enforceCorrectValueType(PropField propField, TicketProp prop) throws InvalidValueException {
 
@@ -134,7 +242,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Boolean deleteTicket(String type, Object id) {
+    public Boolean deleteRecord(String type, Object id) {
         logger.debug("Deleting ticket: " + id);
         if (id == null) {
             return false;
@@ -143,20 +251,15 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         try {
             Long longId = LongUserType.massageToLong(id);
             em.getTransaction().begin();
-            Ticket t = em.find(Ticket.class, longId);
-            logger.debug("Deleting ticket: " + t);
+            JpaRecord t = em.find(JpaRecord.class, longId);
+            logger.trace("Deleting ticket: " + t);
             em.remove(t);
-            logger.debug("Deleted ticket: " + longId);
+            logger.trace("Deleted ticket: " + longId);
             em.getTransaction().commit();
             return true;
         } finally {
             cleanup(em);
         }
-    }
-
-    @Override
-    public Boolean deleteTicket(Ticket t) {
-        return deleteTicket(t.getType(), t.getId());
     }
 
     /**
@@ -167,50 +270,68 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
      * @return Set of tickets whose Props match the athenaSearch
      */
     @Override
-    public Set<Ticket> findTickets(AthenaSearch athenaSearch) {
-        logger.debug("Searching for tickets matching [{}]", athenaSearch);
+    public Set<PTicket> findTickets(AthenaSearch athenaSearch) {
+        logger.debug("Searching for tickets:");
+        logger.debug("{}", athenaSearch);
         EntityManager em = this.emf.createEntityManager();
         Query query = null;
-        Collection<Ticket> finishedTicketsList = null;
-        Set<Ticket> finishedTicketsSet = null;
-        Collection<Ticket> ticketsList = null;
+        Collection<JpaRecord> finishedTicketsList = null;
+        Set<JpaRecord> finishedTicketsSet = null;
+        Collection<JpaRecord> ticketsList = null;
         try {
             //if there are no modifiers, grab all records of (type)
             if (CollectionUtils.isEmpty(athenaSearch.getConstraints())) {
+                logger.debug("No modifiers, getting all records of specified type");
                 finishedTicketsSet = getRecordsByType(athenaSearch, em);
             } else {
                 //else, search with the modifiers
+                //TODO: This block runs independent searches for each constraint, then just spashes those lists together
+                //Smarter way would be to run the first constraint, then search THAT list for the next constraint
+                //Even smarter: be clever about which constraint we search for first.
+
                 for (AthenaSearchConstraint apc : athenaSearch.getConstraints()) {
+                    logger.debug("Searching on modifier: {}", apc);
                     ticketsList = getRecordsForConstraint(athenaSearch.getType(), apc, em);
+                    logger.debug("Found {} tickets", ticketsList.size());
                     if (finishedTicketsList == null) {
                         finishedTicketsList = ticketsList;
                     } else {
+                        logger.debug("Smashing together ticket lists");
                         finishedTicketsList = CollectionUtils.intersection(finishedTicketsList, ticketsList);
                     }
+                    logger.debug("{} tickets remain", finishedTicketsList.size());
                 }
                 if (finishedTicketsList == null) {
-                    finishedTicketsList = new ArrayList<Ticket>();
+                    finishedTicketsList = new ArrayList<JpaRecord>();
                 }
                 Integer limit = athenaSearch.getLimit();
                 Integer start = athenaSearch.getStart();
 
-                finishedTicketsSet = new HashSet<Ticket>();
+                finishedTicketsSet = new HashSet<JpaRecord>();
                 finishedTicketsSet.addAll(finishedTicketsList);
                 finishedTicketsSet = enforceStartAndLimit(finishedTicketsSet, start, limit);
             }
 
             logger.debug("Returning {} tickets", finishedTicketsSet.size());
-            return finishedTicketsSet;
-        } catch (Exception ex) {
+            return convert(finishedTicketsSet);
+        } catch (ApaException ex) {
             logger.error("Error While searching [{}]", athenaSearch.getConstraints());
             logger.error(ex.getMessage(), ex);
-            return new HashSet<Ticket>();
+            throw ex;
         } finally {
             cleanup(em);
         }
     }
 
-    private Set<Ticket> enforceStartAndLimit(Set<Ticket> ticketSet, Integer start, Integer limit) {
+    private Set<PTicket> convert(Set<JpaRecord> jpaRecords) {
+        Set<PTicket> out = new HashSet<PTicket>();
+        for(JpaRecord r : jpaRecords) {
+            out.add(r.toClientTicket());
+        }
+        return out;
+    }
+
+    private Set<JpaRecord> enforceStartAndLimit(Set<JpaRecord> ticketSet, Integer start, Integer limit) {
 
         Integer from = 0;
         Integer to = 0;
@@ -222,22 +343,31 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         //otherwise, set "to" to limit+start
         to = (limit == null || limit + from > ticketSet.size()) ? ticketSet.size() : limit + from;
 
-        //short circuit all of this if we can
+        logger.debug("Enforcing limit:");
+        logger.debug("FROM: {}", from);
+        logger.debug("TO:   {}", to);
+
+        //short circuit all of this if we can.  If they've asked for more tickets than we found, punch out
         if(from == 0 && to >= ticketSet.size()) {
             return ticketSet;
         }
 
-        Ticket[] ticketArray = new Ticket[ticketSet.size()];
+        //if the start is greater than the number of tickets we've found, return nothing
+        if(from > to) {
+            return new HashSet<JpaRecord>();
+        }
+
+        JpaRecord[] ticketArray = new JpaRecord[ticketSet.size()];
         ticketArray = ticketSet.toArray(ticketArray);
-        Ticket[] outTickets = Arrays.copyOfRange(ticketArray, from, to);
+        JpaRecord[] outTickets = Arrays.copyOfRange(ticketArray, from, to);
         ticketSet = new HashSet(Arrays.asList(outTickets));
         return ticketSet;
     }
 
-    private Set<Ticket> getRecordsByType(AthenaSearch athenaSearch, EntityManager em) throws Exception {
-        Set<Ticket> finishedTicketsSet = null;
+    private Set<JpaRecord> getRecordsByType(AthenaSearch athenaSearch, EntityManager em) {
+        Set<JpaRecord> finishedTicketsSet = null;
 
-        Query query = em.createQuery("from Ticket as ticket where type=:ticketType").setParameter("ticketType", athenaSearch.getType());
+        Query query = em.createQuery("from JpaRecord as ticket where type=:ticketType").setParameter("ticketType", athenaSearch.getType());
 
         if (athenaSearch.getLimit() != null) {
             query.setMaxResults(athenaSearch.getLimit());
@@ -247,38 +377,63 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             query.setFirstResult(athenaSearch.getStart());
         }
 
-        finishedTicketsSet = new HashSet<Ticket>(query.getResultList());
+        finishedTicketsSet = new HashSet<JpaRecord>(query.getResultList());
         return finishedTicketsSet;
     }
 
-    private Collection<Ticket> getRecordsForConstraint(String type, AthenaSearchConstraint apc, EntityManager em) throws Exception {
+    private Collection<JpaRecord> getRecordsForConstraint(String type, AthenaSearchConstraint apc, EntityManager em) {
 
         PropField pf = null;
         ValueType vt = null;
-        String queryString = null;
-        Operator operator = null;
         String fieldName = null;
         List<TicketProp> props = null;
-        Iterator<String> it = null;
-        String singleValue = null;
-        Set<Object> valuesAsObjects = null;
-        Set<String> value = null;
-        Query query = null;
-        Ticket tempTicket = null;
-        Collection<Ticket> ticketsList = null;
+        JpaRecord tempTicket = null;
+        Collection<JpaRecord> ticketsList = null;
 
         fieldName = apc.getParameter();
         pf = getPropField(fieldName);
         if (pf != null) {
             vt = pf.getValueType();
         } else {
-            throw new ApaException("No Property Field called " + fieldName + " exists.");
+            throw new InvalidFieldException("No Property Field called " + fieldName + " exists.");
         }
-        operator = apc.getOper();
-        value = apc.getValueSet();
+
+        logger.debug("{}", apc);
+
         TicketProp prop = vt.newTicketProp();
-        if (value.size() > 1) {
-            it = value.iterator();
+        prop.setPropField(pf);
+        Query query = buildQuery(type, apc, pf, vt, em);
+        ticketsList = new ArrayList<JpaRecord>();
+        
+        if(query != null) {
+            props = query.getResultList();
+            for (TicketProp tp : props) {
+                tempTicket = tp.getTicket();
+                ticketsList.add(tempTicket);
+            }
+        }
+
+        return ticketsList;
+    }
+
+    private Query buildQuery(String type,
+                             AthenaSearchConstraint apc,
+                             PropField pf,
+                             ValueType vt,
+                             EntityManager em) {
+
+        Query query = null;
+        String queryString = null;
+        String singleValue = null;
+        Iterator<String> it = null;
+        Set<Object> valuesAsObjects = null;
+        
+        TicketProp prop = vt.newTicketProp();
+        prop.setPropField(pf);
+        Set<String> values = apc.getValueSet();
+
+        if (values.size() > 1) {
+            it = values.iterator();
             valuesAsObjects = new HashSet<Object>();
             while (it.hasNext()) {
                 singleValue = it.next();
@@ -294,7 +449,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             }
             queryString = "FROM " + prop.getClass().getName()
                     + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value "
-                    + operator.getOperatorString();
+                    + apc.getOper().getOperatorString();
 
             if (type != null) {
                 queryString += " AND ticketProp.ticket.type=:ticketType ";
@@ -302,7 +457,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
             query = em.createQuery(queryString);
             query.setParameter("value", valuesAsObjects);
-            query.setParameter("fieldName", fieldName);
+            query.setParameter("fieldName", apc.getParameter());
 
             if (type != null) {
                 query.setParameter("ticketType", type);
@@ -310,35 +465,32 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
 
         } else {
-            prop.setValue(value.iterator().next());
-            queryString = "FROM " + prop.getClass().getName()
-                    + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value "
-                    + operator.getOperatorString();
+            try {
+                prop.setValue(values.iterator().next());
+                queryString = "FROM " + prop.getClass().getName()
+                        + " ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.value "
+                        + apc.getOper().getOperatorString();
 
-            if (type != null) {
-                queryString += " AND ticketProp.ticket.type=:ticketType ";
-            }
+                if (type != null) {
+                    queryString += " AND ticketProp.ticket.type=:ticketType ";
+                }
 
-            query = em.createQuery(queryString);
-            query.setParameter("value", prop.getValue());
-            query.setParameter("fieldName", fieldName);
+                query = em.createQuery(queryString);
+                query.setParameter("value", prop.getValue());
+                query.setParameter("fieldName", apc.getParameter());
 
-            if (type != null) {
-                query.setParameter("ticketType", type);
+                if (type != null) {
+                    query.setParameter("ticketType", type);
+                }
+            } catch (InvalidValueException e) {
+                //this is cool, continue
             }
         }
-        props = query.getResultList();
-        ticketsList = new ArrayList<Ticket>();
-        for (TicketProp tp : props) {
-            tempTicket = tp.getTicket();
-            ticketsList.add(tempTicket);
-        }
 
-        return ticketsList;
+        return query;
     }
 
-    @Override
-    public List<TicketProp> saveTicketProps(List<TicketProp> props) {
+    private List<TicketProp> saveTicketProps(List<TicketProp> props) {
         List<TicketProp> outProps = new ArrayList<TicketProp>();
         EntityManager em = this.emf.createEntityManager();
         try {
@@ -362,8 +514,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     }
 
-    @Override
-    public TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException {
+    private TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException {
         EntityManager em = this.emf.createEntityManager();
         try {
             em.getTransaction().begin();
@@ -616,7 +767,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 throw new ApaException("Cannot delete prop.  Prop was not found.");
             }
 
-            Ticket t = prop.getTicket();
+            JpaRecord t = prop.getTicket();
 
             if (t == null) {
                 throw new ApaException("Cannot delete prop.  This prop has not been assigned to a ticket.");

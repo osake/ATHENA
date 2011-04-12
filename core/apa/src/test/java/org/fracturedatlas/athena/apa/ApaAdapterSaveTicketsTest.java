@@ -21,11 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -44,125 +44,132 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
 
     @Test
     public void testSaveTicket() {
-        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
-        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
-        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(field);
-        propFieldsToDelete.add(field1);
-        propFieldsToDelete.add(field2);
+        addPropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT);
 
-        Ticket ticket = new Ticket();
+        PTicket ticket = new PTicket();
         ticket.setType("record");
-        ticket.addTicketProp(new StringTicketProp(field, "03"));
-        ticket.addTicketProp(new StringTicketProp(field1, "13"));
-        ticket.addTicketProp(new StringTicketProp(field2, "23"));
+        ticket.put("SEAT", "03");
+        ticket.put("SEAT1", "13");
+        ticket.put("SEAT2", "23");
 
-        ticket = apa.saveTicket(ticket);
+        ticket = apa.saveRecord(ticket);
         assertNotNull(ticket.getId());
         ticketsToDelete.add(ticket);
 
-        ticket = apa.getTicket(ticket.getType(), ticket.getId());
+        ticket = apa.getRecord(ticket.getType(), ticket.getId());
 
-        PTicket pTicket = ticket.toClientTicket();
-        assertNotNull(pTicket.getId());
-        assertEquals(3, pTicket.getProps().size());
-        assertEquals("03", pTicket.get("SEAT"));
-        assertEquals("13", pTicket.get("SEAT1"));
-        assertEquals("23", pTicket.get("SEAT2"));
+        assertNotNull(ticket.getId());
+        assertEquals(3, ticket.getProps().size());
+        assertEquals("03", ticket.get("SEAT"));
+        assertEquals("13", ticket.get("SEAT1"));
+        assertEquals("23", ticket.get("SEAT2"));
 
+    }
+
+    @Test
+    public void testUpdateTicket() {
+        addPropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT);
+
+        PTicket ticket = new PTicket();
+        ticket.setType("record");
+        ticket.put("SEAT", "03");
+        ticket.put("SEAT1", "13");
+        ticket.put("SEAT2", "23");
+
+        ticket = apa.saveRecord(ticket);
+        assertNotNull(ticket.getId());
+        ticketsToDelete.add(ticket);
+
+        ticket.put("SEAT", "ELEPHANT");
+
+        PTicket savedTicket = apa.saveRecord(ticket);
+        assertEquals(savedTicket.get("SEAT"), "ELEPHANT");
+        assertEquals(ticket, savedTicket);
     }
 
     @Test
     public void testSaveTwoTicketsSameType() {
-        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
-        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
-        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(field);
-        propFieldsToDelete.add(field1);
-        propFieldsToDelete.add(field2);
+        addPropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT);
 
-        Ticket ticket = new Ticket();
+        PTicket ticket = new PTicket();
         ticket.setType("record");
-        ticket.addTicketProp(new StringTicketProp(field, "03"));
-        ticket.addTicketProp(new StringTicketProp(field1, "13"));
-        ticket.addTicketProp(new StringTicketProp(field2, "23"));
+        ticket.put("SEAT", "03");
+        ticket.put("SEAT1", "13");
+        ticket.put("SEAT2", "23");
 
-        ticket = apa.saveTicket(ticket);
+        ticket = apa.saveRecord(ticket);
         assertNotNull(ticket.getId());
         ticketsToDelete.add(ticket);
 
+        ticket = apa.getRecord(ticket.getType(), ticket.getId());
 
-        Ticket ticket2 = new Ticket();
+        assertNotNull(ticket.getId());
+        assertEquals(3, ticket.getProps().size());
+        assertEquals("03", ticket.get("SEAT"));
+        assertEquals("13", ticket.get("SEAT1"));
+        assertEquals("23", ticket.get("SEAT2"));
+
+
+        PTicket ticket2 = new PTicket();
         ticket2.setType("record");
-        ticket2.addTicketProp(new StringTicketProp(field, "103"));
-        ticket2.addTicketProp(new StringTicketProp(field1, "113"));
-        ticket2.addTicketProp(new StringTicketProp(field2, "123"));
-        ticket2 = apa.saveTicket(ticket2);
-        assertNotNull(ticket2.getId());
-        ticketsToDelete.add(ticket2);
+        ticket2.put("SEAT", "033");
+        ticket2.put("SEAT1", "133");
+        ticket2.put("SEAT2", "233");
 
-        ticket = apa.getTicket(ticket.getType(), ticket.getId());
-        PTicket pTicket = ticket.toClientTicket();
-        assertNotNull(pTicket.getId());
-        assertEquals(3, pTicket.getProps().size());
-        assertEquals("03", pTicket.get("SEAT"));
-        assertEquals("13", pTicket.get("SEAT1"));
-        assertEquals("23", pTicket.get("SEAT2"));
+        ticket2 = apa.saveRecord(ticket2);
+        ticket = apa.getRecord(ticket2.getType(), ticket2.getId());
 
-        ticket2 = apa.getTicket(ticket2.getType(), ticket2.getId());
-        pTicket = ticket2.toClientTicket();
-        assertNotNull(pTicket.getId());
-        assertEquals(3, pTicket.getProps().size());
-        assertEquals("103", pTicket.get("SEAT"));
-        assertEquals("113", pTicket.get("SEAT1"));
-        assertEquals("123", pTicket.get("SEAT2"));
-
+        assertNotNull(ticket.getId());
+        assertEquals(3, ticket.getProps().size());
+        assertEquals("033", ticket.get("SEAT"));
+        assertEquals("133", ticket.get("SEAT1"));
+        assertEquals("233", ticket.get("SEAT2"));
     }
 
     @Test
-    public void testSaveTicketTwoDifferentTypes() {
-        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
-        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
-        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(field);
-        propFieldsToDelete.add(field1);
-        propFieldsToDelete.add(field2);
+    public void testSaveTwoTicketsDifferentTypes() {
+        addPropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT);
 
-        Ticket ticket = new Ticket();
+        PTicket ticket = new PTicket();
         ticket.setType("record");
-        ticket.addTicketProp(new StringTicketProp(field, "03"));
-        ticket.addTicketProp(new StringTicketProp(field1, "13"));
-        ticket.addTicketProp(new StringTicketProp(field2, "23"));
+        ticket.put("SEAT", "03");
+        ticket.put("SEAT1", "13");
+        ticket.put("SEAT2", "23");
 
-        ticket = apa.saveTicket(ticket);
+        ticket = apa.saveRecord(ticket);
         assertNotNull(ticket.getId());
         ticketsToDelete.add(ticket);
 
+        ticket = apa.getRecord(ticket.getType(), ticket.getId());
 
-        Ticket ticket2 = new Ticket();
-        ticket2.setType("album");
-        ticket2.addTicketProp(new StringTicketProp(field, "103"));
-        ticket2.addTicketProp(new StringTicketProp(field1, "113"));
-        ticket2.addTicketProp(new StringTicketProp(field2, "123"));
-        ticket2 = apa.saveTicket(ticket2);
-        assertNotNull(ticket2.getId());
-        ticketsToDelete.add(ticket2);
+        assertNotNull(ticket.getId());
+        assertEquals(3, ticket.getProps().size());
+        assertEquals("03", ticket.get("SEAT"));
+        assertEquals("13", ticket.get("SEAT1"));
+        assertEquals("23", ticket.get("SEAT2"));
 
-        ticket = apa.getTicket(ticket.getType(), ticket.getId());
-        PTicket pTicket = ticket.toClientTicket();
-        assertNotNull(pTicket.getId());
-        assertEquals(3, pTicket.getProps().size());
-        assertEquals("03", pTicket.get("SEAT"));
-        assertEquals("13", pTicket.get("SEAT1"));
-        assertEquals("23", pTicket.get("SEAT2"));
 
-        ticket2 = apa.getTicket(ticket2.getType(), ticket2.getId());
-        pTicket = ticket2.toClientTicket();
-        assertNotNull(pTicket.getId());
-        assertEquals(3, pTicket.getProps().size());
-        assertEquals("103", pTicket.get("SEAT"));
-        assertEquals("113", pTicket.get("SEAT1"));
-        assertEquals("123", pTicket.get("SEAT2"));
+        PTicket ticket2 = new PTicket();
+        ticket2.setType("performance");
+        ticket2.put("SEAT", "033");
+        ticket2.put("SEAT1", "133");
+        ticket2.put("SEAT2", "233");
 
+        ticket2 = apa.saveRecord(ticket2);
+        ticket = apa.getRecord(ticket2.getType(), ticket2.getId());
+
+        assertNotNull(ticket.getId());
+        assertEquals(3, ticket.getProps().size());
+        assertEquals("033", ticket.get("SEAT"));
+        assertEquals("133", ticket.get("SEAT1"));
+        assertEquals("233", ticket.get("SEAT2"));
     }
 }

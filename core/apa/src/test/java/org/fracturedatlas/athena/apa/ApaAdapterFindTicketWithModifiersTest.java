@@ -20,14 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import java.util.Set;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
+import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.search.AthenaSearch;
-import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
-import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
-import org.fracturedatlas.athena.apa.model.PropField;
+import org.fracturedatlas.athena.search.Operator;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -46,126 +43,103 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
      */
     @Before
     public void setupTickets() {
-        Ticket t = new Ticket();
+        addPropField(ValueType.STRING,"Performance",Boolean.FALSE);
+        addPropField(ValueType.INTEGER,"SeatNum",Boolean.FALSE);
 
-        PropField field = new PropField(ValueType.STRING, "Performance", Boolean.FALSE);
-        PropField pf1 = apa.savePropField(field);
-        propFieldsToDelete.add(pf1);
-
-        field = new PropField(ValueType.INTEGER, "SeatNum", Boolean.FALSE);
-        PropField pf2 = apa.savePropField(field);
-        propFieldsToDelete.add(pf2);
-
-
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 1));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        PTicket t = new PTicket("ticket");
+        t.put("Performance", "Mac & Mabel");
+        t.put("SeatNum", "1");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
-        t = new Ticket();
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 2));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        t = new PTicket("ticket");
+        t.put("Performance", "Mac & Mabel");
+        t.put("SeatNum", "2");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
-        t = new Ticket();
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 3));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        t = new PTicket("ticket");
+        t.put("Performance", "Mac & Mabel");
+        t.put("SeatNum", "3");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
-        t = new Ticket();
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 4));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        t = new PTicket("ticket");
+        t.put("Performance", "Mac & Mabel");
+        t.put("SeatNum", "4");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
-        t = new Ticket();
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 5));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        t = new PTicket("ticket");
+        t.put("Performance", "Mac & Mabel");
+        t.put("SeatNum", "5");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
-        t = new Ticket();
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 6));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        t = new PTicket("ticket");
+        t.put("Performance", "Mac & Mabel");
+        t.put("SeatNum", "6");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
-        t = new Ticket();
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 7));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        t = new PTicket("ticket");
+        t.put("Performance", "Mac & Mabel");
+        t.put("SeatNum", "7");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
-        t = new Ticket();
-        t.addTicketProp(new StringTicketProp(pf1, "Mac & Mabel"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 8));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        t = new PTicket("ticket");
+        t.put("Performance", "Mac & Mabel");
+        t.put("SeatNum", "8");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
-        t = new Ticket();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 1));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        t = new PTicket("ticket");
+        t.put("Performance", "West Side Story");
+        t.put("SeatNum", "1");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
-        t = new Ticket();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 2));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        t = new PTicket("ticket");
+        t.put("Performance", "West Side Story");
+        t.put("SeatNum", "2");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
-        t = new Ticket();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 3));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        t = new PTicket("ticket");
+        t.put("Performance", "West Side Story");
+        t.put("SeatNum", "3");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
-        t = new Ticket();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 4));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        t = new PTicket("ticket");
+        t.put("Performance", "West Side Story");
+        t.put("SeatNum", "4");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
-        t = new Ticket();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 5));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        t = new PTicket("ticket");
+        t.put("Performance", "West Side Story");
+        t.put("SeatNum", "5");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
-        t = new Ticket();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 6));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        t = new PTicket("ticket");
+        t.put("Performance", "West Side Story");
+        t.put("SeatNum", "6");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
-        t = new Ticket();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 7));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        t = new PTicket("ticket");
+        t.put("Performance", "West Side Story");
+        t.put("SeatNum", "7");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
-        t = new Ticket();
-        t.addTicketProp(new StringTicketProp(pf1, "West Side Story"));
-        t.addTicketProp(new IntegerTicketProp(pf2, 8));
-        t.setType("ticket");
-        t = apa.saveTicket(t);
+        t = new PTicket("ticket");
+        t.put("Performance", "West Side Story");
+        t.put("SeatNum", "8");
+        t = apa.saveRecord(t);
         ticketsToDelete.add(t);
 
     }
@@ -177,7 +151,6 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
 
     @Test
     public void testStartOnly() {
-
         AthenaSearch search = new AthenaSearch();
         search.setType("ticket");
         search.setSearchModifier(AthenaSearch.START, "3");
@@ -295,9 +268,8 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
     public void testStartofZerotoReturnSizeAndLimitofOne() {
         AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
         AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-        Set<Ticket> results = null;
+        Set results = null;
         AthenaSearch search = null;
-        Ticket t = null;
 
         int limit = 1;
 
@@ -333,8 +305,5 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
         search = new AthenaSearch.Builder(con1).and(con2).start(7).limit(limit).type("ticket").build();
         results = apa.findTickets(search);
         assertEquals(0, results.size());
-
-
-
     }
 }

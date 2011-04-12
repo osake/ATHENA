@@ -21,8 +21,6 @@ package org.fracturedatlas.athena.helper.ticketfactory.manager;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.fracturedatlas.athena.apa.ApaAdapter;
-import org.fracturedatlas.athena.apa.model.Ticket;
 import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.search.AthenaSearch;

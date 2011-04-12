@@ -1,4 +1,4 @@
-package org.fracturedatlas.athena.apa.model;
+package org.fracturedatlas.athena.apa.impl.jpa;
 
 
 public enum ValueType {

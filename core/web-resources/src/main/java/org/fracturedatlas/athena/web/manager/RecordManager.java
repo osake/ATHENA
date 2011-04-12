@@ -34,9 +34,9 @@ import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.TicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
@@ -49,16 +49,16 @@ public class RecordManager {
     @Autowired
     ApaAdapter apa;
 
-    public Ticket getTicket(String type, Object id) {
-        return apa.getTicket(type, id);
+    public PTicket getTicket(String type, Object id) {
+        return apa.getRecord(type, id);
     }
 
-    public void deleteTicket(Ticket t) {
-        apa.deleteTicket(t);
+    public void deleteTicket(PTicket t) {
+        apa.deleteRecord(t);
     }
 
     public void deleteTicket(String type, Object id) {
-        apa.deleteTicket(type, id);
+        apa.deleteRecord(type, id);
     }
 
     public void deletePropertyFromTicket(String type, String propName, Object ticketId)
@@ -67,9 +67,9 @@ public class RecordManager {
 
         if (prop == null) {
             //no prop found, try and figure out why so we can return a sensible 404
-            Ticket t = apa.getTicket(type, ticketId);
+            PTicket t = apa.getRecord(type, ticketId);
             if (t == null) {
-                throw new ObjectNotFoundException("Ticket with id [" + ticketId + "] was not found");
+                throw new ObjectNotFoundException("JpaRecord with id [" + ticketId + "] was not found");
             } else {
                 throw new ObjectNotFoundException("Property with name [" + propName + "] was not found on ticket with id [" + ticketId + "]");
             }
@@ -77,9 +77,9 @@ public class RecordManager {
 
         apa.deleteTicketProp(prop);
     }
-    public Set<Ticket> findTicketsByRelationship(String parentType, Object id, String childType) {
+    public Set<PTicket> findTicketsByRelationship(String parentType, Object id, String childType) {
 
-        Ticket ticket = apa.getTicket(parentType, id);
+        PTicket ticket  = apa.getRecord(parentType, id);
         if(ticket == null) {
             throw new NotFoundException(StringUtils.capitalize(parentType) + " witn id [" + id + "] was not found");
         }
@@ -99,7 +99,7 @@ public class RecordManager {
      * @param queryParams
      * @return
      */
-    public Set<Ticket> findTickets(String type, MultivaluedMap<String, String> queryParams) {
+    public Set<PTicket> findTickets(String type, MultivaluedMap<String, String> queryParams) {
 
         List<String> values = null;
         Operator operator;
@@ -113,15 +113,23 @@ public class RecordManager {
                 if (fieldName.startsWith("_")) {
                     apaSearch.setSearchModifier(fieldName, operatorPrefixedValue);
                 } else {
+                    int start = 0;
 
-                    //If the operator isn't found, this defaults to equals
-                    operator = Operator.fromType(operatorPrefixedValue.substring(0, 2));
-                    int start = 2;
-                    if(operator == null) {
+                    if(operatorPrefixedValue.length() < 2) { 
                         operator = Operator.EQUALS;
-                        start = 0;
+                        value = operatorPrefixedValue;
+                    } else {
+                        //If the operator isn't found, this defaults to equals
+                        operator = Operator.fromType(operatorPrefixedValue.substring(0, 2));
+                        start = 2;
+
+                        if(operator == null) {
+                            operator = Operator.EQUALS;
+                            start = 0;
+                        }
+                        value = operatorPrefixedValue.substring(start, operatorPrefixedValue.length());
                     }
-                    value = operatorPrefixedValue.substring(start, operatorPrefixedValue.length());
+                    
                     valueSet = parseValues(value);
                     apaSearch.addConstraint(fieldName, operator, valueSet);
                 }
@@ -182,135 +190,23 @@ public class RecordManager {
         return values;
     }
 
-    /*
-     * TODO: The fact that this throws Exception (and not something more specific)
-     * is a crime against humanity
-     */
-    public Ticket saveTicketFromClientRequest(String type, PTicket pTicket) throws Exception {
-        //if this ticket has an id
-        if (pTicket.getId() != null) {
-            return updateTicketFromClientTicket(type, pTicket, pTicket.getId());
-        } else {
-            return createAndSaveTicketFromClientTicket(type, pTicket);
-        }
+    public PTicket createRecord(String type, PTicket record) {
+        return apa.saveRecord(type, record);
     }
 
-    /*
-     * updateTicketFromClientTicket assumes that PTicket has been sent with an ID.
-     * updateTicketFromClientTicket will load a ticket with that ID.
-     */
-    public Ticket updateTicketFromClientTicket(String type, PTicket clientTicket, Object idToUpdate) throws Exception {
-        Ticket ticket = apa.getTicket(type, idToUpdate);
+    public PTicket updateRecord(String type, PTicket record, String idToUpdate) {
 
-        /*
-         * If the client ID on the url but we didn't find the ticket, toss back
-         * a ticket not found exception
-         */
-        if (ticket == null) {
+        PTicket ticket  = apa.getRecord(type, idToUpdate);
+
+        if (idToUpdate == null || ticket == null) {
             throw new NotFoundException();
         }
 
-        if (!IdAdapter.isEqual(ticket.getId(), clientTicket.getId())) {
-            throw new AthenaException("Requested update to [" + idToUpdate + "] but sent record with id [" + clientTicket.getId() + "]");
+        if (!IdAdapter.isEqual(ticket.getId(), record.getId())) {
+            throw new AthenaException("Requested update to [" + idToUpdate + "] but sent record with id [" + record.getId() + "]");
         }
 
-        /*
-         * for all props on this pTicket
-         * if apa has a prop for it, update it
-         * otherwise, create a new one
-         */
-        Map<String, String> propMap = clientTicket.getProps();
-        Set<String> keys = propMap.keySet();
-        List<TicketProp> propsToSave = new ArrayList<TicketProp>();
-        for (String key : keys) {
-            String val = propMap.get(key);
-
-            TicketProp ticketProp = apa.getTicketProp(key, type, ticket.getId());
-
-            if (ticketProp == null) {
-                PropField propField = apa.getPropField(key);
-                validatePropField(propField, key, val);
-
-                ticketProp = propField.getValueType().newTicketProp();
-                ticketProp.setPropField(propField);
-                ticketProp.setTicket(ticket);
-            }
-
-            try {
-                ticketProp.setValue(val);
-            } catch (ParseException re) {
-                throw new InvalidValueException(buildExceptionMessage(val, ticketProp.getPropField()));
-            } catch (RuntimeException re) {
-                throw new InvalidValueException(buildExceptionMessage(val, ticketProp.getPropField()));
-            }
-
-            //saving these outside of this loop ensures that all propFields exist before
-            //we go saving values.  Sort of a hack transactionality.
-            propsToSave.add(ticketProp);
-        }
-
-        for (TicketProp ticketProp : propsToSave) {
-            apa.saveTicketProp(ticketProp);
-        }
-
-        ticket = apa.getTicket(type, clientTicket.getId());
-        ticket = apa.saveTicket(ticket);
-        return ticket;
-    }
-
-    private String buildExceptionMessage(String val, PropField propField) {
-        String err = "Value [" + val + "] is not a valid value for the field [" + propField.getName() + "].  ";
-        err += "Field is of type [" + propField.getValueType().name() + "].";
-        return err;
-    }
-
-    /*
-     * createAndSaveTicketFromClientTicket assumes that PTicket has been sent WITHOUT an ID.
-     * createAndSaveTicketFromClientTicket will create a new ticket using magic and wizardry
-     */
-    private Ticket createAndSaveTicketFromClientTicket(String type, PTicket clientTicket) throws Exception {
-
-        Ticket ticket = new Ticket();
-
-        //for all props on this pTicket, create new props with apa
-        Map<String, String> propMap = clientTicket.getProps();
-        Set<String> keys = propMap.keySet();
-        for (String key : keys) {
-
-            String val = propMap.get(key);
-            PropField propField = apa.getPropField(key);
-            validatePropField(propField, key, val);
-            TicketProp ticketProp = propField.getValueType().newTicketProp();
-
-            try {
-                ticketProp.setValue(val);
-            } catch (ParseException re) {
-                throw new InvalidValueException(buildExceptionMessage(val, propField));
-            } catch (RuntimeException re) {
-                throw new InvalidValueException(buildExceptionMessage(val, propField));
-            }
-
-            ticketProp.setPropField(propField);
-            ticketProp.setTicket(ticket);
-            ticket.addTicketProp(ticketProp);
-        }
-        ticket.setType(type);
-        ticket = apa.saveTicket(ticket);
-        return ticket;
-    }
-
-    /**
-     * This method will throw ObjectNotFoundException if propField is null.
-     *
-     * @param propField the prop field to validate
-     * @param key the name of the propField.  Used to validate that propField exists and is correct.
-     * @param value the value that will be validated if propField is strict
-     * @throws PropFieldNotFoundException
-     */
-    private void validatePropField(PropField propField, String key, String value) throws ObjectNotFoundException {
-        if (propField == null) {
-            throw new ObjectNotFoundException("Field with name [" + key + "] does not exist");
-        }
+        return apa.saveRecord(type, record);
     }
 
     public ApaAdapter getApa() {

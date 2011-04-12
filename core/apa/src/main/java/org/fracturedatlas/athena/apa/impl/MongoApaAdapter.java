@@ -24,9 +24,9 @@ import java.net.UnknownHostException;
 import org.bson.types.ObjectId;
 import org.fracturedatlas.athena.apa.AbstractApaAdapter;
 import org.fracturedatlas.athena.apa.ApaAdapter;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.PropValue;
-import org.fracturedatlas.athena.apa.model.Ticket;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.PropValue;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -43,8 +43,9 @@ import org.slf4j.Logger;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
-import org.fracturedatlas.athena.apa.model.TicketProp;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
+import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
@@ -69,20 +70,19 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         fields = db.getCollection(fieldsCollectionName);
     }
 
-    @Override
-    public Ticket getTicket(String type, Object id) {
-        return toRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), true);
+    public JpaRecord getTicket(String type, Object id) {
+        return toJpaRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), true);
     }
 
-    public Ticket getTicket(String type, Object id, Boolean includeProps) {
-        return toRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), includeProps);
+    public JpaRecord getTicket(String type, Object id, Boolean includeProps) {
+        return toJpaRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), includeProps);
     }
 
     @Override
-    public Ticket saveTicket(Ticket t) {
+    public JpaRecord saveTicket(JpaRecord t) {
         BasicDBObject doc = new BasicDBObject();
 
-        Ticket savedTicket = getTicket(t.getType(), t.getId());
+        JpaRecord savedTicket = getTicket(t.getType(), t.getId());
 
         if(savedTicket == null) {
             ObjectId oid = new ObjectId();
@@ -106,12 +106,12 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Set<Ticket> findTickets(AthenaSearch athenaSearch) {
+    public Set<PTicket> findTickets(AthenaSearch athenaSearch) {
         if(athenaSearch.getType() == null) {
             throw new ApaException("You must specify a record type when doing a search");
         }
 
-        Set<Ticket> tickets = new HashSet<Ticket>();
+        Set<PTicket> tickets = new HashSet<PTicket>();
         DBObject currentQuery = new BasicDBObject();
 
         if("0".equals(athenaSearch.getSearchModifiers().get(AthenaSearch.LIMIT))) {
@@ -297,19 +297,17 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return getPropField(propField.getId());
     }
 
-    @Override
-    public TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException {
+    private TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException {
         enforceStrict(prop.getPropField(), prop.getValueAsString());
         enforceCorrectValueType(prop.getPropField(), prop);
-        Ticket t = getTicket(prop.getTicket().getType(), prop.getTicket().getId());
+        JpaRecord t = getTicket(prop.getTicket().getType(), prop.getTicket().getId());
         t.addTicketProp(prop);
         saveTicket(t);
         return null;
     }
 
-    @Override
     public Boolean deleteTicket(String type, Object id) {
-        Ticket t = getTicket(type, id);
+        JpaRecord t = getTicket(type, id);
 
         if(t == null) {
             return false;
@@ -323,8 +321,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
     }
 
-    @Override
-    public Boolean deleteTicket(Ticket t) {
+    public Boolean deleteTicket(JpaRecord t) {
         return deleteTicket(t.getType(), t.getId());
     }
 
@@ -455,15 +452,44 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return db.getCollection(type).findOne(query);
     }
 
-    private Ticket toRecord(DBObject recordObject) {
-        return toRecord(recordObject, true);
-    }
-
-    private Ticket toRecord(DBObject recordObject, Boolean includeProps) {
-        Ticket t = null;
+    private PTicket toRecord(DBObject recordObject) {
+        PTicket t = null;
 
         if(recordObject != null) {
-            t = new Ticket();
+            t = new PTicket();
+            t.setId(recordObject.get("_id"));
+            t.setType((String)recordObject.get("type"));
+
+            DBObject propsObj = (DBObject)recordObject.get("props");
+            for(String key : propsObj.keySet()) {
+                Object val = propsObj.get(key);
+                PropField field = getPropField(key);
+                TicketProp ticketProp = field.getValueType().newTicketProp();
+                ticketProp.setPropField(field);
+
+                try {
+                    ticketProp.setValue(val);
+                } catch (Exception e) {
+                    logger.error(e.getMessage(),e);
+                    throw new ApaException("Problem converting DBObject to record:", e);
+                }
+
+                t.put(key, ticketProp.getValueAsString());
+            }
+        }
+
+        return t;
+    }
+
+    private JpaRecord toJpaRecord(DBObject recordObject) {
+        return toJpaRecord(recordObject, true);
+    }
+
+    private JpaRecord toJpaRecord(DBObject recordObject, Boolean includeProps) {
+        JpaRecord t = null;
+
+        if(recordObject != null) {
+            t = new JpaRecord();
             t.setId(recordObject.get("_id"));
             t.setType((String)recordObject.get("type"));
             

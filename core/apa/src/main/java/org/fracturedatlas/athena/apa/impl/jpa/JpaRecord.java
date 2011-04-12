@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
  */
-package org.fracturedatlas.athena.apa.model;
+package org.fracturedatlas.athena.apa.impl.jpa;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -39,7 +39,7 @@ import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "TICKETS")
-public class Ticket extends TixEntity implements Serializable {
+public class JpaRecord extends TixEntity implements Serializable {
 
     @Id
     @Type(type = "org.fracturedatlas.athena.apa.impl.LongUserType")
@@ -54,11 +54,11 @@ public class Ticket extends TixEntity implements Serializable {
 
     String type;
 
-    public Ticket() {
+    public JpaRecord() {
         ticketProps = new ArrayList<TicketProp>();
     }
 
-    public Ticket(String type) {
+    public JpaRecord(String type) {
         this.type = type;
         ticketProps = new ArrayList<TicketProp>();
     }
@@ -134,7 +134,7 @@ public class Ticket extends TixEntity implements Serializable {
         if (this.getClass() != obj.getClass()) {
             return false;
         }
-        final Ticket other = (Ticket) obj;
+        final JpaRecord other = (JpaRecord) obj;
         if ((this.type == null) ? (other.type != null) : !this.type.equals(other.type)) {
             return false;
         }
@@ -191,6 +191,8 @@ public class Ticket extends TixEntity implements Serializable {
         } else {
             pTicket.setId(null);
         }
+
+        pTicket.setType(getType());
 
 
         for(TicketProp prop : this.getTicketProps()) {

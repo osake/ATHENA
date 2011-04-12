@@ -18,16 +18,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
 
-package org.fracturedatlas.athena.helper;
+package org.fracturedatlas.athena.apa.impl.jpa;
 
-import java.util.List;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
-import org.fracturedatlas.athena.client.PTicket;
-import org.mockito.ArgumentMatcher;
-
-public class PTicketMatcher extends ArgumentMatcher<PTicket> {
-  public boolean matches(Object pTicket) {
-      PTicket t = (PTicket)pTicket;
-      return true;
-  }
+/*
+ * TODO: Enum this?
+ */
+public class StrictType {
+    public static final Boolean STRICT = Boolean.TRUE;
+    public static final Boolean NOT_STRICT = Boolean.FALSE;
 }

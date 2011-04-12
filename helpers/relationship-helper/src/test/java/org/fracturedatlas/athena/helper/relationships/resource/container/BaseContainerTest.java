@@ -32,10 +32,12 @@ import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import org.springframework.context.ApplicationContext;
 import org.fracturedatlas.athena.apa.ApaAdapter;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import static org.junit.Assert.*;
-import org.fracturedatlas.athena.apa.model.*;
 import org.fracturedatlas.athena.client.*;
 import org.fracturedatlas.athena.id.*;
 import org.junit.After;
@@ -50,7 +52,7 @@ public abstract class BaseContainerTest extends JerseyTest {
     protected final static String TIX_URI = "http://localhost:9998/test";
     protected final static String PATH = "/relationships";
 
-    protected List<Ticket> ticketsToDelete = new ArrayList<Ticket>();
+    protected List<JpaRecord> ticketsToDelete = new ArrayList<JpaRecord>();
     protected List<PropField> propFieldsToDelete = new ArrayList<PropField>();
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -74,7 +76,7 @@ public abstract class BaseContainerTest extends JerseyTest {
     }
 
     public void teardownTickets() {
-        for (Ticket t : ticketsToDelete) {
+        for (JpaRecord t : ticketsToDelete) {
             try {
                 apa.deleteTicket(t);
             } catch (Exception ignored) {
@@ -91,7 +93,7 @@ public abstract class BaseContainerTest extends JerseyTest {
         }
     }
 
-    public void assertTicketsEqual(Ticket t, PTicket pTicket, Boolean includeId) {
+    public void assertTicketsEqual(JpaRecord t, PTicket pTicket, Boolean includeId) {
         if(includeId) {
             assertTrue(IdAdapter.isEqual(t.getId(), pTicket.getId()));
         }
@@ -104,7 +106,7 @@ public abstract class BaseContainerTest extends JerseyTest {
         }
     }
 
-    public void assertTicketsEqual(Ticket t, PTicket pTicket) {
+    public void assertTicketsEqual(JpaRecord t, PTicket pTicket) {
         assertTicketsEqual(t, pTicket, Boolean.TRUE);
     }
 }

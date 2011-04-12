@@ -12,7 +12,7 @@
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="test-derby"/>
     </bean>
-    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.JpaApaAdapter">
+    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.jpa.JpaApaAdapter">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">

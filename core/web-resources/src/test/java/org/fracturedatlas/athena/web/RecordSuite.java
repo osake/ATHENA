@@ -27,10 +27,11 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
   DeletePropContainerTest.class,
-  SaveTicketContainerTest.class,
+  SaveRecordContainerTest.class,
   SearchContainerTest.class,
-  PutRecordContainerTest.class,
-  UpdateTicketContainerTest.class
+  RecordResourceContainerTest.class,
+  RelationshipContainerTest.class,
+  PutRecordContainerTest.class
 })
 public class RecordSuite {
 

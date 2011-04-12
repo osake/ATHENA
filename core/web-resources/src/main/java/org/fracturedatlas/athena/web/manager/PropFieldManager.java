@@ -24,8 +24,8 @@ import java.util.Collection;
 
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.web.exception.InvalidFieldNameException;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.PropValue;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.PropValue;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.util.AllowedCharacterCheck;
 import org.fracturedatlas.athena.web.exception.AthenaException;

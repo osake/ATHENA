@@ -2,14 +2,14 @@
 <persistence version="1.0" xmlns="http://java.sun.com/xml/ns/persistence">
   <persistence-unit name="athena" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
-    <class>org.fracturedatlas.athena.apa.model.Ticket</class>
-    <class>org.fracturedatlas.athena.apa.model.TicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.BooleanTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.StringTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.IntegerTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.DateTimeTicketProp</class>
-    <class>org.fracturedatlas.athena.apa.model.PropField</class>
-    <class>org.fracturedatlas.athena.apa.model.PropValue</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.JpaRecord</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.TicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.PropField</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.PropValue</class>
     <properties>
       <property name="hibernate.ejb.autodetection" value="class"/>
       <property name="hibernate.proxool.pool_alias" value="athena-proxool-connection-pool"/>

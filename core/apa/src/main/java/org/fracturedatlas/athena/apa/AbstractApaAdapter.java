@@ -20,45 +20,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.PropValue;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.TicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.PropValue;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
+import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.search.AthenaSearch;
 
 /**
  * Abstract implementation of ApaAdapter as a convenience for developers seeking
  * to implement only a sub-set of features of ApaAdapter.  Also handy during development
  * so you don't need to stub a bunch of methods.
- *
- * If this were Scala, and interfaces were allowed to also define methods, we'd be
- * on the beach drinking rum by now.
  */
 public abstract class AbstractApaAdapter implements ApaAdapter {
     
     @Override
-    public Ticket getTicket(String type, Object id) {
+    public PTicket getRecord(String type, Object id) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
     
     @Override
-    public Ticket saveTicket(Ticket t) throws InvalidValueException {
+    public JpaRecord saveTicket(JpaRecord t) throws InvalidValueException {
+        throw new UnsupportedOperationException("Gone.  Use saveRecord(JpaRecord) instead.");
+    }
+
+    @Override
+    public PTicket saveRecord(String type, PTicket record) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
     @Override
-    public Boolean deleteTicket(String type, Object id) {
+    public PTicket saveRecord(PTicket record) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
     @Override
-    public Boolean deleteTicket(Ticket t) {
+    public Boolean deleteRecord(String type, Object id) {
         throw new UnsupportedOperationException("Unsupported operation");
+    }
+
+    @Override
+    public Boolean deleteRecord(PTicket t) {
+        return deleteRecord(t.getType(), t.getId());
     }
 
     @Override
@@ -67,17 +74,7 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Set<Ticket> findTickets(AthenaSearch search) {
-        return new HashSet<Ticket>();
-    }
-
-    @Override
-    public TicketProp saveTicketProp(TicketProp tp)  throws InvalidValueException {
-        throw new UnsupportedOperationException("Unsupported operation");
-    }
-
-    @Override
-    public List<TicketProp> saveTicketProps(List<TicketProp> props) throws InvalidValueException {
+    public Set<PTicket> findTickets(AthenaSearch search) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
     

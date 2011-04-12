@@ -22,16 +22,10 @@ package org.fracturedatlas.athena.web.resource.container;
 import com.google.gson.Gson;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import javax.ws.rs.core.MultivaluedMap;
-import org.fracturedatlas.athena.apa.model.BooleanTicketProp;
-import org.fracturedatlas.athena.apa.model.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.model.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
+import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.search.AthenaSearch;
-import org.fracturedatlas.athena.util.date.DateUtil;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.junit.*;
@@ -47,7 +41,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
         queryParams.add("PRICE", "50");
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        PTicket[] tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
         assertEquals(6, tickets.length);
     }
@@ -55,11 +49,11 @@ public class SearchContainerTest extends BaseTixContainerTest {
     @Test
     public void testFindTicketsDefaultToEquals2() {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
-        queryParams.add("PRICE", "30");
+        queryParams.add("PRICE", "3");
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        PTicket[] tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
-        assertEquals(0, tickets.length);
+        assertEquals(1, tickets.length);
     }
 
     @Test
@@ -67,7 +61,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
         queryParams.add("SOLD", "false");
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        PTicket[] tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
         assertEquals(5, tickets.length);
     }
@@ -77,7 +71,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
         queryParams.add("SOLD", "eqfalse");
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        PTicket[] tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
         assertEquals(5, tickets.length);
     }
@@ -87,9 +81,9 @@ public class SearchContainerTest extends BaseTixContainerTest {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
         queryParams.add("PRICE", "gt30");
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        PTicket[] tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
-        assertEquals(8, tickets.length);
+        assertEquals(7, tickets.length);
     }
 
     @Test
@@ -98,7 +92,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
         queryParams.add("PRICE", "gt30");
         queryParams.add("PRICE", "lt100");
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        PTicket[] tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
         assertEquals(6, tickets.length);
     }
@@ -108,14 +102,14 @@ public class SearchContainerTest extends BaseTixContainerTest {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
         queryParams.add("SECTION", "in(A,B)");
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        PTicket[] tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
         assertEquals(9, tickets.length);
 
         queryParams = new MultivaluedMapImpl();
         queryParams.add("SECTION", "in( \"A \",B)");
         jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
+        tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
         assertEquals(9, tickets.length);
 
@@ -123,7 +117,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
         queryParams = new MultivaluedMapImpl();
         queryParams.add("SECTION", "in( \\\"A \\\",  \"B\")");
         jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
+        tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
         assertEquals(4, tickets.length);
     }
@@ -131,26 +125,19 @@ public class SearchContainerTest extends BaseTixContainerTest {
     @Test
     public void testFindTicketsInListDate() {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
-        queryParams.add("PERFORMANCE", "in(2010-10-14T13:33:50-04:00,2010-10-15T13:33:50-04:00)");
+        queryParams.add("PERFORMANCE", "in(2010-10-02T13:33:50-04:00,2010-10-03T13:33:50-04:00,2010-10-04T13:33:50-04:00)");
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        PTicket[] tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
-        assertEquals(7, tickets.length);
-
-        queryParams = new MultivaluedMapImpl();
-        queryParams.add("PERFORMANCE", "in( \"2010-10-14T13:33:50-04:00\", 2010-10-15T13:33:50-04:00)");
-        jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
-        assertNotNull(tickets);
-        assertEquals(7, tickets.length);
+        assertEquals(3, tickets.length);
 
         //First figure is not a valid number so only the second is found
         queryParams = new MultivaluedMapImpl();
-        queryParams.add("PERFORMANCE", "in( \\\"2010-10-14T13:33:50-04:00 \\\",  \" 2010-10-15T13:33:50-04:00\")");
+        queryParams.add("PERFORMANCE", "in( \\\"2010-10-24T13:33:50-04:00 \\\",  \" 2010-10-04T13:33:50-04:00\")");
         jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
+        tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
-        assertEquals(2, tickets.length);
+        assertEquals(1, tickets.length);
     }
 
     @Test
@@ -158,14 +145,14 @@ public class SearchContainerTest extends BaseTixContainerTest {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
         queryParams.add("PRICE", "in(25,50)");
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        PTicket[] tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
         assertEquals(8, tickets.length);
 
         queryParams = new MultivaluedMapImpl();
         queryParams.add("PRICE", "in( \"25\", 50)");
         jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
+        tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
         assertEquals(8, tickets.length);
 
@@ -173,7 +160,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
         queryParams = new MultivaluedMapImpl();
         queryParams.add("PRICE", "in( \\\"25 \\\",  \" 50\")");
         jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
+        tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
         assertEquals(6, tickets.length);
     }
@@ -184,7 +171,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
         queryParams.add("PRICE", "in(25,50)");
         queryParams.add(AthenaSearch.LIMIT, "5");
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        PTicket[] tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
         assertEquals(5, tickets.length);
 
@@ -192,7 +179,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
         queryParams.add("PRICE", "in( \"25\", 50)");
         queryParams.add(AthenaSearch.LIMIT, "9");
         jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
+        tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
         assertEquals(8, tickets.length);
 
@@ -206,7 +193,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
         queryParams.add(AthenaSearch.START, "0");
 
         String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        Ticket[] tickets = gson.fromJson(jsonString, Ticket[].class);
+        PTicket[] tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
         assertEquals(8, tickets.length);
 
@@ -214,204 +201,172 @@ public class SearchContainerTest extends BaseTixContainerTest {
         queryParams.add("PRICE", "in( \"25\", 50)");
         queryParams.add(AthenaSearch.START, "2");
         jsonString = tix.path(path).queryParams(queryParams).get(String.class);
-        tickets = gson.fromJson(jsonString, Ticket[].class);
+        tickets = gson.fromJson(jsonString,  PTicket[].class);
         assertNotNull(tickets);
         assertEquals(6, tickets.length);
 
     }
 
-    @Before
+   @Before
     public void addTickets() throws Exception {
-        Ticket t1 = new Ticket();
-        Ticket t2 = new Ticket();
-        Ticket t3 = new Ticket();
-        Ticket t4 = new Ticket();
-        Ticket t5 = new Ticket();
-        Ticket t6 = new Ticket();
-        Ticket t7 = new Ticket();
-        Ticket t8 = new Ticket();
-        Ticket t9 = new Ticket();
-        Ticket t10 = new Ticket();
 
-        t1.setType("ticket");
-        t2.setType("ticket");
-        t3.setType("ticket");
-        t4.setType("ticket");
-        t5.setType("ticket");
-        t6.setType("ticket");
-        t7.setType("ticket");
-        t8.setType("ticket");
-        t9.setType("ticket");
-        t10.setType("ticket");
+        PTicket t1 = new PTicket("ticket");
+        PTicket t2 = new PTicket("ticket");
+        PTicket t3 = new PTicket("ticket");
+        PTicket t4 = new PTicket("ticket");
+        PTicket t5 = new PTicket("ticket");
+        PTicket t6 = new PTicket("ticket");
+        PTicket t7 = new PTicket("ticket");
+        PTicket t8 = new PTicket("ticket");
+        PTicket t9 = new PTicket("ticket");
+        PTicket t10 = new PTicket("ticket");
 
-        PropField seatNumberProp = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", StrictType.NOT_STRICT));
-        PropField sectionProp = apa.savePropField(new PropField(ValueType.STRING, "SECTION", StrictType.NOT_STRICT));
-        PropField performanceProp = apa.savePropField(new PropField(ValueType.DATETIME, "PERFORMANCE", StrictType.NOT_STRICT));
-        PropField tierProp = apa.savePropField(new PropField(ValueType.STRING, "TIER", StrictType.NOT_STRICT));
-        PropField lockedProp = apa.savePropField(new PropField(ValueType.BOOLEAN, "LOCKED", StrictType.NOT_STRICT));
-        PropField soldProp = apa.savePropField(new PropField(ValueType.BOOLEAN, "SOLD", StrictType.NOT_STRICT));
-        PropField lockedByProp = apa.savePropField(new PropField(ValueType.STRING, "LOCKED_BY_API_KEY", StrictType.NOT_STRICT));
-        PropField lockExpiresProp = apa.savePropField(new PropField(ValueType.DATETIME, "LOCK_EXPIRES", StrictType.NOT_STRICT));
-        PropField priceProp = apa.savePropField(new PropField(ValueType.INTEGER, "PRICE", StrictType.NOT_STRICT));
-        PropField halfPriceProp = apa.savePropField(new PropField(ValueType.BOOLEAN, "HALF_PRICE_AVAILABLE", StrictType.NOT_STRICT));
+        addPropField(ValueType.INTEGER, "SEAT_NUMBER", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SECTION", StrictType.NOT_STRICT);
+        addPropField(ValueType.DATETIME, "PERFORMANCE", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "TIER", StrictType.NOT_STRICT);
+        addPropField(ValueType.BOOLEAN, "LOCKED", StrictType.NOT_STRICT);
+        addPropField(ValueType.BOOLEAN, "SOLD", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "LOCKED_BY_API_KEY", StrictType.NOT_STRICT);
+        addPropField(ValueType.DATETIME, "LOCK_EXPIRES", StrictType.NOT_STRICT);
+        addPropField(ValueType.INTEGER, "PRICE", StrictType.NOT_STRICT);
+        addPropField(ValueType.BOOLEAN, "HALF_PRICE_AVAILABLE", StrictType.NOT_STRICT);
 
-        propFieldsToDelete.add(seatNumberProp);
-        propFieldsToDelete.add(sectionProp);
-        propFieldsToDelete.add(performanceProp);
-        propFieldsToDelete.add(tierProp);
-        propFieldsToDelete.add(lockedProp);
-        propFieldsToDelete.add(soldProp);
-        propFieldsToDelete.add(lockedByProp);
-        propFieldsToDelete.add(lockExpiresProp);
-        propFieldsToDelete.add(priceProp);
-        propFieldsToDelete.add(halfPriceProp);
+        t1.put("SEAT_NUMBER", "3");
+        t1.put("SECTION" , "A");
+        t1.put("PERFORMANCE" , "2010-10-01T13:33:50-04:00");
+        t1.put("TIER" , "SILVER");
+        t1.put("LOCKED" , "false");
+        t1.put("SOLD" , "true");
+        t1.put("LOCKED_BY_API_KEY" , "SAMPLE_API_KEY");
+        t1.put("LOCK_EXPIRES" , "2010-10-01T13:33:50-04:00");
+        t1.put("PRICE" , "50");
+        t1.put("HALF_PRICE_AVAILABLE" , "true");
 
-        /*
-         * SECTION, A=5, B=4, C=1
-         * PRICE, 50 = 6, 25=2, 150=1, 250=1
-         * LOCKED=3
-         * SOLD=5
-         * LOCKED & SOLD = 4
-         * GOLD=7, SILVER =2, BRONZE=1
-         *
-         *
-         */
+        t2.put("SEAT_NUMBER", "3");
+        t2.put("SECTION" , "A");
+        t2.put("PERFORMANCE" , "2010-10-02T13:33:50-04:00");
+        t2.put("TIER" , "SILVER");
+        t2.put("LOCKED" , "true");
+        t2.put("SOLD" , "true");
+        t2.put("LOCKED_BY_API_KEY" , "SAMPLE_API_KEY");
+        t2.put("LOCK_EXPIRES" , "2010-10-02T13:33:50-04:00");
+        t2.put("PRICE" , "50");
+        t2.put("HALF_PRICE_AVAILABLE" , "true");
 
-        t1.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
-        t1.addTicketProp(new StringTicketProp(sectionProp, "A"));
-        t1.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-13T13:33:50-04:00")));
-        t1.addTicketProp(new StringTicketProp(tierProp, "SILVER"));
-        t1.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
-        t1.addTicketProp(new BooleanTicketProp(soldProp, Boolean.TRUE));
-        t1.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t1.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-13T13:33:50-04:00")));
-        t1.addTicketProp(new IntegerTicketProp(priceProp, 50));
-        t1.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
+        t3.put("SEAT_NUMBER", "3");
+        t3.put("SECTION" , "A");
+        t3.put("PERFORMANCE" , "2010-10-03T13:33:50-04:00");
+        t3.put("TIER" , "BRONZE");
+        t3.put("LOCKED" , "true");
+        t3.put("SOLD" , "true");
+        t3.put("LOCKED_BY_API_KEY" , "SAMPLE_API_KEY");
+        t3.put("LOCK_EXPIRES" , "2010-10-03T13:33:50-04:00");
+        t3.put("PRICE" , "50");
+        t3.put("HALF_PRICE_AVAILABLE" , "true");
 
-        t2.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
-        t2.addTicketProp(new StringTicketProp(sectionProp, "A"));
-        t2.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-13T13:33:50-04:00")));
-        t2.addTicketProp(new StringTicketProp(tierProp, "SILVER"));
-        t2.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.TRUE));
-        t2.addTicketProp(new BooleanTicketProp(soldProp, Boolean.TRUE));
-        t2.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t2.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-13T13:33:50-04:00")));
-        t2.addTicketProp(new IntegerTicketProp(priceProp, 50));
-        t2.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
+        t4.put("SEAT_NUMBER", "3");
+        t4.put("SECTION" , "A");
+        t4.put("PERFORMANCE" , "2010-10-04T13:33:50-04:00");
+        t4.put("TIER" , "GOLD");
+        t4.put("LOCKED" , "false");
+        t4.put("SOLD" , "true");
+        t4.put("LOCKED_BY_API_KEY" , "SAMPLE_API_KEY");
+        t4.put("LOCK_EXPIRES" , "2010-10-04T13:33:50-04:00");
+        t4.put("PRICE" , "50");
+        t4.put("HALF_PRICE_AVAILABLE" , "true");
 
-        t3.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
-        t3.addTicketProp(new StringTicketProp(sectionProp, "A"));
-        t3.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t3.addTicketProp(new StringTicketProp(tierProp, "BRONZE"));
-        t3.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.TRUE));
-        t3.addTicketProp(new BooleanTicketProp(soldProp, Boolean.TRUE));
-        t3.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t3.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t3.addTicketProp(new IntegerTicketProp(priceProp, 50));
-        t3.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
+        t5.put("SEAT_NUMBER", "3");
+        t5.put("SECTION" , "A");
+        t5.put("PERFORMANCE" , "2010-10-05T13:33:50-04:00");
+        t5.put("TIER" , "GOLD");
+        t5.put("LOCKED" , "false");
+        t5.put("SOLD" , "true");
+        t5.put("LOCKED_BY_API_KEY" , "SAMPLE_API_KEY");
+        t5.put("LOCK_EXPIRES" , "2010-10-05T13:33:50-04:00");
+        t5.put("PRICE" , "50");
+        t5.put("HALF_PRICE_AVAILABLE" , "true");
 
-        t4.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
-        t4.addTicketProp(new StringTicketProp(sectionProp, "A"));
-        t4.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t4.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
-        t4.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
-        t4.addTicketProp(new BooleanTicketProp(soldProp, Boolean.TRUE));
-        t4.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t4.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t4.addTicketProp(new IntegerTicketProp(priceProp, 50));
-        t4.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
+        t6.put("SEAT_NUMBER", "3");
+        t6.put("SECTION" , "B");
+        t6.put("PERFORMANCE" , "2010-10-06T13:33:50-04:00");
+        t6.put("TIER" , "GOLD");
+        t6.put("LOCKED" , "true");
+        t6.put("SOLD" , "false");
+        t6.put("LOCKED_BY_API_KEY" , "SAMPLE_API_KEY");
+        t6.put("LOCK_EXPIRES" , "2010-10-06T13:33:50-04:00");
+        t6.put("PRICE" , "50");
+        t6.put("HALF_PRICE_AVAILABLE" , "true");
 
-        t5.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
-        t5.addTicketProp(new StringTicketProp(sectionProp, "A"));
-        t5.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t5.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
-        t5.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
-        t5.addTicketProp(new BooleanTicketProp(soldProp, Boolean.TRUE));
-        t5.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t5.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t5.addTicketProp(new IntegerTicketProp(priceProp, 50));
-        t5.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
+        t7.put("SEAT_NUMBER", "3");
+        t7.put("SECTION" , "B");
+        t7.put("PERFORMANCE" , "2010-10-07T13:33:50-04:00");
+        t7.put("TIER" , "GOLD");
+        t7.put("LOCKED" , "false");
+        t7.put("SOLD" , "false");
+        t7.put("LOCKED_BY_API_KEY" , "SAMPLE_API_KEY");
+        t7.put("LOCK_EXPIRES" , "2010-10-07T13:33:50-04:00");
+        t7.put("PRICE" , "25");
+        t7.put("HALF_PRICE_AVAILABLE" , "true");
 
-        t6.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
-        t6.addTicketProp(new StringTicketProp(sectionProp, "B"));
-        t6.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t6.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
-        t6.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.TRUE));
-        t6.addTicketProp(new BooleanTicketProp(soldProp, Boolean.FALSE));
-        t6.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t6.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t6.addTicketProp(new IntegerTicketProp(priceProp, 50));
-        t6.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
+        t8.put("SEAT_NUMBER", "3");
+        t8.put("SECTION" , "B");
+        t8.put("PERFORMANCE" , "2010-10-08T13:33:50-04:00");
+        t8.put("TIER" , "GOLD");
+        t8.put("LOCKED" , "false");
+        t8.put("SOLD" , "false");
+        t8.put("LOCKED_BY_API_KEY" , "SAMPLE_API_KEY");
+        t8.put("LOCK_EXPIRES" , "2010-10-08T13:33:50-04:00");
+        t8.put("PRICE" , "150");
+        t8.put("HALF_PRICE_AVAILABLE" , "true");
 
-        t7.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
-        t7.addTicketProp(new StringTicketProp(sectionProp, "B"));
-        t7.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t7.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
-        t7.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
-        t7.addTicketProp(new BooleanTicketProp(soldProp, Boolean.FALSE));
-        t7.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t7.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-14T13:33:50-04:00")));
-        t7.addTicketProp(new IntegerTicketProp(priceProp, 250));
-        t7.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
+        t9.put("SEAT_NUMBER", "3");
+        t9.put("SECTION" , "B");
+        t9.put("PERFORMANCE" , "2010-10-09T13:33:50-04:00");
+        t9.put("TIER" , "GOLD");
+        t9.put("LOCKED" , "false");
+        t9.put("SOLD" , "false");
+        t9.put("LOCKED_BY_API_KEY" , "SAMPLE_API_KEY");
+        t9.put("LOCK_EXPIRES" , "2010-10-09T13:33:50-04:00");
+        t9.put("PRICE" , "25");
+        t9.put("HALF_PRICE_AVAILABLE" , "true");
 
-        t8.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
-        t8.addTicketProp(new StringTicketProp(sectionProp, "B"));
-        t8.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-16T13:33:50-04:00")));
-        t8.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
-        t8.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
-        t8.addTicketProp(new BooleanTicketProp(soldProp, Boolean.FALSE));
-        t8.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t8.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-16T13:33:50-04:00")));
-        t8.addTicketProp(new IntegerTicketProp(priceProp, 150));
-        t8.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
+        t10.put("SEAT_NUMBER", "3");
+        t10.put("SECTION" , "C");
+        t10.put("PERFORMANCE" , "2010-10-10T13:33:50-04:00");
+        t10.put("TIER" , "GOLD");
+        t10.put("LOCKED" , "false");
+        t10.put("SOLD" , "false");
+        t10.put("LOCKED_BY_API_KEY" , "SAMPLE_API_KEY");
+        t10.put("LOCK_EXPIRES" , "2010-10-10T13:33:50-04:00");
+        t10.put("PRICE" , "3");
+        t10.put("HALF_PRICE_AVAILABLE" , "true");
 
-        t9.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
-        t9.addTicketProp(new StringTicketProp(sectionProp, "B"));
-        t9.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-15T13:33:50-04:00")));
-        t9.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
-        t9.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
-        t9.addTicketProp(new BooleanTicketProp(soldProp, Boolean.FALSE));
-        t9.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t9.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-15T13:33:50-04:00")));
-        t9.addTicketProp(new IntegerTicketProp(priceProp, 25));
-        t9.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
+        t1 = apa.saveRecord(t1);
+        t2 = apa.saveRecord(t2);
+        t3 = apa.saveRecord(t3);
+        t4 = apa.saveRecord(t4);
+        t5 = apa.saveRecord(t5);
+        t6 = apa.saveRecord(t6);
+        t7 = apa.saveRecord(t7);
+        t8 = apa.saveRecord(t8);
+        t9 = apa.saveRecord(t9);
+        t10 = apa.saveRecord(t10);
 
-        t10.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
-        t10.addTicketProp(new StringTicketProp(sectionProp, "C"));
-        t10.addTicketProp(new DateTimeTicketProp(performanceProp, DateUtil.parseDate("2010-10-15T13:33:50-04:00")));
-        t10.addTicketProp(new StringTicketProp(tierProp, "GOLD"));
-        t10.addTicketProp(new BooleanTicketProp(lockedProp, Boolean.FALSE));
-        t10.addTicketProp(new BooleanTicketProp(soldProp, Boolean.FALSE));
-        t10.addTicketProp(new StringTicketProp(lockedByProp, "SAMPLE_API_KEY"));
-        t10.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-10-15T13:33:50-04:00")));
-        t10.addTicketProp(new IntegerTicketProp(priceProp, 25));
-        t10.addTicketProp(new BooleanTicketProp(halfPriceProp, Boolean.TRUE));
-
-        t1 = apa.saveTicket(t1);
-        t2 = apa.saveTicket(t2);
-        t3 = apa.saveTicket(t3);
-        t4 = apa.saveTicket(t4);
-        t5 = apa.saveTicket(t5);
-        t6 = apa.saveTicket(t6);
-        t7 = apa.saveTicket(t7);
-        t8 = apa.saveTicket(t8);
-        t9 = apa.saveTicket(t9);
-        t10 = apa.saveTicket(t10);
-
-        ticketsToDelete.add(t1);
-        ticketsToDelete.add(t2);
-        ticketsToDelete.add(t3);
-        ticketsToDelete.add(t4);
-        ticketsToDelete.add(t5);
-        ticketsToDelete.add(t6);
-        ticketsToDelete.add(t7);
-        ticketsToDelete.add(t8);
-        ticketsToDelete.add(t9);
-        ticketsToDelete.add(t10);
+        recordsToDelete.add(t1);
+        recordsToDelete.add(t2);
+        recordsToDelete.add(t3);
+        recordsToDelete.add(t4);
+        recordsToDelete.add(t5);
+        recordsToDelete.add(t6);
+        recordsToDelete.add(t7);
+        recordsToDelete.add(t8);
+        recordsToDelete.add(t9);
+        recordsToDelete.add(t10);
     }
 
     @After
-    public void teardownTickets() {
-        super.teardownTickets();
+    public void teardownRecords() {
+        super.teardownRecords();
     }
 }

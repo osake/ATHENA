@@ -20,17 +20,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.apa;
 
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.StrictType;
-import org.fracturedatlas.athena.apa.model.StringTicketProp;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.TicketProp;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
+import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.id.IdAdapter;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
+
+    PropField field;
+    PropField field1;
+    PropField field2;
+    PTicket ticket;
 
     public ApaAdapterGetPropTest() throws Exception {
         super();
@@ -41,109 +49,67 @@ public class ApaAdapterGetPropTest extends BaseApaAdapterTest {
         super.teardownTickets();
     }
 
-    @Test
-    public void testFindProp() {
-        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
-        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
-        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
+    @Before
+    public void addTicket() {
+        field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
+        field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
+        field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
         propFieldsToDelete.add(field);
         propFieldsToDelete.add(field1);
         propFieldsToDelete.add(field2);
 
-        Ticket ticket = new Ticket();
+        ticket = new PTicket();
         ticket.setType("hockey");
-        ticket.addTicketProp(new StringTicketProp(field, "03"));
-        ticket.addTicketProp(new StringTicketProp(field1, "13"));
-        ticket.addTicketProp(new StringTicketProp(field2, "23"));
+        TicketProp seatProp = new StringTicketProp(field, "03");
 
-        ticket = apa.saveTicket(ticket);
+        //deleting SEAT
+        ticket.put("SEAT", "03");
+        ticket.put("SEAT1", "13");
+        ticket.put("SEAT2", "23");
+
+        ticket = apa.saveRecord(ticket);
         ticketsToDelete.add(ticket);
+    }
 
+    @Test
+    public void testFindProp() {
         TicketProp prop = apa.getTicketProp(field.getName(), ticket.getType(), ticket.getId());
         assertNotNull(prop);
         assertEquals(field.getName(), prop.getPropField().getName());
         assertEquals(field.getValueType(), prop.getPropField().getValueType());
         assertEquals("03", prop.getValue());
-        assertEquals(ticket.getId(), prop.getTicket().getId());
+        assertTrue(IdAdapter.isEqual(ticket.getId(), prop.getTicket().getId()));
 
         prop = apa.getTicketProp(field1.getName(), ticket.getType(), ticket.getId());
         assertNotNull(prop);
         assertEquals(field1.getName(), prop.getPropField().getName());
         assertEquals(field1.getValueType(), prop.getPropField().getValueType());
         assertEquals("13", prop.getValue());
-        assertEquals(ticket.getId(), prop.getTicket().getId());
+        assertTrue(IdAdapter.isEqual(ticket.getId(), prop.getTicket().getId()));
 
         prop = apa.getTicketProp(field2.getName(), ticket.getType(), ticket.getId());
         assertNotNull(prop);
         assertEquals(field2.getName(), prop.getPropField().getName());
         assertEquals(field2.getValueType(), prop.getPropField().getValueType());
         assertEquals("23", prop.getValue());
-        assertEquals(ticket.getId(), prop.getTicket().getId());
+        assertTrue(IdAdapter.isEqual(ticket.getId(), prop.getTicket().getId()));
 
     }
 
     @Test
     public void testFindPropDoesntExist() {
-        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
-        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
-        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(field);
-        propFieldsToDelete.add(field1);
-        propFieldsToDelete.add(field2);
-
-        Ticket ticket = new Ticket();
-        ticket.setType("hockey");
-        ticket.addTicketProp(new StringTicketProp(field, "03"));
-        ticket.addTicketProp(new StringTicketProp(field1, "13"));
-        ticket.addTicketProp(new StringTicketProp(field2, "23"));
-
-        ticket = apa.saveTicket(ticket);
-        ticketsToDelete.add(ticket);
-
         TicketProp prop = apa.getTicketProp("NO_CHANCE", ticket.getType(), ticket.getId());
         assertNull(prop);
     }
 
     @Test
     public void testFindPropTicketDoesntExist() {
-        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
-        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
-        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(field);
-        propFieldsToDelete.add(field1);
-        propFieldsToDelete.add(field2);
-
-        Ticket ticket = new Ticket();
-        ticket.setType("hockey");
-        ticket.addTicketProp(new StringTicketProp(field, "03"));
-        ticket.addTicketProp(new StringTicketProp(field1, "13"));
-        ticket.addTicketProp(new StringTicketProp(field2, "23"));
-
-        ticket = apa.saveTicket(ticket);
-        ticketsToDelete.add(ticket);
-
         TicketProp prop = apa.getTicketProp("SEAT", ticket.getType(), 5665L);
         assertNull(prop);
     }
 
     @Test
     public void testFindPropNullTicket() {
-        PropField field = apa.savePropField(new PropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT));
-        PropField field1 = apa.savePropField(new PropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT));
-        PropField field2 = apa.savePropField(new PropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT));
-        propFieldsToDelete.add(field);
-        propFieldsToDelete.add(field1);
-        propFieldsToDelete.add(field2);
-
-        Ticket ticket = new Ticket();
-        ticket.setType("hockey");
-        ticket.addTicketProp(new StringTicketProp(field, "03"));
-        ticket.addTicketProp(new StringTicketProp(field1, "13"));
-        ticket.addTicketProp(new StringTicketProp(field2, "23"));
-
-        ticket = apa.saveTicket(ticket);
-        ticketsToDelete.add(ticket);
-
         TicketProp prop = apa.getTicketProp("SEAT", ticket.getType(), null);
         assertNull(prop);
     }

@@ -24,9 +24,9 @@ import com.sun.jersey.api.client.ClientResponse;
 import static org.junit.Assert.*;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.fracturedatlas.athena.apa.model.PropField;
-import org.fracturedatlas.athena.apa.model.PropValue;
-import org.fracturedatlas.athena.apa.model.ValueType;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.PropValue;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 
@@ -35,7 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.fracturedatlas.athena.client.PField;
-import org.fracturedatlas.athena.apa.model.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.junit.After;
 import org.junit.Before;
@@ -74,33 +74,33 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
     }
 
     @After
-    public void teardownTickets() {
-        super.teardownTickets();
+    public void teardownRecords() {
+        super.teardownRecords();
     }
 
-//    @Test
-//    public void testGetFieldJson() throws Exception {
-//
-//        String path = FIELDS_PATH + testField.getId() + ".json";
-//        String propFieldString = tix.path(path).get(String.class);
-//        assertNotNull(propFieldString);
-//        PField actualField = mapper.readValue(propFieldString, PField.class);
-//        assertEquals(testField.getName(), actualField.getName());
-//        assertEquals(testField.getValueType().toString(), actualField.getValueType());
-//        assertEquals(testField.getStrict(), actualField.getStrict());
-//        assertTrue(IdAdapter.isEqual(testField.getId(), actualField.getId()));
-//    }
-//
-//    @Test
-//    public void testGetValueJson() throws Exception {
-//        String path = FIELDS_PATH + testField.getId() + "/values/" + testValue.getId() + ".json";
-//        PropValue actualValue = null;
-//        String jsonResponse = tix.path(path).type("application/json").get(String.class);
-//        actualValue = mapper.readValue(jsonResponse, PropValue.class);
-//        assertNotNull(jsonResponse);
-//        assertEquals(testValue.getId().toString(), actualValue.getId().toString());
-//        assertEquals(testValue.getPropValue(), actualValue.getPropValue());
-//    }
+    @Test
+    public void testGetFieldJson() throws Exception {
+
+        String path = FIELDS_PATH + testField.getId() + ".json";
+        String propFieldString = tix.path(path).get(String.class);
+        assertNotNull(propFieldString);
+        PField actualField = mapper.readValue(propFieldString, PField.class);
+        assertEquals(testField.getName(), actualField.getName());
+        assertEquals(testField.getValueType().toString(), actualField.getValueType());
+        assertEquals(testField.getStrict(), actualField.getStrict());
+        assertTrue(IdAdapter.isEqual(testField.getId(), actualField.getId()));
+    }
+
+    @Test
+    public void testGetValueJson() throws Exception {
+        String path = FIELDS_PATH + testField.getId() + "/values/" + testValue.getId() + ".json";
+        PropValue actualValue = null;
+        String jsonResponse = tix.path(path).type("application/json").get(String.class);
+        actualValue = mapper.readValue(jsonResponse, PropValue.class);
+        assertNotNull(jsonResponse);
+        assertEquals(testValue.getId().toString(), actualValue.getId().toString());
+        assertEquals(testValue.getPropValue(), actualValue.getPropValue());
+    }
 
     @Test
     public void testGetAllValuesJson() {

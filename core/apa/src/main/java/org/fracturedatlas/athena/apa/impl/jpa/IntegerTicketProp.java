@@ -18,50 +18,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
 
-package org.fracturedatlas.athena.apa.model;
+package org.fracturedatlas.athena.apa.impl.jpa;
 
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 
 @Entity
-@DiscriminatorValue("STRING")
-public class StringTicketProp extends TicketProp implements Serializable {
+@DiscriminatorValue("INTEGER")
+public class IntegerTicketProp extends TicketProp implements Serializable {
 
-    @Column(name="valueString")
-    String value;
+    @Column(name="valueInteger")
+    Integer value;
 
-    public StringTicketProp() {
+    public IntegerTicketProp() {
       super();
     }
 
-    public StringTicketProp(PropField propField, String value) {
+    public IntegerTicketProp(PropField propField, Integer value) {
       super();
       setValue(value);
       setPropField(propField);
     }
 
-    public String getValue() {
+    public Integer getValue() {
         return value;
     }
 
     public void setValue(Object o) {
-        setValue((String)o);
+        setValue((Integer)o);
     }
 
-    public void setValue(String value) {
+    public void setValue(String s) {
+        try {
+            setValue(Integer.parseInt(s));
+        } catch (NumberFormatException nfe) {
+            throw new InvalidValueException(buildExceptionMessage(s, propField), nfe);
+        }
+    }
+
+    public void setValue(Integer value) {
         this.value = value;
-    }
-
-    public String getValueAsString() {
-        return value;
     }
 
     @Override
     public int compareTo(Object o) throws ClassCastException {
-        String s = (String)o;
-        return value.compareTo(s);
+        Integer i = Integer.parseInt((String)o);
+        return value.compareTo(i);
+    }
+
+    public String getValueAsString() {
+        return value.toString();
     }
 
     @Override
@@ -72,7 +81,7 @@ public class StringTicketProp extends TicketProp implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final StringTicketProp other = (StringTicketProp) obj;
+        final IntegerTicketProp other = (IntegerTicketProp) obj;
         if (this.value != other.value && (this.value == null || !this.value.equals(other.value))) {
             return false;
         }
@@ -85,6 +94,5 @@ public class StringTicketProp extends TicketProp implements Serializable {
         hash = 79 * hash + (this.value != null ? this.value.hashCode() : 0);
         return hash;
     }
-
 
 }

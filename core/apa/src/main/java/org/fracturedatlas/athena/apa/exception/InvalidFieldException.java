@@ -17,18 +17,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
-package org.fracturedatlas.athena.apa.model;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+package org.fracturedatlas.athena.apa.exception;
 
-public abstract class TixEntity { 
 
-    public abstract boolean equals(Object obj);
-    public abstract int hashCode();
+public class InvalidFieldException extends ApaException {
+    public InvalidFieldException(String message) {
+        super(message);
+    }
 
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this,
-                                                  ToStringStyle.MULTI_LINE_STYLE);
+    public InvalidFieldException(String message, Throwable cause) {
+        super(message, cause);
     }
 }
