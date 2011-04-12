@@ -29,6 +29,8 @@ import org.junit.runners.Suite;
   DeletePropContainerTest.class,
   SaveRecordContainerTest.class,
   SearchContainerTest.class,
+  RecordResourceContainerTest.class,
+  RelationshipContainerTest.class,
   PutRecordContainerTest.class
 })
 public class RecordSuite {

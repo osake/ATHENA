@@ -53,115 +53,89 @@ public class StrictPropertyTest extends BaseManagerTest {
         teardownTickets();
     }
 
-//    @Test
-//    public void testMarkBooleanFieldStrict() throws Exception {
-//        try {
-//            PropField pf = apa.savePropField(new PropField(ValueType.BOOLEAN, "STRICT_PROP", StrictType.STRICT));
-//            fail("Should have gotten an InvalidValueException");
-//        } catch (ApaException ae) {
-//            //pass
-//        }
-//    }
-//
-//    @Test
-//    public void testUpdateTicketStrictProperty() throws Exception {
-//
-//        JpaRecord t = new JpaRecord();
-//
-//        PropField pf = apa.savePropField(new PropField(ValueType.STRING, "STRICT_PROP", StrictType.STRICT));
-//        PropValue v1 = apa.savePropValue(new PropValue(pf, "WXYZ"));
-//        PropValue v2 = apa.savePropValue(new PropValue(pf, "UPDATED"));
-//        propFieldsToDelete.add(pf);
-//        t.setType("ticket");
-//        StringTicketProp prop = new StringTicketProp(pf, "WXYZ");
-//        t.addTicketProp(prop);
-//        t = apa.saveTicket(t);
-//        ticketsToDelete.add(t);
-//
-//        PTicket expectedPTicket = t.toClientTicket();
-//        expectedPTicket.put(pf.getName(), "UPDATED");
-//        PTicket savedTicket = manager.createRecord("ticket", expectedPTicket);
-//        assertTrue(expectedPTicket.equals(savedTicket));
-//    }
-//
-//    @Test
-//    public void testUpdateTicketStrictPropertyInvalid() throws Exception {
-//
-//        JpaRecord t = new JpaRecord();
-//
-//        PropField pf = apa.savePropField(new PropField(ValueType.STRING, "STRICT_PROP", StrictType.STRICT));
-//        PropValue v1 = apa.savePropValue(new PropValue(pf, "WXYZ"));
-//        PropValue v2 = apa.savePropValue(new PropValue(pf, "UPDATED"));
-//        propFieldsToDelete.add(pf);
-//
-//
-//        StringTicketProp prop = new StringTicketProp(pf, "WXYZ");
-//        t.addTicketProp(prop);
-//        t.setType("ticket");
-//        t = apa.saveTicket(t);
-//        ticketsToDelete.add(t);
-//
-//        PTicket expectedPTicket = t.toClientTicket();
-//        expectedPTicket.put(pf.getName(), "THIS_SHOULD_FAIL");
-//        try {
-//            PTicket savedTicket = manager.createRecord("ticket", expectedPTicket);
-//            fail("Should have gotten an InvalidValueException");
-//        } catch (InvalidValueException ive) {
-//            //pass
-//        }
-//    }
-//
-//    @Test
-//    public void testUpdateTicketStrictPropertyInteger() throws Exception {
-//
-//        JpaRecord t = new JpaRecord();
-//
-//        PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "NUM", StrictType.STRICT));
-//        PropValue v1 = apa.savePropValue(new PropValue(pf, "1"));
-//        PropValue v2 = apa.savePropValue(new PropValue(pf, "2"));
-//        PropValue v3 = apa.savePropValue(new PropValue(pf, "3"));
-//        PropValue v4 = apa.savePropValue(new PropValue(pf, "4"));
-//        PropValue v5 = apa.savePropValue(new PropValue(pf, "5"));
-//        propFieldsToDelete.add(pf);
-//
-//        IntegerTicketProp prop = new IntegerTicketProp(pf, 2);
-//        t.addTicketProp(prop);
-//        t.setType("ticket");
-//        t = apa.saveTicket(t);
-//        ticketsToDelete.add(t);
-//
-//        PTicket expectedPTicket = t.toClientTicket();
-//        expectedPTicket.put(pf.getName(), "5");
-//        PTicket savedTicket = manager.createRecord("ticket", expectedPTicket);
-//        assertTrue(expectedPTicket.equals(savedTicket));
-//    }
-//
-//    @Test
-//    public void testUpdateTicketStrictPropertyInvalidInteger() throws Exception {
-//
-//        JpaRecord t = new JpaRecord();
-//
-//        PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "NUM", StrictType.STRICT));
-//        PropValue v1 = apa.savePropValue(new PropValue(pf, "1"));
-//        PropValue v2 = apa.savePropValue(new PropValue(pf, "2"));
-//        PropValue v3 = apa.savePropValue(new PropValue(pf, "3"));
-//        PropValue v4 = apa.savePropValue(new PropValue(pf, "4"));
-//        PropValue v5 = apa.savePropValue(new PropValue(pf, "5"));
-//        propFieldsToDelete.add(pf);
-//
-//        IntegerTicketProp prop = new IntegerTicketProp(pf, 2);
-//        t.addTicketProp(prop);
-//        t.setType("ticket");
-//        t = apa.saveTicket(t);
-//        ticketsToDelete.add(t);
-//
-//        PTicket expectedPTicket = t.toClientTicket();
-//        expectedPTicket.put(pf.getName(), "6");
-//        try {
-//            PTicket savedTicket = manager.createRecord("ticket", expectedPTicket);
-//            fail("Should have gotten an InvalidValueException");
-//        } catch (InvalidValueException ive) {
-//            //pass
-//        }
-//    }
+    @Test
+    public void testMarkBooleanFieldStrict() throws Exception {
+        try {
+            PropField pf = apa.savePropField(new PropField(ValueType.BOOLEAN, "STRICT_PROP", StrictType.STRICT));
+            fail("Should have gotten an InvalidValueException");
+        } catch (ApaException ae) {
+            //pass
+        }
+    }
+
+    @Test
+    public void testUpdateTicketStrictProperty() throws Exception {
+
+        PTicket t = new PTicket();
+
+        PropField pf = apa.savePropField(new PropField(ValueType.STRING, "STRICT_PROP", StrictType.STRICT));
+        PropValue v1 = apa.savePropValue(new PropValue(pf, "WXYZ"));
+        PropValue v2 = apa.savePropValue(new PropValue(pf, "UPDATED"));
+        propFieldsToDelete.add(pf);
+        t.setType("ticket");
+        t.put("STRICT_PROP", "WXYZ");
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
+
+        t.put(pf.getName(), "UPDATED");
+        PTicket savedTicket = manager.createRecord("ticket", t);
+        assertTrue(t.equals(savedTicket));
+    }
+
+    @Test
+    public void testUpdateTicketStrictPropertyInvalid() throws Exception {
+
+
+        PropField pf = apa.savePropField(new PropField(ValueType.STRING, "STRICT_PROP", StrictType.STRICT));
+        PropValue v1 = apa.savePropValue(new PropValue(pf, "WXYZ"));
+        PropValue v2 = apa.savePropValue(new PropValue(pf, "UPDATED"));
+        propFieldsToDelete.add(pf);
+        PTicket t = new PTicket();
+        t.setType("ticket");
+        t.put("STRICT_PROP", "WXYZ");
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
+
+        t.put("STRICT_PROP", "NOT_VALID");
+        try {
+            manager.createRecord("ticket", t);
+            fail("Should have thrown IVE");
+        } catch (InvalidValueException ive) {
+            System.out.println(ive.getMessage());
+        }
+
+        //return it to the correct value
+        t.put("STRICT_PROP", "WXYZ");
+
+        PTicket savedTicket = manager.getTicket("ticket", t.getId());
+        savedTicket.setType("ticket");
+        System.out.println(savedTicket);
+        System.out.println(t);
+        assertTrue(t.equals(savedTicket));
+    }
+
+    @Test
+    public void testSsaveTicketStrictPropertyInvalidInteger() throws Exception {
+
+        PTicket t = new PTicket();
+
+        PropField pf = apa.savePropField(new PropField(ValueType.INTEGER, "NUM", StrictType.STRICT));
+        PropValue v1 = apa.savePropValue(new PropValue(pf, "1"));
+        PropValue v2 = apa.savePropValue(new PropValue(pf, "2"));
+        PropValue v3 = apa.savePropValue(new PropValue(pf, "3"));
+        PropValue v4 = apa.savePropValue(new PropValue(pf, "4"));
+        PropValue v5 = apa.savePropValue(new PropValue(pf, "5"));
+        propFieldsToDelete.add(pf);
+
+        IntegerTicketProp prop = new IntegerTicketProp(pf, 2);
+        t.put("NUM", "6");
+        t.setType("ticket");
+
+        try {
+            PTicket savedTicket = manager.createRecord("ticket", t);
+            fail("Should have gotten an InvalidValueException");
+        } catch (InvalidValueException ive) {
+            //pass
+        }
+    }
 }
