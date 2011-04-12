@@ -21,8 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.helper.codes.manager;
 
 import org.fracturedatlas.athena.apa.ApaAdapter;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.apa.model.TicketProp;
 import org.fracturedatlas.athena.helper.codes.model.Code;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +35,7 @@ public class CodeManager {
     ApaAdapter apa;
 
     public Code createCode(Code code) {
-        Ticket codeTicket = new Ticket();
-        TicketProp codeProp = recordManager.buildNewTicketProp("code", code.getCode());
+        //TicketProp codeProp = recordManager.buildNewTicketProp("code", code.getCode());
         return null;
     }
 
