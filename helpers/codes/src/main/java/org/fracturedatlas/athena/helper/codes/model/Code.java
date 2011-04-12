@@ -22,7 +22,7 @@ package org.fracturedatlas.athena.helper.codes.model;
 
 import java.util.Date;
 import java.util.Set;
-import org.fracturedatlas.athena.client.PTicket;
+import java.util.TreeSet;
 
 
 public class Code {
@@ -36,7 +36,7 @@ public class Code {
     Boolean enabled;
 
     public Code() {
-
+        tickets = new TreeSet<String>();
     }
 
     public String getCode() {
