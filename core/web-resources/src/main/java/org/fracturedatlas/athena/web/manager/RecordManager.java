@@ -198,7 +198,7 @@ public class RecordManager {
 
         PTicket ticket  = apa.getRecord(type, idToUpdate);
 
-        if (idToUpdate == null) {
+        if (idToUpdate == null || ticket == null) {
             throw new NotFoundException();
         }
 
