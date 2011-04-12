@@ -22,6 +22,7 @@ package org.fracturedatlas.athena.helper.lock.manager;
 
 import com.sun.jersey.api.NotFoundException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -30,16 +31,12 @@ import java.util.Set;
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
 import org.fracturedatlas.athena.apa.ApaAdapter;
-import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
-import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
-import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.lock.exception.TicketsLockedException;
 import org.fracturedatlas.athena.helper.lock.model.AthenaLock;
 import org.fracturedatlas.athena.helper.lock.model.AthenaLockStatus;
+import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
@@ -98,13 +95,13 @@ public class AthenaLockManager {
                                   .and(new AthenaSearchConstraint(AthenaLockManager.LOCKED_BY_API_KEY, Operator.EQUALS, getCurrentUsername()))
                                   .build();
 
-        Collection<JpaRecord> tickets = apa.findTickets(apaSearch);
+        Collection<PTicket> tickets = apa.findTickets(apaSearch);
 
         if(tickets == null || tickets.size() == 0) {
             throw new NotFoundException("Transaction with id [" + id + "] was not found");
         }
 
-        PTicket firstTicket = tickets.iterator().next().toClientTicket();
+        PTicket firstTicket = tickets.iterator().next();
 
         Set<String> ids = getTicketIds(tickets);
 
@@ -121,11 +118,11 @@ public class AthenaLockManager {
 
     public AthenaLock createLock(HttpServletRequest request, AthenaLock tran) throws Exception {
         //Load all the tickets
-        Set<JpaRecord> tickets = new HashSet<JpaRecord>();
+        Set<PTicket> tickets = new HashSet<PTicket>();
         Set<String> ticketIds = tran.getTickets();
         for(String id : ticketIds) {
 
-            JpaRecord t = apa.getTicket(LOCK_TYPE, id);
+            PTicket t = apa.getRecord(LOCK_TYPE, id);
             if(t == null) {
                 throw new TicketsLockedException("Invalid ticket involved with transaction");
             }
@@ -167,27 +164,27 @@ public class AthenaLockManager {
         PropField lockTimesField = apa.getPropField(AthenaLockManager.LOCK_TIMES);
 
         for(String id : ticketIds) {
-            JpaRecord t = apa.getTicket(LOCK_TYPE, id);
+            PTicket t = apa.getRecord(LOCK_TYPE, id);
 
             //TODO: This might not work
-            t.setTicketProp(new StringTicketProp(lockId, tran.getId()));
-            t.setTicketProp(new StringTicketProp(lockedByApiKeyField, tran.getLockedByApi()));
-            t.setTicketProp(new StringTicketProp(lockedByIpField, tran.getLockedByIp()));
-            t.setTicketProp(new IntegerTicketProp(lockTimesField, 1));
-            t.setTicketProp(new DateTimeTicketProp(lockExpiresField, tran.getLockExpires()));
-            apa.saveTicket(t);
+            t.put(lockId.getName(), tran.getId());
+            t.put(lockedByApiKeyField.getName(), tran.getLockedByApi());
+            t.put(lockedByIpField.getName(), tran.getLockedByIp());
+            t.put(lockTimesField.getName(), "1");
+            t.put(lockExpiresField.getName(), DateUtil.formatDate(tran.getLockExpires()));
+            apa.saveRecord(t);
         }
     }
 
     public AthenaLock updateLock(String id, HttpServletRequest request, AthenaLock tran) throws Exception {
         //Load all the tickets
         Set<String> ticketIds = new HashSet<String>();
-        Set<JpaRecord> ticketsInTransaction = getTicketsInTransaction(tran.getId());
+        Set<PTicket> ticketsInTransaction = getTicketsInTransaction(tran.getId());
 
         //This looks a little stupid: loading the tickets from apa even though the client is sending us
         //an array of tickets.  We do this though to prevent the client from adding in extra tickets
         //beyond those that were locked with the initial lock
-        for(JpaRecord ticket : ticketsInTransaction) {
+        for(PTicket ticket : ticketsInTransaction) {
             ticketIds.add(ticket.getId().toString());
         }
 
@@ -196,14 +193,13 @@ public class AthenaLockManager {
         AthenaLock transactionFromTickets = null;
 
         for(String ticketId : ticketIds) {
-            JpaRecord t = apa.getTicket(LOCK_TYPE, ticketId);
+            PTicket t = apa.getRecord(LOCK_TYPE, ticketId);
 
             if(t == null) {
                 throw new TicketsLockedException("Invalid ticket involved with transaction");
             }
 
-            TicketProp prop = t.getTicketProp(lockTimesField.getName());
-            Integer numTimesLocked = (Integer)prop.getValue();
+            Integer numTimesLocked = Integer.parseInt(t.get(lockTimesField.getName()));
             logger.debug("", numTimesLocked);
             logger.debug(props.getProperty("athena.transaction.number_of_renewals"));
             logger.debug("", isRenewing(tran));
@@ -257,41 +253,28 @@ public class AthenaLockManager {
     private void completeTicketPurchase(AthenaLock tran) throws Exception {
         Set<String> ticketIds = tran.getTickets();
         for(String ticketId : ticketIds) {
-            PropField statusField = apa.getPropField("status");
-
-            if(statusField != null) {
-                TicketProp statusProp = apa.getTicketProp("status", LOCK_TYPE, ticketId);
-
-                if(statusProp == null) {
-                    statusProp = new StringTicketProp(statusField, "sold");
-                    statusProp.setTicket(apa.getTicket(LOCK_TYPE, ticketId));
-                }
-                statusProp.setValue("sold");
-                apa.saveTicketProp(statusProp);
-            }
+            PTicket t = apa.getRecord(LOCK_TYPE, ticketId);
+            t.put("status", "sold");
+            apa.saveRecord(t);
         }
-
-
     }
 
     private void renewLockOnTickets(AthenaLock tran) throws Exception {
         Set<String> ticketIds = tran.getTickets();
         for(String ticketId : ticketIds) {
-            TicketProp lockExpiresProp = apa.getTicketProp(AthenaLockManager.LOCK_EXPIRES, LOCK_TYPE, ticketId);
-            lockExpiresProp.setValue(tran.getLockExpires());
-            apa.saveTicketProp(lockExpiresProp);
+            PTicket t = apa.getRecord(LOCK_TYPE, ticketId);
+            t.put(AthenaLockManager.LOCK_EXPIRES, DateUtil.formatDate(tran.getLockExpires()));
 
-            TicketProp lockTimesProp = apa.getTicketProp(AthenaLockManager.LOCK_TIMES, LOCK_TYPE, ticketId);
-            Integer times = (Integer)lockTimesProp.getValue();
+            Integer times = Integer.parseInt(t.get(AthenaLockManager.LOCK_TIMES));
             times++;
-            lockTimesProp.setValue(times);
-            apa.saveTicketProp(lockTimesProp);
+            t.put(AthenaLockManager.LOCK_TIMES, times.toString());
+            apa.saveRecord(t);
         }
     }
 
     public void deleteLock(String id, HttpServletRequest request) throws Exception {
         //get the tickets on the tran
-        Set<JpaRecord> ticketsInTransaction = getTicketsInTransaction(id);
+        Set<PTicket> ticketsInTransaction = getTicketsInTransaction(id);
 
         logger.info("TICKETS IN THIS TRANSACTION: {}", ticketsInTransaction);
 
@@ -311,47 +294,35 @@ public class AthenaLockManager {
             throw new AthenaException("Cannot delete the transaction");
         }
 
+        for(PTicket ticket : ticketsInTransaction) {
+            PTicket t = apa.getRecord(LOCK_TYPE, ticket.getId());
 
+            t.put(AthenaLockManager.LOCK_ID, null);
+            t.put(AthenaLockManager.LOCKED_BY_IP, null);
+            t.put(AthenaLockManager.LOCKED_BY_API_KEY, null);
+            t.put(AthenaLockManager.LOCK_EXPIRES, null);
+            t.put(AthenaLockManager.LOCK_TIMES, "0");
 
-        for(JpaRecord ticket : ticketsInTransaction) {
-            TicketProp prop = apa.getTicketProp(AthenaLockManager.LOCK_ID, LOCK_TYPE, ticket.getId());
-            prop.setValue(null);
-            apa.saveTicketProp(prop);
-
-            prop = apa.getTicketProp(AthenaLockManager.LOCKED_BY_IP, LOCK_TYPE, ticket.getId());
-            prop.setValue(null);
-            apa.saveTicketProp(prop);
-
-            prop = apa.getTicketProp(AthenaLockManager.LOCKED_BY_API_KEY, LOCK_TYPE, ticket.getId());
-            prop.setValue(null);
-            apa.saveTicketProp(prop);
-
-            prop = apa.getTicketProp(AthenaLockManager.LOCK_EXPIRES, LOCK_TYPE, ticket.getId());
-            prop.setValue(null);
-            apa.saveTicketProp(prop);
-
-            prop = apa.getTicketProp(AthenaLockManager.LOCK_TIMES, LOCK_TYPE, ticket.getId());
-            prop.setValue(0);
-            apa.saveTicketProp(prop);
+            apa.saveRecord(t);
         }
     }
 
-    private Set<JpaRecord> getTicketsInTransaction(String lockId) {
+    private Set<PTicket> getTicketsInTransaction(String lockId) {
         AthenaSearch search = new AthenaSearch();
         search.addConstraint(AthenaLockManager.LOCK_ID, Operator.EQUALS, lockId);
-        Set<JpaRecord> ticketsInTransaction = apa.findTickets(search);
+        Set<PTicket> ticketsInTransaction = apa.findTickets(search);
         return ticketsInTransaction;
     }
 
-    private AthenaLock loadTransactionFromTicket(JpaRecord t) {
+    private AthenaLock loadTransactionFromTicket(PTicket t) throws ParseException {
 
         logger.info("LOADING FROM TICKET: {}", t);
 
         AthenaLock tran = new AthenaLock();
-        tran.setId(t.getTicketProp(AthenaLockManager.LOCK_ID).getValueAsString());
-        tran.setLockedByApi(t.getTicketProp(AthenaLockManager.LOCKED_BY_API_KEY).getValueAsString());
-        tran.setLockedByIp(t.getTicketProp(AthenaLockManager.LOCKED_BY_IP).getValueAsString());
-        tran.setLockExpires((Date)(t.getTicketProp(AthenaLockManager.LOCK_EXPIRES)).getValue());
+        tran.setId(t.get(AthenaLockManager.LOCK_ID));
+        tran.setLockedByApi(t.get(AthenaLockManager.LOCKED_BY_API_KEY));
+        tran.setLockedByIp(t.get(AthenaLockManager.LOCKED_BY_IP));
+        tran.setLockExpires(DateUtil.parseDate(t.get(AthenaLockManager.LOCK_EXPIRES)));
 
         logger.info("Loaded transaction: {}", tran);
 
@@ -386,26 +357,20 @@ public class AthenaLockManager {
      *
      * @param ticket the ticket
      */
-    private Boolean isInvolvedInActiveTransaction(JpaRecord ticket) {
-        TicketProp prop = ticket.getTicketProp(AthenaLockManager.LOCK_ID);
-
-        if(prop == null) {
-            return false;
-        }
-
-        String ticketTranId = prop.getValueAsString();
+    private Boolean isInvolvedInActiveTransaction(PTicket ticket) {
+        String ticketTranId = ticket.get(AthenaLockManager.LOCK_ID);
 
         if(ticketTranId != null) {
-            return (new DateTime(ticket.getTicketProp(AthenaLockManager.LOCK_EXPIRES).getValue())).isAfterNow();
+            return (new DateTime(ticket.get(AthenaLockManager.LOCK_EXPIRES))).isAfterNow();
         }
 
         return false;
     }
 
-    private Set<String> getTicketIds(Collection<JpaRecord> tickets) {
+    private Set<String> getTicketIds(Collection<PTicket> tickets) {
         Set<String> ids = new HashSet<String>();
-        for(JpaRecord t : tickets) {
-            ids.add(t.getId().toString());
+        for(PTicket t : tickets) {
+            ids.add(IdAdapter.toString(t.getId()));
         }
         return ids;
     }
