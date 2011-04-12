@@ -133,6 +133,7 @@ public class CardsResourceTest extends BasePaymentsTest {
 
         savedCard.setExpirationDate("12/2012");
         savedCard.setCardNumber(null);
+        
         CreditCard updatedCard = payments.saveCreditCard(savedCard);
         assertEquals(savedCard.getId(), updatedCard.getId());
         assertEquals(savedCard.getToken(), updatedCard.getToken());

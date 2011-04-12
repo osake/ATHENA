@@ -79,7 +79,6 @@ public class Braintree implements PaymentProcessor {
 
         if(authorizationRequest.isUsingStoredToken()) {
             request.amount(authorizationRequest.getAmount()).
-                    customerId(authorizationRequest.getCustomer().getId()).
                     paymentMethodToken(authorizationRequest.getCreditCard().getToken());
         } else {
             request.amount(authorizationRequest.getAmount());

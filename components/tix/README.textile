@@ -230,7 +230,7 @@ pre. 204 No Content
 
 *POST /meta/fields/{id}/values*
 
-Add a possible value to a strict field, or update the value (if id is included).  If this field already has this as a possible value, Parakeet will return 400 - Bad Request
+Add a possible value to a strict field. Values cannot be updated via PUT or POST, so to change a value you will need to delete and recreate it.
 
 +Example request:+
 
