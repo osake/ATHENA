@@ -20,13 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.helper.relationships.resource.container;
 import com.google.gson.Gson;
-import com.sun.jersey.api.client.ClientResponse;
-import java.util.Arrays;
-import java.util.List;
-import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
-import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.id.IdAdapter;
@@ -41,11 +35,11 @@ public class RelationshipHelperContainerTest extends BaseContainerTest {
 
     String path;
 
-    JpaRecord jimmy = null;
-    JpaRecord bobby = null;
-    JpaRecord t3 = null;
-    JpaRecord t4 = null;
-    JpaRecord t5 = null;
+    PTicket jimmy = null;
+    PTicket bobby = null;
+    PTicket t3 = null;
+    PTicket t4 = null;
+    PTicket t5 = null;
 
     @Test
     public void testFindTicketsByRelationship() {
@@ -83,63 +77,52 @@ public class RelationshipHelperContainerTest extends BaseContainerTest {
 
     @Before
     public void addTickets() throws Exception {
-        jimmy = new JpaRecord();
-        bobby = new JpaRecord();
-        t3 = new JpaRecord();
-        t4 = new JpaRecord();
-        t5 = new JpaRecord();
+        jimmy = new PTicket("person");
+        bobby = new PTicket("person");
+        t3 = new PTicket("relationship");
+        t4 = new PTicket("relationship");
+        t5 = new PTicket("relationship");
 
-        jimmy.setType("person");
-        bobby.setType("person");
-        t3.setType("relationship");
-        t4.setType("relationship");
-        t5.setType("relationship");
+        addPropField(ValueType.STRING, "leftSideId", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "relationshipType", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "rightSideId", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "inverseType", StrictType.NOT_STRICT);
 
-        PropField leftSideIdProp = apa.savePropField(new PropField(ValueType.STRING, "leftSideId", StrictType.NOT_STRICT));
-        PropField relationshipTypeProp = apa.savePropField(new PropField(ValueType.STRING, "relationshipType", StrictType.NOT_STRICT));
-        PropField rightSideIdProp = apa.savePropField(new PropField(ValueType.STRING, "rightSideId", StrictType.NOT_STRICT));
-        PropField inverseTypeProp = apa.savePropField(new PropField(ValueType.STRING, "inverseType", StrictType.NOT_STRICT));
-
-        propFieldsToDelete.add(leftSideIdProp);
-        propFieldsToDelete.add(relationshipTypeProp);
-        propFieldsToDelete.add(rightSideIdProp);
-        propFieldsToDelete.add(inverseTypeProp);
-
-        jimmy = apa.saveTicket(jimmy);
-        bobby = apa.saveTicket(bobby);
+        jimmy = apa.saveRecord(jimmy);
+        bobby = apa.saveRecord(bobby);
 
         /*
          * Jimmy is left side on one relationship
          * Bobby is left isde on one relationship and right side on two
          */
-        t3.addTicketProp(new StringTicketProp(leftSideIdProp, IdAdapter.toString(jimmy.getId())));
-        t3.addTicketProp(new StringTicketProp(relationshipTypeProp, "father"));
-        t3.addTicketProp(new StringTicketProp(rightSideIdProp, IdAdapter.toString(bobby.getId())));
-        t3.addTicketProp(new StringTicketProp(inverseTypeProp, "son"));
+        t3.put("leftSideId", IdAdapter.toString(jimmy.getId()));
+        t3.put("relationshipType", "father");
+        t3.put("rightSideId", IdAdapter.toString(bobby.getId()));
+        t3.put("inverseType", "son");
 
-        t4.addTicketProp(new StringTicketProp(leftSideIdProp, "SOME_ID"));
-        t4.addTicketProp(new StringTicketProp(relationshipTypeProp, "boss"));
-        t4.addTicketProp(new StringTicketProp(rightSideIdProp, IdAdapter.toString(bobby.getId())));
-        t4.addTicketProp(new StringTicketProp(inverseTypeProp, "subordinate"));
+        t4.put("leftSideId", "SOME_ID");
+        t4.put("relationshipType", "boss");
+        t4.put("rightSideId", IdAdapter.toString(bobby.getId()));
+        t4.put("inverseType", "subordinate");
 
-        t5.addTicketProp(new StringTicketProp(leftSideIdProp, IdAdapter.toString(bobby.getId())));
-        t5.addTicketProp(new StringTicketProp(relationshipTypeProp, "husband"));
-        t5.addTicketProp(new StringTicketProp(rightSideIdProp, "WIFEY"));
-        t5.addTicketProp(new StringTicketProp(inverseTypeProp, "wife"));
+        t5.put("leftSideId", IdAdapter.toString(bobby.getId()));
+        t5.put("relationshipType", "husband");
+        t5.put("rightSideId", "WIFEY");
+        t5.put("inverseType", "wife");
 
-        t3 = apa.saveTicket(t3);
-        t4 = apa.saveTicket(t4);
-        t5 = apa.saveTicket(t5);
+        t3 = apa.saveRecord(t3);
+        t4 = apa.saveRecord(t4);
+        t5 = apa.saveRecord(t5);
 
-        ticketsToDelete.add(jimmy);
-        ticketsToDelete.add(bobby);
-        ticketsToDelete.add(t3);
-        ticketsToDelete.add(t4);
-        ticketsToDelete.add(t5);
+        recordsToDelete.add(jimmy);
+        recordsToDelete.add(bobby);
+        recordsToDelete.add(t3);
+        recordsToDelete.add(t4);
+        recordsToDelete.add(t5);
     }
 
     @After
-    public void teardownTickets() {
-        super.teardownTickets();
+    public void teardown() {
+        super.teardownRecords();
     }
 }

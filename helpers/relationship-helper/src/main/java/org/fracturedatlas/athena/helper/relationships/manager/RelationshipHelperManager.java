@@ -22,7 +22,7 @@ package org.fracturedatlas.athena.helper.relationships.manager;
 import java.util.HashSet;
 import java.util.Set;
 import org.fracturedatlas.athena.apa.ApaAdapter;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
+import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
@@ -40,8 +40,8 @@ public class RelationshipHelperManager {
     @Autowired
     private ApaAdapter apa;
 
-    public Set<JpaRecord> findRelationships(String type, String id) {
-        Set<JpaRecord> tickets = new HashSet<JpaRecord>();
+    public Set<PTicket> findRelationships(String type, String id) {
+        Set<PTicket> tickets = new HashSet<PTicket>();
 
         AthenaSearch athenaSearch = new AthenaSearch
                 .Builder(new AthenaSearchConstraint("leftSideId", Operator.EQUALS, IdAdapter.toString(id)))
