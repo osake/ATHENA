@@ -18,33 +18,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
 
-package org.fracturedatlas.athena.helper.codes.resource;
+package org.fracturedatlas.athena.helper.codes.web;
 
 import com.google.gson.Gson;
 import com.sun.jersey.api.NotFoundException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import org.fracturedatlas.athena.apa.model.Ticket;
-import org.fracturedatlas.athena.web.manager.RecordManager;
+import javax.ws.rs.core.Context;
+import org.fracturedatlas.athena.helper.codes.model.Code;
+import org.fracturedatlas.athena.helper.codes.manager.CodeManager;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("/codes")
 @Consumes({"application/json"})
 @Produces({"application/json"})
-public class CodesResource {
+public class CodeResource {
 
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     @Autowired
-    RecordManager recordManager;
+    CodeManager codeManger;
 
     Gson gson = JsonUtil.getGson();
 
@@ -53,14 +54,13 @@ public class CodesResource {
     @GET
     @Path("/{id}")
     public Object get(@PathParam("id") String id) throws NotFoundException {
-        String type = CODE_TYPE;
-        Ticket ticket = recordManager.getTicket(CODE_TYPE, id);
-        if (ticket == null) {
-            type = StringUtils.capitalize(type);
-            throw new NotFoundException(type + " with id [" + id + "] was not found");
-        } else {
-            return ticket;
-        }
+        throw new NotFoundException("Code with id [" + id + "] was not found");
+    }
+
+    @POST
+    @Path("")
+    public Object create(Code code) throws Exception {
+        return codeManger.createCode(code);
     }
 
 }
