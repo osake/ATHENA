@@ -29,18 +29,17 @@ import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import javax.persistence.EntityManagerFactory;
 import org.springframework.context.ApplicationContext;
 import org.fracturedatlas.athena.apa.ApaAdapter;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
-import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.ContextLoaderListener;
 import static org.junit.Assert.*;
 import org.fracturedatlas.athena.client.*;
 import org.fracturedatlas.athena.id.*;
-import org.junit.After;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +51,7 @@ public abstract class BaseContainerTest extends JerseyTest {
     protected final static String TIX_URI = "http://localhost:9998/test";
     protected final static String PATH = "/relationships";
 
-    protected List<JpaRecord> ticketsToDelete = new ArrayList<JpaRecord>();
+    protected List<PTicket> recordsToDelete = new ArrayList<PTicket>();
     protected List<PropField> propFieldsToDelete = new ArrayList<PropField>();
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -75,12 +74,12 @@ public abstract class BaseContainerTest extends JerseyTest {
         apa = (ApaAdapter)context.getBean("apa");
     }
 
-    public void teardownTickets() {
-        for (JpaRecord t : ticketsToDelete) {
+    public void teardownRecords() {
+        for (PTicket t : recordsToDelete) {
             try {
-                apa.deleteTicket(t);
+                apa.deleteRecord(t.getType(), t.getId());
             } catch (Exception ignored) {
-                    logger.error(ignored.getMessage(), ignored);
+                ignored.printStackTrace();
             }
         }
 
@@ -88,27 +87,40 @@ public abstract class BaseContainerTest extends JerseyTest {
             try {
                     apa.deletePropField(pf);
             } catch (Exception ignored) {
-                    logger.error(ignored.getMessage(), ignored);
+                ignored.printStackTrace();
             }
         }
     }
 
-    public void assertTicketsEqual(JpaRecord t, PTicket pTicket, Boolean includeId) {
+    public void assertRecordsEqual(PTicket t, PTicket pTicket, Boolean includeId) {
         if(includeId) {
             assertTrue(IdAdapter.isEqual(t.getId(), pTicket.getId()));
         }
 
-        assertEquals(t.getTicketProps().size(), pTicket.getProps().size());
+        assertEquals(t.getProps().size(), pTicket.getProps().size());
 
-        for(TicketProp ticketProp : t.getTicketProps()) {
-            String value = pTicket.get(ticketProp.getPropField().getName());
-            assertEquals(ticketProp.getValueAsString(), value);
+        for(Entry<String, String> prop : t.getProps().entrySet()) {
+            assertTrue(pTicket.get(prop.getKey()).equals(prop.getValue()));
         }
     }
 
-    public void assertTicketsEqual(JpaRecord t, PTicket pTicket) {
-        assertTicketsEqual(t, pTicket, Boolean.TRUE);
+    public PField addPropField(ValueType valueType, String name, Boolean strict) {
+        PropField pf = apa.savePropField(new PropField(valueType, name, strict));
+        propFieldsToDelete.add(pf);
+        return pf.toClientField();
     }
+
+    public PTicket addRecord(String type, String... keyValues) {
+        PTicket t = new PTicket(type);
+        for(int i=0; i < keyValues.length; i+=2) {
+            System.out.println(keyValues[i]);
+            t.put(keyValues[i], keyValues[i+1]);
+        }
+        t = apa.saveRecord(t);
+        recordsToDelete.add(t);
+        return t;
+    }
+
 }
 
 

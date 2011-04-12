@@ -27,16 +27,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.sun.jersey.api.NotFoundException;
 import java.util.Collection;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import com.sun.jersey.core.impl.provider.entity.Inflector;
+import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.relationships.manager.RelationshipHelperManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Path("/meta/relationships")
@@ -52,7 +50,7 @@ public class RelationshipHelperResource {
 
     @GET
     @Path("{type}/{id}")
-    public Collection<JpaRecord> search(@PathParam("type") String type,
+    public Collection<PTicket> search(@PathParam("type") String type,
                                      @PathParam("id") String id) throws NotFoundException {
         type = Inflector.getInstance().singularize(type);
         return relationshipHelperManager.findRelationships(type, id);
