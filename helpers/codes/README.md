@@ -42,9 +42,9 @@ The codes helper relies on the following fields in Tix
 
 ## Creating a code
 
-POST a code to /tix/meta/codes.  Include the following information.  performances and events are optional.
+POST a code to /tix/codes.  Include the following information.  performances and events are optional.
 
-    POST http://localhost/tix/meta/codes
+    POST http://localhost/tix/codes
     {
       "code": "festivalpass1"
       "description": "A human readable description"
@@ -85,7 +85,7 @@ Example response:
     
 ## Getting information about a code
 
-    GET http://localhost/tix/meta/codes/{code_id}
+    GET http://localhost/tix/codes/{code_id}
     
 Response:
 
@@ -105,7 +105,7 @@ Response:
 
 Make a PUT request similar to the POST request above.
 
-    PUT http://localhost/tix/meta/codes
+    PUT http://localhost/tix/codes
     {
       "code": "festivalpass1"
       "description": "A human readable description"
@@ -137,7 +137,7 @@ Example response:
     
 ## Removing a code from ticket
 
-    DELETE http://localhost/tix/meta/codes/{code_id}/{ticket_id}
+    DELETE http://localhost/tix/codes/{code_id}/{ticket_id}
     
 Example response:
 
@@ -145,7 +145,7 @@ Example response:
     
 ## Deleting a code entirely
 
-    DELETE http://localhost/tix/meta/codes/{code_id}
+    DELETE http://localhost/tix/codes/{code_id}
     
 Example response:
 
