@@ -41,7 +41,7 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
     }
 
     @After
-    public void teardownRecords() {
+    public void teardown() {
         super.teardownRecords();
     }
 
@@ -53,8 +53,6 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
         t.put("PRICE", "2000");
         String updatedTicketJson = tix.path(path).type("application/json").put(String.class, gson.toJson(t));
         PTicket updatedTicket = gson.fromJson(updatedTicketJson, PTicket.class);
-        System.out.println(t);
-        System.out.println(updatedTicket);
         assertTrue(t.equals(updatedTicket));
         PTicket savedTicket = apa.getRecord("ticket", updatedTicket.getId());
         System.out.println(savedTicket);
@@ -102,6 +100,27 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
     }
 
     @Test
+    public void testUpdateTicketWithBadValue() {
+        PTicket t = createSampleRecord();
+        t.put("PRICE", "Nan");
+        String path = RECORDS_PATH + t.getId() + ".json";
+        ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, gson.toJson(t));
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+    }
+
+
+    @Test
+    public void testUpdateTicketWithNullValue() {
+        PTicket t = createSampleRecord();
+        t.put("PRICE", null);
+        String path = RECORDS_PATH + t.getId() + ".json";
+        ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, gson.toJson(t));
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+
+    }
+
+    @Test
     public void testPutBadId() {
         String path = RECORDS_PATH + "0.json";
         assertNotFound(path);
@@ -121,6 +140,47 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
         PTicket savedTicket = apa.getRecord("ticket", t.getId());
         savedTicket.setType(t.getType());
         assertRecordsEqual(t, savedTicket, false);
+    }
+
+    //We're updating a ticket but only sending one property.  Other properties should remain
+    @Test
+    public void testUpdateAddNewPropButDontSendOtherProps() {
+        addPropField(ValueType.INTEGER, "NEWPROP", Boolean.FALSE);
+        PTicket t = createSampleRecord();
+
+        PTicket updatedCopy = new PTicket("ticket");
+        updatedCopy.setId(t.getId());
+        updatedCopy.put("NEWPROP", "4");
+        t.put("NEWPROP", "4");
+
+        String path = RECORDS_PATH + t.getId() + ".json";
+        t.setType(null);
+        String updatedTicketJson = tix.path(path).type("application/json").put(String.class, gson.toJson(updatedCopy));
+        PTicket updatedTicket = gson.fromJson(updatedTicketJson, PTicket.class);
+        assertTrue(t.equals(updatedTicket));
+
+        PTicket savedTicket = apa.getRecord("ticket", updatedTicket.getId());
+        System.out.println(savedTicket);
+        assertRecordsEqual(updatedTicket, savedTicket, true);
+    }
+
+
+    @Test
+    public void testUpdateTicketBlankRequest() {
+        PTicket t = createSampleRecord();
+        String ticketJson = "";
+        String path = RECORDS_PATH + t.getId() + ".json";
+        ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, ticketJson);
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
+    @Test
+    public void testUpdateTicketBadRequest() {
+        PTicket t = createSampleRecord();
+        String ticketJson = "{\"WHAT\":\"EVER\"}";
+        String path = RECORDS_PATH + t.getId() + ".json";
+        ClientResponse response = tix.path(path).type("application/json").put(ClientResponse.class, ticketJson);
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
     }
 
     //this is not allowed
@@ -178,7 +238,7 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
         addPropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE);
 
         return addRecord("ticket",
-                  "PRICE", "4", 
-                  "SECTION", "true");
+                          "PRICE", "4",
+                          "SECTION", "true");
     }
 }
