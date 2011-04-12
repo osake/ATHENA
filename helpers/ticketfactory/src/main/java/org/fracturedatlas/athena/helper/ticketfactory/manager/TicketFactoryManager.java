@@ -95,7 +95,7 @@ public class TicketFactoryManager {
             try{
                 logger.info("Saving ticket: ");
                 logger.info(ticket.toString());
-                ticketManager.saveTicketFromClientRequest("ticket", ticket);
+                ticketManager.createRecord("ticket", ticket);
             } catch (Exception e) {
                 //TODO: Cleanup tickets that we created
                 //Finally, an exception here is something that we can't recover from, so it's okay to throw
