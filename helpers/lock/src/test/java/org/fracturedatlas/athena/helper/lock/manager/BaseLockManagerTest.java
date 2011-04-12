@@ -22,6 +22,7 @@ package org.fracturedatlas.athena.helper.lock.manager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import static org.junit.Assert.*;
 import org.fracturedatlas.athena.apa.impl.jpa.*;
@@ -34,19 +35,19 @@ public abstract class BaseLockManagerTest {
 
     protected ApaAdapter apa;
 
-    protected List<JpaRecord> ticketsToDelete = new ArrayList<JpaRecord>();
+    protected List<PTicket> recordsToDelete = new ArrayList<PTicket>();
     protected List<PropField> propFieldsToDelete = new ArrayList<PropField>();
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     public BaseLockManagerTest() {
     }
 
-    public void teardownTickets() {
-        for (JpaRecord t : ticketsToDelete) {
+    public void teardownRecords() {
+        for (PTicket t : recordsToDelete) {
             try {
-                apa.deleteTicket(t);
+                apa.deleteRecord(t.getType(), t.getId());
             } catch (Exception ignored) {
-                    logger.error(ignored.getMessage(), ignored);
+                ignored.printStackTrace();
             }
         }
 
@@ -54,7 +55,7 @@ public abstract class BaseLockManagerTest {
             try {
                     apa.deletePropField(pf);
             } catch (Exception ignored) {
-                    logger.error(ignored.getMessage(), ignored);
+                ignored.printStackTrace();
             }
         }
     }
@@ -74,6 +75,35 @@ public abstract class BaseLockManagerTest {
 
     public void assertTicketsEqual(JpaRecord t, PTicket pTicket) {
         assertTicketsEqual(t, pTicket, Boolean.TRUE);
+    }
+
+    public PField addPropField(ValueType valueType, String name, Boolean strict) {
+        PropField pf = apa.savePropField(new PropField(valueType, name, strict));
+        propFieldsToDelete.add(pf);
+        return pf.toClientField();
+    }
+
+    public PTicket addRecord(String type, String... keyValues) {
+        PTicket t = new PTicket(type);
+        for(int i=0; i < keyValues.length; i+=2) {
+            System.out.println(keyValues[i]);
+            t.put(keyValues[i], keyValues[i+1]);
+        }
+        t = apa.saveRecord(t);
+        recordsToDelete.add(t);
+        return t;
+    }
+
+    public void assertRecordsEqual(PTicket t, PTicket pTicket, Boolean includeId) {
+        if(includeId) {
+            assertTrue(IdAdapter.isEqual(t.getId(), pTicket.getId()));
+        }
+
+        assertEquals(t.getProps().size(), pTicket.getProps().size());
+
+        for(Entry<String, String> prop : t.getProps().entrySet()) {
+            assertTrue(pTicket.get(prop.getKey()).equals(prop.getValue()));
+        }
     }
 }
 

@@ -22,7 +22,6 @@ package org.fracturedatlas.athena.helper.lock.manager;
 
 import com.google.gson.Gson;
 import com.sun.jersey.api.NotFoundException;
-import com.sun.jersey.api.client.ClientResponse;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -30,13 +29,8 @@ import java.util.List;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.fracturedatlas.athena.apa.ApaAdapter;
-import org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
-import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.lock.exception.TicketsLockedException;
@@ -64,11 +58,11 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
     Gson gson = JsonUtil.getGson();
     String path = "/";
 
-    JpaRecord t1 = null;
-    JpaRecord t2 = null;
-    JpaRecord t3 = null;
-    JpaRecord t4 = null;
-    JpaRecord t5 = null;
+    PTicket t1 = null;
+    PTicket t2 = null;
+    PTicket t3 = null;
+    PTicket t4 = null;
+    PTicket t5 = null;
 
     PropField seatNumberProp = null;
     PropField lockIdProp = null;
@@ -95,8 +89,8 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
     }
 
     @After
-    public void teardownTickets() {
-        super.teardownTickets();
+    public void teardown() {
+        super.teardownRecords();
     }
 
     @Test
@@ -108,31 +102,31 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
         /* SETUP THE TRANSACTION IN THE DB */
         List<String> ticketIdsInTransaction = new ArrayList<String>();
         int i=0;
-        for(JpaRecord t : ticketsToDelete) {
+        for(PTicket t : recordsToDelete) {
 
             //put three tickets in this transaction, one ticket in another transaction, and another ticket just hanging out
             if(i<3) {
-                t.addTicketProp(new StringTicketProp(lockIdProp, testTransactionId));
-                t.addTicketProp(new StringTicketProp(statusProp, "on_sale"));
-                t.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-05-05T05:05:33-04:00")));
-                t.addTicketProp(new StringTicketProp(lockedByApiProp, TEST_USERNAME));
-                t.addTicketProp(new StringTicketProp(lockedByIpProp, CLIENT_IP));
-                t = apa.saveTicket(t);
+                t.put(AthenaLockManager.LOCK_ID, testTransactionId);
+                t.put("status", "on_sale");
+                t.put(AthenaLockManager.LOCK_EXPIRES, "2010-05-05T05:05:33-04:00");
+                t.put(AthenaLockManager.LOCKED_BY_API_KEY, TEST_USERNAME);
+                t.put(AthenaLockManager.LOCKED_BY_IP, CLIENT_IP);
+                t = apa.saveRecord(t);
                 ticketIdsInTransaction.add(t.getId().toString());
             } else if (i<4) {
-                t.addTicketProp(new StringTicketProp(lockIdProp, "FAKE_TRAN_ID"));
-                t.addTicketProp(new StringTicketProp(statusProp, "on_sale"));
-                t.addTicketProp(new DateTimeTicketProp(lockExpiresProp, DateUtil.parseDate("2010-05-05T05:05:33-04:00")));
-                t.addTicketProp(new StringTicketProp(lockedByApiProp, TEST_USERNAME));
-                t.addTicketProp(new StringTicketProp(lockedByIpProp, CLIENT_IP));
-                t = apa.saveTicket(t);
+                t.put(AthenaLockManager.LOCK_ID, "FAKE_TRAN_ID");
+                t.put("status", "on_sale");
+                t.put(AthenaLockManager.LOCK_EXPIRES, "2011-05-05T05:05:33-04:00");
+                t.put(AthenaLockManager.LOCKED_BY_API_KEY, TEST_USERNAME);
+                t.put(AthenaLockManager.LOCKED_BY_IP, CLIENT_IP);
+                t = apa.saveRecord(t);
             } else {
-                t.addTicketProp(new StringTicketProp(lockIdProp, null));
-                t.addTicketProp(new StringTicketProp(statusProp, "on_sale"));
-                t.addTicketProp(new DateTimeTicketProp(lockExpiresProp, null));
-                t.addTicketProp(new StringTicketProp(lockedByApiProp, null));
-                t.addTicketProp(new StringTicketProp(lockedByIpProp, null));
-                t = apa.saveTicket(t);
+                t.put(AthenaLockManager.LOCK_ID, null);
+                t.put("status", "on_sale");
+                t.put(AthenaLockManager.LOCK_EXPIRES, null);
+                t.put(AthenaLockManager.LOCKED_BY_API_KEY, null);
+                t.put(AthenaLockManager.LOCKED_BY_IP, null);
+                t = apa.saveRecord(t);
             }
             i++;
         }
@@ -184,32 +178,35 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
 
         //check the three tickets involved in this transaction make sure that
         //they aren't marked
-        PTicket savedT1 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t1.getId()).toClientTicket();
+        PTicket savedT1 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t1.getId());
+        savedT1.setType(AthenaLockManager.LOCK_TYPE);
         assertFalse(savedTran.getId().equals(savedT1.get(AthenaLockManager.LOCK_ID)));
         assertEquals(null, savedT1.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(null, savedT1.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t1, savedT1);
+        assertRecordsEqual(t1, savedT1, true);
 
-        PTicket savedT4 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t4.getId()).toClientTicket();
+        PTicket savedT4 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t4.getId());
+        savedT4.setType(AthenaLockManager.LOCK_TYPE);
         assertFalse(savedTran.getId().equals(savedT4.get(AthenaLockManager.LOCK_ID)));
         assertEquals(null, savedT4.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(null, savedT4.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t4, savedT4);
+        assertRecordsEqual(t4, savedT4, true);
 
-        PTicket savedT5 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t5.getId()).toClientTicket();
+        PTicket savedT5 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t5.getId());
+        savedT5.setType(AthenaLockManager.LOCK_TYPE);
         assertFalse(savedTran.getId().equals(savedT5.get(AthenaLockManager.LOCK_ID)));
         assertEquals(null, savedT5.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(null, savedT5.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t5, savedT5);
+        assertRecordsEqual(t5, savedT5, true);
 
         //now check the two correct tickets
-        PTicket savedT2 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t2.getId()).toClientTicket();
+        PTicket savedT2 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t2.getId());
         assertEquals(savedTran.getId(), savedT2.get(AthenaLockManager.LOCK_ID));
         assertEquals(savedTran.getLockedByApi(), savedT2.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(savedTran.getLockedByIp(), savedT2.get(AthenaLockManager.LOCKED_BY_IP));
         assertEquals(DateUtil.formatDate(savedTran.getLockExpires()), savedT2.get(AthenaLockManager.LOCK_EXPIRES));
 
-        PTicket savedT3 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t3.getId()).toClientTicket();
+        PTicket savedT3 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t3.getId());
         assertEquals(savedTran.getId(), savedT3.get(AthenaLockManager.LOCK_ID));
         assertEquals(savedTran.getLockedByApi(), savedT3.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(savedTran.getLockedByIp(), savedT3.get(AthenaLockManager.LOCKED_BY_IP));
@@ -254,10 +251,10 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
         //lock ticket2
         PropField transactionIdField = apa.getPropField(AthenaLockManager.LOCK_ID);
         PropField lockExpiresField = apa.getPropField(AthenaLockManager.LOCK_EXPIRES);
-        t2.getTicketProps().add(new StringTicketProp(transactionIdField, "30303030033"));
+        t2.put(AthenaLockManager.LOCK_ID, "30303030033");
         DateTime expires = new DateTime().plusMinutes(2);
-        t2.getTicketProps().add(new DateTimeTicketProp(lockExpiresField, expires.toDate()));
-        t2 = apa.saveTicket(t2);
+        t2.put(AthenaLockManager.LOCK_EXPIRES, DateUtil.formatDate(expires.toDate()));
+        t2 = apa.saveRecord(t2);
 
         //Now try to start the transaction with t2 already locked
         Set<String> ticketIdsInTransaction = new HashSet<String>();
@@ -276,33 +273,23 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
 
         //check the three tickets involved in this transaction make sure that
         //they aren't marked
-        PTicket savedT1 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t1.getId()).toClientTicket();
+        assertTicketUnchanged(t1);
+        assertTicketUnchanged(t3);
+        assertTicketUnchanged(t4);
+        assertTicketUnchanged(t5);
+
+        //check to make sure t2 doesn't have a new lock on it
+        PTicket savedT2 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t2.getId());
+        assertEquals("30303030033", savedT2.get(AthenaLockManager.LOCK_ID));
+    }
+
+    private void assertTicketUnchanged(PTicket t1) {
+        PTicket savedT1 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t1.getId());
+        savedT1.setType(AthenaLockManager.LOCK_TYPE);
         assertFalse("30303030033".equals(savedT1.get(AthenaLockManager.LOCK_ID)));
         assertEquals(null, savedT1.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(null, savedT1.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t1, savedT1);
-
-        PTicket savedT3 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t3.getId()).toClientTicket();
-        assertFalse("30303030033".equals(savedT3.get(AthenaLockManager.LOCK_ID)));
-        assertEquals(null, savedT3.get(AthenaLockManager.LOCKED_BY_API_KEY));
-        assertEquals(null, savedT3.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t3, savedT3);
-
-        PTicket savedT4 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t4.getId()).toClientTicket();
-        assertFalse("30303030033".equals(savedT4.get(AthenaLockManager.LOCK_ID)));
-        assertEquals(null, savedT4.get(AthenaLockManager.LOCKED_BY_API_KEY));
-        assertEquals(null, savedT4.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t4, savedT4);
-
-        PTicket savedT5 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t5.getId()).toClientTicket();
-        assertFalse("30303030033".equals(savedT5.get(AthenaLockManager.LOCK_ID)));
-        assertEquals(null, savedT5.get(AthenaLockManager.LOCKED_BY_API_KEY));
-        assertEquals(null, savedT5.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t5, savedT5);
-
-        //check to make sure t2 doesn't have a new lock on it
-        PTicket savedT2 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t2.getId()).toClientTicket();
-        assertEquals("30303030033", savedT2.get(AthenaLockManager.LOCK_ID));
+        assertRecordsEqual(t1, savedT1, true);
     }
 
     @Test
@@ -324,35 +311,24 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
 
         //check the three tickets involved in this transaction make sure that
         //they aren't marked
-        PTicket savedT1 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t1.getId()).toClientTicket();
-        assertFalse("30303030033".equals(savedT1.get(AthenaLockManager.LOCK_ID)));
-        assertEquals(null, savedT1.get(AthenaLockManager.LOCKED_BY_API_KEY));
-        assertEquals(null, savedT1.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t1, savedT1);
+        assertTicketUnchanged(t1);
 
-        PTicket savedT2 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t2.getId()).toClientTicket();
+        PTicket savedT2 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t2.getId());
+        savedT2.setType(AthenaLockManager.LOCK_TYPE);
         assertNull(savedT2.get(AthenaLockManager.LOCK_ID));
         assertEquals(null, savedT2.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(null, savedT2.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t2, savedT2);
+        assertRecordsEqual(t2, savedT2, true);
+        
+        assertTicketUnchanged(t3);
+        assertTicketUnchanged(t4);
 
-        PTicket savedT3 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t3.getId()).toClientTicket();
-        assertFalse("30303030033".equals(savedT3.get(AthenaLockManager.LOCK_ID)));
-        assertEquals(null, savedT3.get(AthenaLockManager.LOCKED_BY_API_KEY));
-        assertEquals(null, savedT3.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t3, savedT3);
-
-        PTicket savedT4 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t4.getId()).toClientTicket();
-        assertFalse("30303030033".equals(savedT4.get(AthenaLockManager.LOCK_ID)));
-        assertEquals(null, savedT4.get(AthenaLockManager.LOCKED_BY_API_KEY));
-        assertEquals(null, savedT4.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t4, savedT4);
-
-        PTicket savedT5 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t5.getId()).toClientTicket();
+        PTicket savedT5 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t5.getId());
+        savedT5.setType(AthenaLockManager.LOCK_TYPE);
         assertNull(savedT5.get(AthenaLockManager.LOCK_ID));
         assertEquals(null, savedT5.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(null, savedT5.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t5, savedT5);
+        assertRecordsEqual(t5, savedT5, true);
     }
 
     @Test
@@ -427,27 +403,31 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
         assertTrue(updatedLockExpires.isAfterNow());
         assertTrue(originalLockExpires.isBefore(updatedLockExpires.toInstant()));
 
-        PTicket savedT1 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t1.getId()).toClientTicket();
+        PTicket savedT1 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t1.getId());
+        savedT1.setType(AthenaLockManager.LOCK_TYPE);
         assertFalse(savedTran.getId().equals(savedT1.get(AthenaLockManager.LOCK_ID)));
         assertEquals(null, savedT1.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(null, savedT1.get(AthenaLockManager.LOCKED_BY_IP));
         assertEquals(null, savedT1.get(AthenaLockManager.LOCK_EXPIRES));
-        assertTicketsEqual(t1, savedT1);
+        assertRecordsEqual(t1, savedT1, true);
 
-        PTicket savedT4 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t4.getId()).toClientTicket();
+        PTicket savedT4 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t4.getId());
+        savedT4.setType(AthenaLockManager.LOCK_TYPE);
         assertFalse(savedTran.getId().equals(savedT4.get(AthenaLockManager.LOCK_ID)));
         assertEquals(null, savedT4.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(null, savedT4.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t4, savedT4);
+        assertRecordsEqual(t4, savedT4, true);
 
-        PTicket savedT5 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t5.getId()).toClientTicket();
+        PTicket savedT5 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t5.getId());
+        savedT5.setType(AthenaLockManager.LOCK_TYPE);
         assertFalse(savedTran.getId().equals(savedT5.get(AthenaLockManager.LOCK_ID)));
         assertEquals(null, savedT5.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(null, savedT5.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t5, savedT5);
+        assertRecordsEqual(t5, savedT5, true);
 
         //now check the two correct tickets
-        PTicket savedT2 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t2.getId()).toClientTicket();
+        PTicket savedT2 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t2.getId());
+        savedT2.setType(AthenaLockManager.LOCK_TYPE);
         assertEquals(savedTran.getId(), savedT2.get(AthenaLockManager.LOCK_ID));
         assertEquals(savedTran.getLockedByApi(), savedT2.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(savedTran.getLockedByIp(), savedT2.get(AthenaLockManager.LOCKED_BY_IP));
@@ -455,7 +435,8 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
         DateTime newExpires = new DateTime(DateUtil.parseDate(savedT2.get(AthenaLockManager.LOCK_EXPIRES)));
         assertTrue(originalLockExpires.isBefore(newExpires));
 
-        PTicket savedT3 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t3.getId()).toClientTicket();
+        PTicket savedT3 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t3.getId());
+        savedT3.setType(AthenaLockManager.LOCK_TYPE);
         assertEquals(savedTran.getId(), savedT3.get(AthenaLockManager.LOCK_ID));
         assertEquals(savedTran.getLockedByApi(), savedT3.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(savedTran.getLockedByIp(), savedT3.get(AthenaLockManager.LOCKED_BY_IP));
@@ -482,7 +463,7 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
 
         savedTran.setStatus(AthenaLockStatus.RENEW);
         //now try to renew again
-        
+
         try {
             manager.updateLock(savedTran.getId(), mockHttpServletRequest, savedTran);
             fail("Should not have locked");
@@ -505,34 +486,37 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
 
         manager.deleteLock(savedTran.getId(), mockHttpServletRequest);
 
-        PTicket savedT1 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t1.getId()).toClientTicket();
+        PTicket savedT1 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t1.getId());
+        savedT1.setType(AthenaLockManager.LOCK_TYPE);
         assertFalse(savedTran.getId().equals(savedT1.get(AthenaLockManager.LOCK_ID)));
         assertEquals(null, savedT1.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(null, savedT1.get(AthenaLockManager.LOCKED_BY_IP));
         assertEquals(null, savedT1.get(AthenaLockManager.LOCK_EXPIRES));
-        assertTicketsEqual(t1, savedT1);
+        assertRecordsEqual(t1, savedT1, true);
 
-        PTicket savedT2 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t2.getId()).toClientTicket();
+        PTicket savedT2 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t2.getId());
         assertEquals(null, savedT2.get(AthenaLockManager.LOCK_ID));
         assertEquals(null, savedT2.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(null, savedT2.get(AthenaLockManager.LOCKED_BY_IP));
 
-        PTicket savedT3 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t3.getId()).toClientTicket();
+        PTicket savedT3 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t3.getId());
         assertEquals(null, savedT3.get(AthenaLockManager.LOCK_ID));
         assertEquals(null, savedT3.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(null, savedT3.get(AthenaLockManager.LOCKED_BY_IP));
 
-        PTicket savedT4 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t4.getId()).toClientTicket();
+        PTicket savedT4 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t4.getId());
+        savedT4.setType(AthenaLockManager.LOCK_TYPE);
         assertFalse(savedTran.getId().equals(savedT4.get(AthenaLockManager.LOCK_ID)));
         assertEquals(null, savedT4.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(null, savedT4.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t4, savedT4);
+        assertRecordsEqual(t4, savedT4, true);
 
-        PTicket savedT5 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t5.getId()).toClientTicket();
+        PTicket savedT5 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t5.getId());
+        savedT5.setType(AthenaLockManager.LOCK_TYPE);
         assertFalse(savedTran.getId().equals(savedT5.get(AthenaLockManager.LOCK_ID)));
         assertEquals(null, savedT5.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(null, savedT5.get(AthenaLockManager.LOCKED_BY_IP));
-        assertTicketsEqual(t5, savedT5);
+        assertRecordsEqual(t5, savedT5, true);
     }
 
     @Test
@@ -556,13 +540,15 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
         updatedTran = manager.updateLock(updatedTran.getId(), mockHttpServletRequest, savedTran);
 
         //now check the two correct tickets
-        PTicket savedT2 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t2.getId()).toClientTicket();
+        PTicket savedT2 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t2.getId());
+        savedT2.setType(AthenaLockManager.LOCK_TYPE);
         assertEquals(savedTran.getId(), savedT2.get(AthenaLockManager.LOCK_ID));
         assertEquals(savedTran.getLockedByApi(), savedT2.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(savedTran.getLockedByIp(), savedT2.get(AthenaLockManager.LOCKED_BY_IP));
         assertTrue("sold".equals(savedT2.get("status")));
 
-        PTicket savedT3 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t3.getId()).toClientTicket();
+        PTicket savedT3 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t3.getId());
+        savedT3.setType(AthenaLockManager.LOCK_TYPE);
         assertEquals(savedTran.getId(), savedT3.get(AthenaLockManager.LOCK_ID));
         assertEquals(savedTran.getLockedByApi(), savedT3.get(AthenaLockManager.LOCKED_BY_API_KEY));
         assertEquals(savedTran.getLockedByIp(), savedT3.get(AthenaLockManager.LOCKED_BY_IP));
@@ -605,12 +591,12 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
         AthenaLock savedTran = manager.createLock(mockHttpServletRequest, tran);
 
         DateTime yesterday = new DateTime().minusDays(1);
-        t2 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t2.getId());
-        t2.setTicketProp(new DateTimeTicketProp(lockExpiresProp, yesterday.toDate()));
-        t2 = apa.saveTicket(t2);
-        t3 = apa.getTicket(AthenaLockManager.LOCK_TYPE, t3.getId());
-        t3.setTicketProp(new DateTimeTicketProp(lockExpiresProp, yesterday.toDate()));
-        t3 = apa.saveTicket(t3);
+        t2 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t2.getId());
+        t2.put(AthenaLockManager.LOCK_EXPIRES, DateUtil.formatDate(yesterday.toDate()));
+        t2 = apa.saveRecord(t2);
+        t3 = apa.getRecord(AthenaLockManager.LOCK_TYPE, t3.getId());
+        t3.put(AthenaLockManager.LOCK_EXPIRES, DateUtil.formatDate(yesterday.toDate()));
+        t3 = apa.saveRecord(t3);
 
         tran = manager.getLock(savedTran.getId(), mockHttpServletRequest);
         for(String id : tran.getTickets()) {
@@ -673,58 +659,43 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
     }
 
     public void addTickets() throws Exception {
-        t1 = new JpaRecord();
-        t2 = new JpaRecord();
-        t3 = new JpaRecord();
-        t4 = new JpaRecord();
-        t5 = new JpaRecord();
+        t1 = new PTicket("ticket");
+        t2 = new PTicket("ticket");
+        t3 = new PTicket("ticket");
+        t4 = new PTicket("ticket");
+        t5 = new PTicket("ticket");
 
-        seatNumberProp = apa.savePropField(new PropField(ValueType.INTEGER, "SEAT_NUMBER", StrictType.NOT_STRICT));
-        lockIdProp = apa.savePropField(new PropField(ValueType.STRING, AthenaLockManager.LOCK_ID, StrictType.NOT_STRICT));
-        statusProp = apa.savePropField(new PropField(ValueType.STRING, "status", StrictType.NOT_STRICT));
-        lockedByApiProp = apa.savePropField(new PropField(ValueType.STRING, AthenaLockManager.LOCKED_BY_API_KEY, StrictType.NOT_STRICT));
-        lockedByIpProp = apa.savePropField(new PropField(ValueType.STRING, AthenaLockManager.LOCKED_BY_IP, StrictType.NOT_STRICT));
-        lockExpiresProp = apa.savePropField(new PropField(ValueType.DATETIME, AthenaLockManager.LOCK_EXPIRES, StrictType.NOT_STRICT));
-        lockTimesProp = apa.savePropField(new PropField(ValueType.INTEGER, AthenaLockManager.LOCK_TIMES, StrictType.NOT_STRICT));
-        someOtherFieldProp = apa.savePropField(new PropField(ValueType.STRING, "SOME_OTHER_FIELD", StrictType.NOT_STRICT));
+        addPropField(ValueType.INTEGER, "SEAT_NUMBER", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, AthenaLockManager.LOCK_ID, StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "status", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, AthenaLockManager.LOCKED_BY_API_KEY, StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, AthenaLockManager.LOCKED_BY_IP, StrictType.NOT_STRICT);
+        addPropField(ValueType.DATETIME, AthenaLockManager.LOCK_EXPIRES, StrictType.NOT_STRICT);
+        addPropField(ValueType.INTEGER, AthenaLockManager.LOCK_TIMES, StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SOME_OTHER_FIELD", StrictType.NOT_STRICT);
 
-        propFieldsToDelete.add(seatNumberProp);
-        propFieldsToDelete.add(lockIdProp);
-        propFieldsToDelete.add(statusProp);
-        propFieldsToDelete.add(lockedByApiProp);
-        propFieldsToDelete.add(lockedByIpProp);
-        propFieldsToDelete.add(lockExpiresProp);
-        propFieldsToDelete.add(lockTimesProp);
-        propFieldsToDelete.add(someOtherFieldProp);
+        t1.put("SEAT_NUMBER", "3");
+        t2.put("SEAT_NUMBER", "4");
+        t3.put("SEAT_NUMBER", "5");
+        t4.put("SEAT_NUMBER", "6");
+        t5.put("SEAT_NUMBER", "7");
 
-        t1.setType("ticket");
-        t2.setType("ticket");
-        t3.setType("ticket");
-        t4.setType("ticket");
-        t5.setType("ticket");
+        t1.put("SOME_OTHER_FIELD", "$");
+        t2.put("SOME_OTHER_FIELD", "$");
+        t3.put("SOME_OTHER_FIELD", "$");
+        t4.put("SOME_OTHER_FIELD", "$");
+        t5.put("SOME_OTHER_FIELD", "$");
 
-        t1.addTicketProp(new IntegerTicketProp(seatNumberProp, 3));
-        t2.addTicketProp(new IntegerTicketProp(seatNumberProp, 4));
-        t3.addTicketProp(new IntegerTicketProp(seatNumberProp, 5));
-        t4.addTicketProp(new IntegerTicketProp(seatNumberProp, 6));
-        t5.addTicketProp(new IntegerTicketProp(seatNumberProp, 7));
+        t1 = apa.saveRecord(t1);
+        t2 = apa.saveRecord(t2);
+        t3 = apa.saveRecord(t3);
+        t4 = apa.saveRecord(t4);
+        t5 = apa.saveRecord(t5);
 
-        t1.addTicketProp(new StringTicketProp(someOtherFieldProp, "$"));
-        t2.addTicketProp(new StringTicketProp(someOtherFieldProp, "$"));
-        t3.addTicketProp(new StringTicketProp(someOtherFieldProp, "$"));
-        t4.addTicketProp(new StringTicketProp(someOtherFieldProp, "$"));
-        t5.addTicketProp(new StringTicketProp(someOtherFieldProp, "$"));
-
-        t1 = apa.saveTicket(t1);
-        t2 = apa.saveTicket(t2);
-        t3 = apa.saveTicket(t3);
-        t4 = apa.saveTicket(t4);
-        t5 = apa.saveTicket(t5);
-
-        ticketsToDelete.add(t1);
-        ticketsToDelete.add(t2);
-        ticketsToDelete.add(t3);
-        ticketsToDelete.add(t4);
-        ticketsToDelete.add(t5);
+        recordsToDelete.add(t1);
+        recordsToDelete.add(t2);
+        recordsToDelete.add(t3);
+        recordsToDelete.add(t4);
+        recordsToDelete.add(t5);
     }
 }
