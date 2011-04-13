@@ -54,7 +54,7 @@ public class CodeResource {
     @GET
     @Path("/{id}")
     public Object get(@PathParam("id") String id) throws NotFoundException {
-        throw new NotFoundException("Code with id [" + id + "] was not found");
+        return codeManger.getCode(id);
     }
 
     @POST

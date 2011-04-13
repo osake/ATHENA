@@ -21,13 +21,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.helper.codes.manager;
 
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.HashSet;
 import org.fracturedatlas.athena.apa.ApaAdapter;
+import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.codes.model.Code;
+import org.fracturedatlas.athena.search.AthenaSearch;
+import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CodeManager {
 
@@ -35,27 +39,89 @@ public class CodeManager {
     RecordManager recordManager;
 
     @Autowired
+    AthenaComponent athenaStage;
+
+    @Autowired
     ApaAdapter apa;
 
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
+    public static final String CODE = "code";
     public static final String CODED_TYPE = "ticket";
 
-    public Code getCode(Code code) {
-        return new Code();
+    public Code getCode(Object id) {
+        logger.debug("Geting code with id [{}]", id);
+        PTicket t = recordManager.getTicket(CODE, id);
+        logger.debug("Found record:");
+        logger.debug("{}", t.toString());
+        return new Code(t);
     }
 
+    /**
+     * Create a code
+     *
+     * tickets, performances, or events may be empty or null.
+     *
+     * This method does not fail if a performance or event is not found.  Processing will continue with other valid performance, events, or tickets.
+     *
+     * @param code
+     * @return the created code with an id sassigned
+     */
     public Code createCode(Code code) {
-        Set<PTicket> ticketsForThisCode = new TreeSet<PTicket>();
+        verifyCode(code);
+        PTicket codeRecord = code.toRecord();
+        codeRecord = recordManager.createRecord(CODE, codeRecord);
 
-        for(String ticketId : code.getTickets()) {
-            PTicket t = recordManager.getTicket(CODED_TYPE, ticketId);
-            ticketsForThisCode.add(t);
+        Set<PTicket> ticketsForThisCode = new HashSet<PTicket>();
+        ticketsForThisCode.addAll(getTicketsForPerformances(code));
+        ticketsForThisCode.addAll(getTicketsOnCode(code));
+        processTickets(ticketsForThisCode, code);
+
+        return new Code(codeRecord);
+    }
+
+    private Set<PTicket> processTickets(Set<PTicket> tickets, Code code) {
+        for(PTicket ticket : tickets) {
+            ticket.put(code.getCode(), Integer.toString(code.getPrice()));
+            recordManager.updateRecord(CODED_TYPE, ticket);
+        }
+        return tickets;
+    }
+
+    private Set<PTicket> getTicketsOnCode(Code code) {
+        Set<PTicket> tickets = new HashSet<PTicket>();
+
+        //Load the ticketIds from this code
+        if(code.getTickets() != null) {
+            for(String ticketId : code.getTickets()) {
+                logger.debug("Looking up ticket with id [{}]", ticketId);
+                PTicket t = recordManager.getTicket(CODED_TYPE, ticketId);
+                logger.debug("Found ticket for this code:");
+                logger.debug("{}", t.toString());
+                tickets.add(t);
+            }
         }
 
-        for(PTicket t : ticketsForThisCode) {
-            recordManager.updateRecord(CODED_TYPE, t);
-        }
+        return tickets;
+    }
 
-        return new Code();
+    private Set<PTicket> getTicketsForPerformances(Code code) {
+        Set<PTicket> tickets = new HashSet<PTicket>();
+        if(code.getPerformances() != null && code.getPerformances().size() > 0) {
+            logger.debug("Searching for tickets in the following performances {}" , code.getPerformances());
+            AthenaSearch search = new AthenaSearch.Builder().type("ticket").build();
+            if(code.getPerformances().size() == 1) {
+                search.addConstraint("performanceId", Operator.EQUALS, code.getPerformances().iterator().next());
+            } else {
+                search.addConstraint("performanceId", Operator.IN, code.getPerformances());
+            }
+            tickets.addAll(apa.findTickets(search));
+        }
+        return tickets;
+    }
+
+    public void verifyCode(Code code) {
+
     }
 
     public ApaAdapter getApa() {
@@ -72,6 +138,14 @@ public class CodeManager {
 
     public void setRecordManager(RecordManager recordManager) {
         this.recordManager = recordManager;
+    }
+
+    public AthenaComponent getAthenaStage() {
+        return athenaStage;
+    }
+
+    public void setAthenaStage(AthenaComponent athenaStage) {
+        this.athenaStage = athenaStage;
     }
 
     
