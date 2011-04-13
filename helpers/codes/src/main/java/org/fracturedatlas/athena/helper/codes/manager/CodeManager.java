@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.helper.codes.manager;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
 import org.fracturedatlas.athena.apa.ApaAdapter;
@@ -73,6 +74,11 @@ public class CodeManager {
         codeRecord = recordManager.createRecord(CODE, codeRecord);
 
         Set<PTicket> ticketsForThisCode = new HashSet<PTicket>();
+        if(code.getPerformances() == null) {
+            code.setPerformances(new HashSet<String>());
+        }
+
+        code.getPerformances().addAll(getPerformanceIdsForEvents(code));
         ticketsForThisCode.addAll(getTicketsForPerformances(code));
         ticketsForThisCode.addAll(getTicketsOnCode(code));
         processTickets(ticketsForThisCode, code);
@@ -103,6 +109,24 @@ public class CodeManager {
         }
 
         return tickets;
+    }
+
+    private Set<String> getPerformanceIdsForEvents(Code code) {
+        Set<String> performanceIds = new HashSet<String>();
+        if(code.getEvents() != null && code.getEvents().size() > 0) {
+            logger.debug("Searching for performances in the following events {}" , code.getPerformances());
+            AthenaSearch search = new AthenaSearch.Builder().type("performance").build();
+            if(code.getEvents().size() == 1) {
+                search.addConstraint("eventId", Operator.EQUALS, code.getEvents().iterator().next());
+            } else {
+                search.addConstraint("eventId", Operator.IN, code.getEvents());
+            }
+            Collection<PTicket> performances = athenaStage.find("performance", search);
+            for(PTicket perf : performances) {
+                performanceIds.add(perf.getIdAsString());
+            }
+        }
+        return performanceIds;
     }
 
     private Set<PTicket> getTicketsForPerformances(Code code) {
