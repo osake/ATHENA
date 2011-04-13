@@ -285,7 +285,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 finishedTicketsSet = getRecordsByType(athenaSearch, em);
             } else {
                 //else, search with the modifiers
-                //TODO: This block runs independent searches for each constraint, then just spashes those lists together
+                //TODO: This block runs independent searches for each constraint, then just smashes those lists together
                 //Smarter way would be to run the first constraint, then search THAT list for the next constraint
                 //Even smarter: be clever about which constraint we search for first.
 

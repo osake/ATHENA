@@ -47,6 +47,10 @@ public class PTicket {
         return id;
     }
 
+    public String getIdAsString() {
+        return IdAdapter.toString(id);
+    }
+
     public void setId(Object id) {
         this.id = id;
     }
