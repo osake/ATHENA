@@ -132,6 +132,58 @@ public class CodeManagerTest {
     }
 
     @Test
+    public void testCreateCodeTwoPerformancesAndTwoEvents() throws Exception {
+        PTicket sampleTicket2 = new PTicket("ticket");
+        sampleTicket2.setId("sampleTicket2Id");
+        sampleTicket2.put("performanceId", "samplePerformanceId2");
+
+        Set<String> performanceIds = new HashSet<String>();
+        performanceIds.add(SAMPLE_PERFORMANCE_ID);
+        performanceIds.add("samplePerformanceId2");
+        performanceIds.add("performance_19");
+        code.setPerformances(performanceIds);
+
+        Set<String> eventIds = new HashSet<String>();
+        eventIds.add("EVENT1");
+        eventIds.add("EVENT2");
+        code.setEvents(eventIds);
+
+        PTicket samplePerformanceForEvent = new PTicket("performance");
+        samplePerformanceForEvent.setId("performance_19");
+
+        PTicket sampleTicketForPerformance = new PTicket("ticket");
+        sampleTicketForPerformance.setId("ticket_19");
+
+        //setup the performances by events search
+        AthenaSearch athenaPerformanceSearch = new AthenaSearch.Builder().type("performance").build();
+        athenaPerformanceSearch.addConstraint("eventId", Operator.IN, eventIds);
+        Set<PTicket> perfs = new HashSet<PTicket>();
+        perfs.add(samplePerformanceForEvent);
+        when(mockStage.find("performance", athenaPerformanceSearch)).thenReturn(perfs);
+
+        //setup the tickets by performance search
+        AthenaSearch athenaTicketSearch = new AthenaSearch.Builder().type("ticket").build();
+        athenaTicketSearch.addConstraint("performanceId", Operator.IN, performanceIds);
+        Set<PTicket> tickets = new HashSet<PTicket>();
+        tickets.add(sampleTicket);
+        tickets.add(sampleTicket2);
+        tickets.add(sampleTicketForPerformance);
+        when(mockApa.findTickets(athenaTicketSearch)).thenReturn(tickets);
+
+        code.setTickets(null);
+        code.getPerformances().add(samplePerformance.getIdAsString());
+        Code createdCode = manager.createCode(code);
+        assertNotNull(createdCode);
+
+        verify(mockRecordManager, times(1)).createRecord(CodeManager.CODE, targetCode);
+        verify(mockStage, times(1)).find("performance", athenaPerformanceSearch);
+        verify(mockApa, times(1)).findTickets(athenaTicketSearch);
+        verify(mockRecordManager, times(1)).updateRecord("ticket", targetTicket);
+        verify(mockRecordManager, times(1)).updateRecord("ticket", sampleTicket2);
+        verify(mockRecordManager, times(1)).updateRecord("ticket", sampleTicketForPerformance);
+    }
+
+    @Test
     public void testCreateCodeWithNullTickets() throws Exception {
         code.setTickets(null);
         Code createdCode = manager.createCode(code);
