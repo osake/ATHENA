@@ -153,7 +153,7 @@ Example response:
     
 ## Retrieving tickets with a code
 
-    GET http://localhost/tix/tickets?code=festivalpass11&...
+    GET http://localhost/tix/tickets?_code=festivalpass11&...
     
 ATHENA will respond with eligible tickets if any are found.  Both the "price" field and the coded price will be returned.
 

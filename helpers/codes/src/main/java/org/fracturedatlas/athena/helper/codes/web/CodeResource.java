@@ -63,4 +63,20 @@ public class CodeResource {
         return codeManger.createCode(code);
     }
 
+    @PUT
+    @Path("/{id}")
+    public Object create(@PathParam("id") String id, Code code) throws Exception {
+        return codeManger.getCode(id);
+    }
+
+    @DELETE
+    @Path("/{id}")
+    public void create(@PathParam("id") String id) throws Exception {
+    }
+
+    @DELETE
+    @Path("/{id}/tickets/{ticketId}")
+    public void create(@PathParam("id") String id, @PathParam("ticketId") String ticketId) throws Exception {
+    }
+
 }
