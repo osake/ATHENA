@@ -134,11 +134,10 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
          * if apa has a prop for it, update it
          * otherwise, create a new one
          */
-        Map<String, String> propMap = clientTicket.getProps();
-        Set<String> keys = propMap.keySet();
+        Set<String> keys = clientTicket.getProps().keySet();
         List<TicketProp> propsToSave = new ArrayList<TicketProp>();
         for (String key : keys) {
-            String val = propMap.get(key);
+            String val = clientTicket.get(key);
 
             TicketProp ticketProp = getTicketProp(key, type, ticket.getId());
 
@@ -176,10 +175,9 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         JpaRecord ticket  = new JpaRecord();
 
         //for all props on this pTicket, create new props with apa
-        Map<String, String> propMap = clientTicket.getProps();
-        Set<String> keys = propMap.keySet();
+        Set<String> keys = clientTicket.getProps().keySet();
         for (String key : keys) {
-            String val = propMap.get(key);
+            String val = clientTicket.get(key);
             logger.debug("Creating property: {}={}", key, val);
             PropField propField = getPropField(key);
             logger.debug("Found PropField: {}", propField);
