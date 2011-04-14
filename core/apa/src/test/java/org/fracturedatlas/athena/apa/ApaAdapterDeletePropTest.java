@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.apa;
 
-import java.util.Map.Entry;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
@@ -69,15 +68,15 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         ticket = apa.getRecord(ticket.getType(), ticket.getId());
         assertEquals(2, ticket.getProps().size());
 
-        for(Entry<String, String> prop : ticket.getProps().entrySet()) {
-            if("SEAT".equals(prop.getKey())) {
+        for(String key : ticket.getProps().keySet()) {
+            if("SEAT".equals(key)) {
                 fail("Should have been deleted");
-            } else if ("SEAT1".equals(prop.getKey())) {
-                assertEquals(field1.getName(), prop.getKey());
-                assertEquals("13", prop.getValue());
-            } else if ("SEAT2".equals(prop.getKey())) {
-                assertEquals(field2.getName(), prop.getKey());
-                assertEquals("23", prop.getValue());
+            } else if ("SEAT1".equals(key)) {
+                assertEquals(field1.getName(), key);
+                assertEquals("13", ticket.get(key));
+            } else if ("SEAT2".equals(key)) {
+                assertEquals(field2.getName(), key);
+                assertEquals("23", ticket.get(key));
             } else {
                 fail("Found a prop that should not be here");
             }
@@ -119,15 +118,15 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         ticket = apa.getRecord(ticket.getType(), ticket.getId());
         assertEquals(2, ticket.getProps().size());
 
-        for(Entry<String, String> prop : ticket.getProps().entrySet()) {
-            if("SEAT".equals(prop.getKey())) {
+        for(String key : ticket.getProps().keySet()) {
+            if("SEAT".equals(key)) {
                 fail("Should have been deleted");
-            } else if ("SEAT1".equals(prop.getKey())) {
-                assertEquals(field1.getName(), prop.getKey());
-                assertEquals("13", prop.getValue());
-            } else if ("SEAT2".equals(prop.getKey())) {
-                assertEquals(field2.getName(), prop.getKey());
-                assertEquals("23", prop.getValue());
+            } else if ("SEAT1".equals(key)) {
+                assertEquals(field1.getName(), key);
+                assertEquals("13", ticket.get(key));
+            } else if ("SEAT2".equals(key)) {
+                assertEquals(field2.getName(), key);
+                assertEquals("23", ticket.get(key));
             } else {
                 fail("Found a prop that should not be here");
             }
@@ -136,16 +135,16 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         ticket2 = apa.getRecord(ticket2.getType(), ticket2.getId());
         assertEquals(3, ticket2.getProps().size());
 
-        for(Entry<String, String> prop : ticket2.getProps().entrySet()) {
-            if("SEAT".equals(prop.getKey())) {
-                assertEquals(field.getName(), prop.getKey());
-                assertEquals("ddd", prop.getValue());
-            } else if ("SEAT1".equals(prop.getKey())) {
-                assertEquals(field1.getName(), prop.getKey());
-                assertEquals("fff", prop.getValue());
-            } else if ("SEAT2".equals(prop.getKey())) {
-                assertEquals(field2.getName(), prop.getKey());
-                assertEquals("ggg", prop.getValue());
+        for(String key : ticket.getProps().keySet()) {
+            if("SEAT".equals(key)) {
+                assertEquals(field.getName(), key);
+                assertEquals("ddd", ticket.get(key));
+            } else if ("SEAT1".equals(key)) {
+                assertEquals(field1.getName(), key);
+                assertEquals("13", ticket.get(key));
+            } else if ("SEAT2".equals(key)) {
+                assertEquals(field2.getName(), key);
+                assertEquals("23", ticket.get(key));
             } else {
                 fail("Found a prop that should not be here");
             }
@@ -187,20 +186,19 @@ public class ApaAdapterDeletePropTest extends BaseApaAdapterTest {
         ticket = apa.getRecord(ticket.getType(), ticket.getId());
         assertEquals(2, ticket.getProps().size());
 
-        for(Entry<String, String> prop : ticket.getProps().entrySet()) {
-            if("SEAT".equals(prop.getKey())) {
-                assertEquals(field.getName(), prop.getKey());
-                assertEquals("03", prop.getValue());
-            } else if ("SEAT1".equals(prop.getKey())) {
-                assertEquals(field1.getName(), prop.getKey());
-                assertEquals("13", prop.getValue());
-            } else if ("SEAT2".equals(prop.getKey())) {
-                assertEquals(field2.getName(), prop.getKey());
-                assertEquals("23", prop.getValue());
+        for(String key : ticket.getProps().keySet()) {
+            if("SEAT".equals(key)) {
+                assertEquals(field.getName(), key);
+                assertEquals("03", ticket.get(key));
+            } else if ("SEAT1".equals(key)) {
+                assertEquals(field1.getName(), key);
+                assertEquals("13", ticket.get(key));
+            } else if ("SEAT2".equals(key)) {
+                assertEquals(field2.getName(), key);
+                assertEquals("23", ticket.get(key));
             } else {
                 fail("Found a prop that should not be here");
             }
         }
-
     }
 }

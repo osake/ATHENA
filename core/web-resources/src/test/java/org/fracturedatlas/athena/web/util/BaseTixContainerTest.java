@@ -105,8 +105,8 @@ public abstract class BaseTixContainerTest extends JerseyTest {
 
         assertEquals(t.getProps().size(), pTicket.getProps().size());
 
-        for(Entry<String, String> prop : t.getProps().entrySet()) {
-            assertTrue(pTicket.get(prop.getKey()).equals(prop.getValue()));
+        for(String key : t.getProps().keySet()) {
+            assertTrue(pTicket.get(key).equals(t.get(key)));
         }
     }
 

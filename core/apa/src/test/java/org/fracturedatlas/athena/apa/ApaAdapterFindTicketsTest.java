@@ -132,9 +132,9 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         assertEquals(1, tickets.size());
 
         for (PTicket ticket : tickets) {
-            for (Entry<String, String> entry : t.getProps().entrySet()) {
-                assertEquals(entry.getKey(), "INTEGER_PROP");
-                assertEquals(entry.getValue(), "2");
+            for (String key : t.getProps().keySet()) {
+                assertEquals(key, "INTEGER_PROP");
+                assertEquals(t.get(key), "2");
             }
         }
     }

@@ -20,23 +20,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.client;
 
+import com.sun.jersey.core.util.MultivaluedMapImpl;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.fracturedatlas.athena.id.*;
 
 /**
- * This is the client-representation of a ticket
+ * This is the client-representation of a record
  */
 public class PTicket {
 
     private Object id;
     private String type;
-    private Map<String, String> props;
+    private MultivaluedMapImpl props;
 
     public PTicket() {
-        props = new HashMap<String, String>();
+        props = new MultivaluedMapImpl();
     }
     public PTicket(String type) {
         this();
@@ -63,12 +67,8 @@ public class PTicket {
         this.type = type;
     }
 
-    public Map<String, String> getProps() {
+    public MultivaluedMapImpl getProps() {
         return props;
-    }
-
-    public void setProps(Map<String, String> props) {
-        this.props = props;
     }
 
     /**
@@ -78,6 +78,20 @@ public class PTicket {
      * @return the value if it exists
      */
     public String get(String key) {
+        return getAsString(key);
+    }
+
+    /**
+     * Shorthand method to get a property from thie ticket's list of properties
+     *
+     * @param key
+     * @return the value if it exists
+     */
+    public String getAsString(String key) {
+        return getProps().getFirst(key);
+    }
+
+    public List<String> getAsList(String key) {
         return getProps().get(key);
     }
 
@@ -87,8 +101,12 @@ public class PTicket {
      * @param key
      * @return the value if it exists
      */
-    public String put(String key, String value) {
-        return getProps().put(key, value);
+    public void put(String key, String value) {
+        getProps().putSingle(key, value);
+    }
+    
+    public void add(String key, String value) {
+        getProps().add(key, value);
     }
 
     @Override
