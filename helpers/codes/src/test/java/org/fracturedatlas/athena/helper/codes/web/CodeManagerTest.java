@@ -30,6 +30,7 @@ import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
+import org.fracturedatlas.athena.util.date.DateUtil;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,14 +65,15 @@ public class CodeManagerTest {
         verify(mockRecordManager, times(1)).getTicket(CodeManager.CODE, SAMPLE_ID);
         assertNotNull(savedCode);
         assertNotNull(savedCode.getId());
+        assertSavedcodeIsCorrect(savedCode, code);
     }
 
     @Test
     public void testCreateCode() throws Exception {
         Code createdCode = manager.createCode(code);
         assertNotNull(createdCode);
-        assertNotNull(createdCode.getId());
-        //TODO: The rest of the asserts
+        assertSavedcodeIsCorrect(createdCode, code);
+        assertEquals(createdCode.getTickets(), code.getTickets());
 
         verify(mockRecordManager, times(1)).getTicket("ticket", sampleTicket.getId());
         verify(mockRecordManager, times(code.getTickets().size())).updateRecord("ticket", targetTicket);
@@ -95,6 +97,13 @@ public class CodeManagerTest {
         code.getPerformances().add(samplePerformance.getIdAsString());
         Code createdCode = manager.createCode(code);
         assertNotNull(createdCode);
+        assertSavedcodeIsCorrect(createdCode, code);
+
+        //Should be three tickets on this code, two fromt he perf and one on the code
+        Set<String> targetTicketIds = new HashSet<String>();
+        targetTicketIds.add(IdAdapter.toString(sampleTicket.getId()));
+        targetTicketIds.add(IdAdapter.toString(sampleTicket2.getId()));
+        assertEquals(createdCode.getTickets(), targetTicketIds);
 
         verify(mockRecordManager, times(1)).createRecord(CodeManager.CODE, targetCode);
         verify(mockApa, times(1)).findTickets(athenaSearch);
@@ -124,6 +133,11 @@ public class CodeManagerTest {
         code.getPerformances().add(samplePerformance.getIdAsString());
         Code createdCode = manager.createCode(code);
         assertNotNull(createdCode);
+        assertSavedcodeIsCorrect(createdCode, code);
+        Set<String> targetTicketIds = new HashSet<String>();
+        targetTicketIds.add(IdAdapter.toString(sampleTicket.getId()));
+        targetTicketIds.add(IdAdapter.toString(sampleTicket2.getId()));
+        assertEquals(createdCode.getTickets(), targetTicketIds);
 
         verify(mockRecordManager, times(1)).createRecord(CodeManager.CODE, targetCode);
         verify(mockApa, times(1)).findTickets(athenaSearch);
@@ -174,6 +188,12 @@ public class CodeManagerTest {
         code.getPerformances().add(samplePerformance.getIdAsString());
         Code createdCode = manager.createCode(code);
         assertNotNull(createdCode);
+        assertSavedcodeIsCorrect(createdCode, code);
+        Set<String> targetTicketIds = new HashSet<String>();
+        targetTicketIds.add(IdAdapter.toString(sampleTicket.getId()));
+        targetTicketIds.add(IdAdapter.toString(sampleTicket2.getId()));
+        targetTicketIds.add(IdAdapter.toString(sampleTicketForPerformance.getId()));
+        assertEquals(createdCode.getTickets(), targetTicketIds);
 
         verify(mockRecordManager, times(1)).createRecord(CodeManager.CODE, targetCode);
         verify(mockStage, times(1)).find("performance", athenaPerformanceSearch);
@@ -188,21 +208,25 @@ public class CodeManagerTest {
         code.setTickets(null);
         Code createdCode = manager.createCode(code);
         assertNotNull(createdCode);
+        assertSavedcodeIsCorrect(createdCode, code);
 
         verify(mockRecordManager, times(1)).createRecord(CodeManager.CODE, targetCode);
     }
 
-    public void buildCode() {
+    public void buildCode() throws Exception {
         code = new Code();
         code.setCode(SAMPLE_CODE);
         code.setPrice(SAMPLE_PRICE);
+        code.setDescription("Sample description");
+        code.setStartDate(DateUtil.parseDate("2011-09-09T05:05:03Z"));
+        code.setEndDate(DateUtil.parseDate("2011-09-19T05:05:03Z"));
         code.getTickets().add(IdAdapter.toString(sampleTicket.getId()));
         targetCode = code.toRecord();
         targetCodeWithId = code.toRecord();
         targetCodeWithId.setId(SAMPLE_ID);
     }
 
-    public void createSampleObjects() {
+    public void createSampleObjects() throws Exception {
         sampleTicket.setId("400");
         samplePerformance.setId(SAMPLE_PERFORMANCE_ID);
         sampleTicket.put("performanceId", SAMPLE_PERFORMANCE_ID);
@@ -215,7 +239,7 @@ public class CodeManagerTest {
     }
 
     @Before
-    public void mockupTix() {
+    public void mockupTix() throws Exception {
         MockitoAnnotations.initMocks(this);
         createSampleObjects();
 
@@ -227,5 +251,25 @@ public class CodeManagerTest {
         manager.setRecordManager(mockRecordManager);
         manager.setAthenaStage(mockStage);
         manager.setApa(mockApa);
+    }
+
+    /*
+     * Will match savedcode to targetCode on the following outbound fields:
+     * - tickets
+     * - id
+     * - code
+     * - startDate
+     * - endDate
+     * - price
+     * - description
+     * - enabled
+     */
+    private void assertSavedcodeIsCorrect(Code savedCode, Code targetCode) {
+        assertEquals(savedCode.getEnabled(), targetCode.getEnabled());
+        assertEquals(savedCode.getCode(), targetCode.getCode());
+        assertEquals(savedCode.getStartDate(), targetCode.getStartDate());
+        assertEquals(savedCode.getEndDate(), targetCode.getEndDate());
+        assertEquals(savedCode.getDescription(), targetCode.getDescription());
+        assertEquals(savedCode.getPrice(), targetCode.getPrice());
     }
 }
