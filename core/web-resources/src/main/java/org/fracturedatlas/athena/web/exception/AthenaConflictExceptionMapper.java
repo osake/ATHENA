@@ -16,7 +16,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
- */
+*/
+
 package org.fracturedatlas.athena.web.exception;
 
 import javax.ws.rs.core.Response;
@@ -24,10 +25,9 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class AthenaExceptionMapper implements ExceptionMapper<AthenaException> {
-
-    public Response toResponse(AthenaException ex) {
-        return Response.status(Response.Status.BAD_REQUEST).
+public class AthenaConflictExceptionMapper implements ExceptionMapper<AthenaConflictException> {
+    public Response toResponse(AthenaConflictException ex) {
+        return Response.status(Response.Status.CONFLICT).
                 entity(ex.getMessage()).
                 type("text/plain").
                 build();
