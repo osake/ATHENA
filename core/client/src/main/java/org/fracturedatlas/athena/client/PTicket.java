@@ -59,6 +59,10 @@ public class PTicket {
         this.id = id;
     }
 
+    public void deleteProperty(String propertyName) {
+        getProps().remove(propertyName);
+    }
+
     public String getType() {
         return type;
     }
