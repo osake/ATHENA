@@ -20,15 +20,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.helper.codes.manager;
 
+import com.sun.jersey.api.NotFoundException;
 import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.List;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.codes.model.Code;
+import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.Operator;
+import org.fracturedatlas.athena.web.exception.AthenaConflictException;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
@@ -53,9 +57,38 @@ public class CodeManager {
     public Code getCode(Object id) {
         logger.debug("Geting code with id [{}]", id);
         PTicket t = recordManager.getTicket(CODE, id);
-        logger.debug("Found record:");
-        logger.debug("{}", t.toString());
-        return new Code(t);
+        if(t == null) {
+            throw new NotFoundException("Code with id ["+id+"] was not found");
+        } else {
+            logger.debug("Found record:");
+            logger.debug("{}", t.toString());
+            return new Code(t);
+        }
+    }
+
+    public void deleteCode(Object id) {
+        apa.deleteRecord(CODE, id);
+    }
+
+    public void deleteCodeFromTicket(Object id, Object ticketId) {
+        Code code = getCode(id);
+        PTicket ticket = recordManager.getTicket(CODED_TYPE, ticketId);
+        logger.debug("Deleting code [{}] from this ticket", code.getCode());
+        logger.debug(ticket.toString());
+        if(ticket == null) {
+            throw new NotFoundException("Ticket with id ["+ticketId+"] was not found");
+        } else {
+            String val = ticket.get(code.getCode());
+            if(val != null) {
+                logger.debug("Code found, deleting from ticket [{}]", ticket.getId());
+                ticket.deleteProperty(code.getCode());
+                logger.debug("Removed code, saving ticket:");
+                logger.debug(ticket.toString());
+                apa.saveRecord(CODED_TYPE, ticket);
+            } else {
+                logger.debug("Code not found on this ticket");
+            }
+        }
     }
 
     /**
@@ -71,6 +104,8 @@ public class CodeManager {
     public Code createCode(Code code) {
         verifyCode(code);
         PTicket codeRecord = code.toRecord();
+
+        checkIfThisCodeExists(code);
         codeRecord = recordManager.createRecord(CODE, codeRecord);
         
         Set<PTicket> ticketsForThisCode = new HashSet<PTicket>();
@@ -86,6 +121,17 @@ public class CodeManager {
         Code savedCode = new Code(codeRecord);
         savedCode.setTickets(getIds(ticketsForThisCode));
         return savedCode;
+    }
+
+    private void checkIfThisCodeExists(Code code) {
+        AthenaSearch search = new AthenaSearch.Builder()
+                                              .type(CODE)
+                                              .and("code", Operator.EQUALS, code.getCode())
+                                              .build();
+        Set<PTicket> results = apa.findTickets(search);
+        if(results.size() > 0) {
+            throw new AthenaConflictException("Code ["+code.getCode()+"] already exists");
+        }
     }
 
     private Set<String> getIds(Collection<PTicket> records) {

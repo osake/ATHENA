@@ -65,18 +65,19 @@ public class CodeResource {
 
     @PUT
     @Path("/{id}")
-    public Object create(@PathParam("id") String id, Code code) throws Exception {
-        return codeManger.getCode(id);
+    public Object update(@PathParam("id") String id, Code code) throws Exception {
+        return codeManger.createCode(code);
     }
 
     @DELETE
     @Path("/{id}")
-    public void create(@PathParam("id") String id) throws Exception {
+    public void delete(@PathParam("id") String id) throws Exception {
+        codeManger.deleteCode(id);
     }
 
     @DELETE
     @Path("/{id}/tickets/{ticketId}")
-    public void create(@PathParam("id") String id, @PathParam("ticketId") String ticketId) throws Exception {
+    public void delete(@PathParam("id") String id, @PathParam("ticketId") String ticketId) throws Exception {
     }
 
 }
