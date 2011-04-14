@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.helper.codes.web;
 
+import com.sun.jersey.api.NotFoundException;
 import java.util.HashSet;
 import java.util.Set;
 import org.fracturedatlas.athena.apa.ApaAdapter;
@@ -31,6 +32,7 @@ import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.util.date.DateUtil;
+import org.fracturedatlas.athena.web.exception.AthenaConflictException;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,6 +68,42 @@ public class CodeManagerTest {
         assertNotNull(savedCode);
         assertNotNull(savedCode.getId());
         assertSavedcodeIsCorrect(savedCode, code);
+
+        //todo: assert that the tickets are correct
+    }
+
+    @Test
+    public void testGetCodeDoesNotExist() throws Exception {
+        try{
+            manager.getCode("32orino3n");
+            fail("Should have thrown nfe");
+        } catch (NotFoundException nfe) {
+            //pass
+        }
+        verify(mockRecordManager, times(1)).getTicket(CodeManager.CODE, "32orino3n");
+    }
+
+    @Test
+    public void testDeleteCode() throws Exception {
+        manager.deleteCode(SAMPLE_ID);
+        verify(mockApa, times(1)).deleteRecord(CodeManager.CODE, SAMPLE_ID);
+
+        //TODO: cleanup the tickets too
+    }
+
+    @Test
+    public void testDeleteCodeFromTicketThatDoesntHaveCode() throws Exception {
+        manager.deleteCodeFromTicket(SAMPLE_ID, sampleTicket.getId());
+        verify(mockRecordManager, times(1)).getTicket(CodeManager.CODE, SAMPLE_ID);
+    }
+
+    @Test
+    public void testDeleteCodeFromTicket() throws Exception {
+        when(mockRecordManager.getTicket("ticket", sampleTicket.getId())).thenReturn(targetTicket);
+        manager.deleteCodeFromTicket(SAMPLE_ID, targetTicket.getId());
+
+        verify(mockRecordManager, times(1)).getTicket(CodeManager.CODE, SAMPLE_ID);
+        verify(mockApa, times(1)).saveRecord("ticket", sampleTicket);
     }
 
     @Test
@@ -78,6 +116,25 @@ public class CodeManagerTest {
         verify(mockRecordManager, times(1)).getTicket("ticket", sampleTicket.getId());
         verify(mockRecordManager, times(code.getTickets().size())).updateRecord("ticket", targetTicket);
         verify(mockRecordManager, times(1)).createRecord(CodeManager.CODE, targetCode);
+    }
+
+    @Test
+    public void testCreateCodeAlreadyExists() throws Exception {
+        Set<PTicket> results = new HashSet<PTicket>();
+        results.add(targetCodeWithId);
+        AthenaSearch athenaSearch = new AthenaSearch.Builder()
+                                              .type("code")
+                                              .and("code", Operator.EQUALS, targetCodeWithId.get("code"))
+                                              .build();
+
+        when(mockApa.findTickets(athenaSearch)).thenReturn(results);
+        try{
+            manager.createCode(code);
+            fail("Should have a conflict");
+        } catch (AthenaConflictException ace) {
+            //pass
+        }
+        verify(mockApa, times(1)).findTickets(athenaSearch);
     }
 
     @Test
