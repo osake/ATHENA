@@ -72,7 +72,7 @@ public class CodeManager {
         verifyCode(code);
         PTicket codeRecord = code.toRecord();
         codeRecord = recordManager.createRecord(CODE, codeRecord);
-
+        
         Set<PTicket> ticketsForThisCode = new HashSet<PTicket>();
         if(code.getPerformances() == null) {
             code.setPerformances(new HashSet<String>());
@@ -83,7 +83,19 @@ public class CodeManager {
         ticketsForThisCode.addAll(getTicketsOnCode(code));
         processTickets(ticketsForThisCode, code);
 
-        return new Code(codeRecord);
+        Code savedCode = new Code(codeRecord);
+        savedCode.setTickets(getIds(ticketsForThisCode));
+        return savedCode;
+    }
+
+    private Set<String> getIds(Collection<PTicket> records) {
+        Set<String> ids = new HashSet<String>();
+
+        for(PTicket r : records) {
+            ids.add(r.getIdAsString());
+        }
+
+        return ids;
     }
 
     private Set<PTicket> processTickets(Set<PTicket> tickets, Code code) {
@@ -122,9 +134,7 @@ public class CodeManager {
                 search.addConstraint("eventId", Operator.IN, code.getEvents());
             }
             Collection<PTicket> performances = athenaStage.find("performance", search);
-            for(PTicket perf : performances) {
-                performanceIds.add(perf.getIdAsString());
-            }
+            performanceIds = getIds(performances);
         }
         return performanceIds;
     }

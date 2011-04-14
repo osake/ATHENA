@@ -70,6 +70,7 @@ public class Code {
 
         this.description = pTicket.get("codeDescription");
         this.code = pTicket.get("code");
+        this.price = Integer.parseInt(pTicket.get("price"));
 
         if(pTicket.get("codeStartDate") != null) {
             try {
@@ -186,6 +187,7 @@ public class Code {
 
         pTicket.put("codeDescription", description);
         pTicket.put("code", code);
+        pTicket.put("price", Integer.toString(price));
         
         if(startDate != null) {
             pTicket.put("codeStartDate", DateUtil.formatDate(startDate));
@@ -196,4 +198,6 @@ public class Code {
 
         return pTicket;
     }
+
+
 }
