@@ -108,7 +108,12 @@ public class CodeManager {
         PTicket codeRecord = code.toRecord();
 
         checkIfThisCodeExists(code);
+
+        System.out.println("1");
+        System.out.println(code);
         codeRecord = recordManager.createRecord(CODE, codeRecord);
+        System.out.println("2");
+        System.out.println(codeRecord);
         
         Set<PTicket> ticketsForThisCode = new HashSet<PTicket>();
         if(code.getPerformances() == null) {
@@ -118,10 +123,15 @@ public class CodeManager {
         code.getPerformances().addAll(getPerformanceIdsForEvents(code));
         ticketsForThisCode.addAll(getTicketsForPerformances(code));
         ticketsForThisCode.addAll(getTicketsOnCode(code));
+
+        System.out.println("3");
         processTickets(ticketsForThisCode, code);
+        System.out.println("4");
 
         Code savedCode = new Code(codeRecord);
+        System.out.println("5");
         savedCode.setTickets(getIds(ticketsForThisCode));
+        System.out.println("6");
         return savedCode;
     }
 

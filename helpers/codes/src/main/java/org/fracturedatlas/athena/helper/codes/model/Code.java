@@ -70,7 +70,11 @@ public class Code {
 
         this.description = pTicket.get("codeDescription");
         this.code = pTicket.get("code");
-        this.price = Integer.parseInt(pTicket.get("price"));
+
+
+        if(pTicket.get("price") != null) {
+            this.price = Integer.parseInt(pTicket.get("price"));
+        }
 
         if(pTicket.get("codeStartDate") != null) {
             try {
@@ -179,15 +183,24 @@ public class Code {
     
     public PTicket toRecord() {
         PTicket pTicket = new PTicket();
-        pTicket.put("id", id);
+        pTicket.setId(id);
+        pTicket.setType("code");
 
         if(enabled != null) {
             pTicket.put("codeEnabled", Boolean.toString(enabled));
         }
 
-        pTicket.put("codeDescription", description);
-        pTicket.put("code", code);
-        pTicket.put("price", Integer.toString(price));
+        if(description != null) {
+            pTicket.put("codeDescription", description);
+        }
+        
+        if(code != null) {
+            pTicket.put("code", code);
+        }
+
+        if(price != null) {
+            pTicket.put("price", Integer.toString(price));
+        }
         
         if(startDate != null) {
             pTicket.put("codeStartDate", DateUtil.formatDate(startDate));
