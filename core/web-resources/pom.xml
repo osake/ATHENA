@@ -2,14 +2,14 @@
   <parent>
     <groupId>org.fracturedatlas.athena</groupId>
     <artifactId>core</artifactId>
-    <version>1.0.0-rc-02-SNAPSHOT</version>
+    <version>1.0.0-rc-03-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.fracturedatlas.athena</groupId>
   <artifactId>web-resources</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0-rc-02-SNAPSHOT</version>
+  <version>1.0.0-rc-03-SNAPSHOT</version>
   <name>web-resources</name>
   <build>
     <finalName>web-resources</finalName>
