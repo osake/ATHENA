@@ -61,8 +61,12 @@ public class CodeResource {
 
     @POST
     @Path("")
-    public Object create(Code code) throws Exception {
-        return codeManger.createCode(code);
+    public Code create(Code code) throws Exception {
+        System.out.println("11");
+        Code createdCode = codeManger.createCode(code);
+        System.out.println("22");
+        System.out.println(createdCode);
+        return createdCode;
     }
 
     @PUT
