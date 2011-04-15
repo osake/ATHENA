@@ -36,10 +36,12 @@ import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 @Path("/codes")
 @Consumes({"application/json"})
 @Produces({"application/json"})
+@Component
 public class CodeResource {
 
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
