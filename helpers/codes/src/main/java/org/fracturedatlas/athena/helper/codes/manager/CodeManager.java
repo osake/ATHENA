@@ -37,7 +37,9 @@ import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CodeManager {
 
     @Autowired
