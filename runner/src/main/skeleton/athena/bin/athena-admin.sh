@@ -1,1 +1,1 @@
-exec java -classpath ../config:../components/shared/config -jar ./admin.jar create-user
+exec java -jar ./admin.jar create-user

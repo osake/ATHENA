@@ -13,8 +13,8 @@ jdbc-athena.proxool.alias=athena-proxool-connection-pool
 #The JDBC connection string to your databasew
 jdbc-athena.proxool.driver-url=jdbc:mysql://localhost/ATHENA-Tix
 jdbc-athena.proxool.driver-class=com.mysql.jdbc.Driver
-jdbc-athena.user=parakeetdb
-jdbc-athena.password=parakeetdb
+jdbc-athena.user=
+jdbc-athena.password=
 jdbc-athena.proxool.test-before-use=true
 jdbc-athena.proxool.house-keeping-test-sql=select 1
 jdbc-athena.proxool.house-keeping-sleep-time=30000

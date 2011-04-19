@@ -127,6 +127,7 @@
                                         <copy todir="../../runner/src/main/skeleton/athena/components/shared/config">
                                             <fileset dir="src/main/resources" includes="components.properties" />
                                             <fileset dir="src/main/resources" includes="security.properties" />
+                                            <fileset dir="src/main/resources" includes="audit-client.properties" />
                                         </copy>
                                     </target>
                                 </configuration>

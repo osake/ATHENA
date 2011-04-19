@@ -7,7 +7,7 @@
     <bean
         class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="location">
-            <value>classpath:security.properties</value>
+            <value>file:/opt/athena/components/shared/config/security.properties</value>
         </property>
     </bean>
 
