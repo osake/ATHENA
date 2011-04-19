@@ -19,13 +19,11 @@ Copyright 2011 Fractured Atlas.  See included LICENSE file.
 * Service-oriented architecture
 * RESTful endpoints using JSON over HTTP
 * Application authentication with Digest authentication
-* Flexibile back-end storage solutions (JPA or Mongo)
+* Flexibile back-end storage solutions (JPA or Mongo) (comping soon)
 
 ## Installation and Deployment
 
-ATHENA builds war files which can (concievably) be deployed to any Java-compliant web container.  We're supporting standalone deployment to Glassfishv3 and embedded deployment with Jetty.
-
-Please see instructions for setting up ATHENA [on the wiki](https://github.com/fracturedatlas/ATHENA/wiki)
+ATHENA can be run as a process or as a daemon (Ubuntu only).  Please see instructions for setting up ATHENA [on the wiki](https://github.com/fracturedatlas/ATHENA/wiki)
 
 ## Components
 
@@ -52,7 +50,7 @@ ATHENA Components are built from building blocks found in "core" and "helpers"
 
 ## Reporting Problems
 
-Public JIRA is coming soon
+We'd love to hear it!  Please feel free to repot problems to the mailing list (above) or on our [JIRA](http://jira.fracturedatlas.org)
 
 ## Contributors
 
