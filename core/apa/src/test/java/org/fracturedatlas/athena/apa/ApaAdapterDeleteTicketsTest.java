@@ -50,7 +50,7 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
     }
 
     @After
-    public void teardownTickets() {
+    public void teardown() {
         super.teardownTickets();
     }
 
@@ -100,6 +100,7 @@ public class ApaAdapterDeleteTicketsTest extends BaseApaAdapterTest {
         t2 = apa.saveRecord(t2);
         t3 = apa.saveRecord(t3);
         t4 = apa.saveRecord(t4);
+        ticketsToDelete.add(t4);
 
         assertTrue(apa.deleteRecord(t.getType(), t.getId()));
         assertTrue(apa.deleteRecord(t2.getType(), t2.getId()));

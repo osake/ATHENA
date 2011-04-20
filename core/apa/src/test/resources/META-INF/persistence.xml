@@ -12,7 +12,7 @@
     <class>org.fracturedatlas.athena.apa.impl.jpa.PropField</class>
     <class>org.fracturedatlas.athena.apa.impl.jpa.PropValue</class>
     <properties>
-      <property name="hibernate.hbm2ddl.auto" value="validate"/>
+      <property name="hibernate.hbm2ddl.auto" value=""/>
       <property name="hibernate.ejb.autodetection" value="class"/>
       <property name="hibernate.connection.url" value="jdbc:mysql://localhost/ATHENA-Test"/>
       <property name="hibernate.connection.driver_class" value="com.mysql.jdbc.Driver"/>

@@ -104,6 +104,10 @@ public interface ApaAdapter {
      *
      * Type must be specified, but search constraints may be empty.  This method must honor start, end, and limit modifiers.
      *
+     * Implementors may decide to not allow searching if the underlying type is not conducive to seearching (either for performance or otherwise)
+     * One example is ValueText.TEXT.  In a RDBMS, TEXT is usually mapped to TEXT, CLOB, or LONG VARCHAR types which are not
+     * usually allowed to be compared.
+     *
      * @param searchParams the search criteria.  Criteria should be in the format: key = prop, value = prop value
      * @return matching tickets, empty List if no tickets found
      */

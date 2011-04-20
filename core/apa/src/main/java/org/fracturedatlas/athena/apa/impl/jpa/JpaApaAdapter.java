@@ -264,6 +264,8 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
      * Find tickets according to the AtheaSearch.
      * Type must be specified, but search constraints may be empty.  This method honors start, end, and limit modifiers.
      *
+     * If one of the fields is ValueType.TEXT, this method will throw an ApaException
+     *
      * @param athenaSearch a set of search constraints and search modifiers
      * @return Set of tickets whose Props match the athenaSearch
      */
@@ -271,6 +273,9 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     public Set<PTicket> findTickets(AthenaSearch athenaSearch) {
         logger.debug("Searching for tickets:");
         logger.debug("{}", athenaSearch);
+
+        checkValueTypes(athenaSearch);
+
         EntityManager em = this.emf.createEntityManager();
         Query query = null;
         Collection<JpaRecord> finishedTicketsList = null;
@@ -318,6 +323,23 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             throw ex;
         } finally {
             cleanup(em);
+        }
+    }
+
+    private void checkValueTypes(AthenaSearch athenaSearch) {
+        for (AthenaSearchConstraint apc : athenaSearch.getConstraints()) {
+            String fieldName = apc.getParameter();
+
+            //TODO: This is done twice (see checkValueTypes), a bit of a waste of time
+            PropField pf = getPropField(fieldName);
+            if (pf != null) {
+                ValueType vt = pf.getValueType();
+                if(vt.equals(ValueType.TEXT)) {
+                    throw new ApaException("You cannot search on TEXT fields");
+                }
+            } else {
+                throw new InvalidFieldException("No Property Field called " + fieldName + " exists.");
+            }
         }
     }
 
@@ -389,6 +411,8 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         Collection<JpaRecord> ticketsList = null;
 
         fieldName = apc.getParameter();
+
+        //TODO: This is done twice (see checkValueTypes), a bit of a waste of time
         pf = getPropField(fieldName);
         if (pf != null) {
             vt = pf.getValueType();

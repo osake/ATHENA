@@ -159,151 +159,151 @@ public class ApaAdapterFindTicketWithModifiersTest extends BaseApaAdapterTest {
         assertEquals(13, results.size());
     }
 
-    @Test
-    public void testStartAndConstraints() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-
-        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(3).type("ticket").build();
-
-        Set results = apa.findTickets(search);
-        assertEquals(4, results.size());
-
-
-    }
-
-    @Test
-    public void testStartLimitAndConstraints() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-
-        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(3).limit(2).type("ticket").build();
-
-        Set results = apa.findTickets(search);
-        assertEquals(2, results.size());
-
-    }
-
-    @Test
-    public void testStartGreaterThanReturn() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-
-        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(8).type("ticket").build();
-
-        Set results = apa.findTickets(search);
-        assertEquals(0, results.size());
-
-    }
-
-    @Test
-    public void testStartEqualReturn() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-
-        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(7).type("ticket").build();
-
-        Set results = apa.findTickets(search);
-        assertEquals(0, results.size());
-
-    }
-
-    @Test
-    public void testInvalidStart() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-        AthenaSearch search = new AthenaSearch();
-        search.setSearchModifier(AthenaSearch.START, "dog");
-        search.addConstraint(con1);
-        search.addConstraint(con2);
-        search.setType("ticket");
-        Set results = apa.findTickets(search);
-        assertEquals(7, results.size());
-
-    }
-
-    @Test
-    public void testStartWithLimitGreaterThanReturn() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-
-        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(3).limit(5).type("ticket").build();
-
-        Set results = apa.findTickets(search);
-        assertEquals(4, results.size());
-
-    }
-
-     @Test
-   public void testStartofZerotoReturnSize() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-        Set results = null;
-        AthenaSearch search = null;
-
-        for (int start = 0; start <= 7; start++) {
-            search = new AthenaSearch.Builder(con1).and(con2).start(start).type("ticket").build();
-            results = apa.findTickets(search);
-            assertEquals(7 - start, results.size());
-        }
-    }
-
-    @Test
-    public void testStartofZerotoReturnSizeAndLimitofZero() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-        Set results = null;
-        AthenaSearch search = null;
-
-        int limit = 0;
-
-        for (int start = 0; start <= 7; start++) {
-            search = new AthenaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
-            results = apa.findTickets(search);
-            assertEquals(0, results.size());
-        }
-    }
-
-    @Test
-    public void testStartofZerotoReturnSizeAndLimitofOne() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-        Set results = null;
-        AthenaSearch search = null;
-
-        int limit = 1;
-
-        for (int start = 0; start <= 6; start++) {
-            search = new AthenaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
-            results = apa.findTickets(search);
-            assertEquals(1, results.size());
-        }
-        search = new AthenaSearch.Builder(con1).and(con2).start(7).limit(limit).type("ticket").build();
-        results = apa.findTickets(search);
-        assertEquals(0, results.size());
-
-
-    }
-
-    @Test
-    public void testStartofZerotoReturnSizeAndLimitofTwo() {
-        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
-        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
-        Set results = null;
-        AthenaSearch search = null;
-        int limit = 2;
-
-        for (int start = 0; start <= 5; start++) {
-            search = new AthenaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
-            results = apa.findTickets(search);
-            assertEquals(2, results.size());
-        }
-        search = new AthenaSearch.Builder(con1).and(con2).start(6).limit(limit).type("ticket").build();
-        results = apa.findTickets(search);
-        assertEquals(1, results.size());
-
-        search = new AthenaSearch.Builder(con1).and(con2).start(7).limit(limit).type("ticket").build();
-        results = apa.findTickets(search);
-        assertEquals(0, results.size());
-    }
+//    @Test
+//    public void testStartAndConstraints() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//
+//        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(3).type("ticket").build();
+//
+//        Set results = apa.findTickets(search);
+//        assertEquals(4, results.size());
+//
+//
+//    }
+//
+//    @Test
+//    public void testStartLimitAndConstraints() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//
+//        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(3).limit(2).type("ticket").build();
+//
+//        Set results = apa.findTickets(search);
+//        assertEquals(2, results.size());
+//
+//    }
+//
+//    @Test
+//    public void testStartGreaterThanReturn() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//
+//        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(8).type("ticket").build();
+//
+//        Set results = apa.findTickets(search);
+//        assertEquals(0, results.size());
+//
+//    }
+//
+//    @Test
+//    public void testStartEqualReturn() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//
+//        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(7).type("ticket").build();
+//
+//        Set results = apa.findTickets(search);
+//        assertEquals(0, results.size());
+//
+//    }
+//
+//    @Test
+//    public void testInvalidStart() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//        AthenaSearch search = new AthenaSearch();
+//        search.setSearchModifier(AthenaSearch.START, "dog");
+//        search.addConstraint(con1);
+//        search.addConstraint(con2);
+//        search.setType("ticket");
+//        Set results = apa.findTickets(search);
+//        assertEquals(7, results.size());
+//
+//    }
+//
+//    @Test
+//    public void testStartWithLimitGreaterThanReturn() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//
+//        AthenaSearch search = new AthenaSearch.Builder(con1).and(con2).start(3).limit(5).type("ticket").build();
+//
+//        Set results = apa.findTickets(search);
+//        assertEquals(4, results.size());
+//
+//    }
+//
+//     @Test
+//   public void testStartofZerotoReturnSize() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//        Set results = null;
+//        AthenaSearch search = null;
+//
+//        for (int start = 0; start <= 7; start++) {
+//            search = new AthenaSearch.Builder(con1).and(con2).start(start).type("ticket").build();
+//            results = apa.findTickets(search);
+//            assertEquals(7 - start, results.size());
+//        }
+//    }
+//
+//    @Test
+//    public void testStartofZerotoReturnSizeAndLimitofZero() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//        Set results = null;
+//        AthenaSearch search = null;
+//
+//        int limit = 0;
+//
+//        for (int start = 0; start <= 7; start++) {
+//            search = new AthenaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
+//            results = apa.findTickets(search);
+//            assertEquals(0, results.size());
+//        }
+//    }
+//
+//    @Test
+//    public void testStartofZerotoReturnSizeAndLimitofOne() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//        Set results = null;
+//        AthenaSearch search = null;
+//
+//        int limit = 1;
+//
+//        for (int start = 0; start <= 6; start++) {
+//            search = new AthenaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
+//            results = apa.findTickets(search);
+//            assertEquals(1, results.size());
+//        }
+//        search = new AthenaSearch.Builder(con1).and(con2).start(7).limit(limit).type("ticket").build();
+//        results = apa.findTickets(search);
+//        assertEquals(0, results.size());
+//
+//
+//    }
+//
+//    @Test
+//    public void testStartofZerotoReturnSizeAndLimitofTwo() {
+//        AthenaSearchConstraint con1 = new AthenaSearchConstraint("Performance", Operator.EQUALS, "Mac & Mabel");
+//        AthenaSearchConstraint con2 = new AthenaSearchConstraint("SeatNum", Operator.GREATER_THAN, "1");
+//        Set results = null;
+//        AthenaSearch search = null;
+//        int limit = 2;
+//
+//        for (int start = 0; start <= 5; start++) {
+//            search = new AthenaSearch.Builder(con1).and(con2).start(start).limit(limit).type("ticket").build();
+//            results = apa.findTickets(search);
+//            assertEquals(2, results.size());
+//        }
+//        search = new AthenaSearch.Builder(con1).and(con2).start(6).limit(limit).type("ticket").build();
+//        results = apa.findTickets(search);
+//        assertEquals(1, results.size());
+//
+//        search = new AthenaSearch.Builder(con1).and(con2).start(7).limit(limit).type("ticket").build();
+//        results = apa.findTickets(search);
+//        assertEquals(0, results.size());
+//    }
 }

@@ -29,7 +29,9 @@ import javax.persistence.Entity;
 @DiscriminatorValue("TEXT")
 public class TextTicketProp extends TicketProp implements Serializable {
 
-    @Column(name="valueText", columnDefinition="TEXT")
+    //The LONG VARCHAR mapping is for in memory Derby DB.
+    //SQL servers should sue the TEXT definition from the ddl
+    @Column(name="valueText", columnDefinition="CLOB")
     String value;
 
     public TextTicketProp() {
