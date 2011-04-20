@@ -121,8 +121,8 @@
         <configuration>
           <driver>com.mysql.jdbc.Driver</driver>
           <url>jdbc:mysql://localhost/ATHENA-Test</url>
-          <username>root</username>
-          <password></password>
+          <username>parakeetdb</username>
+          <password>parakeetdb</password>
           <srcFiles>
             <srcFile>../../ddl/athena-audit.sql</srcFile>
             <srcFile>../../ddl/athena-ddl.sql</srcFile>
