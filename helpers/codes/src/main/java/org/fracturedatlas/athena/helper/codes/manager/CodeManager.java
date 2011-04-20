@@ -24,15 +24,14 @@ import com.sun.jersey.api.NotFoundException;
 import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.List;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.codes.model.Code;
-import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.web.exception.AthenaConflictException;
+import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
@@ -100,15 +99,22 @@ public class CodeManager {
      *
      * This method does not fail if a performance or event is not found.  Processing will continue with other valid performance, events, or tickets.
      *
+     * code.code cannot be updated
+     *
      * @param code
      * @return the created code with an id sassigned
      */
-    public Code createCode(Code code) {
+    public Code saveCode(Code code) {
         verifyCode(code);
         PTicket codeRecord = code.toRecord();
 
-        checkIfThisCodeExists(code);
-        codeRecord = recordManager.createRecord(CODE, codeRecord);
+        if(code.getId() == null) {
+            checkIfThisCodeExists(code);
+            codeRecord = recordManager.createRecord(CODE, codeRecord);
+        } else {
+            checkForCodeImmutability(code);
+            codeRecord = recordManager.updateRecord(CODE, codeRecord);
+        }
         
         Set<PTicket> ticketsForThisCode = new HashSet<PTicket>();
         if(code.getPerformances() == null) {
@@ -124,6 +130,17 @@ public class CodeManager {
         Code savedCode = new Code(codeRecord);
         savedCode.setTickets(getIds(ticketsForThisCode));
         return savedCode;
+    }
+
+    private void checkForCodeImmutability(Code code) {
+        PTicket codeRecord = recordManager.getTicket(CODE, code.getId());
+        if(codeRecord == null) {
+            throw new AthenaException("Trying to update code [" + code.getId() + "] but this code was not found");
+        } else {
+            if(code.getCode() == null || !code.getCode().equals(codeRecord.get("code"))) {
+                throw new AthenaException("Cannot change code on [" + code.getId() + "].  Tried to change ["+codeRecord.get("code")+"] to ["+code.getCode()+"]");
+            }
+        }
     }
 
     private void checkIfThisCodeExists(Code code) {
@@ -150,6 +167,7 @@ public class CodeManager {
     private Set<PTicket> processTickets(Set<PTicket> tickets, Code code) {
         for(PTicket ticket : tickets) {
             ticket.put(code.getCode(), Integer.toString(code.getPrice()));
+            logger.debug("Updating: " + ticket);
             recordManager.updateRecord(CODED_TYPE, ticket);
         }
         return tickets;

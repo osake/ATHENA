@@ -33,7 +33,9 @@ import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.fracturedatlas.athena.web.exception.AthenaConflictException;
+import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.fracturedatlas.athena.web.manager.RecordManager;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -108,7 +110,7 @@ public class CodeManagerTest {
 
     @Test
     public void testCreateCode() throws Exception {
-        Code createdCode = manager.createCode(code);
+        Code createdCode = manager.saveCode(code);
         assertNotNull(createdCode);
         assertSavedcodeIsCorrect(createdCode, code);
         assertEquals(createdCode.getTickets(), code.getTickets());
@@ -116,6 +118,70 @@ public class CodeManagerTest {
         verify(mockRecordManager, times(1)).getTicket("ticket", sampleTicket.getId());
         verify(mockRecordManager, times(code.getTickets().size())).updateRecord("ticket", targetTicket);
         verify(mockRecordManager, times(1)).createRecord(CodeManager.CODE, targetCode);
+    }
+
+    @Test
+    public void testUpdateCode() throws Exception {
+
+        String testDescription = "TEST_DESCRIPTON";
+        DateTime testStartDate = new DateTime("2013-03-03T03:09:33Z");
+        DateTime testEndDate = new DateTime("2013-02-23T03:19:33Z");
+        Integer testPrice = 4000;
+        Boolean testEnabled = Boolean.FALSE;
+
+        Code createdCode = manager.saveCode(code);
+
+        createdCode.setDescription(testDescription);
+        createdCode.setStartDate(testStartDate.toDate());
+        createdCode.setEndDate(testEndDate.toDate());
+        createdCode.setPrice(testPrice);
+        createdCode.setEnabled(testEnabled);
+
+        PTicket createdCodeRecord = createdCode.toRecord();
+        Code updatedCode = manager.saveCode(createdCode);
+
+        verify(mockRecordManager, times(2)).getTicket("ticket", sampleTicket.getId());
+        verify(mockRecordManager, times(2)).updateRecord(CodeManager.CODED_TYPE, sampleTicket);
+        verify(mockRecordManager, times(1)).updateRecord(CodeManager.CODE, createdCodeRecord);
+    }
+
+    @Test
+    public void testUpdateCodeImmutableCodeField() throws Exception {
+
+        String testCode = "A_NEW_TEST_CODE";
+        Code createdCode = manager.saveCode(code);
+        createdCode.setCode(testCode);
+
+        PTicket createdCodeRecord = createdCode.toRecord();
+        try {
+            Code updatedCode = manager.saveCode(createdCode);
+            fail("Should not have saved code");
+        } catch (AthenaException ae) {
+            //pass
+        }
+
+        verify(mockRecordManager, times(1)).getTicket("ticket", sampleTicket.getId());
+        verify(mockRecordManager, times(1)).updateRecord(CodeManager.CODED_TYPE, sampleTicket);
+        verify(mockRecordManager, times(0)).updateRecord(CodeManager.CODE, createdCodeRecord);
+    }
+
+    @Test
+    public void testUpdateCodeAddTickets() throws Exception {
+        Code createdCode = manager.saveCode(code);
+
+        PTicket anotherSampleTicket = new PTicket("ticket");
+        anotherSampleTicket.setId("some_idz");        
+        PTicket createdCodeRecord = createdCode.toRecord();
+        createdCode.getTickets().add(anotherSampleTicket.getIdAsString());
+        anotherSampleTicket.put(createdCode.getCode(), createdCode.getId());
+        when(mockRecordManager.getTicket(CodeManager.CODED_TYPE, anotherSampleTicket.getId())).thenReturn(anotherSampleTicket);
+        
+        Code updatedCode = manager.saveCode(createdCode);
+
+        verify(mockRecordManager, times(2)).getTicket(CodeManager.CODED_TYPE, sampleTicket.getId());
+        verify(mockRecordManager, times(2)).updateRecord(CodeManager.CODED_TYPE, sampleTicket);
+        verify(mockRecordManager, times(1)).updateRecord(CodeManager.CODED_TYPE, anotherSampleTicket);
+        verify(mockRecordManager, times(1)).updateRecord(CodeManager.CODE, createdCodeRecord);
     }
 
     @Test
@@ -129,7 +195,7 @@ public class CodeManagerTest {
 
         when(mockApa.findTickets(athenaSearch)).thenReturn(results);
         try{
-            manager.createCode(code);
+            manager.saveCode(code);
             fail("Should have a conflict");
         } catch (AthenaConflictException ace) {
             //pass
@@ -152,7 +218,7 @@ public class CodeManagerTest {
 
         code.setTickets(null);
         code.getPerformances().add(samplePerformance.getIdAsString());
-        Code createdCode = manager.createCode(code);
+        Code createdCode = manager.saveCode(code);
         assertNotNull(createdCode);
         assertSavedcodeIsCorrect(createdCode, code);
 
@@ -188,7 +254,7 @@ public class CodeManagerTest {
 
         code.setTickets(null);
         code.getPerformances().add(samplePerformance.getIdAsString());
-        Code createdCode = manager.createCode(code);
+        Code createdCode = manager.saveCode(code);
         assertNotNull(createdCode);
         assertSavedcodeIsCorrect(createdCode, code);
         Set<String> targetTicketIds = new HashSet<String>();
@@ -243,7 +309,7 @@ public class CodeManagerTest {
 
         code.setTickets(null);
         code.getPerformances().add(samplePerformance.getIdAsString());
-        Code createdCode = manager.createCode(code);
+        Code createdCode = manager.saveCode(code);
         assertNotNull(createdCode);
         assertSavedcodeIsCorrect(createdCode, code);
         Set<String> targetTicketIds = new HashSet<String>();
@@ -263,7 +329,7 @@ public class CodeManagerTest {
     @Test
     public void testCreateCodeWithNullTickets() throws Exception {
         code.setTickets(null);
-        Code createdCode = manager.createCode(code);
+        Code createdCode = manager.saveCode(code);
         assertNotNull(createdCode);
         assertSavedcodeIsCorrect(createdCode, code);
 

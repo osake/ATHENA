@@ -62,17 +62,14 @@ public class CodeResource {
     @POST
     @Path("")
     public Code create(Code code) throws Exception {
-        System.out.println("11");
-        Code createdCode = codeManger.createCode(code);
-        System.out.println("22");
-        System.out.println(createdCode);
+        Code createdCode = codeManger.saveCode(code);
         return createdCode;
     }
 
     @PUT
     @Path("/{id}")
     public Object update(@PathParam("id") String id, Code code) throws Exception {
-        return codeManger.createCode(code);
+        return codeManger.saveCode(code);
     }
 
     @DELETE

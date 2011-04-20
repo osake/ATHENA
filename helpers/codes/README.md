@@ -118,8 +118,10 @@ Make a PUT request similar to the POST request above.
       "eligibleClients": []
       "enabled": 
     }
-    
-All fields will be updated EXCEPT: performances, events, and tickets.  Any tickets in this list will have this code applied to them.  Tickets not in this list will not be updated.
+
+*You cannot update the "code" field*
+
+All other fields will be updated EXCEPT: performances, events, and tickets.  Any tickets in this list will have this code applied to them.  Tickets not in this list will not be updated.
 
 Example response:
 
