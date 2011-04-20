@@ -10,7 +10,7 @@
     <context:component-scan base-package="org.fracturedatlas.athena"/>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
-        <property name="persistenceUnitName" value="test-derby"/>
+        <property name="persistenceUnitName" value="test"/>
     </bean>
     <bean id="apa" class="org.fracturedatlas.athena.apa.impl.jpa.JpaApaAdapter">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>

@@ -123,6 +123,7 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
         ticket2.put("SEAT2", "233");
 
         ticket2 = apa.saveRecord(ticket2);
+        ticketsToDelete.add(ticket2);
         ticket = apa.getRecord(ticket2.getType(), ticket2.getId());
 
         assertNotNull(ticket.getId());
@@ -164,6 +165,7 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
         ticket2.put("SEAT2", "233");
 
         ticket2 = apa.saveRecord(ticket2);
+        ticketsToDelete.add(ticket2);
         ticket = apa.getRecord(ticket2.getType(), ticket2.getId());
 
         assertNotNull(ticket.getId());

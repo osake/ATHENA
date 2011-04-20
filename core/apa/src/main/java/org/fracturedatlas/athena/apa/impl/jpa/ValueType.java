@@ -17,6 +17,11 @@ public enum ValueType {
                 return new IntegerTicketProp();
             }
         },
+	TEXT {
+            public TicketProp newTicketProp() {
+                return new TextTicketProp();
+            }
+        },
 	STRING {
             public TicketProp newTicketProp() {
                 return new StringTicketProp();

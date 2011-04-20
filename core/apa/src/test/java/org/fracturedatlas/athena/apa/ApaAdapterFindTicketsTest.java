@@ -49,7 +49,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
     }
 
     @After
-    public void teardownTickets() {
+    public void teardown() {
         super.teardownTickets();
     }
 
@@ -94,6 +94,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         PTicket t = new PTicket("ticket");
         t.put("BOOLEAN_PROP", "true");
         t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("BOOLEAN_PROP", Operator.EQUALS, "true");
@@ -109,6 +110,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         PTicket t = new PTicket("ticket");
         t.put("WHENISIT", "2009-08-08T04:05:06Z");
         t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("WHENISIT", Operator.EQUALS, "2009-08-08T04:05:06Z");
@@ -124,6 +126,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         PTicket t = new PTicket("ticket");
         t.put("INTEGER_PROP", "2");
         t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("INTEGER_PROP", Operator.EQUALS, "2");
@@ -148,6 +151,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         t.put("SEAT_NUMBER", "3");
         t.put("LOCKED", "true");
         t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         AthenaSearch as = new AthenaSearch.Builder()
                                           .type("ticket")
@@ -172,6 +176,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         t.put("artist", "ACDC");
         t.put("date", "2010-10-14T13:33:50-04:00");
         t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         AthenaSearch as = new AthenaSearch.Builder()
                                           .type("ticket")
@@ -199,9 +204,8 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         t.put("artist", "ACDC");
         t.put("date", "2010-10-14T13:33:50-04:00");
         t.put("locked", "false");
-        logger.debug(t.toString());
         t = apa.saveRecord(t);
-        logger.debug(t.toString());
+        ticketsToDelete.add(t);
 
         AthenaSearch as = new AthenaSearch.Builder()
                                           .type("ticket")
@@ -232,9 +236,8 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         t.put("artist", "ACDC");
         t.put("date", "2010-10-14T13:33:50-04:00");
         t.put("locked", "false");
-        logger.debug(t.toString());
         t = apa.saveRecord(t);
-        logger.debug(t.toString());
+        ticketsToDelete.add(t);
 
         AthenaSearch as = new AthenaSearch.Builder()
                                           .type("ticket")
@@ -277,10 +280,13 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         winners.add(apa.saveRecord(t));
         t = new PTicket("ticket");
         t.put("Artist", "Warant");
-        apa.saveRecord(t);
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
         t = new PTicket("ticket");
         t.put("Artist", "Van Halen");
-        apa.saveRecord(t);
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
+        ticketsToDelete.addAll(winners);
 
         AthenaSearch as = new AthenaSearch.Builder().type("ticket")
                                                     .and(new AthenaSearchConstraint("Artist", Operator.EQUALS, "ACDC"))
@@ -309,7 +315,8 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         t = new PTicket("ticket");
         t.put("Artist", "ACDC");
         t.put("PRICE", "100");
-        apa.saveRecord(t);
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         t = new PTicket("ticket");
         t.put("Artist", "ACDC");
@@ -319,17 +326,21 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         t = new PTicket("ticket");
         t.put("Artist", "ACDC");
         t.put("PRICE", "100");
-        apa.saveRecord(t);
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         t = new PTicket("ticket");
         t.put("Artist", "Warrant");
         t.put("PRICE", "50");
-        apa.saveRecord(t);
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         t = new PTicket("ticket");
         t.put("Artist", "Warrant");
         t.put("PRICE", "75");
-        apa.saveRecord(t);
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
+        ticketsToDelete.addAll(winners);
 
         AthenaSearch as = new AthenaSearch.Builder().type("ticket")
                                                     .and("Artist", Operator.EQUALS, "ACDC")
@@ -355,32 +366,38 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         PTicket t = new PTicket("ticket");
         t.put("Artist", "ACDC");
         t.put("PRICE", "50");
-        apa.saveRecord(t);
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         t = new PTicket("ticket");
         t.put("Artist", "ACDC");
         t.put("PRICE", "100");
-        apa.saveRecord(t);
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         t = new PTicket("ticket");
         t.put("Artist", "ACDC");
         t.put("PRICE", "50");
-        apa.saveRecord(t);
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         t = new PTicket("ticket");
         t.put("Artist", "ACDC");
         t.put("PRICE", "100");
-        apa.saveRecord(t);
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         t = new PTicket("ticket");
         t.put("Artist", "Warrant");
         t.put("PRICE", "50");
-        apa.saveRecord(t);
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         t = new PTicket("ticket");
         t.put("Artist", "Warrant");
         t.put("PRICE", "75");
-        apa.saveRecord(t);
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         AthenaSearch as = new AthenaSearch.Builder().type("ticket")
                                                     .and("Artist", Operator.EQUALS, "Warrant")
@@ -411,7 +428,8 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         t = new PTicket("ticket");
         t.put("Artist", "ACDC");
         t.put("PRICE", "100");
-        apa.saveRecord(t);
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         t = new PTicket("ticket");
         t.put("Artist", "ACDC");
@@ -421,7 +439,8 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         t = new PTicket("ticket");
         t.put("Artist", "ACDC");
         t.put("PRICE", "100");
-        apa.saveRecord(t);
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         t = new PTicket("ticket");
         t.put("Artist", "Warrant");
@@ -431,7 +450,9 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         t = new PTicket("ticket");
         t.put("Artist", "Warrant");
         t.put("PRICE", "75");
-        apa.saveRecord(t);
+        t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
+        ticketsToDelete.addAll(winners);
 
         AthenaSearch as = new AthenaSearch.Builder().type("ticket")
                                                     .and("PRICE", Operator.EQUALS, "50")
@@ -448,6 +469,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         PTicket t = new PTicket("ticket");
         t.put("WHENISIT", "2009-08-08T04:05:06Z");
         t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("WHENISIT", Operator.EQUALS, "2009-08-08");
@@ -462,6 +484,7 @@ public class ApaAdapterFindTicketsTest extends BaseApaAdapterTest {
         PTicket t = new PTicket("ticket");
         t.put("WHENISIT", "2009-08-08T04:05:06Z");
         t = apa.saveRecord(t);
+        ticketsToDelete.add(t);
 
         AthenaSearch as = new AthenaSearch();
         as.addConstraint("WHENISIT", Operator.EQUALS, "04:05:06Z");

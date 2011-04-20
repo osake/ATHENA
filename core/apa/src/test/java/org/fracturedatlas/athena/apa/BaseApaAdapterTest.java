@@ -46,6 +46,7 @@ public abstract class BaseApaAdapterTest {
     public void teardownTickets() {
         for (PTicket t : ticketsToDelete) {
             try {
+                logger.debug("Cleaning up ticket [{}]", t.getId());
                 apa.deleteRecord(t.getType(), t.getId());
             } catch (Exception ignored) {
                 logger.error(ignored.getMessage(), ignored);
@@ -56,7 +57,7 @@ public abstract class BaseApaAdapterTest {
             try {
                 apa.deletePropField(pf);
             } catch (Exception ignored) {
-                //ignored
+                ignored.printStackTrace();
             }
         }
     }

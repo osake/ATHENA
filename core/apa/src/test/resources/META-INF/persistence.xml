@@ -8,6 +8,7 @@
     <class>org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp</class>
     <class>org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp</class>
     <class>org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.TextTicketProp</class>
     <class>org.fracturedatlas.athena.apa.impl.jpa.PropField</class>
     <class>org.fracturedatlas.athena.apa.impl.jpa.PropValue</class>
     <properties>
@@ -30,6 +31,7 @@
     <class>org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp</class>
     <class>org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp</class>
     <class>org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.TextTicketProp</class>
     <class>org.fracturedatlas.athena.apa.impl.jpa.PropField</class>
     <class>org.fracturedatlas.athena.apa.impl.jpa.PropValue</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
@@ -50,6 +52,7 @@
     <class>org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp</class>
     <class>org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp</class>
     <class>org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp</class>
+    <class>org.fracturedatlas.athena.apa.impl.jpa.TextTicketProp</class>
     <class>org.fracturedatlas.athena.apa.impl.jpa.PropField</class>
     <class>org.fracturedatlas.athena.apa.impl.jpa.PropValue</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
