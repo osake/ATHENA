@@ -23,6 +23,8 @@ import com.sun.jersey.api.NotFoundException;
 import java.util.HashSet;
 import java.util.Set;
 import org.fracturedatlas.athena.apa.ApaAdapter;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.codes.manager.CodeManager;
@@ -34,6 +36,7 @@ import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.fracturedatlas.athena.web.exception.AthenaConflictException;
 import org.fracturedatlas.athena.web.exception.AthenaException;
+import org.fracturedatlas.athena.web.manager.PropFieldManager;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.joda.time.DateTime;
 import org.junit.Before;
@@ -60,6 +63,7 @@ public class CodeManagerTest {
     private static final String SAMPLE_PERFORMANCE_ID = "id10t";
     private static final Integer SAMPLE_PRICE = 95;
     @Mock private RecordManager mockRecordManager;
+    @Mock private PropFieldManager mockFieldManager;
     @Mock private AthenaComponent mockStage;
     @Mock private ApaAdapter mockApa;
 
@@ -110,6 +114,11 @@ public class CodeManagerTest {
 
     @Test
     public void testCreateCode() throws Exception {
+        PropField targetPropField = new PropField(ValueType.INTEGER, code.getCodeAsFieldName(), Boolean.FALSE);
+        PropField savedTargetPropField = new PropField(ValueType.INTEGER, code.getCodeAsFieldName(), Boolean.FALSE);
+        savedTargetPropField.setId("1");
+        when(mockApa.savePropField(targetPropField)).thenReturn(savedTargetPropField);
+
         Code createdCode = manager.saveCode(code);
         assertNotNull(createdCode);
         assertSavedcodeIsCorrect(createdCode, code);
@@ -117,6 +126,19 @@ public class CodeManagerTest {
 
         verify(mockRecordManager, times(1)).getTicket("ticket", sampleTicket.getId());
         verify(mockRecordManager, times(code.getTickets().size())).updateRecord("ticket", targetTicket);
+        verify(mockRecordManager, times(1)).createRecord(CodeManager.CODE, targetCode);
+        verify(mockApa, times(1)).getPropField(targetPropField.getName());
+        verify(mockApa, times(1)).savePropField(targetPropField);
+    }
+
+    @Test
+    public void testCreateCodeWithNoTickets() throws Exception {
+        code.setTickets(null);
+        code.setPerformances(null);
+        code.setEvents(null);
+        Code createdCode = manager.saveCode(code);
+        assertNotNull(createdCode);
+        assertSavedcodeIsCorrect(createdCode, code);
         verify(mockRecordManager, times(1)).createRecord(CodeManager.CODE, targetCode);
     }
 
@@ -170,12 +192,12 @@ public class CodeManagerTest {
         Code createdCode = manager.saveCode(code);
 
         PTicket anotherSampleTicket = new PTicket("ticket");
-        anotherSampleTicket.setId("some_idz");        
+        anotherSampleTicket.setId("some_idz");
         PTicket createdCodeRecord = createdCode.toRecord();
         createdCode.getTickets().add(anotherSampleTicket.getIdAsString());
         anotherSampleTicket.put(createdCode.getCode(), createdCode.getId());
         when(mockRecordManager.getTicket(CodeManager.CODED_TYPE, anotherSampleTicket.getId())).thenReturn(anotherSampleTicket);
-        
+
         Code updatedCode = manager.saveCode(createdCode);
 
         verify(mockRecordManager, times(2)).getTicket(CodeManager.CODED_TYPE, sampleTicket.getId());
@@ -351,14 +373,15 @@ public class CodeManagerTest {
 
     public void createSampleObjects() throws Exception {
         sampleTicket.setId("400");
+        targetTicket.setId(sampleTicket.getId());
+        
+        buildCode();
+        
         samplePerformance.setId(SAMPLE_PERFORMANCE_ID);
         sampleTicket.put("performanceId", SAMPLE_PERFORMANCE_ID);
-        
-        targetTicket.setId(sampleTicket.getId());
-        targetTicket.put(SAMPLE_CODE, Integer.toString(SAMPLE_PRICE));
+        targetTicket.put(code.getCodeAsFieldName(), Integer.toString(SAMPLE_PRICE));
         targetTicket.put("performanceId", SAMPLE_PERFORMANCE_ID);
 
-        buildCode();
     }
 
     @Before
@@ -372,6 +395,7 @@ public class CodeManagerTest {
         when(mockRecordManager.createRecord(CodeManager.CODE, targetCode)).thenReturn(targetCodeWithId);
 
         manager.setRecordManager(mockRecordManager);
+        manager.setFieldManager(mockFieldManager);
         manager.setAthenaStage(mockStage);
         manager.setApa(mockApa);
     }

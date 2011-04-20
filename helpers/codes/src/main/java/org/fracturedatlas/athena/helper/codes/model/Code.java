@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class Code {
 
-    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     
     String id;
     String code;
@@ -46,6 +46,8 @@ public class Code {
     Set<String> performances;
     Set<String> events;
     Boolean enabled;
+    
+    public static final String FIELD_PREFIX = "__";
 
     public Code() {
         tickets = new TreeSet<String>();
@@ -111,6 +113,10 @@ public class Code {
 
     public String getCode() {
         return code;
+    }
+
+    public String getCodeAsFieldName() {
+        return FIELD_PREFIX + code;
     }
 
     public void setCode(String code) {

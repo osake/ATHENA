@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
 import org.fracturedatlas.athena.apa.ApaAdapter;
+import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.codes.model.Code;
@@ -32,7 +34,7 @@ import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.web.exception.AthenaConflictException;
 import org.fracturedatlas.athena.web.exception.AthenaException;
-import org.fracturedatlas.athena.web.manager.RecordManager;
+import org.fracturedatlas.athena.web.manager.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,9 @@ public class CodeManager {
 
     @Autowired
     RecordManager recordManager;
+
+    @Autowired
+    PropFieldManager fieldManager;
 
     @Autowired
     AthenaComponent athenaStage;
@@ -79,10 +84,10 @@ public class CodeManager {
         if(ticket == null) {
             throw new NotFoundException("Ticket with id ["+ticketId+"] was not found");
         } else {
-            String val = ticket.get(code.getCode());
+            String val = ticket.get(code.getCodeAsFieldName());
             if(val != null) {
                 logger.debug("Code found, deleting from ticket [{}]", ticket.getId());
-                ticket.deleteProperty(code.getCode());
+                ticket.deleteProperty(code.getCodeAsFieldName());
                 logger.debug("Removed code, saving ticket:");
                 logger.debug(ticket.toString());
                 apa.saveRecord(CODED_TYPE, ticket);
@@ -164,9 +169,18 @@ public class CodeManager {
         return ids;
     }
 
+    private void addFieldForThisCodeIfItDoesntExist(Code code) {
+        PropField pf = apa.getPropField(code.getCodeAsFieldName());
+        if(pf == null) {
+            pf = new PropField(ValueType.INTEGER, code.getCodeAsFieldName(), Boolean.FALSE);
+            apa.savePropField(pf);
+        }
+    }
+
     private Set<PTicket> processTickets(Set<PTicket> tickets, Code code) {
+        addFieldForThisCodeIfItDoesntExist(code);
         for(PTicket ticket : tickets) {
-            ticket.put(code.getCode(), Integer.toString(code.getPrice()));
+            ticket.put(code.getCodeAsFieldName(), Integer.toString(code.getPrice()));
             logger.debug("Updating: " + ticket);
             recordManager.updateRecord(CODED_TYPE, ticket);
         }
@@ -251,6 +265,11 @@ public class CodeManager {
         this.athenaStage = athenaStage;
     }
 
-    
+    public PropFieldManager getFieldManager() {
+        return fieldManager;
+    }
 
+    public void setFieldManager(PropFieldManager fieldManager) {
+        this.fieldManager = fieldManager;
+    }
 }
