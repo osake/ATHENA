@@ -37,7 +37,6 @@ The codes helper relies on the following fields in Tix
 * description - A human-readable description of the code
 * startDate - A datetime.  Codes will not be considered valid before this date.
 * endDate - A datetime.  Codes will not be considered valid after this date.
-* eligibleClients - An array of usernames that are allowed to see this price
 * enabled - Boolean.  True if this code is enabled, false otherwise.  Codes that have enabled set to false are considered not valid regardless of startDate and endDate
 
 ## Creating a code
@@ -46,16 +45,15 @@ POST a code to /tix/codes.  Include the following information.  performances and
 
     POST http://localhost/tix/codes
     {
-      "code": "festivalpass1"
-      "description": "A human readable description"
-      "performances": []
-      "events": []
-      "tickets": []
-      "startDate": "2010-03-04T05:05:30-04:00"
-      "endDate":"2010-03-04T05:05:30-04:00"
-      "price": 50
-      "eligibleClients": []
-      "enabled": 
+      "code": "festivalpass1",
+      "description": "A human readable description",
+      "performances": [],
+      "events": [],
+      "tickets": [],
+      "startDate": "2010-03-04T05:05:30-04:00",
+      "endDate":"2010-03-04T05:05:30-04:00",
+      "price": 50,
+      "enabled": true
     }
     
 The only required field is "code".  "code" must be unique. 
@@ -72,15 +70,14 @@ Using the following requires use of the ATHENA Stage component
 Example response:
 
     {
-      "id": 39029
-      "code": "festivalpass1"
-      "description": "A human readable description"
-      "tickets": [(An array of tickets that this code has been applied to)]
-      "startDate": "2010-03-04T05:05:30-04:00"
-      "endDate":"2010-03-04T05:05:30-04:00"
-      "price": 50
-      "eligibleClients": []
-      "enabled": 
+      "id": 39029,
+      "code": "festivalpass1",
+      "description": "A human readable description",
+      "tickets": [(An array of tickets that this code has been applied to)],
+      "startDate": "2010-03-04T05:05:30-04:00",
+      "endDate":"2010-03-04T05:05:30-04:00",
+      "price": 50,
+      "enabled": true
     }
     
 ## Getting information about a code
@@ -90,14 +87,13 @@ Example response:
 Response:
 
     {
-      "id": 39029
-      "code": "festivalpass1"
-      "description": "A human readable description"
-      "tickets": [(An array of tickets that this code has been applied to)]
-      "startDate": "2010-03-04T05:05:30-04:00"
-      "endDate":"2010-03-04T05:05:30-04:00"
-      "price": 50
-      "eligibleClients": []
+      "id": 39029,
+      "code": "festivalpass1",
+      "description": "A human readable description",
+      "tickets": [(An array of tickets that this code has been applied to)],
+      "startDate": "2010-03-04T05:05:30-04:00",
+      "endDate":"2010-03-04T05:05:30-04:00",
+      "price": 50,
       "enabled": 
     }    
     
@@ -107,15 +103,15 @@ Make a PUT request similar to the POST request above.
 
     PUT http://localhost/tix/codes
     {
-      "code": "festivalpass1"
-      "description": "A human readable description"
-      "performances": []
-      "events": []
-      "tickets": []
-      "startDate": "2010-03-04T05:05:30-04:00"
-      "endDate":"2010-03-04T05:05:30-04:00"
-      "price": 50
-      "eligibleClients": []
+      "code": "festivalpass1",
+      "description": "A human readable description",
+      "performances": [],
+      "events": [],
+      "tickets": [],
+      "startDate": "2010-03-04T05:05:30-04:00",
+      "endDate":"2010-03-04T05:05:30-04:00",
+      "price": 50,
+      "eligibleClients": [],
       "enabled": 
     }
 
@@ -126,14 +122,13 @@ All other fields will be updated EXCEPT: performances, events, and tickets.  Any
 Example response:
 
     {
-      "id": 39029
-      "code": "festivalpass1"
-      "description": "A human readable description"
-      "tickets": [(An array of tickets that this code has been applied to)]
-      "startDate": "2010-03-04T05:05:30-04:00"
-      "endDate":"2010-03-04T05:05:30-04:00"
-      "price": 50
-      "eligibleClients": []
+      "id": 39029,
+      "code": "festivalpass1",
+      "description": "A human readable description",
+      "tickets": [(An array of tickets that this code has been applied to)],
+      "startDate": "2010-03-04T05:05:30-04:00",
+      "endDate":"2010-03-04T05:05:30-04:00",
+      "price": 50,
       "enabled": 
     }
     

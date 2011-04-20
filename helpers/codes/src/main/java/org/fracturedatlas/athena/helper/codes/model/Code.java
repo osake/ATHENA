@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class Code {
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    private transient Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     
     String id;
     String code;
