@@ -64,11 +64,11 @@ public class Code {
             this.id = IdAdapter.toString(pTicket.getId());
         }
 
-        if(pTicket.get("codeEnabled") != null) {
-            this.enabled = Boolean.parseBoolean(pTicket.get("codeEnabled"));
+        if(pTicket.get("enabled") != null) {
+            this.enabled = Boolean.parseBoolean(pTicket.get("enabled"));
         }
 
-        this.description = pTicket.get("codeDescription");
+        this.description = pTicket.get("description");
         this.code = pTicket.get("code");
 
 
@@ -76,17 +76,17 @@ public class Code {
             this.price = Integer.parseInt(pTicket.get("price"));
         }
 
-        if(pTicket.get("codeStartDate") != null) {
+        if(pTicket.get("startDate") != null) {
             try {
-                this.startDate = DateUtil.parseDate(pTicket.get("codeStartDate"));
+                this.startDate = DateUtil.parseDate(pTicket.get("startDate"));
             } catch (ParseException ignored) {
                 logger.info(ignored.getMessage());
             }
         }
 
-        if(pTicket.get("codeEndDate") != null) {
+        if(pTicket.get("endDate") != null) {
             try {
-                this.endDate = DateUtil.parseDate(pTicket.get("codeEndDate"));
+                this.endDate = DateUtil.parseDate(pTicket.get("endDate"));
             } catch (ParseException ignored) {
                 logger.info(ignored.getMessage());
             }
@@ -187,11 +187,11 @@ public class Code {
         pTicket.setType("code");
 
         if(enabled != null) {
-            pTicket.put("codeEnabled", Boolean.toString(enabled));
+            pTicket.put("enabled", Boolean.toString(enabled));
         }
 
         if(description != null) {
-            pTicket.put("codeDescription", description);
+            pTicket.put("description", description);
         }
         
         if(code != null) {
@@ -203,10 +203,10 @@ public class Code {
         }
         
         if(startDate != null) {
-            pTicket.put("codeStartDate", DateUtil.formatDate(startDate));
+            pTicket.put("startDate", DateUtil.formatDate(startDate));
         }
         if(startDate != null) {
-            pTicket.put("codeEndDate", DateUtil.formatDate(endDate));
+            pTicket.put("endDate", DateUtil.formatDate(endDate));
         }
 
         return pTicket;
