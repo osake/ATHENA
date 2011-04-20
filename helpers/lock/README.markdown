@@ -9,7 +9,7 @@ You may share and adapt this work under the terms this license, provided
 you describe the changes and attribute the original work to the copyright
 holder above.
 
-========
+=
 
 The lock helper provides a RESTful lock object to assist client applications with locking tickets while customers are deciding to purchase.  While tickets are locked, no other application can lock those tickets.
 

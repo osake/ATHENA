@@ -9,7 +9,7 @@ You may share and adapt this work under the terms this license, provided
 you describe the changes and attribute the original work to the copyright
 holder above.
 
-========
+=
 
 ATHENA is a modular service-oriented application.  The modules in ATHENA can be used to be arts-infrascturcure software applications.  ATHENA implementations for Tix, People, and Orders can be found here: <http://github.com/fracturedatlas/ATHENA-Components>
 

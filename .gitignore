@@ -12,4 +12,4 @@ nbactions.xml
 runner.jar
 *.war
 runner/src/main/skeleton/athena/components/*/config/*.properties*
-deploy.sh
+deploy.sh*

@@ -9,7 +9,7 @@ You may share and adapt this work under the terms this license, provided
 you describe the changes and attribute the original work to the copyright
 holder above.
 
-========
+=
 
 The codes helper provides a RESTFul resource for setting codes on tickets.  A "code" allows a certain ticket price to be made available to a user.
 
