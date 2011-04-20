@@ -681,6 +681,10 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             throw new ApaException("Boolean fields cannot be marked as strict");
         }
 
+        if (propField.getStrict() && propField.getValueType().equals(ValueType.TEXT)) {
+            throw new ApaException("Text fields cannot be marked as strict");
+        }
+
         //check for immutability
         if (propField.getId() != null) {
             PropField oldPropField = getPropField(propField.getId());

@@ -43,4 +43,4 @@ athena.hibernate.showSql=false
 # db's demand some sort of flexible solution
 #
 # DO NOT EVER SET THIS TO ANYTHING BESIDES validate IN A PRODUCTION ENVIRONMENT
-athena.hibernate.hbm2ddl.auto=validate
+athena.hibernate.hbm2ddl.auto=

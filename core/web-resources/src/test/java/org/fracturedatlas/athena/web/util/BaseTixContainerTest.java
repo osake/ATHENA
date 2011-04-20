@@ -28,10 +28,9 @@ import com.sun.jersey.spi.spring.container.servlet.SpringServlet;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map.Entry;
 import javax.persistence.EntityManagerFactory;
+import javax.ws.rs.core.MultivaluedMap;
 import org.springframework.context.ApplicationContext;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -96,6 +95,11 @@ public abstract class BaseTixContainerTest extends JerseyTest {
     public void assertNotFound(String path) {
         ClientResponse response = tix.path(path).get(ClientResponse.class);
         assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
+    public void assertBadRequest(String path, MultivaluedMap queryParams) {
+        ClientResponse response = tix.path(path).queryParams(queryParams).get(ClientResponse.class);
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
     }
 
     public void assertRecordsEqual(PTicket t, PTicket pTicket, Boolean includeId) {

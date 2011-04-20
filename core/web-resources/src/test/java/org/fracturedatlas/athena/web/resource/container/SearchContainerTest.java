@@ -67,6 +67,13 @@ public class SearchContainerTest extends BaseTixContainerTest {
     }
 
     @Test
+    public void testFindTicketsUsingTextField() {
+        MultivaluedMap queryParams = new MultivaluedMapImpl();
+        queryParams.add("DESC", "eqcool");
+        assertBadRequest(path, queryParams);
+    }
+
+    @Test
     public void testFindTickets() {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
         queryParams.add("SOLD", "eqfalse");
@@ -221,6 +228,7 @@ public class SearchContainerTest extends BaseTixContainerTest {
         PTicket t9 = new PTicket("ticket");
         PTicket t10 = new PTicket("ticket");
 
+        addPropField(ValueType.TEXT, "DESC", StrictType.NOT_STRICT);
         addPropField(ValueType.INTEGER, "SEAT_NUMBER", StrictType.NOT_STRICT);
         addPropField(ValueType.STRING, "SECTION", StrictType.NOT_STRICT);
         addPropField(ValueType.DATETIME, "PERFORMANCE", StrictType.NOT_STRICT);
