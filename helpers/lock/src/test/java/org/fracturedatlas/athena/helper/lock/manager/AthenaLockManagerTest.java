@@ -122,14 +122,6 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
                 t.put(AthenaLockManager.LOCKED_BY_IP, CLIENT_IP);
                 t = apa.saveRecord(t);
             } else {
-//                TicketProp prop = apa.getTicketProp(AthenaLockManager.LOCK_ID, "ticket", t.getId());
-//                apa.deleteTicketProp(prop);
-//                prop = apa.getTicketProp(AthenaLockManager.LOCKED_BY_IP, "ticket", t.getId());
-//                apa.deleteTicketProp(prop);
-//                prop = apa.getTicketProp(AthenaLockManager.LOCKED_BY_API_KEY, "ticket", t.getId());
-//                apa.deleteTicketProp(prop);
-//                prop = apa.getTicketProp(AthenaLockManager.LOCK_EXPIRES, "ticket", t.getId());
-//                apa.deleteTicketProp(prop);
                 t = apa.getRecord("ticket", t.getId());
                 t.put("status", "on_sale");
                 t = apa.saveRecord(t);
