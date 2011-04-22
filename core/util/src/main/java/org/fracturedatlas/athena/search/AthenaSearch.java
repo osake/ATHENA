@@ -102,8 +102,8 @@ public class AthenaSearch {
             try {
                 modifierValue = Integer.parseInt(stringVal);
             } catch (NumberFormatException ex) {
-                logger.error("{} parameter for AthenaSearch was malformed [{}]", modifierName, stringVal);
-                logger.error("Continuing with search");
+                logger.info("{} parameter for AthenaSearch was malformed [{}]", modifierName, stringVal);
+                logger.info("Continuing with search");
             }
         }
 

@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.lock.exception.TicketsLockedException;
@@ -121,11 +122,16 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
                 t.put(AthenaLockManager.LOCKED_BY_IP, CLIENT_IP);
                 t = apa.saveRecord(t);
             } else {
-                t.put(AthenaLockManager.LOCK_ID, null);
+//                TicketProp prop = apa.getTicketProp(AthenaLockManager.LOCK_ID, "ticket", t.getId());
+//                apa.deleteTicketProp(prop);
+//                prop = apa.getTicketProp(AthenaLockManager.LOCKED_BY_IP, "ticket", t.getId());
+//                apa.deleteTicketProp(prop);
+//                prop = apa.getTicketProp(AthenaLockManager.LOCKED_BY_API_KEY, "ticket", t.getId());
+//                apa.deleteTicketProp(prop);
+//                prop = apa.getTicketProp(AthenaLockManager.LOCK_EXPIRES, "ticket", t.getId());
+//                apa.deleteTicketProp(prop);
+                t = apa.getRecord("ticket", t.getId());
                 t.put("status", "on_sale");
-                t.put(AthenaLockManager.LOCK_EXPIRES, null);
-                t.put(AthenaLockManager.LOCKED_BY_API_KEY, null);
-                t.put(AthenaLockManager.LOCKED_BY_IP, null);
                 t = apa.saveRecord(t);
             }
             i++;
