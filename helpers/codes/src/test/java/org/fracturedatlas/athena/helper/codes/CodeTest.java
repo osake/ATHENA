@@ -82,9 +82,9 @@ public class CodeTest {
 
         assertEquals(code.getCode(), testCode);
         assertEquals(code.getDescription(), testDescription);
-        assertEquals(code.getStartDate(), testCode);
-        assertEquals(code.getCode(), testCode);
-        assertEquals(code.getCode(), testCode);
-        assertEquals(code.getCode(), testCode);
+        assertEquals(code.getStartDate(), DateUtil.parseDate(testStartDate));
+        assertEquals(code.getEndDate(), DateUtil.parseDate(testEndDate));
+        assertEquals(code.getPrice(), (Integer)Integer.parseInt(testPrice));
+        assertEquals(code.getEnabled(), Boolean.parseBoolean(testEnabled));
     }
 }

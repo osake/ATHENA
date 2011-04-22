@@ -81,6 +81,7 @@ public class CodeResource {
     @DELETE
     @Path("/{id}/tickets/{ticketId}")
     public void delete(@PathParam("id") String id, @PathParam("ticketId") String ticketId) throws Exception {
+        codeManger.deleteCodeFromTicket(id, ticketId);
     }
 
 }

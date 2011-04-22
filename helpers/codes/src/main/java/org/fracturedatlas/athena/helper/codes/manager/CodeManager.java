@@ -30,6 +30,7 @@ import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.codes.model.Code;
+import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.web.exception.AthenaConflictException;
@@ -73,6 +74,19 @@ public class CodeManager {
     }
 
     public void deleteCode(Object id) {
+        Code code = getCode(id);
+
+        //This search is incorrect, needs to search for existence of a prop
+        AthenaSearch search = new AthenaSearch.Builder().type(CODED_TYPE).and(code.getCodeAsFieldName(), Operator.EQUALS, IdAdapter.toString(code.getId())).build();
+        Set<PTicket> ticketsOnCode = apa.findTickets(search);
+        logger.debug("Found [{}] tickets on this code", ticketsOnCode.size());
+        for(PTicket ticket : ticketsOnCode) {
+            logger.debug("Deleting code [{}] from this ticket [{}]", code.getCode(), ticket.getId());
+            ticket.deleteProperty(code.getCodeAsFieldName());
+            logger.debug("Removed code, saving ticket [{}]", ticket.getId());
+            logger.debug(ticket.toString());
+            apa.saveRecord(CODED_TYPE, ticket);
+        }
         apa.deleteRecord(CODE, id);
     }
 

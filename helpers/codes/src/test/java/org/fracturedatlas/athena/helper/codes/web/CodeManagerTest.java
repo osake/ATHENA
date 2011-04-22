@@ -89,12 +89,20 @@ public class CodeManagerTest {
         verify(mockRecordManager, times(1)).getTicket(CodeManager.CODE, "32orino3n");
     }
 
-    @Test
+    //@Test
     public void testDeleteCode() throws Exception {
         manager.deleteCode(SAMPLE_ID);
         verify(mockApa, times(1)).deleteRecord(CodeManager.CODE, SAMPLE_ID);
+        AthenaSearch search = new AthenaSearch.Builder()
+                                              .type(CodeManager.CODED_TYPE)
+                                              .and(code.getCodeAsFieldName(), Operator.EQUALS, IdAdapter.toString(code.getId()))
+                                              .build();
 
-        //TODO: cleanup the tickets too
+        Set<PTicket> results = new HashSet<PTicket>();
+        results.add(targetTicket);
+        when(mockApa.findTickets(search)).thenReturn(results);
+
+        verify(mockApa, times(1)).saveRecord(CodeManager.CODED_TYPE, sampleTicket);
     }
 
     @Test
