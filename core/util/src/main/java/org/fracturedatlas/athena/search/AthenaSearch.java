@@ -32,6 +32,7 @@ public class AthenaSearch {
 
     public static final String LIMIT = "_limit";
     public static final String START = "_start";
+    public static final String ANY_VALUE = ".*";
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     
     ArrayList<AthenaSearchConstraint> asc = null;

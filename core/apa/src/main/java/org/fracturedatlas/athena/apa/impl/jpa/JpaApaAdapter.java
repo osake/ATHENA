@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.search.Operator;
 
 public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
@@ -294,7 +295,17 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
                 for (AthenaSearchConstraint apc : athenaSearch.getConstraints()) {
                     logger.debug("Searching on modifier: {}", apc);
-                    ticketsList = getRecordsForConstraint(athenaSearch.getType(), apc, em);
+
+                    if(apc.getOper().equals(Operator.MATCHES)) {
+                        if(apc.getValue().equals(AthenaSearch.ANY_VALUE)) {
+                            ticketsList = getRecordsWithFieldDefined(athenaSearch.getType(), apc, em);
+                        } else {
+                            throw new UnsupportedOperationException("Regex searching is not supported");
+                        }
+                    } else {
+                        ticketsList = getRecordsForConstraint(athenaSearch.getType(), apc, em);
+                    }
+
                     logger.debug("Found {} tickets", ticketsList.size());
                     if (finishedTicketsList == null) {
                         finishedTicketsList = ticketsList;
@@ -399,6 +410,38 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
         finishedTicketsSet = new HashSet<JpaRecord>(query.getResultList());
         return finishedTicketsSet;
+    }
+
+    private Collection<JpaRecord> getRecordsWithFieldDefined(String type, AthenaSearchConstraint apc, EntityManager em) {
+        Set<JpaRecord> tickets = new HashSet<JpaRecord>();
+        Collection<TicketProp> props = getTicketPropsForType(type, apc.getParameter());
+        for(TicketProp prop : props) {
+            tickets.add(prop.getTicket());
+        }
+        return tickets;
+    }
+
+    private Collection<TicketProp> getTicketPropsForType(String type, String fieldName) {
+        EntityManager em = this.emf.createEntityManager();
+
+        try {
+            //TODO: Would this be faster to first select propFields with fieldName, then use that id to
+            //search ticketProp?
+            Query query = em.createQuery("FROM TicketProp ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.ticket.type=:type");
+            query.setParameter("type", type);
+            query.setParameter("fieldName", fieldName);
+
+            //TODO: There must be a better way of getting asingle result in JPA.
+            //Using exceptions as flow control is kinda lame
+            try {
+                List ticketProp = query.getResultList();
+                return ticketProp;
+            } catch (javax.persistence.NoResultException nre) {
+                return null;
+            }
+        } finally {
+            cleanup(em);
+        }
     }
 
     private Collection<JpaRecord> getRecordsForConstraint(String type, AthenaSearchConstraint apc, EntityManager em) {

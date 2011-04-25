@@ -59,6 +59,10 @@ public class PTicket {
         this.id = id;
     }
 
+    /**
+     * Deleting a property from a PTicket, then calling apa.saveRecord, WILL NOT delete the property from the record
+     * @param propertyName
+     */
     public void deleteProperty(String propertyName) {
         getProps().remove(propertyName);
     }

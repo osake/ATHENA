@@ -23,7 +23,10 @@ import com.sun.jersey.api.NotFoundException;
 import java.util.HashSet;
 import java.util.Set;
 import org.fracturedatlas.athena.apa.ApaAdapter;
+import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
@@ -80,29 +83,21 @@ public class CodeManagerTest {
 
     @Test
     public void testGetCodeDoesNotExist() throws Exception {
-        try{
-            manager.getCode("32orino3n");
-            fail("Should have thrown nfe");
-        } catch (NotFoundException nfe) {
-            //pass
-        }
+        assertNull(manager.getCode("32orino3n"));
         verify(mockRecordManager, times(1)).getTicket(CodeManager.CODE, "32orino3n");
     }
 
     //@Test
     public void testDeleteCode() throws Exception {
         manager.deleteCode(SAMPLE_ID);
-        verify(mockApa, times(1)).deleteRecord(CodeManager.CODE, SAMPLE_ID);
-        AthenaSearch search = new AthenaSearch.Builder()
-                                              .type(CodeManager.CODED_TYPE)
-                                              .and(code.getCodeAsFieldName(), Operator.EQUALS, IdAdapter.toString(code.getId()))
-                                              .build();
 
         Set<PTicket> results = new HashSet<PTicket>();
         results.add(targetTicket);
-        when(mockApa.findTickets(search)).thenReturn(results);
+        TicketProp mockProp = new StringTicketProp(null, SAMPLE_ID);
+        when(mockApa.getTicketProp(code.getCodeAsFieldName(), CodeManager.CODE, targetTicket.getId())).thenReturn(mockProp);
 
-        verify(mockApa, times(1)).saveRecord(CodeManager.CODED_TYPE, sampleTicket);
+        verify(mockApa, times(1)).deleteTicketProp(mockProp);
+        verify(mockApa, times(1)).deleteRecord(CodeManager.CODE, SAMPLE_ID);
     }
 
     @Test
@@ -114,10 +109,12 @@ public class CodeManagerTest {
     @Test
     public void testDeleteCodeFromTicket() throws Exception {
         when(mockRecordManager.getTicket("ticket", sampleTicket.getId())).thenReturn(targetTicket);
+        TicketProp mockProp = new StringTicketProp(null, SAMPLE_ID);
+        when(mockApa.getTicketProp(code.getCodeAsFieldName(), CodeManager.CODE, targetTicket.getId())).thenReturn(mockProp);
+
         manager.deleteCodeFromTicket(SAMPLE_ID, targetTicket.getId());
 
-        verify(mockRecordManager, times(1)).getTicket(CodeManager.CODE, SAMPLE_ID);
-        verify(mockApa, times(1)).saveRecord("ticket", sampleTicket);
+        verify(mockApa, times(1)).deleteTicketProp(mockProp);
     }
 
     @Test

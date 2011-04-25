@@ -24,6 +24,9 @@ public enum Operator {
     IN("in", "IN (:value)"),
     LESS_THAN("lt", "< :value"),
     GREATER_THAN("gt", "> :value"),
+
+    //For now, only '.*' will be supported
+    MATCHES("ma", ""),
     EQUALS("eq", "= :value");
 
     private String operatorString;

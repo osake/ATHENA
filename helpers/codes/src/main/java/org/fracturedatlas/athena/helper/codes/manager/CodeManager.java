@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.HashSet;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
@@ -61,11 +62,14 @@ public class CodeManager {
     public static final String CODE = "code";
     public static final String CODED_TYPE = "ticket";
 
+    /*
+     * TODO: This should not throw NotFoundException.  Should be handled up in the resource
+     */
     public Code getCode(Object id) {
         logger.debug("Geting code with id [{}]", id);
         PTicket t = recordManager.getTicket(CODE, id);
         if(t == null) {
-            throw new NotFoundException("Code with id ["+id+"] was not found");
+            return null;
         } else {
             logger.debug("Found record:");
             logger.debug("{}", t.toString());
@@ -77,38 +81,32 @@ public class CodeManager {
         Code code = getCode(id);
 
         //This search is incorrect, needs to search for existence of a prop
-        AthenaSearch search = new AthenaSearch.Builder().type(CODED_TYPE).and(code.getCodeAsFieldName(), Operator.EQUALS, IdAdapter.toString(code.getId())).build();
+        AthenaSearch search = new AthenaSearch.Builder()
+                                              .type(CODED_TYPE)
+                                              .and(code.getCodeAsFieldName(), Operator.MATCHES, AthenaSearch.ANY_VALUE)
+                                              .build();
         Set<PTicket> ticketsOnCode = apa.findTickets(search);
-        logger.debug("Found [{}] tickets on this code", ticketsOnCode.size());
+        logger.debug("Found [{}] tickets with code [{}]", ticketsOnCode.size(), code.getCode());
         for(PTicket ticket : ticketsOnCode) {
-            logger.debug("Deleting code [{}] from this ticket [{}]", code.getCode(), ticket.getId());
-            ticket.deleteProperty(code.getCodeAsFieldName());
-            logger.debug("Removed code, saving ticket [{}]", ticket.getId());
-            logger.debug(ticket.toString());
-            apa.saveRecord(CODED_TYPE, ticket);
+            deleteCodeFromTicket(code, ticket.getId());
         }
         apa.deleteRecord(CODE, id);
     }
 
-    public void deleteCodeFromTicket(Object id, Object ticketId) {
-        Code code = getCode(id);
-        PTicket ticket = recordManager.getTicket(CODED_TYPE, ticketId);
-        logger.debug("Deleting code [{}] from this ticket", code.getCode());
-        logger.debug(ticket.toString());
-        if(ticket == null) {
-            throw new NotFoundException("Ticket with id ["+ticketId+"] was not found");
+    public void deleteCodeFromTicket(Code code, Object ticketId) {
+        logger.debug("Deleting code [{}] from this ticket [{}]", code.getCode(), ticketId);
+        TicketProp prop = apa.getTicketProp(code.getCodeAsFieldName(), CODE, ticketId);
+        if(prop != null) {
+            logger.debug("Deleting prop [{}]", prop.getId());
+            apa.deleteTicketProp(prop);
         } else {
-            String val = ticket.get(code.getCodeAsFieldName());
-            if(val != null) {
-                logger.debug("Code found, deleting from ticket [{}]", ticket.getId());
-                ticket.deleteProperty(code.getCodeAsFieldName());
-                logger.debug("Removed code, saving ticket:");
-                logger.debug(ticket.toString());
-                apa.saveRecord(CODED_TYPE, ticket);
-            } else {
-                logger.debug("Code not found on this ticket");
-            }
+            logger.info("Code [{}] was supposed to be on ticket [{}], but no prop was found to delete", code.getCode(), ticketId);
         }
+    }
+
+    public void deleteCodeFromTicket(Object codeId, Object ticketId) {
+        Code code = getCode(IdAdapter.toString(codeId));
+        deleteCodeFromTicket(code, ticketId);
     }
 
     /**
@@ -144,6 +142,7 @@ public class CodeManager {
         ticketsForThisCode.addAll(getTicketsForPerformances(code));
         ticketsForThisCode.addAll(getTicketsOnCode(code));
 
+        logger.debug("Adding code to tickets: {}", ticketsForThisCode);
         processTickets(ticketsForThisCode, code);
 
         Code savedCode = new Code(codeRecord);
