@@ -47,7 +47,7 @@ public class Code {
     Set<String> events;
     Boolean enabled;
     
-    public static final String FIELD_PREFIX = "__";
+    public static final String FIELD_PREFIX = "code___";
 
     public Code() {
         tickets = new TreeSet<String>();

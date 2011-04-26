@@ -22,6 +22,7 @@ package org.fracturedatlas.athena.helper.codes.web;
 
 import com.google.gson.Gson;
 import com.sun.jersey.api.NotFoundException;
+import java.util.Collection;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -30,8 +31,13 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
+import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.codes.model.Code;
 import org.fracturedatlas.athena.helper.codes.manager.CodeManager;
+import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
@@ -47,7 +53,7 @@ public class CodeResource {
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     @Autowired
-    CodeManager codeManger;
+    CodeManager codeManager;
 
     Gson gson = JsonUtil.getGson();
 
@@ -56,7 +62,7 @@ public class CodeResource {
     @GET
     @Path("/{id}")
     public Object get(@PathParam("id") String id) throws NotFoundException {
-        Code c = codeManger.getCode(id);
+        Code c = codeManager.getCode(id);
         if(c == null) {
             throw new NotFoundException("Code with id ["+id+"] was not found");
         } else {
@@ -67,26 +73,37 @@ public class CodeResource {
     @POST
     @Path("")
     public Code create(Code code) throws Exception {
-        Code createdCode = codeManger.saveCode(code);
+        Code createdCode = codeManager.saveCode(code);
         return createdCode;
     }
 
     @PUT
     @Path("/{id}")
     public Object update(@PathParam("id") String id, Code code) throws Exception {
-        return codeManger.saveCode(code);
+        return codeManager.saveCode(code);
     }
 
     @DELETE
     @Path("/{id}")
     public void delete(@PathParam("id") String id) throws Exception {
-        codeManger.deleteCode(id);
+        codeManager.deleteCode(id);
+    }
+
+    @GET
+    @Path("/{id}/tickets")
+    public Collection<PTicket> findTickets(@PathParam("id") String codeId, @Context UriInfo ui) {
+        MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
+        try{
+            return codeManager.findTickets(codeId, queryParams);
+        } catch (ObjectNotFoundException onfe) {
+            throw new NotFoundException(onfe.getMessage());
+        }
     }
 
     @DELETE
     @Path("/{id}/tickets/{ticketId}")
     public void delete(@PathParam("id") String id, @PathParam("ticketId") String ticketId) throws Exception {
-        codeManger.deleteCodeFromTicket(id, ticketId);
+        codeManager.deleteCodeFromTicket(id, ticketId);
     }
 
 }

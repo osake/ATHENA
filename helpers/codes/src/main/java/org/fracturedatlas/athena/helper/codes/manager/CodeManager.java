@@ -20,10 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.helper.codes.manager;
 
-import com.sun.jersey.api.NotFoundException;
 import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
+import javax.ws.rs.core.MultivaluedMap;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
@@ -36,6 +36,7 @@ import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.web.exception.AthenaConflictException;
 import org.fracturedatlas.athena.web.exception.AthenaException;
+import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.web.manager.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
@@ -62,10 +63,7 @@ public class CodeManager {
     public static final String CODE = "code";
     public static final String CODED_TYPE = "ticket";
 
-    /*
-     * TODO: This should not throw NotFoundException.  Should be handled up in the resource
-     */
-    public Code getCode(Object id) {
+    public Code getCode(Object id, Boolean loadTicketsIdsToo) {
         logger.debug("Geting code with id [{}]", id);
         PTicket t = recordManager.getTicket(CODE, id);
         if(t == null) {
@@ -73,20 +71,76 @@ public class CodeManager {
         } else {
             logger.debug("Found record:");
             logger.debug("{}", t.toString());
-            return new Code(t);
+            Code code = new Code(t);
+            
+            if(loadTicketsIdsToo) {
+                logger.debug("Loading tickets");
+                Set<PTicket> ticketsOnCode = loadTicketsForCode(code);
+                for(PTicket ticket : ticketsOnCode) {
+                    code.getTickets().add(ticket.getIdAsString());
+                }
+            }
+            return code;
         }
     }
+    
+    public Code getCode(Object id) {
+        return getCode(id, true);
+    }
 
-    public void deleteCode(Object id) {
-        Code code = getCode(id);
+    public Set<PTicket> findTickets(String codeId, MultivaluedMap<String, String> queryParams) throws ObjectNotFoundException {
+        Code code = getCode(codeId, false);
+        if(code == null) {
+            throw new ObjectNotFoundException("Code with id ["+ codeId +"] was not found");
+        }
+        queryParams.add(code.getCodeAsFieldName(), Operator.MATCHES.getOperatorType() + ".*");
+        Set<PTicket> tickets = recordManager.findTickets(CODED_TYPE, queryParams);
+        return tickets;
+    }
 
-        //This search is incorrect, needs to search for existence of a prop
+    /**
+     * This will find tickets in the data store that are linked to this ticket and return their ids
+     * @param code
+     * @return
+     */
+    private Set<PTicket> loadTicketsForCode(Code code) {
         AthenaSearch search = new AthenaSearch.Builder()
                                               .type(CODED_TYPE)
                                               .and(code.getCodeAsFieldName(), Operator.MATCHES, AthenaSearch.ANY_VALUE)
                                               .build();
         Set<PTicket> ticketsOnCode = apa.findTickets(search);
         logger.debug("Found [{}] tickets with code [{}]", ticketsOnCode.size(), code.getCode());
+        return ticketsOnCode;
+    }
+
+    /**
+     * This will get the ticket ids from code.getTickets() and load them fromt he datastore
+     * @param code
+     * @return
+     */
+    private Set<PTicket> getTicketsOnCode(Code code) {
+        Set<PTicket> tickets = new HashSet<PTicket>();
+
+        //Load the ticketIds from this code
+        if(code.getTickets() != null) {
+            for(String ticketId : code.getTickets()) {
+                logger.debug("Looking up ticket with id [{}]", ticketId);
+                PTicket t = recordManager.getTicket(CODED_TYPE, ticketId);
+                if( t != null ) {
+                    logger.debug("Found ticket for this code:");
+                    logger.debug("{}", t.toString());
+                    tickets.add(t);
+                }
+            }
+        }
+
+        return tickets;
+    }
+
+    public void deleteCode(Object id) {
+        Code code = getCode(id);
+
+        Set<PTicket> ticketsOnCode = loadTicketsForCode(code);
         for(PTicket ticket : ticketsOnCode) {
             deleteCodeFromTicket(code, ticket.getId());
         }
@@ -116,7 +170,7 @@ public class CodeManager {
      *
      * This method does not fail if a performance or event is not found.  Processing will continue with other valid performance, events, or tickets.
      *
-     * code.code cannot be updated
+     * code.code cannot be updated.  If an existing code is sent with a different code.code, this method will throw an AthenaException
      *
      * @param code
      * @return the created code with an id sassigned
@@ -197,25 +251,6 @@ public class CodeManager {
             logger.debug("Updating: " + ticket);
             recordManager.updateRecord(CODED_TYPE, ticket);
         }
-        return tickets;
-    }
-
-    private Set<PTicket> getTicketsOnCode(Code code) {
-        Set<PTicket> tickets = new HashSet<PTicket>();
-
-        //Load the ticketIds from this code
-        if(code.getTickets() != null) {
-            for(String ticketId : code.getTickets()) {
-                logger.debug("Looking up ticket with id [{}]", ticketId);
-                PTicket t = recordManager.getTicket(CODED_TYPE, ticketId);
-                if( t != null ) {
-                    logger.debug("Found ticket for this code:");
-                    logger.debug("{}", t.toString());
-                    tickets.add(t);
-                }
-            }
-        }
-
         return tickets;
     }
 

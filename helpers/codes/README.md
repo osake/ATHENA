@@ -134,7 +134,7 @@ Example response:
     
 ## Removing a code from ticket
 
-    DELETE http://localhost/tix/codes/{code_id}/{ticket_id}
+    DELETE http://localhost/tix/codes/{code_id}/tickets/{ticket_id}
     
 Example response:
 
@@ -150,7 +150,7 @@ Example response:
     
 ## Retrieving tickets with a code
 
-    GET http://localhost/tix/tickets?_code=festivalpass11&...
+    GET http://localhost/tix/codes/{id}/tickets?...
     
 ATHENA will respond with eligible tickets if any are found.  Both the "price" field and the coded price will be returned.
 
