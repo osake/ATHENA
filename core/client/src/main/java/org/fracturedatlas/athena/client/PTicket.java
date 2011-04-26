@@ -30,17 +30,24 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.fracturedatlas.athena.id.*;
 
-/**
- * This is the client-representation of a record
+/*
+ * TODO: Refactor this out of the client module
  */
 public class PTicket {
 
     private Object id;
     private String type;
+
+    //props will be serialized out to the client
     private MultivaluedMapImpl props;
+    
+    //systemProps are used internally by Athena and the helpers
+    //They can be used internally and will not be serialized back to (or from) the client
+    private transient MultivaluedMapImpl systemProps;
 
     public PTicket() {
         props = new MultivaluedMapImpl();
+        systemProps = new MultivaluedMapImpl();
     }
     public PTicket(String type) {
         this();
@@ -77,6 +84,20 @@ public class PTicket {
 
     public MultivaluedMapImpl getProps() {
         return props;
+    }
+
+    public MultivaluedMapImpl getSystemProps() {
+        return systemProps;
+    }
+
+    /**
+     * Shorthand method to get a property from thie ticket's list of properties
+     *
+     * @param key
+     * @return the value if it exists
+     */
+    public String getSystemProp(String key) {
+        return getSystemProps().getFirst(key);
     }
 
     /**
@@ -133,6 +154,9 @@ public class PTicket {
             return false;
         }
         if (this.props != other.props && (this.props == null || !this.props.equals(other.props))) {
+            return false;
+        }
+        if (this.systemProps != other.systemProps && (this.systemProps == null || !this.systemProps.equals(other.systemProps))) {
             return false;
         }
         return true;

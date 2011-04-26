@@ -20,6 +20,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
+import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,29 +136,21 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
          * if apa has a prop for it, update it
          * otherwise, create a new one
          */
-        Set<String> keys = clientTicket.getProps().keySet();
         List<TicketProp> propsToSave = new ArrayList<TicketProp>();
+        Set<String> keys = clientTicket.getProps().keySet();
         for (String key : keys) {
             String val = clientTicket.get(key);
-
-            TicketProp ticketProp = getTicketProp(key, type, ticket.getId());
-
-            if (ticketProp == null) {
-                PropField propField = getPropField(key);
-                validatePropField(propField, key, val);
-
-                ticketProp = propField.getValueType().newTicketProp();
-                ticketProp.setPropField(propField);
-                ticketProp.setTicket(ticket);
-            }
-
-            ticketProp.setValue(val);
-            
-            //saving these outside of this loop ensures that all propFields exist before
-            //we go saving values.  Sort of a hack transactionality.
-            propsToSave.add(ticketProp);
+            propsToSave.add(buildProp(ticket, type, key, val));
         }
 
+        keys = clientTicket.getSystemProps().keySet();
+        for (String key : keys) {
+            String val = clientTicket.getSystemProps().getFirst(key);
+            propsToSave.add(buildProp(ticket, type, key, val));
+        }
+        
+        //saving these outside of this loop ensures that all propFields exist before
+        //we go saving values.  Sort of a hack transactionality.
         for (TicketProp ticketProp : propsToSave) {
             saveTicketProp(ticketProp);
         }
@@ -165,6 +158,24 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         ticket = getTicket(type, clientTicket.getId());
         ticket = saveRecord(ticket);
         return ticket;
+    }
+
+    private TicketProp buildProp(JpaRecord ticket, String type, String key, String val) {
+
+        TicketProp ticketProp = getTicketProp(key, type, ticket.getId());
+
+        if (ticketProp == null) {
+            PropField propField = getPropField(key);
+            validatePropField(propField, key, val);
+
+            ticketProp = propField.getValueType().newTicketProp();
+            ticketProp.setPropField(propField);
+            ticketProp.setTicket(ticket);
+        }
+
+        ticketProp.setValue(val);
+
+        return ticketProp;
     }
 
     /*
@@ -179,6 +190,19 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         Set<String> keys = clientTicket.getProps().keySet();
         for (String key : keys) {
             String val = clientTicket.get(key);
+            buildPropOntoTicket(ticket, key, val);
+        }
+        keys = clientTicket.getSystemProps().keySet();
+        for (String key : keys) {
+            String val = clientTicket.getSystemProps().getFirst(key);
+            buildPropOntoTicket(ticket, key, val);
+        }
+        ticket.setType(type);
+        ticket = saveRecord(ticket);
+        return ticket;
+    }
+
+    private JpaRecord buildPropOntoTicket(JpaRecord ticket, String key, String val) {
             logger.debug("Creating property: {}={}", key, val);
             PropField propField = getPropField(key);
             logger.debug("Found PropField: {}", propField);
@@ -190,10 +214,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             logger.debug("Creating TicketProp: [{}]", ticketProp.getClass().getName());
             logger.debug("{}={}", ticketProp.getPropField().getName(), ticketProp.getValueAsString());
             ticket.addTicketProp(ticketProp);
-        }
-        ticket.setType(type);
-        ticket = saveRecord(ticket);
-        return ticket;
+            return ticket;
     }
 
     /**
