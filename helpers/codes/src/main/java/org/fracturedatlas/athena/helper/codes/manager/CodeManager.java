@@ -95,11 +95,13 @@ public class CodeManager {
         }
         queryParams.add(code.getCodeAsFieldName(), Operator.MATCHES.getOperatorType() + ".*");
         Set<PTicket> tickets = recordManager.findTickets(CODED_TYPE, queryParams);
+        tickets = cleanTickets(code, tickets);
         return tickets;
     }
 
     /**
-     * This will find tickets in the data store that are linked to this ticket and return their ids
+     * This will find tickets in the data store that are linked to this code and return them
+     * for the purpose of shilling their ids
      * @param code
      * @return
      */
@@ -113,8 +115,16 @@ public class CodeManager {
         return ticketsOnCode;
     }
 
+    private Set<PTicket> cleanTickets(Code code, Set<PTicket> tickets) {
+        for(PTicket ticket : tickets) {
+            String codedPrice = ticket.getSystemProp(code.getCodeAsFieldName());
+            ticket.put("codedPrice", codedPrice);
+        }
+        return tickets;
+    }
+
     /**
-     * This will get the ticket ids from code.getTickets() and load them fromt he datastore
+     * This will get the ticket ids from code.getTickets() and load them from the datastore
      * @param code
      * @return
      */

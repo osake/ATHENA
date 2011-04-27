@@ -60,8 +60,8 @@ public class CodeManagerContextTest extends BaseManagerTest {
         code.getTickets().add(IdAdapter.toString(t2.getId()));
         code = manager.saveCode(code);
 
-        assertEquals(Integer.toString(300), apa.getRecord(CodeManager.CODED_TYPE, t1.getId()).get(code.getCodeAsFieldName()));
-        assertEquals(Integer.toString(300), apa.getRecord(CodeManager.CODED_TYPE, t2.getId()).get(code.getCodeAsFieldName()));
+        assertEquals(Integer.toString(300), apa.getRecord(CodeManager.CODED_TYPE, t1.getId()).getSystemProp(code.getCodeAsFieldName()));
+        assertEquals(Integer.toString(300), apa.getRecord(CodeManager.CODED_TYPE, t2.getId()).getSystemProp(code.getCodeAsFieldName()));
 
         Code savedCode = manager.getCode(code.getId());
         assertEquals(savedCode.getCode(), code.getCode());
@@ -87,6 +87,9 @@ public class CodeManagerContextTest extends BaseManagerTest {
         MultivaluedMapImpl queryParams = new MultivaluedMapImpl();
         Set<PTicket> tickets = manager.findTickets(code.getId(), queryParams);
         assertEquals(2, tickets.size());
+        for(PTicket ticket: tickets) {
+            assertEquals(ticket.get("codedPrice"), "300");
+        }
     }
 
     public void setupCodeFields() throws Exception {
