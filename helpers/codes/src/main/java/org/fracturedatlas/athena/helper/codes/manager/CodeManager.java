@@ -295,6 +295,10 @@ public class CodeManager {
         return tickets;
     }
 
+    public Set<PTicket> findCodes(MultivaluedMap<String, String> queryParams) {
+        return recordManager.findTickets(CODE, queryParams);
+    }
+
     public void verifyCode(Code code) {
 
     }
