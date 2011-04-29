@@ -1,6 +1,8 @@
 # ATHENA
 
-Management Tools for the Cultural Sector
+Management Tools for the Cultural Sector.
+
+ATHENA is an open source software framework that is intended to meet the needs of arts and cultural organizations. The first release supports basic event ticketing and donor/patron management. 
 
 ## License
 
@@ -27,20 +29,26 @@ ATHENA can be run as a process or as a daemon (Ubuntu only).  Please see instruc
 
 ## Components
 
-ATHENA is made up of components, each with seperate but related duties
+ATHENA itself takes the form of various components. Each component is deployed as a web service which can be accessed through RESTful HTTP requests. Currently JSON is the only supported format for these web service calls, though future versions of ATHENA will likely support XML and/or other formats. 
 
-* ATHENA-Tix: Ticket storage and searching engine
-* ATHENA-People: A "CRM" component to store information related to people, donors, patrons, etc...
-* ATHENA-Orders: Stores and retrieves orders made by your customers
-* ATHENA-Payments: Thin wrapper around PAyment Processor (Braintree, PayPal) APIs
-* ATHENA-Stage: Metadata about tickets such as event, perofrmance, date, time, venue information
+Components are further divided in core components and helper components. Core components provide low-level gateways to the data (and related functionality) tracked by ATHENA. Helper components provide simplified support for higher-level functionality by encapsulating common multi-step scenarios into single service calls. 
+ATHENA’s core components include:
 
-## Architecture
+* Orders: a component for storing and retrieving orders made by your customers
+* Payments: a thin wrapper around payment processor (e.g., Braintree, PayPal) APIs
+* People: a "CRM" component to store information related to people, donors, patrons, and other constituents
+* Stage: a component for storing information on events, including performance dates and times, and venue information
+* Tix: a ticket storage and searching engine
 
-ATHENA Components are built from building blocks found in "core" and "helpers"
+ATHENA Helpers enhance the functionality of components:
 
-* Core: The blocks that make up the components listed above
-* Helpers: Specific pieces of functionality that relate to a specific component
+* Lock: locks tickets for a period of time while the customer is in the purchasing process (bundled with Tix)
+* Relationships: establishes relationships among people and organizations
+* TicketFactory: creates tickets for a performance (bundled with Tix)
+
+## Applications
+
+ATHENA components themselves don’t provide end-user interfaces, only web service endpoints. Therefore, to provide end-users with access to ATHENA services requires the creation of a client application. ATHENA’s service-oriented architecture means that client applications can theoretically be written in any programming language for any platform. Future releases of ATHENA will likely include standard client libraries for popular programming languages. 
 
 ## Contact the Team
 
