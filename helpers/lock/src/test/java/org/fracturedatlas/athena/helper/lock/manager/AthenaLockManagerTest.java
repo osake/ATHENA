@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
-import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.lock.exception.TicketsLockedException;
@@ -39,6 +38,7 @@ import org.fracturedatlas.athena.helper.lock.model.AthenaLock;
 import org.fracturedatlas.athena.helper.lock.model.AthenaLockStatus;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.fracturedatlas.athena.web.exception.AthenaException;
+import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -468,6 +468,12 @@ public class AthenaLockManagerTest extends BaseLockManagerTest {
         } catch (AthenaException ae) {
             //pass
         }
+    }
+
+    @Test
+    public void deleteUnknownTransaction() throws Exception {
+        manager.deleteLock("UNKNOWN", mockHttpServletRequest);
+        //nothing should happen here.  We are intentionaly returning a 204 in all cases.
     }
 
     @Test

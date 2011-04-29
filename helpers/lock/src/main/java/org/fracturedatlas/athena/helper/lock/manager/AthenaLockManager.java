@@ -273,13 +273,19 @@ public class AthenaLockManager {
         }
     }
 
+    /*
+     * This method intentionally does not return NotFound for locks
+     * because this would allow someone to brute force scan for locks and delete them
+     *
+     * TODO: Check for lock ownership before deleting
+     */
     public void deleteLock(String id, HttpServletRequest request) throws Exception {
         //get the tickets on the tran
         Set<PTicket> ticketsInTransaction = getTicketsInTransaction(id);
 
         logger.info("TICKETS IN THIS TRANSACTION: {}", ticketsInTransaction);
 
-        if(ticketsInTransaction == null) {
+        if(ticketsInTransaction == null || ticketsInTransaction.size() == 0) {
             return;
         }
 
