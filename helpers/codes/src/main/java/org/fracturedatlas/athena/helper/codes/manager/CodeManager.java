@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.HashSet;
 import javax.ws.rs.core.MultivaluedMap;
+import org.apache.commons.lang.StringUtils;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
@@ -296,7 +297,9 @@ public class CodeManager {
     }
 
     public void verifyCode(Code code) {
-
+        if(StringUtils.isBlank(code.getCode())) {
+            throw new AthenaException("The code field cannot be blank");
+        }
     }
 
     public ApaAdapter getApa() {
