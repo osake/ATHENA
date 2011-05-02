@@ -23,10 +23,6 @@ import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
 import java.text.ParseException;
 import static org.junit.Assert.*;
-
-
-
-import org.codehaus.jackson.map.ObjectMapper;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
@@ -42,7 +38,6 @@ public class RecordResourceContainerTest extends BaseTixContainerTest {
 
     JpaRecord testTicket = new JpaRecord();
     String testTicketJson = "";
-    ObjectMapper mapper = new ObjectMapper();
     Gson gson = JsonUtil.getGson();
 
     public RecordResourceContainerTest() throws Exception {

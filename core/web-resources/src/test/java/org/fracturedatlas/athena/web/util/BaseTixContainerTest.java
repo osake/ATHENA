@@ -159,13 +159,17 @@ public abstract class BaseTixContainerTest extends JerseyTest {
         return pf.toClientField();
     }
 
-    public PTicket addRecord(String type, String... keyValues) {
+    public PTicket createRecord(String type, String... keyValues) {
         PTicket t = new PTicket(type);
         for(int i=0; i < keyValues.length; i+=2) {
             System.out.println(keyValues[i]);
             t.put(keyValues[i], keyValues[i+1]);
         }
-        t = apa.saveRecord(t);
+        return t;
+    }
+
+    public PTicket addRecord(String type, String... keyValues) {
+        PTicket t = apa.saveRecord(createRecord(type, keyValues));
         recordsToDelete.add(t);
         return t;
     }

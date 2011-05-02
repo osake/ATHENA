@@ -30,8 +30,7 @@ import org.junit.runners.Suite;
   SaveRecordContainerTest.class,
   SearchContainerTest.class,
   RecordResourceContainerTest.class,
-  RelationshipContainerTest.class,
-  PutRecordContainerTest.class
+  RelationshipContainerTest.class
 })
 public class RecordSuite {
 

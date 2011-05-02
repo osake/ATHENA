@@ -43,13 +43,14 @@ import org.fracturedatlas.athena.web.exception.ForbiddenException;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import com.sun.jersey.core.impl.provider.entity.Inflector;
+import javax.ws.rs.core.MediaType;
 import org.fracturedatlas.athena.apa.exception.InvalidFieldException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Path("")
-@Consumes({"application/json"})
-@Produces({"application/json"})
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class RecordResource {
 
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());

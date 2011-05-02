@@ -28,6 +28,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import javax.ws.rs.core.MediaType;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp;
 import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
@@ -105,7 +106,7 @@ public class SaveRecordContainerTest extends BaseTixContainerTest {
 
         String ticketJson = gson.toJson(pTicket);
 
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, ticketJson);
+        ClientResponse response = tix.path(path).type(MediaType.APPLICATION_JSON).post(ClientResponse.class, ticketJson);
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
     }
 

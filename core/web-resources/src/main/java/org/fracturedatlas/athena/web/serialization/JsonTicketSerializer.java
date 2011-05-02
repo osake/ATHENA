@@ -33,6 +33,7 @@ import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Map.Entry;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -41,13 +42,13 @@ import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 
 @Provider
-@Produces({"application/json"})
+@Produces("application/json")
+@Consumes("application/json")
 public class JsonTicketSerializer implements MessageBodyWriter<PTicket>,
                                              MessageBodyReader<PTicket>,
                                              JsonSerializer<PTicket>,
