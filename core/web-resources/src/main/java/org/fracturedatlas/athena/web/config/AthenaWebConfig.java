@@ -25,7 +25,7 @@ import javax.ws.rs.core.MediaType;
 public class AthenaWebConfig extends PackagesResourceConfig {
 
     public AthenaWebConfig() {
-        super ("org.fracturedatlas.athena.web.serialization", "org.fracturedatlas.athena.web.exception");
+        super ("org.fracturedatlas.athena");
 
         getMediaTypeMappings().put("json", MediaType.APPLICATION_JSON_TYPE);
     }

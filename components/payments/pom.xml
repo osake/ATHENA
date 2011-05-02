@@ -104,6 +104,10 @@
                     <groupId>org.fracturedatlas.athena</groupId>
                     <artifactId>web-resources</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.fracturedatlas.athena</groupId>
+                    <artifactId>apa</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
