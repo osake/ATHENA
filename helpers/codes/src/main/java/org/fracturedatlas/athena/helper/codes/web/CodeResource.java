@@ -37,6 +37,7 @@ import javax.ws.rs.core.UriInfo;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.codes.model.Code;
 import org.fracturedatlas.athena.helper.codes.manager.CodeManager;
+import org.fracturedatlas.athena.web.exception.ForbiddenException;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,4 +107,22 @@ public class CodeResource {
         codeManager.deleteCodeFromTicket(id, ticketId);
     }
 
+    /**
+     * Get tickets based on criteria specified in ui.getQueryParameters()
+     * All search parameters will be bundled together as AND queries
+     * Calls to this method with blank query parameters (trying to get a list of all records)
+     * will be returned a 405 (Method not allowed)
+     * @param ui
+     * @return
+     */
+    @GET
+    @Path("")
+    public Collection<PTicket> search(@Context UriInfo ui) {
+        MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
+        if (queryParams.isEmpty()) {
+            throw new ForbiddenException("You must specify at least one query parameter when searching for codes");
+        }
+
+        return codeManager.findCodes(queryParams);
+    }
 }

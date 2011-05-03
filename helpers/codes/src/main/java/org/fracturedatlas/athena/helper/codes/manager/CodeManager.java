@@ -296,6 +296,10 @@ public class CodeManager {
         return tickets;
     }
 
+    public Set<PTicket> findCodes(MultivaluedMap<String, String> queryParams) {
+        return recordManager.findTickets(CODE, queryParams);
+    }
+
     public void verifyCode(Code code) {
         if(StringUtils.isBlank(code.getCode())) {
             throw new AthenaException("The code field cannot be blank");

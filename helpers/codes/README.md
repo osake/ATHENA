@@ -101,8 +101,9 @@ Response:
 
 Make a PUT request similar to the POST request above.
 
-    PUT http://localhost/tix/codes
+    PUT http://localhost/tix/codes/{code_id}
     {
+      "id": "39029",
       "code": "festivalpass1",
       "description": "A human readable description",
       "performances": [],
