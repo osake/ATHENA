@@ -1,0 +1,28 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+    <context:component-scan base-package="org.fracturedatlas.athena"/>
+
+    <import resource="testApplicationContext-jpa.xml"/>
+    <bean id="bulkManager" class="org.fracturedatlas.athena.helper.bulk.manager.BulkManager" autowire="autodetect"/>
+    <bean id="recordManager" class="org.fracturedatlas.athena.web.manager.RecordManager" autowire="autodetect"/>
+    <bean id="propFieldManager" class="org.fracturedatlas.athena.web.manager.PropFieldManager" autowire="autodetect"/>
+
+    <!-- Obviously tests that need stage won't work -->
+    <bean name="athenaStage" class="org.fracturedatlas.athena.web.JsonAthenaComponent">
+        <constructor-arg index="0" value="null"/>
+        <constructor-arg index="1" value="4444"/>
+        <constructor-arg index="2" value="null"/>
+        <constructor-arg index="3">
+            <bean class="org.springframework.security.core.context.SecurityContextHolder"
+                  factory-method="getContextHolderStrategy">
+            </bean>
+        </constructor-arg>
+    </bean>
+</beans>

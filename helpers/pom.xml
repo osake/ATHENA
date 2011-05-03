@@ -17,6 +17,7 @@
         <module>ticketfactory</module>
         <module>relationship-helper</module>
         <module>codes</module>
+        <module>bulk</module>
     </modules>
     <dependencies>
 
@@ -25,6 +26,13 @@
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>sdk</artifactId>
             <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.jersey.jersey-test-framework</groupId>
+            <artifactId>jersey-test-framework-grizzly</artifactId>
+            <version>${jersey-version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

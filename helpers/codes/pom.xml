@@ -93,13 +93,7 @@
                     <artifactId>spring-context</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey.jersey-test-framework</groupId>
-            <artifactId>jersey-test-framework-grizzly</artifactId>
-            <version>1.4</version>
-            <scope>test</scope>
-        </dependency>   
+        </dependency>  
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
