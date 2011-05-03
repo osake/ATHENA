@@ -11,6 +11,8 @@ holder above.
 
 =
 
+# Bulk
+
 The bulk helper allows clients to create and update multiple records in one JSON request
 
 #Installing the helper
@@ -33,7 +35,7 @@ The bulk helper is included in already Tix <https://github.com/fracturedatlas/AT
 
 The bulk helper relies on no special fields in tix
 
-## Creating many tickets
+## Creating multiple tickets
 
 POST a JSON array
 
