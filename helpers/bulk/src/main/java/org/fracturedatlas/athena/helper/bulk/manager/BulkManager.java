@@ -20,7 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.helper.bulk.manager;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.fracturedatlas.athena.apa.ApaAdapter;
+import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.web.manager.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
@@ -40,6 +46,23 @@ public class BulkManager {
     ApaAdapter apa;
 
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
+    public List<PTicket> updateRecords(String type, String ids, PTicket record) throws ObjectNotFoundException {
+        List<PTicket> outRecords = new ArrayList<PTicket>();
+        List<String> idList = Arrays.asList(StringUtils.split(ids, ";"));
+        for(String id : idList) {
+            record.setId(id);
+            PTicket ticket  = apa.getRecord(type, record.getId());
+
+            if (ticket == null) {
+                throw new ObjectNotFoundException("Record not found");
+            }
+
+            outRecords.add(apa.saveRecord(type, record));
+        }
+
+        return null;
+    }
 
     public ApaAdapter getApa() {
         return apa;
