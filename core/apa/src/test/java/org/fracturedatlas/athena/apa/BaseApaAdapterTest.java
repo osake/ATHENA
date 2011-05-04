@@ -89,4 +89,19 @@ public abstract class BaseApaAdapterTest {
         propFieldsToDelete.add(pf);
         return pf.toClientField();
     }
+
+    public PTicket makeRecord(String type, String... keyValues) {
+        PTicket t = new PTicket(type);
+        for(int i=0; i < keyValues.length; i+=2) {
+            System.out.println(keyValues[i]);
+            t.put(keyValues[i], keyValues[i+1]);
+        }
+        return t;
+    }
+
+    public PTicket addRecord(String type, String... keyValues) {
+        PTicket t = apa.saveRecord(makeRecord(type, keyValues));
+        ticketsToDelete.add(t);
+        return t;
+    }
 }
