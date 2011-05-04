@@ -22,8 +22,8 @@ package org.fracturedatlas.athena.web.resource.container;
 
 
 import com.google.gson.Gson;
-import com.sun.jersey.api.client.ClientResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.PTicket;
@@ -32,6 +32,7 @@ import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class PostArrayContainerTest extends BaseTixContainerTest {
 
@@ -48,7 +49,24 @@ public class PostArrayContainerTest extends BaseTixContainerTest {
     }
 
     @Test
-    public void testPostRecordWithOneArray() {
+    public void testPostRecordWithOneTicket() {
+        List<PTicket> ticketList = new ArrayList<PTicket>();
+        PTicket ticket = createRecord("ticket",
+                                      "performanceId", "8",
+                                      "eventId", "true",
+                                      "price", "50");
+
+        String jsonResponse = tix.path(path)
+                                     .type("application/json")
+                                     .post(String.class, gson.toJson(ticket));
+
+        PTicket pTicket = gson.fromJson(jsonResponse,  PTicket.class);
+        assertNotNull(pTicket);
+        recordsToDelete.add(pTicket);
+    }
+
+    @Test
+    public void testPostRecordWithOneTicketInArray() {
         List<PTicket> ticketList = new ArrayList<PTicket>();
         PTicket ticket = createRecord("ticket",
                                       "performanceId", "8",
@@ -57,8 +75,14 @@ public class PostArrayContainerTest extends BaseTixContainerTest {
         ticketList.add(ticket);
         PTicket[] recordArray = ticketList.toArray(new PTicket[0]);
 
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, gson.toJson(recordArray));
+        String jsonResponse = tix.path(path)
+                                     .type("application/json")
+                                     .post(String.class, gson.toJson(recordArray));
 
+        PTicket[] tickets = gson.fromJson(jsonResponse,  PTicket[].class);
+        List<PTicket> savedTicketList = Arrays.asList(tickets);
+        assertEquals(1, savedTicketList.size());
+        recordsToDelete.addAll(savedTicketList);
     }
 
     @Before

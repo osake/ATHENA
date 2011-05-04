@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.web.resource;
 
 import com.google.gson.Gson;
+import java.util.*;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -47,6 +48,8 @@ import javax.ws.rs.core.MediaType;
 import org.fracturedatlas.athena.apa.exception.InvalidFieldException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 @Path("")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -162,12 +165,33 @@ public class RecordResource {
      * @return the saved ticket
      * @throws Exception if the json was malformed
      */
+    /*
+     * We can't rely on automatic serialization here, because this method needs to know if the client sent
+     * a signle object or an array so that it can return a sigle object or an array.
+     *
+     * This, we must deserialize manually so that we can serialize correctly
+     */
     @POST
     @Path("{type}/")
-    public Object save(@PathParam("type") String type, PTicket pTicket) throws Exception {
+    public Object save(@PathParam("type") String type, String jsonBody) throws Exception {
         type = Inflector.getInstance().singularize(type);
-        PTicket ticket  = recordManager.createRecord(type, pTicket);
-        return ticket;
+        JsonParser jp = new JsonParser();
+        JsonElement el = jp.parse(jsonBody);
+        Object outRecords;
+        if(el.isJsonArray()) {
+            List<PTicket> savedRecords = new ArrayList<PTicket>();
+            PTicket[] recordArray = gson.fromJson(el, PTicket[].class);
+            List<PTicket> records = Arrays.asList(recordArray);
+            for(PTicket record : records) {
+                savedRecords.add(recordManager.createRecord(type, record));
+            }
+            outRecords = savedRecords;
+        } else {
+            PTicket pTicket = gson.fromJson(el, PTicket.class);
+            pTicket = recordManager.createRecord(type, pTicket);
+            outRecords = pTicket;
+        }
+        return outRecords;
     }
 
     /**
