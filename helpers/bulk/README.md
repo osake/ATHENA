@@ -13,7 +13,7 @@ holder above.
 
 # Bulk
 
-The bulk helper allows clients to create and update multiple records in one JSON request
+The bulk helper allows clients to update multiple records in one JSON request
 
 #Installing the helper
 
@@ -35,47 +35,6 @@ The bulk helper is included in already Tix <https://github.com/fracturedatlas/AT
 
 The bulk helper relies on no special fields in tix
 
-## Creating multiple tickets
-
-POST a JSON array
-
-    POST http://localhost/tix/bulk/tickets
-    [
-    {
-      "eventId": "3221",
-      "performanceId": "3009",
-      "price": 22,
-      "status":"off_sale"
-    },
-    {
-      "eventId": "3221",
-      "performanceId": "3009",
-      "price": 22,
-      "status":"off_sale"
-    }
-    ]
-    
-If any tickets cannot be saved, the entire operation will be rolled back and no tickets wil be created.
-
-Example response:
-
-    [
-    {
-      "id":3,
-      "eventId": "3221",
-      "performanceId": "3009",
-      "price": 22,
-      "status":"off_sale"
-    },
-    {
-      "id":4,
-      "eventId": "3221",
-      "performanceId": "3009",
-      "price": 22,
-      "status":"off_sale"
-    }
-    ]
-    
 ## Updating multiple tickets
 
 Put all ids to be updated on the URL.  In the JSON body, include fields to be updated.  Other fields will be unchanged.
