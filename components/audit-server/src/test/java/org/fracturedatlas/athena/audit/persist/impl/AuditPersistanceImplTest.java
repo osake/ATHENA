@@ -69,10 +69,6 @@ public class AuditPersistanceImplTest {
         AthenaSearch athenaSearch = new AthenaSearch();
         athenaSearch.addConstraint("id", Operator.EQUALS, ""+id);
         List<AuditMessage> lam = auditPersistance.getAuditMessages(athenaSearch);
-//        AuditMessage expResult = lam.get(0);
-
-
-//        assertEquals(expResult, result);
     }
 
 
