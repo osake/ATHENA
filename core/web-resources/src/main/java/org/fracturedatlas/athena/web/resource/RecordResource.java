@@ -182,9 +182,7 @@ public class RecordResource {
             List<PTicket> savedRecords = new ArrayList<PTicket>();
             PTicket[] recordArray = gson.fromJson(el, PTicket[].class);
             List<PTicket> records = Arrays.asList(recordArray);
-            for(PTicket record : records) {
-                savedRecords.add(recordManager.createRecord(type, record));
-            }
+            savedRecords = recordManager.createRecords(type, records);
             outRecords = savedRecords;
         } else {
             PTicket pTicket = gson.fromJson(el, PTicket.class);
@@ -207,6 +205,7 @@ public class RecordResource {
     @Path("{type}/{id}")
     public Object update(@PathParam("type") String type, @PathParam("id") String id, PTicket pTicket) throws Exception {
         type = Inflector.getInstance().singularize(type);
+        pTicket.setId(null);
         PTicket ticket  = recordManager.updateRecord(type, pTicket, id);
         return ticket;
     }

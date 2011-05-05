@@ -57,7 +57,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
 
     public BaseTixContainerTest() {
 
-      super(new WebAppDescriptor.Builder("org.fracturedatlas.athena.web.resource")
+      super(new WebAppDescriptor.Builder("org.fracturedatlas.athena")
         .contextPath("tix")
         .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
         .servletClass(SpringServlet.class)
@@ -95,6 +95,10 @@ public abstract class BaseTixContainerTest extends JerseyTest {
     public void assertNotFound(String path) {
         ClientResponse response = tix.path(path).get(ClientResponse.class);
         assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
+    public void assertBadRequest(ClientResponse response) {
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
     }
 
     public void assertBadRequest(String path, MultivaluedMap queryParams) {

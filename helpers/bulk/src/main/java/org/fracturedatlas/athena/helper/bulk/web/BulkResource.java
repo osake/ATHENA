@@ -22,12 +22,15 @@ package org.fracturedatlas.athena.helper.bulk.web;
 
 import com.google.gson.Gson;
 import com.sun.jersey.core.impl.provider.entity.Inflector;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import org.apache.commons.lang.StringUtils;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.fracturedatlas.athena.helper.bulk.manager.BulkManager;
@@ -50,7 +53,7 @@ public class BulkResource {
     Gson gson = JsonUtil.getGson();
 
     /**
-     * Apply the properties to the ids listed in the URL
+     * Apply the properties in pTicket to the ids listed in the URL
      *
      * Ids should be listed in a semicolon delimited list
      *
@@ -61,9 +64,11 @@ public class BulkResource {
     @PUT
     @Path("{type}/{ids}")
     public Object update(@PathParam("type") String type, @PathParam("ids") String ids, PTicket pTicket) throws Exception {
+        logger.debug("Id list [{}]", ids);
         type = Inflector.getInstance().singularize(type);
-
-        List<PTicket> records  = bulkManager.updateRecords(type, ids, pTicket);
+        String[] idArray = StringUtils.split(ids, BulkManager.ID_DELIMITER);
+        List<String> idList = Arrays.asList(idArray);
+        Collection<PTicket> records = bulkManager.updateRecords(type, idList, pTicket);
         return records;
     }
 }

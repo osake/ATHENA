@@ -190,6 +190,21 @@ public class RecordManager {
         return values;
     }
 
+    public List<PTicket> createRecords(String type, List<PTicket> records) {
+        List<PTicket> outRecords = new ArrayList<PTicket>();
+        try {
+            for(PTicket record : records) {
+                outRecords.add(apa.saveRecord(type, record));
+            }
+        } finally {
+            for(PTicket t : outRecords) {
+                apa.deleteRecord(t);
+            }            
+        }
+            
+        return outRecords;
+    }
+
     public PTicket createRecord(String type, PTicket record) {
         return apa.saveRecord(type, record);
     }

@@ -45,12 +45,15 @@ public class BulkManager {
     @Autowired
     ApaAdapter apa;
 
+    public static final String ID_DELIMITER = ",";
+
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    public List<PTicket> updateRecords(String type, String ids, PTicket record) throws ObjectNotFoundException {
+    public List<PTicket> updateRecords(String type, List<String> idList, PTicket record) throws ObjectNotFoundException {
         List<PTicket> outRecords = new ArrayList<PTicket>();
-        List<String> idList = Arrays.asList(StringUtils.split(ids, ";"));
+        logger.debug("Applying [{}] to [{}]", record, idList);
         for(String id : idList) {
+            logger.debug("Applying patch to [{}]", id);
             record.setId(id);
             PTicket ticket  = apa.getRecord(type, record.getId());
 
@@ -61,7 +64,7 @@ public class BulkManager {
             outRecords.add(apa.saveRecord(type, record));
         }
 
-        return null;
+        return outRecords;
     }
 
     public ApaAdapter getApa() {

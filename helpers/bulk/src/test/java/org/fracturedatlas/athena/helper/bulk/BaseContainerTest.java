@@ -17,9 +17,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
-package org.fracturedatlas.athena.web.util;
 
- 
+package org.fracturedatlas.athena.helper.bulk;
+
 import com.sun.jersey.api.client.*;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
@@ -43,7 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class BaseContainerTest extends JerseyTest {
-
     protected WebResource tix;
     protected EntityManagerFactory emf;
     protected ApaAdapter apa;
@@ -57,7 +56,7 @@ public abstract class BaseContainerTest extends JerseyTest {
 
     public BaseContainerTest() {
 
-      super(new WebAppDescriptor.Builder("org.fracturedatlas.athena.web.resource")
+      super(new WebAppDescriptor.Builder("org.fracturedatlas.athena")
         .contextPath("tix")
         .contextParam("contextConfigLocation", "classpath:testApplicationContext.xml")
         .servletClass(SpringServlet.class)
@@ -97,6 +96,10 @@ public abstract class BaseContainerTest extends JerseyTest {
         assertEquals(ClientResponse.Status.NOT_FOUND, ClientResponse.Status.fromStatusCode(response.getStatus()));
     }
 
+    public void assertBadRequest(ClientResponse response) {
+        assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
+    }
+
     public void assertBadRequest(String path, MultivaluedMap queryParams) {
         ClientResponse response = tix.path(path).queryParams(queryParams).get(ClientResponse.class);
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
@@ -118,7 +121,7 @@ public abstract class BaseContainerTest extends JerseyTest {
         if(includeId) {
             assertTrue(IdAdapter.isEqual(t.getId(), pTicket.getId()));
         }
-        
+
         assertEquals(t.getTicketProps().size(), pTicket.getProps().size());
 
         for(TicketProp ticketProp : t.getTicketProps()) {
@@ -130,7 +133,7 @@ public abstract class BaseContainerTest extends JerseyTest {
     public void assertTicketsEqual(JpaRecord t, PTicket pTicket) {
         assertTicketsEqual(t, pTicket, Boolean.TRUE);
     }
-    
+
     public void assertFieldsEqual(PropField field, PField pField) {
         assertTrue(IdAdapter.isEqual(field.getId(), pField.getId()));
         assertEquals(field.getName(), pField.getName());

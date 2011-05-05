@@ -22,11 +22,14 @@ package org.fracturedatlas.athena.web.resource.container;
 
 
 import com.google.gson.Gson;
+import com.sun.jersey.api.client.ClientResponse;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.junit.After;
@@ -82,7 +85,72 @@ public class PostArrayContainerTest extends BaseTixContainerTest {
         PTicket[] tickets = gson.fromJson(jsonResponse,  PTicket[].class);
         List<PTicket> savedTicketList = Arrays.asList(tickets);
         assertEquals(1, savedTicketList.size());
+        assertNotNull(savedTicketList.get(0).getId());
+        assertRecordsEqual(ticket, savedTicketList.get(0), Boolean.FALSE);
         recordsToDelete.addAll(savedTicketList);
+    }
+
+    @Test
+    public void testPostRecordWithTwoTickets() {
+        List<PTicket> ticketList = new ArrayList<PTicket>();
+        PTicket ticket = createRecord("ticket",
+                                      "performanceId", "81",
+                                      "eventId", "true",
+                                      "price", "50");
+        PTicket ticket2 = createRecord("ticket",
+                                      "performanceId", "80",
+                                      "eventId", "true",
+                                      "price", "50");
+        ticketList.add(ticket);
+        ticketList.add(ticket2);
+        PTicket[] recordArray = ticketList.toArray(new PTicket[0]);
+
+        String jsonResponse = tix.path(path)
+                                     .type("application/json")
+                                     .post(String.class, gson.toJson(recordArray));
+
+        PTicket[] tickets = gson.fromJson(jsonResponse,  PTicket[].class);
+        List<PTicket> savedTicketList = Arrays.asList(tickets);
+        assertEquals(2, savedTicketList.size());
+
+        for(PTicket t : savedTicketList) {
+            if(t.get("performanceId").equals(ticket.get("performanceId"))) {
+                assertRecordsEqual(t, ticket, Boolean.FALSE);
+            } else if(t.get("performanceId").equals(ticket2.get("performanceId"))) {
+                assertRecordsEqual(t, ticket2, Boolean.FALSE);
+            } else {
+                fail("One of the returned tickets does not match");
+            }
+        }
+
+        recordsToDelete.addAll(savedTicketList);
+    }
+
+    @Test
+    public void testPostRecordWithOneBadTicket() {
+        List<PTicket> ticketList = new ArrayList<PTicket>();
+        PTicket ticket = createRecord("ticket",
+                                      "performanceId", "81",
+                                      "eventId", "true",
+                                      "price", "50");
+        PTicket ticket2 = createRecord("ticket",
+                                      "performanceId", "80",
+                                      "unknownProp", "true",
+                                      "price", "50");
+        ticketList.add(ticket);
+        ticketList.add(ticket2);
+        PTicket[] recordArray = ticketList.toArray(new PTicket[0]);
+
+        ClientResponse response = tix.path(path)
+                                     .type("application/json")
+                                     .post(ClientResponse.class, gson.toJson(recordArray));
+
+        assertBadRequest(response);
+
+        //make sure nothing got saved
+        AthenaSearch search = new AthenaSearch.Builder().type("ticket").build();
+        Set<PTicket> savedTickets = apa.findTickets(search);
+        assertEquals(0, savedTickets.size());
     }
 
     @Before
