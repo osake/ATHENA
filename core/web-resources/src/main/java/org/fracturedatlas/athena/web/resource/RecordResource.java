@@ -204,8 +204,8 @@ public class RecordResource {
     @PUT
     @Path("{type}/{id}")
     public Object update(@PathParam("type") String type, @PathParam("id") String id, PTicket pTicket) throws Exception {
+        logger.debug("PUT: [{}]", pTicket);
         type = Inflector.getInstance().singularize(type);
-        pTicket.setId(null);
         PTicket ticket  = recordManager.updateRecord(type, pTicket, id);
         return ticket;
     }

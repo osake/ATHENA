@@ -49,19 +49,20 @@ public class BulkManager {
 
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    public List<PTicket> updateRecords(String type, List<String> idList, PTicket record) throws ObjectNotFoundException {
+    public List<PTicket> updateRecords(String type, List<String> idList, PTicket patchRecord) throws ObjectNotFoundException {
         List<PTicket> outRecords = new ArrayList<PTicket>();
-        logger.debug("Applying [{}] to [{}]", record, idList);
+        patchRecord.setId(null);
+        logger.debug("Applying [{}] to [{}]", patchRecord, idList);
         for(String id : idList) {
             logger.debug("Applying patch to [{}]", id);
-            record.setId(id);
-            PTicket ticket  = apa.getRecord(type, record.getId());
+            patchRecord.setId(id);
+            PTicket ticket  = apa.getRecord(type, patchRecord.getId());
 
             if (ticket == null) {
                 throw new ObjectNotFoundException("Record not found");
             }
 
-            outRecords.add(apa.saveRecord(type, record));
+            outRecords.add(apa.saveRecord(type, patchRecord));
         }
 
         return outRecords;

@@ -21,21 +21,16 @@ package org.fracturedatlas.athena.web.manager;
 
 import com.sun.jersey.api.NotFoundException;
 import java.text.CharacterIterator;
-import java.text.ParseException;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.lang.StringUtils;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
-import org.fracturedatlas.athena.apa.impl.jpa.PropField;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
@@ -43,11 +38,14 @@ import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RecordManager {
 
     @Autowired
     ApaAdapter apa;
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     public PTicket getTicket(String type, Object id) {
         return apa.getRecord(type, id);
@@ -190,6 +188,13 @@ public class RecordManager {
         return values;
     }
 
+    /**
+     * TODO: This method saves the records, then if one save fails it rolls back and deletes any records that it has saved to this point.
+     * This is an edge case where it saves a record, some other client modifies the record, then this thread deletes that record in a rollback.
+     * @param type
+     * @param records
+     * @return
+     */
     public List<PTicket> createRecords(String type, List<PTicket> records) {
         List<PTicket> outRecords = new ArrayList<PTicket>();
         try {
@@ -227,6 +232,10 @@ public class RecordManager {
         if (idToUpdate == null || ticket == null) {
             throw new NotFoundException();
         }
+
+        logger.debug("Updating record [{}]", ticket);
+        logger.debug("With record record [{}]", record);
+
 
         if (!IdAdapter.isEqual(ticket.getId(), record.getId())) {
             throw new AthenaException("Requested update to [" + idToUpdate + "] but sent record with id [" + record.getId() + "]");
