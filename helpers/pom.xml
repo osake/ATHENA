@@ -17,7 +17,6 @@
         <module>ticketfactory</module>
         <module>relationship-helper</module>
         <module>codes</module>
-        <module>bulk</module>
     </modules>
     <dependencies>
 

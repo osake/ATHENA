@@ -116,8 +116,14 @@ public class PostArrayContainerTest extends BaseTixContainerTest {
         for(PTicket t : savedTicketList) {
             if(t.get("performanceId").equals(ticket.get("performanceId"))) {
                 assertRecordsEqual(t, ticket, Boolean.FALSE);
+                PTicket savedTicket = apa.getRecord("ticket", t.getId());
+                assertNotNull(savedTicket);
+                assertRecordsEqual(savedTicket, ticket, Boolean.FALSE);
             } else if(t.get("performanceId").equals(ticket2.get("performanceId"))) {
                 assertRecordsEqual(t, ticket2, Boolean.FALSE);
+                PTicket savedTicket = apa.getRecord("ticket", t.getId());
+                assertNotNull(savedTicket);
+                assertRecordsEqual(savedTicket, ticket2, Boolean.FALSE);
             } else {
                 fail("One of the returned tickets does not match");
             }

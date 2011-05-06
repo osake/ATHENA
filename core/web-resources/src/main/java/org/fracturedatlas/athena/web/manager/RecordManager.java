@@ -47,6 +47,8 @@ public class RecordManager {
     ApaAdapter apa;
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
+    public static final String ID_DELIMITER = ",";
+
     public PTicket getTicket(String type, Object id) {
         return apa.getRecord(type, id);
     }
@@ -201,10 +203,18 @@ public class RecordManager {
             for(PTicket record : records) {
                 outRecords.add(apa.saveRecord(type, record));
             }
-        } finally {
+        } catch (RuntimeException e) {
+            logger.error("Exception while saving records [{}]", e);
+            logger.error("Rolling back");
             for(PTicket t : outRecords) {
-                apa.deleteRecord(t);
-            }            
+                try{
+                    apa.deleteRecord(t);
+                } catch (Exception exception) {
+                    logger.error("Could not rollback record [{}]", t);
+                    logger.error("[{}]", e.getMessage());
+                }
+            }
+            throw e;
         }
             
         return outRecords;
@@ -223,6 +233,25 @@ public class RecordManager {
         }
 
         return apa.saveRecord(type, record);
+    }
+
+    public List<PTicket> updateRecords(String type, List<String> idList, PTicket patchRecord) throws ObjectNotFoundException {
+        List<PTicket> outRecords = new ArrayList<PTicket>();
+        patchRecord.setId(null);
+        logger.debug("Applying [{}] to [{}]", patchRecord, idList);
+        for(String id : idList) {
+            logger.debug("Applying patch to [{}]", id);
+            patchRecord.setId(id);
+            PTicket ticket  = apa.getRecord(type, patchRecord.getId());
+
+            if (ticket == null) {
+                throw new ObjectNotFoundException("Record not found");
+            }
+
+            outRecords.add(apa.saveRecord(type, patchRecord));
+        }
+
+        return outRecords;
     }
 
     public PTicket updateRecord(String type, PTicket record, String idToUpdate) {

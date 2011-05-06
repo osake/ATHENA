@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
 
-package org.fracturedatlas.athena.helper.bulk;
+package org.fracturedatlas.athena.web.resource.container;
 
 import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
@@ -27,15 +27,16 @@ import java.util.Arrays;
 import java.util.List;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
+import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class BulkRecordsContainerTest extends BaseContainerTest {
+public class BulkRecordsContainerTest extends BaseTixContainerTest {
 
-    String path = "/bulk" + RECORDS_PATH;
+    String path = RECORDS_PATH + "patch/";
     Gson gson = JsonUtil.getGson();
 
     public BulkRecordsContainerTest() throws Exception {

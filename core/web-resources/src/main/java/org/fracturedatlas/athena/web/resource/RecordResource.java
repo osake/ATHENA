@@ -210,6 +210,27 @@ public class RecordResource {
         return ticket;
     }
 
+    /**
+     * Apply the properties in pTicket to the ids listed in the URL
+     *
+     * Ids should be listed in a comma delimited list
+     *
+     * The HTTP PATCH method is a better candidate for this, but it isn't implemented yet:  http://tools.ietf.org/html/rfc5789
+     *
+     * @param json the fields to update
+     * @return the saved ticket
+     * @throws Exception if the json was malformed
+     */
+    @PUT
+    @Path("{type}/patch/{ids}")
+    public Object patch(@PathParam("type") String type, @PathParam("ids") String ids, PTicket pTicket) throws Exception {
+        type = Inflector.getInstance().singularize(type);
+        String[] idArray = StringUtils.split(ids, RecordManager.ID_DELIMITER);
+        List<String> idList = Arrays.asList(idArray);
+        Collection<PTicket> records = recordManager.updateRecords(type, idList, pTicket);
+        return records;
+    }
+
     public RecordManager getRecordManager() {
         return recordManager;
     }
