@@ -170,10 +170,10 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey.jersey-test-framework</groupId>
-            <artifactId>jersey-test-framework-grizzly</artifactId>
-            <version>1.4</version>
-            <scope>test</scope>
+          <groupId>com.sun.jersey.jersey-test-framework</groupId>
+          <artifactId>jersey-test-framework-grizzly</artifactId>
+          <version>${jersey-version}</version>
+          <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
