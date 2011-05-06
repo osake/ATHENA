@@ -19,11 +19,13 @@ The remainder of this document provides paths that should be pre-pended with the
 
 *POST /tickets*
 
-Save a ticket.  If an id is included in the JSON body, that ticket will be updated.  If no id is specified, the ticket will be saved as new.
+Save a ticket.  Do not specify an id int he body, one will be assigned by the system.
+
+You can POST a single ticket or an array of tickets.  If you pass a signel ticket, a single ticket will be returned.  If you pass an array, all created tickets will be returned as an array.  +This is true even if you pass an array of one ticket,+ the return type in this case will be an array.
 
 +Example request:+
 
-pre. /tickets
+pre. POST /tickets
 
 pre. body =>
 {"PRICE":"50",
@@ -48,6 +50,53 @@ pre. {"id":"44",
    "SECTION":"B",
    "SOLD":"false",
    "VENUE":"St. James Theater"}
+
++Example request:+
+
+pre. POST /tickets
+
+pre. body =>
+[{"PRICE":"50",
+   "HALF_PRICE":"true",
+   "SEAT_NUMBER":"10",
+   "TITLE":"Jersey Boys",
+   "TIER":"NONE",
+   "PERFORMANCE":"2010-10-02 09:00",
+   "SECTION":"B",
+   "SOLD":"false",
+   "VENUE":"St. James Theater"},
+ {"PRICE":"50",
+   "HALF_PRICE":"true",
+   "SEAT_NUMBER":"10",
+   "TITLE":"Jersey Boys",
+   "TIER":"NONE",
+   "PERFORMANCE":"2010-10-02 09:00",
+   "SECTION":"B",
+   "SOLD":"false",
+   "VENUE":"St. James Theater"}]
+
++Example response:+
+
+pre. [{"id":"44",
+   "PRICE":"50",
+   "HALF_PRICE":"true",
+   "SEAT_NUMBER":"10",
+   "TITLE":"Jersey Boys",
+   "TIER":"NONE",
+   "PERFORMANCE":"2010-10-02 09:00",
+   "SECTION":"B",
+   "SOLD":"false",
+   "VENUE":"St. James Theater"},
+   {"id":"44",
+   "PRICE":"50",
+   "HALF_PRICE":"true",
+   "SEAT_NUMBER":"10",
+   "TITLE":"Jersey Boys",
+   "TIER":"NONE",
+   "PERFORMANCE":"2010-10-02 09:00",
+   "SECTION":"B",
+   "SOLD":"false",
+   "VENUE":"St. James Theater"}]
 
 *PUT http://hostname.com:port/tix/tickets/{id}*
 
