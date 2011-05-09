@@ -199,7 +199,7 @@ public class JpaRecord extends TixEntity implements Serializable {
             if(propName.contains(":")) {
                 pTicket.getSystemProps().putSingle(propName, prop.getValueAsString());
             } else {
-                pTicket.put(propName, prop.getValueAsString());
+                pTicket.getProps().add(propName, prop.getValueAsString());
             }
         }
 

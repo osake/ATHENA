@@ -139,8 +139,9 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         List<TicketProp> propsToSave = new ArrayList<TicketProp>();
         Set<String> keys = clientTicket.getProps().keySet();
         for (String key : keys) {
-            String val = clientTicket.get(key);
-            propsToSave.add(buildProp(ticket, type, key, val));
+            for(String val : clientTicket.getProps().get(key)) {
+                propsToSave.add(buildProp(ticket, type, key, val));
+            }
         }
 
         keys = clientTicket.getSystemProps().keySet();
@@ -162,6 +163,9 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     private TicketProp buildProp(JpaRecord ticket, String type, String key, String val) {
 
+        //TODO: If this is an array, then we should prob nuke all props and re-build them
+        //Actually that isn't a bad strategy in all cases
+
         TicketProp ticketProp = getTicketProp(key, type, ticket.getId());
 
         if (ticketProp == null) {
@@ -174,7 +178,6 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
 
         ticketProp.setValue(val);
-
         return ticketProp;
     }
 
