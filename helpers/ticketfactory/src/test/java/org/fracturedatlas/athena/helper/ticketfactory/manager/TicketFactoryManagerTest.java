@@ -52,6 +52,8 @@ public class TicketFactoryManagerTest {
     AthenaSearch athenaSearch;
     PTicketMatcher isAPTicket = new PTicketMatcher();
 
+    public static final String SAMPLE_ORG_ID = "org123";
+
     @Mock private AthenaComponent mockStage;
     @Mock private RecordManager mockTicketManager;
 
@@ -76,6 +78,7 @@ public class TicketFactoryManagerTest {
         samplePerformance = new PTicket();
         samplePerformance.setId("49");
         samplePerformance.put("chartId", (String)sampleSeatChart.getId());
+        samplePerformance.put("organizationId", SAMPLE_ORG_ID);
         samplePerformance.put("eventId", (String)sampleEvent.getId());
         samplePerformance.put("datetime", "2010-03-20T20:20:11-04:00");
         when(mockStage.get("performance", samplePerformance.getId())).thenReturn(null);
@@ -167,6 +170,7 @@ public class TicketFactoryManagerTest {
         samplePerformance.put("chartId", (String)sampleSeatChart.getId());
         samplePerformance.put("eventId", (String)sampleEvent.getId());
         samplePerformance.put("datetime", "2010-03-20T20:20:11-04:00");
+        samplePerformance.put("organizationId", SAMPLE_ORG_ID);
     }
 
     @Before
