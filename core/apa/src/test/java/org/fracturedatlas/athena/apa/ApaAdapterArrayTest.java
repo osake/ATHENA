@@ -58,6 +58,7 @@ public class ApaAdapterArrayTest extends BaseApaAdapterTest {
     public void testSaveRecordWithArrayValue() {
         jim.getProps().put("teams", Arrays.asList(ravens.getIdAsString(), chiefs.getIdAsString()));
         jim = apa.saveRecord(jim);
+        System.out.println(jim);
         assertEquals(2, jim.getProps().get("teams").size());
         assertTrue(jim.getProps().get("teams").contains(ravens.getIdAsString()));
         assertTrue(jim.getProps().get("teams").contains(chiefs.getIdAsString()));
@@ -73,6 +74,32 @@ public class ApaAdapterArrayTest extends BaseApaAdapterTest {
         assertTrue(jim.getProps().get("teams").contains(ravens.getIdAsString()));
         assertTrue(jim.getProps().get("teams").contains(chiefs.getIdAsString()));
         assertTrue(jim.getProps().get("teams").contains(raiders.getIdAsString()));
+    }
+
+    @Test
+    public void testSaveRecordReduceArrayValues() {
+        jim.getProps().add("teams", ravens.getIdAsString());
+        jim.getProps().add("teams", chiefs.getIdAsString());
+        jim.getProps().add("teams", raiders.getIdAsString());
+        jim = apa.saveRecord(jim);
+        assertEquals(3, jim.getProps().get("teams").size());
+        jim.getProps().put("teams", Arrays.asList(ravens.getIdAsString(), chiefs.getIdAsString()));
+        jim = apa.saveRecord(jim);
+        assertEquals(2, jim.getProps().get("teams").size());
+        assertTrue(jim.getProps().get("teams").contains(ravens.getIdAsString()));
+        assertTrue(jim.getProps().get("teams").contains(chiefs.getIdAsString()));
+    }
+
+    @Test
+    public void testSaveRecordDeleteArrayValue() {
+        jim.getProps().add("teams", ravens.getIdAsString());
+        jim.getProps().add("teams", chiefs.getIdAsString());
+        jim.getProps().add("teams", raiders.getIdAsString());
+        jim = apa.saveRecord(jim);
+        assertEquals(3, jim.getProps().get("teams").size());
+        jim.getProps().remove("teams");
+        jim = apa.saveRecord(jim);
+        assertNull(jim.getProps().get("teams"));
     }
 
     @Before

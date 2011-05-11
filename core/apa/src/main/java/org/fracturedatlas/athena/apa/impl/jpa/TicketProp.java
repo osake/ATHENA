@@ -41,6 +41,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
+import org.fracturedatlas.athena.client.PTicket;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.Type;
@@ -182,6 +183,10 @@ public abstract class TicketProp extends TixEntity implements Serializable, Comp
         }
 
         return err;
+    }
+
+    public Boolean isSystemProp() {
+        return this.propField.getName().contains(PTicket.SYSTEM_PROP_DELIMITER);
     }
  
 }
