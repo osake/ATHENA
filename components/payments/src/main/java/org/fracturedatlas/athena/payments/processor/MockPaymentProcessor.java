@@ -129,12 +129,30 @@ public class MockPaymentProcessor implements PaymentProcessor {
 
     @Override
     public org.fracturedatlas.athena.payments.model.Customer getCustomer(String id) {
-        return customers.get(id);
+        org.fracturedatlas.athena.payments.model.Customer c = customers.get(id);
+        if(c == null) {
+            throw new NotFoundException("Customer with id [" + id + "] was not found");
+        } else {
+            for(org.fracturedatlas.athena.payments.model.CreditCard card : cards.values()) {
+                if(card.getCustomer().getId().equals(c.getId())) {
+                    c.getCreditCards().add(card);
+                }
+            }
+
+            return c;
+        }
     }
 
     @Override
     public org.fracturedatlas.athena.payments.model.Customer saveCustomer(org.fracturedatlas.athena.payments.model.Customer customer) {
-        customer.setId(UUID.randomUUID().toString());
+        org.fracturedatlas.athena.payments.model.Customer existingCustomer = customers.get(customer.getId());
+
+        if(existingCustomer == null) {
+            customer.setId(UUID.randomUUID().toString());
+        } else {
+            customer.setId(existingCustomer.getId());
+            customers.remove(existingCustomer.getId());
+        }
         customers.put(customer.getId(), customer);
         return customer;
     }
