@@ -47,7 +47,7 @@ public class Code {
     Set<String> events;
     Boolean enabled;
     
-    public static final String FIELD_PREFIX = "athena_code:";
+    public static final String FIELD_PREFIX = "athena_code" + PTicket.SYSTEM_PROP_DELIMITER;
 
     public Code() {
         tickets = new TreeSet<String>();
