@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import java.util.Arrays;
+import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.PTicket;
 import org.junit.After;
@@ -37,14 +38,6 @@ public class ApaAdapterArrayTest extends BaseApaAdapterTest {
     PTicket chiefs;
     PTicket raiders;
 
-    private class Team extends PTicket {
-
-    }
-
-    private class Fan extends PTicket {
-
-    }
-
     public ApaAdapterArrayTest() throws Exception {
         super();
     }
@@ -58,7 +51,6 @@ public class ApaAdapterArrayTest extends BaseApaAdapterTest {
     public void testSaveRecordWithArrayValue() {
         jim.getProps().put("teams", Arrays.asList(ravens.getIdAsString(), chiefs.getIdAsString()));
         jim = apa.saveRecord(jim);
-        System.out.println(jim);
         assertEquals(2, jim.getProps().get("teams").size());
         assertTrue(jim.getProps().get("teams").contains(ravens.getIdAsString()));
         assertTrue(jim.getProps().get("teams").contains(chiefs.getIdAsString()));
@@ -102,6 +94,30 @@ public class ApaAdapterArrayTest extends BaseApaAdapterTest {
         assertNull(jim.getProps().get("teams"));
     }
 
+    @Test
+    public void testSaveRecordWithInvalidArrayValue() {
+        ravens.getProps().put("gameTimes", Arrays.asList("2010-04-04T02:02:02Z", "notadate"));
+        try{
+            jim = apa.saveRecord(ravens);
+            fail("Needed Apa Exception");
+        } catch (InvalidValueException e) {
+            //pass
+        }
+    }
+
+    @Test
+    public void testUpdateRecordWithInvalidArrayValue() {
+        ravens.getProps().put("gameTimes", Arrays.asList("2010-04-04T02:02:02Z"));
+        ravens = apa.saveRecord(ravens);
+        ravens.getProps().add("gameTimes", "notadate");
+        try{
+            ravens = apa.saveRecord(ravens);
+            fail("Needed Apa Exception");
+        } catch (InvalidValueException e) {
+            //pass
+        }
+    }
+
     @Before
     public void setup() {
         /* fans */
@@ -112,6 +128,7 @@ public class ApaAdapterArrayTest extends BaseApaAdapterTest {
         //implied
         //addPropField(ValueType.STRING,"name",Boolean.FALSE);
         addPropField(ValueType.INTEGER,"fans",Boolean.FALSE);
+        addPropField(ValueType.DATETIME,"gameTimes",Boolean.FALSE);
 
         jim = addRecord("fan",
                         "name", "Jim");

@@ -88,9 +88,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             return null;
         }
         finally {
-            
             if(closeTransaction) {
-            
                 cleanup(em);
             }
         }
@@ -107,7 +105,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 em.getTransaction().begin();
             }
             t.setId(LongUserType.massageToLong(t.getId()));
-            // Make sure the TicketProps are set to this ticket
+            // Make sure the TicketProps are set to this existingTicket
             // If the caller forgets to do it, and we don't do it here, then JPA
             // will bonk
             if (t.getTicketProps() != null) {
@@ -124,15 +122,12 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             }
             return t;
         } catch (ApaException e) {
-            
             if(useTransaction) {
                 em.getTransaction().rollback();
             }
             throw e;
         } finally {
-            
             if(useTransaction) {
-                
                 cleanup(em);
             }
         }
@@ -153,7 +148,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             throw new ApaException("Cannot save a record without a type");
         }
 
-        //if this ticket has an id
+        //if this existingTicket has an id
         if (record.getId() != null) {
             return updateTicketFromClientTicket(type, record, record.getId()).toClientTicket();
         } else {
@@ -163,7 +158,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     /*
      * updateTicketFromClientTicket assumes that PTicket has been sent with an ID.
-     * updateTicketFromClientTicket will load a ticket with that ID.
+     * updateTicketFromClientTicket will load a existingTicket with that ID.
      *
      * Any system props will be updated by the props on this PTicket.
      * No system props will be deleted
@@ -171,14 +166,14 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
      * New props will be created from this pTicket
      *
      * basic algorithm:
-     * - get all props on this ticket
+     * - get all props on this existingTicket
      * - delete all that are not system props
      * - create and dave new props on this pTicket
      * - for all system props on pTicket
      * - if prop exists, update it
      * - else, save a new one
      *
-     * It would be smarter to bulk delete all props on the ticket, then just create new props
+     * It would be smarter to bulk delete all props on the existingTicket, then just create new props
      * But, JPA/Hibernate chokes on the query to delete all props, prob something to do with the
      * STI on TicketProp
      */
@@ -188,104 +183,106 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
         try {
             em.getTransaction().begin();
-            
-            
-            JpaRecord ticket  = getTicket(em, type, idToUpdate);
-            //delete anything that isn't a system prop
-            List<TicketProp> propListCopy = new ArrayList<TicketProp>();
-
-            Iterator<TicketProp> iter = ticket.getTicketProps().iterator();
-            List<TicketProp> propsToDelete = new ArrayList<TicketProp>();
-            em.flush();
-            while(iter.hasNext()) {
-                TicketProp prop = (TicketProp)iter.next();
-                if(!prop.isSystemProp()) {
-                    propsToDelete.add(prop);
-                } else {
-                    List<String> values = clientTicket.getSystemProps().get(prop.getPropField().getName());
-                    if(values != null) {
-                        propsToDelete.add(prop);
-                    }
-                }
-            }
-
-            for(TicketProp prop : propsToDelete) {
-                deleteTicketProp(prop, em);
-            }
-
-            //save all the new non-system props
-            List<TicketProp> propsToSave = new ArrayList<TicketProp>();
-            Set<String> keys = clientTicket.getProps().keySet();
-            for (String key : keys) {
-                for(String val : clientTicket.getProps().get(key)) {
-                    Query query = em.createQuery("FROM PropField pf where pf.name=:name");
-                    query.setParameter("name", key);
-                    PropField propField = (PropField) query.getSingleResult();
-
-                    validatePropField(propField, key, val);
-
-                    TicketProp ticketProp = propField.getValueType().newTicketProp();
-                    ticketProp.setPropField(propField);
-                    ticketProp.setTicket(ticket);
-                    ticketProp.setValue(val);
-                    propsToSave.add(ticketProp);
-                }
-            }
-            
-
-            /*
-             * System props don't get blasted, they get replcaed if present
-             */
-            keys = clientTicket.getSystemProps().keySet();
-            for (String key : keys) {
-                String val = clientTicket.getSystemProps().getFirst(key);
-                propsToSave.add(buildNewProp(em, ticket, type, key, val));
-            }
-
+            JpaRecord existingTicket  = getTicket(em, type, idToUpdate);
+            deletePropsFromRecord(existingTicket, clientTicket, em);
+            List<TicketProp> propsToSave = buildProps(type, existingTicket, clientTicket, em);
             
             for (TicketProp prop : propsToSave) {
-                enforceStrict(prop.getPropField(), prop.getValueAsString());
-                
-                Query query = em.createQuery("FROM PropField pf where pf.name=:name");
-                query.setParameter("name", prop.getPropField().getName());
 
-                PropField propField = (PropField) query.getSingleResult();
-                if (!propField.getValueType().newTicketProp().getClass().getName().equals(prop.getClass().getName())) {
-                    String err = "Value [" + prop.getValueAsString() + "] is not a valid value for the field [" + propField.getName() + "].  ";
-                    err += "Field is of type [" + propField.getValueType().name() + "].";
-                    throw new InvalidValueException(err);
-                }
-                
-                prop.setId(LongUserType.massageToLong(prop.getId()));
+                //TODO: This should be done when we're building the prop
+                enforceStrict(prop.getPropField(), prop.getValueAsString());
                 prop = (TicketProp) em.merge(prop);
-                ticket.addTicketProp(prop);
+                existingTicket.addTicketProp(prop);
             }
-            ticket = getTicket(em, type, clientTicket.getId());
-            ticket = saveRecord(ticket, em);
+            existingTicket = saveRecord(existingTicket, em);
             em.getTransaction().commit();
-            return ticket;
+            return existingTicket;
         } catch (ApaException e) {
-            
             em.getTransaction().rollback();
             throw e;
-        } catch (Exception e) {
-            
-            e.printStackTrace();
-            em.getTransaction().rollback();
-            return null;
         } finally {
             cleanup(em);
         }
     }
 
+    /*
+     * createAndSaveTicketFromClientTicket assumes that PTicket has been sent WITHOUT an ID.
+     * createAndSaveTicketFromClientTicket will create a new existingTicket using magic and wizardry
+     */
+    private JpaRecord createAndSaveTicketFromClientTicket(String type, PTicket clientTicket) throws InvalidPropException, InvalidValueException {
+
+        JpaRecord ticket  = new JpaRecord();
+
+        //for all props on this pTicket, create new props with apa
+        Set<String> keys = clientTicket.getProps().keySet();
+        for (String key : keys) {
+            for(String val : clientTicket.getProps().get(key)) {
+                buildPropOntoTicket(ticket, key, val);
+            }
+        }
+        keys = clientTicket.getSystemProps().keySet();
+        for (String key : keys) {
+            for(String val : clientTicket.getSystemProps().get(key)) {
+                buildPropOntoTicket(ticket, key, val);
+            }
+        }
+        ticket.setType(type);
+        ticket = saveRecord(ticket);
+        return ticket;
+    }
+
+    private List<TicketProp> buildProps(String type, JpaRecord existingRecord, PTicket newRecord, EntityManager em) {
+        List<TicketProp> propsToSave = new ArrayList<TicketProp>();
+        Set<String> keys = newRecord.getProps().keySet();
+        for (String key : keys) {
+            for(String val : newRecord.getProps().get(key)) {
+                propsToSave.add(buildNewProp(em, existingRecord, type, key, val));
+            }
+        }
+
+        /*
+         * Save all the new system props
+         */
+        keys = newRecord.getSystemProps().keySet();
+        for (String key : keys) {
+            String val = newRecord.getSystemProps().getFirst(key);
+            propsToSave.add(buildNewProp(em, existingRecord, type, key, val));
+        }
+
+        return propsToSave;
+    }
+
+    /*
+     * Delete anything that isn't a system prop
+     * Also delete system props that exist on the incoming record
+     * This method DOES NOT manage transactions
+     */
+    private void deletePropsFromRecord(JpaRecord existingRecord, PTicket newRecord, EntityManager em) {
+        List<TicketProp> propListCopy = new ArrayList<TicketProp>();
+
+        Iterator<TicketProp> iter = existingRecord.getTicketProps().iterator();
+        List<TicketProp> propsToDelete = new ArrayList<TicketProp>();
+        em.flush();
+        while(iter.hasNext()) {
+            TicketProp prop = (TicketProp)iter.next();
+            if(!prop.isSystemProp()) {
+                propsToDelete.add(prop);
+            } else {
+                List<String> values = newRecord.getSystemProps().get(prop.getPropField().getName());
+                if(values != null) {
+                    propsToDelete.add(prop);
+                }
+            }
+        }
+
+        for(TicketProp prop : propsToDelete) {
+            deleteTicketProp(prop, em);
+        }
+    }
+
     private TicketProp buildNewProp(EntityManager em, JpaRecord ticket, String type, String key, String val) {
-
-        Query query = em.createQuery("FROM PropField pf where pf.name=:name");
-        query.setParameter("name", key);
-        PropField propField = (PropField) query.getSingleResult();
- 
+        PropField propField = getPropField(key, em);
         validatePropField(propField, key, val);
-
         TicketProp ticketProp = propField.getValueType().newTicketProp();
         ticketProp.setPropField(propField);
         ticketProp.setTicket(ticket);
@@ -311,45 +308,19 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return ticketProp;
     }
 
-    /*
-     * createAndSaveTicketFromClientTicket assumes that PTicket has been sent WITHOUT an ID.
-     * createAndSaveTicketFromClientTicket will create a new ticket using magic and wizardry
-     */
-    private JpaRecord createAndSaveTicketFromClientTicket(String type, PTicket clientTicket) throws InvalidPropException, InvalidValueException {
-
-        JpaRecord ticket  = new JpaRecord();
-
-        //for all props on this pTicket, create new props with apa
-        Set<String> keys = clientTicket.getProps().keySet();
-        for (String key : keys) {
-            for(String val : clientTicket.getProps().get(key)) {
-                buildPropOntoTicket(ticket, key, val);
-            }
-        }
-        keys = clientTicket.getSystemProps().keySet();
-        for (String key : keys) {
-            for(String val : clientTicket.getSystemProps().get(key)) {
-                buildPropOntoTicket(ticket, key, val);
-            }
-        }
-        ticket.setType(type);
-        ticket = saveRecord(ticket);
-        return ticket;
-    }
-
     private JpaRecord buildPropOntoTicket(JpaRecord ticket, String key, String val) {
-            logger.debug("Creating property: {}={}", key, val);
-            PropField propField = getPropField(key);
-            logger.debug("Found PropField: {}", propField);
-            validatePropField(propField, key, val);
-            TicketProp ticketProp = propField.getValueType().newTicketProp();
-            ticketProp.setPropField(propField);
-            ticketProp.setValue(val);
-            ticketProp.setTicket(ticket);
-            logger.debug("Creating TicketProp: [{}]", ticketProp.getClass().getName());
-            logger.debug("{}={}", ticketProp.getPropField().getName(), ticketProp.getValueAsString());
-            ticket.addTicketProp(ticketProp);
-            return ticket;
+        logger.debug("Creating property: {}={}", key, val);
+        PropField propField = getPropField(key);
+        logger.debug("Found PropField: {}", propField);
+        validatePropField(propField, key, val);
+        TicketProp ticketProp = propField.getValueType().newTicketProp();
+        ticketProp.setPropField(propField);
+        ticketProp.setValue(val);
+        ticketProp.setTicket(ticket);
+        logger.debug("Creating TicketProp: [{}]", ticketProp.getClass().getName());
+        logger.debug("{}={}", ticketProp.getPropField().getName(), ticketProp.getValueAsString());
+        ticket.addTicketProp(ticketProp);
+        return ticket;
     }
 
     /**
@@ -771,7 +742,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
      *
      * Callers of this method are assuming that there is only one prop that meets the above conditions
      *
-     * If ticketId is null, this method will return null.  If no ticket prop
+     * If ticketId is null, this method will return null.  If no existingTicket prop
      * is found for the given conditions, this method will return null;
      *
      * This method WILL hydrate TicketProp.getTicket().  
@@ -880,9 +851,12 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
     }
 
-    @Override
-    public PropField getPropField(String name) {
-        EntityManager em = this.emf.createEntityManager();
+    public PropField getPropField(String name, EntityManager em) {
+        boolean closeEm = false;
+        if(em == null) {
+            closeEm = true;
+            em = this.emf.createEntityManager();
+        }
         try {
             Query query = em.createQuery("FROM PropField pf where pf.name=:name");
             query.setParameter("name", name);
@@ -894,8 +868,15 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 return null;
             }
         } finally {
-            cleanup(em);
+            if(closeEm) {
+                cleanup(em);
+            }
         }
+    }
+    
+    @Override
+    public PropField getPropField(String name) {
+        return getPropField(name, null);
     }
 
     @Override
@@ -1134,13 +1115,9 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     private void cleanup(EntityManager em) {
-        
         if (em.getTransaction().isActive()) {
-            
             em.getTransaction().rollback();
         }
-        
-
         em.close();
     }
 }
