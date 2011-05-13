@@ -50,6 +50,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import org.fracturedatlas.athena.web.manager.AthenaPlugin;
+import org.springframework.context.ApplicationContext;
 
 @Path("")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -59,6 +61,10 @@ public class RecordResource {
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     @Autowired
     RecordManager recordManager;
+
+    @Autowired
+    @javax.ws.rs.core.Context
+    ApplicationContext applicationContext;
 
     Gson gson = JsonUtil.getGson();
 
@@ -126,13 +132,16 @@ public class RecordResource {
      */
     @GET
     @Path("{parentType}/{id}/{childType}")
-    public Collection<PTicket> search(@PathParam("parentType") String parentType,
+    public Object search(@PathParam("parentType") String parentType,
                                      @PathParam("id") String id,
-                                     @PathParam("childType") String childType) throws NotFoundException {
+                                     @PathParam("childType") String childType,
+                                     @Context UriInfo uriInfo) throws NotFoundException {
         parentType = Inflector.getInstance().singularize(parentType);
         childType = Inflector.getInstance().singularize(childType);
         try{
             return recordManager.findTicketsByRelationship(parentType, id, childType);
+//            AthenaPlugin plugin = (AthenaPlugin)applicationContext.getBean(childType + "Plugin");
+//            return plugin.execute(uriInfo);
         } catch (InvalidFieldException ife) {
             throw new NotFoundException();
         }

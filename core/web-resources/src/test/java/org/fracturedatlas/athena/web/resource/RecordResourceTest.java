@@ -43,7 +43,7 @@ public class RecordResourceTest {
     @Test
     public void testSearchRelationships() {
         when(mockRecordManager.findTicketsByRelationship("company", "1", "employee")).thenReturn(new TreeSet<PTicket>());
-        resource.search("companies", "1", "employees");
+        resource.search("companies", "1", "employees", null);
         verify(mockRecordManager, times(1)).findTicketsByRelationship("company", "1", "employee");
     }
 }
