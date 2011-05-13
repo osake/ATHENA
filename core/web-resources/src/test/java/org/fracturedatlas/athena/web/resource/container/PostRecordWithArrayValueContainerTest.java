@@ -21,16 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.web.resource.container;
 
 import com.google.gson.Gson;
-import com.sun.jersey.api.client.ClientResponse;
-import java.text.ParseException;
+import java.util.List;
 import static org.junit.Assert.*;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
-import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
 import org.junit.After;
 import org.junit.Test;
 
@@ -50,7 +47,7 @@ public class PostRecordWithArrayValueContainerTest extends BaseTixContainerTest 
     }
 
     @Test
-    public void testGetRecordJson() {
+    public void testGetRecord() {
 
         addPropField(ValueType.STRING,"SEAT_NUMBER",Boolean.FALSE);
         addPropField(ValueType.STRING,"SECTION",Boolean.FALSE);
@@ -67,5 +64,65 @@ public class PostRecordWithArrayValueContainerTest extends BaseTixContainerTest 
         PTicket pTicket = gson.fromJson(jsonResponse,  PTicket.class);
         assertNotNull(pTicket);
         recordsToDelete.add(pTicket);
+        List<String> tiers = t.getProps().get("TIER");
+        assertTrue(tiers.contains("GOLD"));
+        assertTrue(tiers.contains("SILVER"));
+        assertEquals("3D", t.get("SEAT_NUMBER"));
+    }
+
+    @Test
+    public void testUpdateRecord() {
+
+        addPropField(ValueType.STRING,"SEAT_NUMBER",Boolean.FALSE);
+        addPropField(ValueType.STRING,"SECTION",Boolean.FALSE);
+        addPropField(ValueType.STRING,"TIER",Boolean.FALSE);
+
+        PTicket t = createRecord("ticket",
+                                 "SEAT_NUMBER", "3D");
+        t.getProps().add("TIER", "GOLD");
+        t.getProps().add("TIER", "SILVER");
+        String path = RECORDS_PATH;
+        String jsonResponse = tix.path(path)
+                                     .type("application/json")
+                                     .post(String.class, gson.toJson(t));
+        PTicket savedTicket = gson.fromJson(jsonResponse,  PTicket.class);
+        recordsToDelete.add(savedTicket);
+        savedTicket.put("TIER", "NONE");
+        jsonResponse = tix.path(path + savedTicket.getId())
+                          .type("application/json")
+                          .put(String.class, gson.toJson(savedTicket));
+        PTicket updatedTicket = gson.fromJson(jsonResponse,  PTicket.class);
+        assertEquals("3D", updatedTicket.get("SEAT_NUMBER"));
+        assertEquals("NONE", updatedTicket.get("TIER"));
+    }
+
+    @Test
+    public void testUpdateRecord2() {
+
+        addPropField(ValueType.STRING,"SEAT_NUMBER",Boolean.FALSE);
+        addPropField(ValueType.STRING,"SECTION",Boolean.FALSE);
+        addPropField(ValueType.STRING,"TIER",Boolean.FALSE);
+
+        PTicket t = createRecord("ticket",
+                                 "SEAT_NUMBER", "3D");
+        t.getProps().add("TIER", "GOLD");
+        t.getProps().add("TIER", "SILVER");
+        String path = RECORDS_PATH;
+        String jsonResponse = tix.path(path)
+                                     .type("application/json")
+                                     .post(String.class, gson.toJson(t));
+        PTicket savedTicket = gson.fromJson(jsonResponse,  PTicket.class);
+        recordsToDelete.add(savedTicket);
+        savedTicket.getProps().add("SEAT_NUMBER", "ANOTHER");
+        jsonResponse = tix.path(path + savedTicket.getId())
+                          .type("application/json")
+                          .put(String.class, gson.toJson(savedTicket));
+        PTicket updatedTicket = gson.fromJson(jsonResponse,  PTicket.class);
+        List<String> tiers = t.getProps().get("TIER");
+        assertTrue(tiers.contains("GOLD"));
+        assertTrue(tiers.contains("SILVER"));
+        List<String> seats = updatedTicket.getProps().get("SEAT_NUMBER");
+        assertTrue(seats.contains("3D"));
+        assertTrue(seats.contains("ANOTHER"));
     }
 }
