@@ -142,28 +142,6 @@ public class PutRecordContainerTest extends BaseTixContainerTest {
         assertRecordsEqual(t, savedTicket, false);
     }
 
-    //We're updating a ticket but only sending one property.  Other properties should remain
-    @Test
-    public void testUpdateAddNewPropButDontSendOtherProps() {
-        addPropField(ValueType.INTEGER, "NEWPROP", Boolean.FALSE);
-        PTicket t = createSampleRecord();
-
-        PTicket updatedCopy = new PTicket("ticket");
-        updatedCopy.setId(t.getId());
-        updatedCopy.put("NEWPROP", "4");
-        t.put("NEWPROP", "4");
-
-        String path = RECORDS_PATH + t.getId() + ".json";
-        t.setType(null);
-        String updatedTicketJson = tix.path(path).type("application/json").put(String.class, gson.toJson(updatedCopy));
-        PTicket updatedTicket = gson.fromJson(updatedTicketJson, PTicket.class);
-        assertTrue(t.equals(updatedTicket));
-
-        PTicket savedTicket = apa.getRecord("ticket", updatedTicket.getId());
-        System.out.println(savedTicket);
-        assertRecordsEqual(updatedTicket, savedTicket, true);
-    }
-
 
     @Test
     public void testUpdateTicketBlankRequest() {

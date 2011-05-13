@@ -50,7 +50,6 @@ public class FieldResourceImmutableContainerTest extends BaseTixContainerTest {
 
     @Test
     public void testImmutableFieldsName() {
-        String path = "fields";
         Gson gson = JsonUtil.getGson();
         PropField field = apa.savePropField(new PropField(ValueType.BOOLEAN, "TESTONE", StrictType.NOT_STRICT));
         propFieldsToDelete.add(field);
@@ -58,48 +57,45 @@ public class FieldResourceImmutableContainerTest extends BaseTixContainerTest {
         PField pField = field.toClientField();
         pField.setValueType(ValueType.STRING.toString());
         pField.setStrict(StrictType.NOT_STRICT);
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, gson.toJson(pField));
+        ClientResponse response = tix.path(FIELDS_PATH).type("application/json").post(ClientResponse.class, gson.toJson(pField));
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
-        response = tix.path(path + "/" + field.getId()).type("application/json").put(ClientResponse.class, gson.toJson(pField));
+        response = tix.path(FIELDS_PATH + field.getId()).type("application/json").put(ClientResponse.class, gson.toJson(pField));
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
     }
 
     @Test
     public void testChangeStrict() {
-        String path = "fields";
         Gson gson = JsonUtil.getGson();
         PropField field = apa.savePropField(new PropField(ValueType.DATETIME, "TESTONE", StrictType.STRICT));
         propFieldsToDelete.add(field);
 
         PField pField = field.toClientField();
         pField.setStrict(StrictType.NOT_STRICT);
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, gson.toJson(pField));
+        ClientResponse response = tix.path(FIELDS_PATH).type("application/json").post(ClientResponse.class, gson.toJson(pField));
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
-        response = tix.path(path + "/" + field.getId()).type("application/json").put(ClientResponse.class, gson.toJson(pField));
+        response = tix.path(FIELDS_PATH + field.getId()).type("application/json").put(ClientResponse.class, gson.toJson(pField));
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
     }
 
     @Test
     public void testChangeValueType() {
-        String path = "fields";
         Gson gson = JsonUtil.getGson();
         PropField field = apa.savePropField(new PropField(ValueType.BOOLEAN, "TESTONE", StrictType.NOT_STRICT));
         propFieldsToDelete.add(field);
 
         PField pField = field.toClientField();
         pField.setValueType(ValueType.INTEGER.toString());
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, gson.toJson(pField));
+        ClientResponse response = tix.path(FIELDS_PATH).type("application/json").post(ClientResponse.class, gson.toJson(pField));
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
-        response = tix.path(path + "/" + field.getId()).type("application/json").put(ClientResponse.class, gson.toJson(pField));
+        response = tix.path(FIELDS_PATH + field.getId()).type("application/json").put(ClientResponse.class, gson.toJson(pField));
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
     }
 
     @Test
     public void testChangeToDuplicateName() {
-        String path = "fields";
         Gson gson = JsonUtil.getGson();
         PropField field = apa.savePropField(new PropField(ValueType.BOOLEAN, "TESTONE", StrictType.NOT_STRICT));
         propFieldsToDelete.add(field);
@@ -107,9 +103,9 @@ public class FieldResourceImmutableContainerTest extends BaseTixContainerTest {
         PField pField = field.toClientField();
         pField.setValueType(ValueType.STRING.toString());
         pField.setStrict(StrictType.NOT_STRICT);
-        ClientResponse response = tix.path(path).type("application/json").post(ClientResponse.class, gson.toJson(pField));
+        ClientResponse response = tix.path(FIELDS_PATH).type("application/json").post(ClientResponse.class, gson.toJson(pField));
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
-        response = tix.path(path + "/" + field.getId()).type("application/json").put(ClientResponse.class, gson.toJson(pField));
+        response = tix.path(FIELDS_PATH + field.getId()).type("application/json").put(ClientResponse.class, gson.toJson(pField));
         assertEquals(ClientResponse.Status.BAD_REQUEST, ClientResponse.Status.fromStatusCode(response.getStatus()));
 
     }
