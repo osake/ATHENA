@@ -65,12 +65,26 @@ public interface ApaAdapter {
     public JpaRecord saveTicket(JpaRecord t) throws InvalidValueException;
 
     /**
-     * Save a record to the data store
+     * Save a record to the data store.  If the record exists, its props will be overwritten
+     * by props contained in record.  Props that exist on the existing record and not on the incoming record will be deleted.
+     *
      * @param record
      * @return the saved record
      * @throws InvalidValueExcepion if this record contains a field/value pairing that is invalid
      */
     public PTicket saveRecord(PTicket record);
+
+    /**
+     * Update a record identified by idToPAtch with the props contained in patchRecord.
+     * Props not included in patchRecord will be unchanged
+     *
+     * If patchRecord is null or empty, implementors must return the existing record unchanged
+     *
+     * @param patchRecord
+     * @return the saved record
+     * @throws InvalidValueExcepion if this record contains a field/value pairing that is invalid
+     */
+    public PTicket patchRecord(Object idToPatch, String type, PTicket patchRecord);
 
     /**
      * Save a record to the data store

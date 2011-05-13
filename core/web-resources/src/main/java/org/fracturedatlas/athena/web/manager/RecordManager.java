@@ -29,6 +29,7 @@ import java.util.Set;
 import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.lang.StringUtils;
 import org.fracturedatlas.athena.apa.ApaAdapter;
+import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
@@ -235,20 +236,18 @@ public class RecordManager {
         return apa.saveRecord(type, record);
     }
 
-    public List<PTicket> updateRecords(String type, List<String> idList, PTicket patchRecord) throws ObjectNotFoundException {
+    public List<PTicket> updateRecords(String type, List<String> idList, PTicket patch) throws ObjectNotFoundException {
         List<PTicket> outRecords = new ArrayList<PTicket>();
-        patchRecord.setId(null);
-        logger.debug("Applying [{}] to [{}]", patchRecord, idList);
+        patch.setId(null);
+        logger.debug("Applying [{}] to [{}]", patch, idList);
         for(String id : idList) {
             logger.debug("Applying patch to [{}]", id);
-            patchRecord.setId(id);
-            PTicket ticket  = apa.getRecord(type, patchRecord.getId());
 
-            if (ticket == null) {
-                throw new ObjectNotFoundException("Record not found");
+            try {
+                outRecords.add(apa.patchRecord(id, type, patch));
+            } catch (ApaException ae) {
+                throw new ObjectNotFoundException(ae.getMessage());
             }
-
-            outRecords.add(apa.saveRecord(type, patchRecord));
         }
 
         return outRecords;

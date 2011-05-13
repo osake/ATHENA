@@ -59,6 +59,11 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
+    public PTicket patchRecord(Object idToPatch, String type, PTicket patchRecord) {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+
+    @Override
     public Boolean deleteRecord(String type, Object id) {
         throw new UnsupportedOperationException("Unsupported operation");
     }

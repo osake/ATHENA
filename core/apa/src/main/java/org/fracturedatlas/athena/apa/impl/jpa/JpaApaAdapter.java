@@ -15,12 +15,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa.impl.jpa;
 
 import java.util.*;
+import java.util.List;
+import java.util.Map.Entry;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
-import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import org.fracturedatlas.athena.apa.exception.InvalidFieldException;
 import org.fracturedatlas.athena.apa.exception.InvalidPropException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.impl.LongUserType;
+import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
@@ -156,6 +158,50 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
     }
 
+    @Override
+    public PTicket patchRecord(Object idToPatch, String type, PTicket patchRecord) {
+        
+        EntityManager em = this.emf.createEntityManager();
+
+        try {
+            JpaRecord existingRecord = getTicket(type, idToPatch);
+            if(existingRecord == null) {
+                throw new ApaException("Record with id ["+idToPatch+"] was not found to patch");
+            }
+            if(patchRecord == null) {
+                return existingRecord.toClientTicket();
+            }
+
+            em.getTransaction().begin();
+
+            //delete properties on the patch
+            for(Entry<String, List<String>> entry : patchRecord.getProps().entrySet()) {
+                TicketProp prop = getTicketProp(entry.getKey(), type, idToPatch);
+                if(prop != null) {
+                    prop = em.merge(prop);
+                    existingRecord.getTicketProps().remove(prop);
+                    em.remove(prop);
+                    existingRecord = em.merge(existingRecord);
+                }
+            }
+
+            //Now patch the records
+            List<TicketProp> propsToSave = buildProps(type, existingRecord, patchRecord, em);
+            for (TicketProp prop : propsToSave) {
+
+                //TODO: This should be done when we're building the prop
+                enforceStrict(prop.getPropField(), prop.getValueAsString());
+                prop = (TicketProp) em.merge(prop);
+                existingRecord.addTicketProp(prop);
+            }
+            existingRecord = saveRecord(existingRecord, em);
+            em.getTransaction().commit();
+            return existingRecord.toClientTicket();
+        } finally {
+            cleanup(em);
+        }
+    }
+
     /*
      * updateTicketFromClientTicket assumes that PTicket has been sent with an ID.
      * updateTicketFromClientTicket will load a existingTicket with that ID.
@@ -258,11 +304,8 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
      * This method DOES NOT manage transactions
      */
     private void deletePropsFromRecord(JpaRecord existingRecord, PTicket newRecord, EntityManager em) {
-        List<TicketProp> propListCopy = new ArrayList<TicketProp>();
-
         Iterator<TicketProp> iter = existingRecord.getTicketProps().iterator();
         List<TicketProp> propsToDelete = new ArrayList<TicketProp>();
-        em.flush();
         while(iter.hasNext()) {
             TicketProp prop = (TicketProp)iter.next();
             if(!prop.isSystemProp()) {
@@ -1023,12 +1066,11 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             if (t == null) {
                 throw new ApaException("Cannot delete prop.  This prop has not been assigned to a ticket.");
             }
-
             t.getTicketProps().remove(prop);
             em.remove(prop);
             t = em.merge(t);
             if (useTransaction) {
-                    em.getTransaction().commit();
+                em.getTransaction().commit();
             }
         } finally {
             if(useTransaction) {
