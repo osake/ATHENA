@@ -45,6 +45,8 @@ public class PTicket {
     //They can be used internally and will not be serialized back to (or from) the client
     private transient MultivaluedMapImpl systemProps;
 
+    public final static String SYSTEM_PROP_DELIMITER = ":";
+
     public PTicket() {
         props = new MultivaluedMapImpl();
         systemProps = new MultivaluedMapImpl();
@@ -174,6 +176,10 @@ public class PTicket {
     public String toString() {
         return ToStringBuilder.reflectionToString(this,
                                                   ToStringStyle.MULTI_LINE_STYLE);
+    }
+
+    public static String convertToSystemPropName(String string) {
+        return string + SYSTEM_PROP_DELIMITER;
     }
     
 }

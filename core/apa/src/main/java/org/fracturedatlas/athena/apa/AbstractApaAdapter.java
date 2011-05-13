@@ -89,6 +89,11 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
+    public List<TicketProp> getTicketProps(String fieldName, String type, Object ticketId) {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+
+    @Override
     public PropField getPropField(Object id) {
         throw new UnsupportedOperationException("Unsupported operation");
     }

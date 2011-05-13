@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.web.serialization;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -32,6 +33,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -112,7 +114,19 @@ public class JsonTicketSerializer implements MessageBodyWriter<PTicket>,
             pTicket.setId(JsonUtil.nullSafeGetAsString(ticketObj.get("id")));
             ticketObj.remove("id");
             for (Entry<String, JsonElement> entry : ticketObj.entrySet()) {
-                pTicket.put(entry.getKey(), JsonUtil.nullSafeGetAsString(entry.getValue()));
+                JsonElement val = entry.getValue();
+                if(val.isJsonArray()) {
+                    JsonArray jsonArray = val.getAsJsonArray();
+                    Iterator<JsonElement> iter = jsonArray.iterator();
+                    while(iter.hasNext()) {
+                        pTicket.getProps().add(entry.getKey(), iter.next().getAsString());
+                    }
+                    
+                } else if(val.isJsonNull()) {
+                    pTicket.put(entry.getKey(), null);
+                } else {
+                    pTicket.put(entry.getKey(), val.getAsString());
+                }
             }
             return pTicket;
         } catch (JsonParseException jpe) {

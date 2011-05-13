@@ -46,7 +46,7 @@ public abstract class BaseApaAdapterTest {
     public void teardownTickets() {
         for (PTicket t : ticketsToDelete) {
             try {
-                logger.debug("Cleaning up ticket [{}]", t.getId());
+                logger.trace("Cleaning up ticket [{}]", t.getId());
                 apa.deleteRecord(t.getType(), t.getId());
             } catch (Exception ignored) {
                 logger.error(ignored.getMessage(), ignored);
@@ -93,7 +93,6 @@ public abstract class BaseApaAdapterTest {
     public PTicket makeRecord(String type, String... keyValues) {
         PTicket t = new PTicket(type);
         for(int i=0; i < keyValues.length; i+=2) {
-            System.out.println(keyValues[i]);
             t.put(keyValues[i], keyValues[i+1]);
         }
         return t;

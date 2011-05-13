@@ -36,6 +36,7 @@ The codes helper relies on the following fields in Tix
 * code - The actual discount code
 * description - A human-readable description of the code
 * startDate - A datetime.  Codes will not be considered valid before this date.
+* sellers - An array of string values.  A list of sellers authorized to use this code.
 * endDate - A datetime.  Codes will not be considered valid after this date.
 * enabled - Boolean.  True if this code is enabled, false otherwise.  Codes that have enabled set to false are considered not valid regardless of startDate and endDate
 
@@ -50,6 +51,7 @@ POST a code to /tix/codes.  Include the following information.  performances and
       "performances": [],
       "events": [],
       "tickets": [],
+      "sellers": ["453","433","410"],
       "startDate": "2010-03-04T05:05:30-04:00",
       "endDate":"2010-03-04T05:05:30-04:00",
       "price": 50,
@@ -73,6 +75,7 @@ Example response:
       "id": 39029,
       "code": "festivalpass1",
       "description": "A human readable description",
+      "sellers": ["453","433","410"],
       "tickets": [(An array of tickets that this code has been applied to)],
       "startDate": "2010-03-04T05:05:30-04:00",
       "endDate":"2010-03-04T05:05:30-04:00",
@@ -90,6 +93,7 @@ Response:
       "id": 39029,
       "code": "festivalpass1",
       "description": "A human readable description",
+      "sellers": ["453","433","410"],
       "tickets": [(An array of tickets that this code has been applied to)],
       "startDate": "2010-03-04T05:05:30-04:00",
       "endDate":"2010-03-04T05:05:30-04:00",
@@ -109,6 +113,7 @@ Make a PUT request similar to the POST request above.
       "performances": [],
       "events": [],
       "tickets": [],
+      "sellers": ["453","433","410"],
       "startDate": "2010-03-04T05:05:30-04:00",
       "endDate":"2010-03-04T05:05:30-04:00",
       "price": 50,
@@ -126,6 +131,7 @@ Example response:
       "id": 39029,
       "code": "festivalpass1",
       "description": "A human readable description",
+      "sellers": ["453","433","410"],
       "tickets": [(An array of tickets that this code has been applied to)],
       "startDate": "2010-03-04T05:05:30-04:00",
       "endDate":"2010-03-04T05:05:30-04:00",

@@ -21,14 +21,13 @@ package org.fracturedatlas.athena.web.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import com.google.gson.LongSerializationPolicy;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import javax.ws.rs.core.MultivaluedMap;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.util.date.DateTypeConverter;
 import org.fracturedatlas.athena.web.serialization.JsonTicketSerializer;
@@ -54,7 +53,16 @@ public class JsonUtil {
     public synchronized static JsonObject mapToJson(MultivaluedMapImpl map) {
         JsonObject jsonObject = new JsonObject();
         for(String key : map.keySet()) {
-            jsonObject.addProperty(key, map.getFirst(key));
+            List<String> valueList = map.get(key);
+            if(valueList.size() < 2) {
+                jsonObject.addProperty(key, valueList.get(0));
+            } else {
+                JsonArray jsonArray = new JsonArray();
+                for(String val : valueList) {
+                    jsonArray.add(new JsonPrimitive(val));
+                }
+                jsonObject.add(key, jsonArray);
+            }
         }
         return jsonObject;
     }

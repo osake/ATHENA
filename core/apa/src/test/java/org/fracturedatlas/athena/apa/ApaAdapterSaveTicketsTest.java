@@ -20,11 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.apa;
 
+import org.fracturedatlas.athena.apa.exception.InvalidPropException;
+import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
-import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.junit.After;
 import org.junit.Test;
@@ -69,6 +68,27 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
     }
 
     @Test
+    public void testSaveTicketIncorrectType() {
+        addPropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT);
+        addPropField(ValueType.DATETIME, "SEAT2", StrictType.NOT_STRICT);
+
+        PTicket ticket = new PTicket();
+        ticket.setType("record");
+        ticket.put("SEAT", "03");
+        ticket.put("SEAT1", "13");
+        ticket.put("SEAT2", "notadate");
+
+        try{
+            ticket = apa.saveRecord(ticket);
+            fail("Needed Apa Exception");
+        } catch (InvalidValueException e) {
+            //pass
+        }
+
+    }
+
+    @Test
     public void testUpdateTicket() {
         addPropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT);
         addPropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT);
@@ -88,6 +108,100 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
 
         PTicket savedTicket = apa.saveRecord(ticket);
         assertEquals(savedTicket.get("SEAT"), "ELEPHANT");
+        assertEquals(ticket, savedTicket);
+    }
+
+    @Test
+    public void testSaveTicketUnknownField() {
+        addPropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT);
+        addPropField(ValueType.INTEGER, "SEAT2", StrictType.NOT_STRICT);
+
+        PTicket ticket = new PTicket();
+        ticket.setType("record");
+        ticket.put("SEAT", "03");
+        ticket.put("SEAT1", "13");
+        ticket.put("UNKNOWN_PROP", "23");
+
+        try{
+            ticket = apa.saveRecord(ticket);
+            fail("Needed Apa Exception");
+        } catch (InvalidPropException e) {
+            //pass
+        }
+    }
+
+    @Test
+    public void testUpdateTicketUnknownProp() {
+        addPropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT);
+
+        PTicket ticket = new PTicket();
+        ticket.setType("record");
+        ticket.put("SEAT", "03");
+        ticket.put("SEAT1", "13");
+        ticket.put("SEAT2", "23");
+
+        ticket = apa.saveRecord(ticket);
+        assertNotNull(ticket.getId());
+        ticketsToDelete.add(ticket);
+        ticket.put("UNKNOWN_PROP", "23");
+
+        try{
+            ticket = apa.saveRecord(ticket);
+            fail("Needed Apa Exception");
+        } catch (InvalidPropException e) {
+            //pass
+        }
+    }
+
+    @Test
+    public void testUpdateTicketIncorrectType() {
+        addPropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT);
+        addPropField(ValueType.INTEGER, "SEAT2", StrictType.NOT_STRICT);
+
+        PTicket ticket = new PTicket();
+        ticket.setType("record");
+        ticket.put("SEAT", "03");
+        ticket.put("SEAT1", "13");
+        ticket.put("SEAT2", "23");
+
+        ticket = apa.saveRecord(ticket);
+        assertNotNull(ticket.getId());
+        ticketsToDelete.add(ticket);
+
+        ticket.put("SEAT2", "ELEPHANT");
+
+        try{
+            ticket = apa.saveRecord(ticket);
+            fail("Needed Apa Exception");
+        } catch (InvalidValueException e) {
+            //pass
+        }
+    }
+
+    @Test
+    public void testUpdateTicketRemoveProp() {
+        addPropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT);
+
+        PTicket ticket = new PTicket();
+        ticket.setType("record");
+        ticket.put("SEAT", "03");
+        ticket.put("SEAT1", "13");
+        ticket.put("SEAT2", "23");
+
+        ticket = apa.saveRecord(ticket);
+        assertNotNull(ticket.getId());
+        ticketsToDelete.add(ticket);
+
+        ticket.deleteProperty("SEAT");
+
+        PTicket savedTicket = apa.saveRecord(ticket);
+        assertNull(savedTicket.get("SEAT"));
         assertEquals(ticket, savedTicket);
     }
 

@@ -74,7 +74,7 @@ public class TextTicketProp extends TicketProp implements Serializable {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final StringTicketProp other = (StringTicketProp) obj;
+        final TextTicketProp other = (TextTicketProp) obj;
         if (this.value != other.value && (this.value == null || !this.value.equals(other.value))) {
             return false;
         }

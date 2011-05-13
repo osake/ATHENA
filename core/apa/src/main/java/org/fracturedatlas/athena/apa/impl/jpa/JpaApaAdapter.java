@@ -40,6 +40,8 @@ import org.fracturedatlas.athena.search.Operator;
 
 public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
+    private Boolean BLOW = false;
+
     @Autowired
     private EntityManagerFactory emf;
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -59,8 +61,16 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
     }
 
+
     private  JpaRecord getTicket(String type, Object id) {
-        EntityManager em = this.emf.createEntityManager();
+        return getTicket(null, type, id);
+    }
+
+    private JpaRecord getTicket(EntityManager em, String type, Object id) {
+        boolean closeTransaction = (em == null);
+        if(em == null) {
+            em = this.emf.createEntityManager();
+        }
         try {
             Long longId = LongUserType.massageToLong(id);
             if (longId == null) {
@@ -73,36 +83,58 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                     return null;
                 }
             }
-        } finally {
-            cleanup(em);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        finally {
+            if(closeTransaction) {
+                cleanup(em);
+            }
         }
     }
 
-    private JpaRecord saveRecord(JpaRecord t) {
-        EntityManager em = this.emf.createEntityManager();
+    private JpaRecord saveRecord(JpaRecord t, EntityManager em) {
+        boolean useTransaction = (em == null);
+
+        if(em == null) {
+            em = this.emf.createEntityManager();
+        }
         try {
-            em.getTransaction().begin();
+            if(useTransaction) {
+                em.getTransaction().begin();
+            }
             t.setId(LongUserType.massageToLong(t.getId()));
-            // Make sure the TicketProps are set to this ticket
+            // Make sure the TicketProps are set to this existingTicket
             // If the caller forgets to do it, and we don't do it here, then JPA
             // will bonk
             if (t.getTicketProps() != null) {
                 for (TicketProp prop : t.getTicketProps()) {
                     enforceStrict(prop.getPropField(), prop.getValueAsString());
-                    enforceCorrectValueType(prop.getPropField(), prop);
+                    enforceCorrectValueType(prop.getPropField(), prop, em);
                     prop.setTicket(t);
                 }
             }
             t = (JpaRecord) em.merge(t);
-            em.getTransaction().commit();
+            if(useTransaction) {
+                
+                em.getTransaction().commit();
+            }
             return t;
         } catch (ApaException e) {
-            logger.error(e.getMessage(), e);
-            em.getTransaction().rollback();
+            if(useTransaction) {
+                em.getTransaction().rollback();
+            }
             throw e;
         } finally {
-            cleanup(em);
+            if(useTransaction) {
+                cleanup(em);
+            }
         }
+    }
+
+    private JpaRecord saveRecord(JpaRecord t) {
+        return saveRecord(t, null);
     }
 
     @Override
@@ -116,7 +148,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             throw new ApaException("Cannot save a record without a type");
         }
 
-        //if this ticket has an id
+        //if this existingTicket has an id
         if (record.getId() != null) {
             return updateTicketFromClientTicket(type, record, record.getId()).toClientTicket();
         } else {
@@ -126,41 +158,139 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     /*
      * updateTicketFromClientTicket assumes that PTicket has been sent with an ID.
-     * updateTicketFromClientTicket will load a ticket with that ID.
+     * updateTicketFromClientTicket will load a existingTicket with that ID.
+     *
+     * Any system props will be updated by the props on this PTicket.
+     * No system props will be deleted
+     * All regular props will be deleted
+     * New props will be created from this pTicket
+     *
+     * basic algorithm:
+     * - get all props on this existingTicket
+     * - delete all that are not system props
+     * - create and dave new props on this pTicket
+     * - for all system props on pTicket
+     * - if prop exists, update it
+     * - else, save a new one
+     *
+     * It would be smarter to bulk delete all props on the existingTicket, then just create new props
+     * But, JPA/Hibernate chokes on the query to delete all props, prob something to do with the
+     * STI on TicketProp
      */
     public JpaRecord updateTicketFromClientTicket(String type, PTicket clientTicket, Object idToUpdate) throws InvalidPropException, InvalidValueException {
-        JpaRecord ticket  = getTicket(type, idToUpdate);
+        
+        EntityManager em = this.emf.createEntityManager();
 
-        /*
-         * for all props on this pTicket
-         * if apa has a prop for it, update it
-         * otherwise, create a new one
-         */
-        List<TicketProp> propsToSave = new ArrayList<TicketProp>();
+        try {
+            em.getTransaction().begin();
+            JpaRecord existingTicket  = getTicket(em, type, idToUpdate);
+            deletePropsFromRecord(existingTicket, clientTicket, em);
+            List<TicketProp> propsToSave = buildProps(type, existingTicket, clientTicket, em);
+            
+            for (TicketProp prop : propsToSave) {
+
+                //TODO: This should be done when we're building the prop
+                enforceStrict(prop.getPropField(), prop.getValueAsString());
+                prop = (TicketProp) em.merge(prop);
+                existingTicket.addTicketProp(prop);
+            }
+            existingTicket = saveRecord(existingTicket, em);
+            em.getTransaction().commit();
+            return existingTicket;
+        } catch (ApaException e) {
+            em.getTransaction().rollback();
+            throw e;
+        } finally {
+            cleanup(em);
+        }
+    }
+
+    /*
+     * createAndSaveTicketFromClientTicket assumes that PTicket has been sent WITHOUT an ID.
+     * createAndSaveTicketFromClientTicket will create a new existingTicket using magic and wizardry
+     */
+    private JpaRecord createAndSaveTicketFromClientTicket(String type, PTicket clientTicket) throws InvalidPropException, InvalidValueException {
+
+        JpaRecord ticket  = new JpaRecord();
+
+        //for all props on this pTicket, create new props with apa
         Set<String> keys = clientTicket.getProps().keySet();
         for (String key : keys) {
-            String val = clientTicket.get(key);
-            propsToSave.add(buildProp(ticket, type, key, val));
+            for(String val : clientTicket.getProps().get(key)) {
+                buildPropOntoTicket(ticket, key, val);
+            }
         }
-
         keys = clientTicket.getSystemProps().keySet();
         for (String key : keys) {
-            String val = clientTicket.getSystemProps().getFirst(key);
-            propsToSave.add(buildProp(ticket, type, key, val));
+            for(String val : clientTicket.getSystemProps().get(key)) {
+                buildPropOntoTicket(ticket, key, val);
+            }
         }
-        
-        //saving these outside of this loop ensures that all propFields exist before
-        //we go saving values.  Sort of a hack transactionality.
-        for (TicketProp ticketProp : propsToSave) {
-            saveTicketProp(ticketProp);
-        }
-
-        ticket = getTicket(type, clientTicket.getId());
+        ticket.setType(type);
         ticket = saveRecord(ticket);
         return ticket;
     }
 
-    private TicketProp buildProp(JpaRecord ticket, String type, String key, String val) {
+    private List<TicketProp> buildProps(String type, JpaRecord existingRecord, PTicket newRecord, EntityManager em) {
+        List<TicketProp> propsToSave = new ArrayList<TicketProp>();
+        Set<String> keys = newRecord.getProps().keySet();
+        for (String key : keys) {
+            for(String val : newRecord.getProps().get(key)) {
+                propsToSave.add(buildNewProp(em, existingRecord, type, key, val));
+            }
+        }
+
+        /*
+         * Save all the new system props
+         */
+        keys = newRecord.getSystemProps().keySet();
+        for (String key : keys) {
+            String val = newRecord.getSystemProps().getFirst(key);
+            propsToSave.add(buildNewProp(em, existingRecord, type, key, val));
+        }
+
+        return propsToSave;
+    }
+
+    /*
+     * Delete anything that isn't a system prop
+     * Also delete system props that exist on the incoming record
+     * This method DOES NOT manage transactions
+     */
+    private void deletePropsFromRecord(JpaRecord existingRecord, PTicket newRecord, EntityManager em) {
+        List<TicketProp> propListCopy = new ArrayList<TicketProp>();
+
+        Iterator<TicketProp> iter = existingRecord.getTicketProps().iterator();
+        List<TicketProp> propsToDelete = new ArrayList<TicketProp>();
+        em.flush();
+        while(iter.hasNext()) {
+            TicketProp prop = (TicketProp)iter.next();
+            if(!prop.isSystemProp()) {
+                propsToDelete.add(prop);
+            } else {
+                List<String> values = newRecord.getSystemProps().get(prop.getPropField().getName());
+                if(values != null) {
+                    propsToDelete.add(prop);
+                }
+            }
+        }
+
+        for(TicketProp prop : propsToDelete) {
+            deleteTicketProp(prop, em);
+        }
+    }
+
+    private TicketProp buildNewProp(EntityManager em, JpaRecord ticket, String type, String key, String val) {
+        PropField propField = getPropField(key, em);
+        validatePropField(propField, key, val);
+        TicketProp ticketProp = propField.getValueType().newTicketProp();
+        ticketProp.setPropField(propField);
+        ticketProp.setTicket(ticket);
+        ticketProp.setValue(val);
+        return ticketProp;
+    }
+
+    private TicketProp buildExistingProp(JpaRecord ticket, String type, String key, String val) {
 
         TicketProp ticketProp = getTicketProp(key, type, ticket.getId());
 
@@ -178,43 +308,19 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         return ticketProp;
     }
 
-    /*
-     * createAndSaveTicketFromClientTicket assumes that PTicket has been sent WITHOUT an ID.
-     * createAndSaveTicketFromClientTicket will create a new ticket using magic and wizardry
-     */
-    private JpaRecord createAndSaveTicketFromClientTicket(String type, PTicket clientTicket) throws InvalidPropException, InvalidValueException {
-
-        JpaRecord ticket  = new JpaRecord();
-
-        //for all props on this pTicket, create new props with apa
-        Set<String> keys = clientTicket.getProps().keySet();
-        for (String key : keys) {
-            String val = clientTicket.get(key);
-            buildPropOntoTicket(ticket, key, val);
-        }
-        keys = clientTicket.getSystemProps().keySet();
-        for (String key : keys) {
-            String val = clientTicket.getSystemProps().getFirst(key);
-            buildPropOntoTicket(ticket, key, val);
-        }
-        ticket.setType(type);
-        ticket = saveRecord(ticket);
-        return ticket;
-    }
-
     private JpaRecord buildPropOntoTicket(JpaRecord ticket, String key, String val) {
-            logger.debug("Creating property: {}={}", key, val);
-            PropField propField = getPropField(key);
-            logger.debug("Found PropField: {}", propField);
-            validatePropField(propField, key, val);
-            TicketProp ticketProp = propField.getValueType().newTicketProp();
-            ticketProp.setPropField(propField);
-            ticketProp.setValue(val);
-            ticketProp.setTicket(ticket);
-            logger.debug("Creating TicketProp: [{}]", ticketProp.getClass().getName());
-            logger.debug("{}={}", ticketProp.getPropField().getName(), ticketProp.getValueAsString());
-            ticket.addTicketProp(ticketProp);
-            return ticket;
+        logger.debug("Creating property: {}={}", key, val);
+        PropField propField = getPropField(key);
+        logger.debug("Found PropField: {}", propField);
+        validatePropField(propField, key, val);
+        TicketProp ticketProp = propField.getValueType().newTicketProp();
+        ticketProp.setPropField(propField);
+        ticketProp.setValue(val);
+        ticketProp.setTicket(ticket);
+        logger.debug("Creating TicketProp: [{}]", ticketProp.getClass().getName());
+        logger.debug("{}={}", ticketProp.getPropField().getName(), ticketProp.getValueAsString());
+        ticket.addTicketProp(ticketProp);
+        return ticket;
     }
 
     /**
@@ -232,9 +338,9 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
 
-    private void enforceCorrectValueType(PropField propField, TicketProp prop) throws InvalidValueException {
-
-        propField = getPropField(propField.getId());
+    private void enforceCorrectValueType(PropField propField, TicketProp prop, EntityManager em) throws InvalidValueException {
+        Long longId = LongUserType.massageToLong(propField.getId());
+        propField = em.find(PropField.class, longId);
         if (!propField.getValueType().newTicketProp().getClass().getName().equals(prop.getClass().getName())) {
             String err = "Value [" + prop.getValueAsString() + "] is not a valid value for the field [" + propField.getName() + "].  ";
             err += "Field is of type [" + propField.getValueType().name() + "].";
@@ -350,8 +456,8 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             logger.debug("Returning {} tickets", finishedTicketsSet.size());
             return convert(finishedTicketsSet);
         } catch (ApaException ex) {
-            logger.error("Error While searching [{}]", athenaSearch.getConstraints());
-            logger.error(ex.getMessage(), ex);
+            
+            
             throw ex;
         } finally {
             cleanup(em);
@@ -528,9 +634,9 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                     valuesAsObjects.add(prop.getValue());
                 } catch (Exception ex) {
                     //TODO: This is bad. We should blow up here
-                    logger.error("Error While searching [{}]", apc);
-                    logger.error("Continuing search with other constraints");
-                    logger.error(ex.getMessage(), ex);
+                    
+                    
+                    
                 }
             }
             queryString = "FROM " + prop.getClass().getName()
@@ -584,14 +690,14 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
             for (TicketProp prop : props) {
                 enforceStrict(prop.getPropField(), prop.getValueAsString());
-                enforceCorrectValueType(prop.getPropField(), prop);
+                enforceCorrectValueType(prop.getPropField(), prop, em);
                 prop.setId(LongUserType.massageToLong(prop.getId()));
                 prop = (TicketProp) em.merge(prop);
             }
             em.getTransaction().commit();
             return outProps;
         } catch (ApaException e) {
-            logger.error(e.getMessage(), e);
+            
             em.getTransaction().rollback();
             throw e;
         } finally {
@@ -605,7 +711,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         try {
             em.getTransaction().begin();
             enforceStrict(prop.getPropField(), prop.getValueAsString());
-            enforceCorrectValueType(prop.getPropField(), prop);
+            enforceCorrectValueType(prop.getPropField(), prop, em);
             prop.setId(LongUserType.massageToLong(prop.getId()));
             prop = (TicketProp) em.merge(prop);
             em.getTransaction().commit();
@@ -632,7 +738,11 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     /**
-     * Return a ticketprop.  If ticketId is null, this method will return null.  If no ticket prop
+     * Return the first ticketprop where name=fieldName and ticket_id = ticketId.
+     *
+     * Callers of this method are assuming that there is only one prop that meets the above conditions
+     *
+     * If ticketId is null, this method will return null.  If no existingTicket prop
      * is found for the given conditions, this method will return null;
      *
      * This method WILL hydrate TicketProp.getTicket().  
@@ -666,6 +776,37 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             try {
                 TicketProp ticketProp = (TicketProp) query.getSingleResult();
                 //ticketProp.setTicket(getTicket(type, ticketId));
+                return ticketProp;
+            } catch (javax.persistence.NoResultException nre) {
+                return null;
+            }
+        } finally {
+            cleanup(em);
+        }
+    }
+
+    @Override
+    public List getTicketProps(String fieldName, String type, Object ticketId) {
+        EntityManager em = this.emf.createEntityManager();
+
+        //This is to get around a bug in Derby that prevents us selecting on a null
+        if(ticketId == null) {
+            return null;
+        }
+        
+        try {
+            Long longTicketId = LongUserType.massageToLong(ticketId);
+            
+            //TODO: Would this be faster to first select propFields with fieldName, then use that id to
+            //search ticketProp?
+            Query query = em.createQuery("FROM TicketProp ticketProp WHERE ticketProp.propField.name=:fieldName AND ticketProp.ticket.id=:ticketId");
+            query.setParameter("fieldName", fieldName);
+            query.setParameter("ticketId", longTicketId);
+
+            //TODO: There must be a better way of getting asingle result in JPA.
+            //Using exceptions as flow control is kinda lame
+            try {
+                List ticketProp = query.getResultList();
                 return ticketProp;
             } catch (javax.persistence.NoResultException nre) {
                 return null;
@@ -710,9 +851,12 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
     }
 
-    @Override
-    public PropField getPropField(String name) {
-        EntityManager em = this.emf.createEntityManager();
+    public PropField getPropField(String name, EntityManager em) {
+        boolean closeEm = false;
+        if(em == null) {
+            closeEm = true;
+            em = this.emf.createEntityManager();
+        }
         try {
             Query query = em.createQuery("FROM PropField pf where pf.name=:name");
             query.setParameter("name", name);
@@ -724,8 +868,15 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 return null;
             }
         } finally {
-            cleanup(em);
+            if(closeEm) {
+                cleanup(em);
+            }
         }
+    }
+    
+    @Override
+    public PropField getPropField(String name) {
+        return getPropField(name, null);
     }
 
     @Override
@@ -848,9 +999,19 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
      */
     @Override
     public void deleteTicketProp(TicketProp prop) {
-        EntityManager em = this.emf.createEntityManager();
+        deleteTicketProp(prop, null);
+
+    }
+    
+    public void deleteTicketProp(TicketProp prop, EntityManager em) {
+        boolean useTransaction = (em == null);
+        if(em == null) {
+            em = this.emf.createEntityManager();
+        }
         try {
-            em.getTransaction().begin();
+            if(useTransaction) {
+                em.getTransaction().begin();
+            }
             prop = em.merge(prop);
 
             if (prop == null) {
@@ -866,10 +1027,14 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             t.getTicketProps().remove(prop);
             em.remove(prop);
             t = em.merge(t);
-            em.getTransaction().commit();
+            if (useTransaction) {
+                    em.getTransaction().commit();
+            }
         } finally {
-            cleanup(em);
-        }
+            if(useTransaction) {
+                cleanup(em);
+            }
+        }    
     }
 
     @Override

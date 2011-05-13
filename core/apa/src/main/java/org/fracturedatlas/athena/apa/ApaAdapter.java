@@ -127,6 +127,7 @@ public interface ApaAdapter {
      * @return the ticket prop if found, null otherwise
      */
     public TicketProp getTicketProp(String fieldName, String type, Object ticketId);
+    public List<TicketProp> getTicketProps(String fieldName, String type, Object ticketId);
 
     /**
      * get the ticketProps for the given field name

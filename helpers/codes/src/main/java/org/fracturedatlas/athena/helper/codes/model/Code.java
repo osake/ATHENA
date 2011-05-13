@@ -22,6 +22,7 @@ package org.fracturedatlas.athena.helper.codes.model;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import org.fracturedatlas.athena.client.PTicket;
@@ -41,18 +42,19 @@ public class Code {
     Date startDate;
     Date endDate;
     Integer price;
-    Set<String> eligibleClients;
+    Set<String> sellers;
     Set<String> tickets;
     Set<String> performances;
     Set<String> events;
     Boolean enabled;
     
-    public static final String FIELD_PREFIX = "athena_code:";
+    public static final String FIELD_PREFIX = "athena_code" + PTicket.SYSTEM_PROP_DELIMITER;
 
     public Code() {
         tickets = new TreeSet<String>();
         performances = new TreeSet<String>();
         events = new TreeSet<String>();
+        sellers = new TreeSet<String>();
     }
 
     public Code (PTicket pTicket) {
@@ -91,6 +93,13 @@ public class Code {
                 this.endDate = DateUtil.parseDate(pTicket.get("endDate"));
             } catch (ParseException ignored) {
                 logger.info(ignored.getMessage());
+            }
+        }
+
+        if(pTicket.get("sellers") != null) {
+            List<String> sellers = pTicket.getProps().get("sellers");
+            for(String seller : sellers) {
+                this.sellers.add(seller);
             }
         }
     }
@@ -132,11 +141,11 @@ public class Code {
     }
 
     public Set<String> getEligibleClients() {
-        return eligibleClients;
+        return sellers;
     }
 
     public void setEligibleClients(Set<String> eligibleClients) {
-        this.eligibleClients = eligibleClients;
+        this.sellers = eligibleClients;
     }
 
     public Set<String> getTickets() {
@@ -186,6 +195,15 @@ public class Code {
     public void setPrice(Integer price) {
         this.price = price;
     }
+
+    public Set<String> getSellers() {
+        return sellers;
+    }
+
+    public void setSellers(Set<String> sellers) {
+        this.sellers = sellers;
+    }
+
     
     public PTicket toRecord() {
         PTicket pTicket = new PTicket();
@@ -215,8 +233,63 @@ public class Code {
             pTicket.put("endDate", DateUtil.formatDate(endDate));
         }
 
+        for(String seller : sellers) {
+            pTicket.getProps().add("sellers", seller);
+        }
+
         return pTicket;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Code other = (Code) obj;
+        if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
+            return false;
+        }
+        if ((this.code == null) ? (other.code != null) : !this.code.equals(other.code)) {
+            return false;
+        }
+        if ((this.description == null) ? (other.description != null) : !this.description.equals(other.description)) {
+            return false;
+        }
+        if (this.startDate != other.startDate && (this.startDate == null || !this.startDate.equals(other.startDate))) {
+            return false;
+        }
+        if (this.endDate != other.endDate && (this.endDate == null || !this.endDate.equals(other.endDate))) {
+            return false;
+        }
+        if (this.price != other.price && (this.price == null || !this.price.equals(other.price))) {
+            return false;
+        }
+        if (this.sellers != other.sellers && (this.sellers == null || !this.sellers.equals(other.sellers))) {
+            return false;
+        }
+        if (this.enabled != other.enabled && (this.enabled == null || !this.enabled.equals(other.enabled))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 11 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 11 * hash + (this.code != null ? this.code.hashCode() : 0);
+        hash = 11 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 11 * hash + (this.startDate != null ? this.startDate.hashCode() : 0);
+        hash = 11 * hash + (this.endDate != null ? this.endDate.hashCode() : 0);
+        hash = 11 * hash + (this.price != null ? this.price.hashCode() : 0);
+        hash = 11 * hash + (this.sellers != null ? this.sellers.hashCode() : 0);
+        hash = 11 * hash + (this.enabled != null ? this.enabled.hashCode() : 0);
+        return hash;
+    }
+
+    
 
 }
