@@ -40,6 +40,7 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+@Ignore
 public class PluginContainerTest extends BaseTixContainerTest {
 
     String path = RECORDS_PATH;
