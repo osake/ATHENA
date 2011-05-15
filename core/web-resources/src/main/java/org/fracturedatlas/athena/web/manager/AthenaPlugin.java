@@ -22,6 +22,7 @@ package org.fracturedatlas.athena.web.manager;
 
 import javax.ws.rs.core.UriInfo;
 import org.fracturedatlas.athena.client.PTicket;
+import org.springframework.stereotype.Component;
 
 public interface AthenaPlugin {
     public PTicket execute(UriInfo uriInfo);

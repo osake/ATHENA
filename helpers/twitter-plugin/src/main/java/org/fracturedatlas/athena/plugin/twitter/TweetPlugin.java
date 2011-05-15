@@ -18,7 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 */
 
-package org.fracturedatlas.athena.web.manager;
+package org.fracturedatlas.athena.plugin.twitter;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -28,17 +28,18 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.client.filter.LoggingFilter;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import java.util.Iterator;
-import java.util.List;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.PathSegment;
 import javax.ws.rs.core.UriInfo;
 import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.web.manager.AthenaPlugin;
+import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class TweetPlugin implements AthenaPlugin {
 
     @Autowired

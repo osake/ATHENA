@@ -92,6 +92,11 @@
         <artifactId>relationship-helper</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.fracturedatlas.athena.plugin</groupId>
+        <artifactId>twitter-plugin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -231,14 +236,6 @@
       <name>Java.net Maven 2 Repository</name>
       <url>http://download.java.net/maven/2/</url>
       <layout>default</layout>
-    </repository>
-    <repository>
-      <id>Fractured Atlas Releases</id>
-      <url>http://nexus.fracturedatlas.org:8081/nexus/content/repositories/releases</url>
-    </repository>
-    <repository>
-      <id>Fractured Atlas Snapshots</id>
-      <url>http://nexus.fracturedatlas.org:8081/nexus/content/repositories/snapshots</url>
     </repository>
     <repository>
       <id>gson</id>
