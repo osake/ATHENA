@@ -21,24 +21,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.web.resource.container;
 
 import com.google.gson.Gson;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import java.util.Arrays;
-import java.util.List;
-import javax.ws.rs.core.MultivaluedMap;
-import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
-import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 @Ignore
 public class PluginContainerTest extends BaseTixContainerTest {
