@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.web.resource;
 
 import java.util.TreeSet;
+import javax.ws.rs.core.UriInfo;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.junit.Before;
@@ -33,6 +34,7 @@ public class RecordResourceTest {
     RecordResource resource = new RecordResource();
 
     @Mock private RecordManager mockRecordManager;
+    @Mock private UriInfo mockUriInfo;
 
     @Before
     public void setup() {
@@ -42,8 +44,10 @@ public class RecordResourceTest {
 
     @Test
     public void testSearchRelationships() {
+
+        when(mockUriInfo.getQueryParameters()).thenReturn(null);
         when(mockRecordManager.findSubResources("company", "1", "employee", null)).thenReturn(new TreeSet<PTicket>());
-        resource.search("companies", "1", "employees", null);
+        resource.search("companies", "1", "employees", mockUriInfo);
         verify(mockRecordManager, times(1)).findSubResources("company", "1", "employee", null);
     }
 }

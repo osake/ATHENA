@@ -43,6 +43,7 @@ import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolderStrategy;
@@ -104,7 +105,12 @@ public class RecordManager {
         }
 
         //load the plugin.  If the plugin is found, let it do its thing.
-        AthenaSubResource plugin = (AthenaSubResource)applicationContext.getBean(childType + "SubResource");
+        AthenaSubResource plugin = null;
+        try{
+             plugin = (AthenaSubResource)applicationContext.getBean(childType + "SubResource");
+        } catch (NoSuchBeanDefinitionException noBean) {
+            //it's okay
+        }
         if(plugin != null) {
             String username = getCurrentUsername();
             return plugin.execute(parentType, id, childType, queryParams, username);

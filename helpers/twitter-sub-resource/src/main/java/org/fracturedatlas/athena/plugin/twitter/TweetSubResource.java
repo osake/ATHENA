@@ -24,31 +24,41 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.sun.jersey.api.NotFoundException;
 import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.MultivaluedMap;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.web.manager.AthenaSubResource;
+import org.fracturedatlas.athena.id.IdAdapter;
+import org.fracturedatlas.athena.web.exception.AthenaException;
+import org.fracturedatlas.athena.web.manager.AbstractAthenaSubResource;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TweetSubResource implements AthenaSubResource {
+public class TweetSubResource extends AbstractAthenaSubResource {
 
     @Autowired
     RecordManager recordManager;
 
     @Override
-    public PTicket execute(String username, Map<String, List<String>> queryParams, String... args) {
-        String personId = args[3];
+    public List<PTicket> execute(String parentType, 
+                                 Object parentId,
+                                 String subResourceType,
+                                 Map<String, List<String>> queryParams,
+                                 String username) {
+        List<PTicket> tweets = new ArrayList<PTicket>();
+        String personId = IdAdapter.toString(parentId);
 
         PTicket person = recordManager.getTicket("person", personId);
         
@@ -61,18 +71,38 @@ public class TweetSubResource implements AthenaSubResource {
         MultivaluedMap twitterQueryParams = new MultivaluedMapImpl();
         twitterQueryParams.add("screen_name", person.get("twitterHandle"));
 
-        String jsonResponse = twitter.queryParams(twitterQueryParams).get(String.class);
+        ClientResponse response = twitter.queryParams(twitterQueryParams).get(ClientResponse.class);
         
-        Gson gson = JsonUtil.getGson();
-        JsonParser jsonParser = new JsonParser();
-        Iterator<JsonElement> tweetIter = jsonParser.parse(jsonResponse).getAsJsonArray().iterator();
+        if(ClientResponse.Status.OK.equals(ClientResponse.Status.fromStatusCode(response.getStatus()))) {
+            String jsonResponse = response.getEntity(String.class);
+            Gson gson = JsonUtil.getGson();
+            JsonParser jsonParser = new JsonParser();
+            Iterator<JsonElement> tweetIter = jsonParser.parse(jsonResponse).getAsJsonArray().iterator();
 
-        PTicket twitterFeed = new PTicket();
-        while(tweetIter.hasNext()) {
-            JsonObject tweetObj = tweetIter.next().getAsJsonObject();
-            twitterFeed.getProps().add("tweets", tweetObj.get("text"));
+            while(tweetIter.hasNext()) {
+                JsonObject tweetObj = tweetIter.next().getAsJsonObject();
+                PTicket tweet = new PTicket("tweet");
+                tweet.put("text", tweetObj.get("text").getAsString());
+                tweets.add(tweet);
+            }
+            return tweets;
+        } else if (ClientResponse.Status.NOT_FOUND.equals(ClientResponse.Status.fromStatusCode(response.getStatus()))) {
+            throw new NotFoundException();
+        } else {
+            throw new AthenaException(response.getEntity(String.class));
         }
+        
 
-        return twitterFeed;
+
     }
+
+    public RecordManager getRecordManager() {
+        return recordManager;
+    }
+
+    public void setRecordManager(RecordManager recordManager) {
+        this.recordManager = recordManager;
+    }
+    
+
 }

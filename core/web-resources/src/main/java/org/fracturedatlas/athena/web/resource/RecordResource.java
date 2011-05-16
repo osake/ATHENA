@@ -129,9 +129,9 @@ public class RecordResource {
     @GET
     @Path("{parentType}/{id}/{childType}")
     public Object search(@PathParam("parentType") String parentType,
-                                     @PathParam("id") String id,
-                                     @PathParam("childType") String childType,
-                                     @Context UriInfo ui) throws NotFoundException {
+                         @PathParam("id") String id,
+                         @PathParam("childType") String childType,
+                         @Context UriInfo ui) throws NotFoundException {
         MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
         parentType = Inflector.getInstance().singularize(parentType);
         childType = Inflector.getInstance().singularize(childType);
