@@ -30,37 +30,38 @@ import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.UriInfo;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.web.manager.AthenaPlugin;
+import org.fracturedatlas.athena.web.manager.AthenaSubResource;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TweetPlugin implements AthenaPlugin {
+public class TweetSubResource implements AthenaSubResource {
 
     @Autowired
     RecordManager recordManager;
 
     @Override
-    public PTicket execute(UriInfo uriInfo) {        
-        String[] pathBits = uriInfo.getAbsolutePath().getPath().split("/");
-        String personId = pathBits[3];
+    public PTicket execute(String username, Map<String, List<String>> queryParams, String... args) {
+        String personId = args[3];
 
         PTicket person = recordManager.getTicket("person", personId);
         
         ClientConfig cc = new DefaultClientConfig();
         Client c = Client.create(cc);
+
+        //TODO: props file
         WebResource twitter = c.resource("http://api.twitter.com/1/statuses/user_timeline.json" );
-        //twitter.addFilter(new LoggingFilter());
 
-        MultivaluedMap queryParams = new MultivaluedMapImpl();
-        queryParams.add("screen_name", person.get("twitterHandle"));
+        MultivaluedMap twitterQueryParams = new MultivaluedMapImpl();
+        twitterQueryParams.add("screen_name", person.get("twitterHandle"));
 
-        String jsonResponse = twitter.queryParams(queryParams).get(String.class);
+        String jsonResponse = twitter.queryParams(twitterQueryParams).get(String.class);
         
         Gson gson = JsonUtil.getGson();
         JsonParser jsonParser = new JsonParser();

@@ -20,10 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.web.manager;
 
-import javax.ws.rs.core.UriInfo;
+import java.util.List;
+import java.util.Map;
 import org.fracturedatlas.athena.client.PTicket;
-import org.springframework.stereotype.Component;
 
-public interface AthenaPlugin {
-    public PTicket execute(UriInfo uriInfo);
+public interface AthenaSubResource {
+    public PTicket execute(String username, Map<String, List<String>> queryParams, String... args);
 }
