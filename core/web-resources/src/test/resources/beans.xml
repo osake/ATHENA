@@ -13,4 +13,5 @@
 
     <bean id="fieldResource" class="org.fracturedatlas.athena.web.resource.FieldResource" autowire="autodetect"/>
     <bean id="propFieldManager" class="org.fracturedatlas.athena.web.manager.PropFieldManager" autowire="autodetect"/>
+    <bean id="contextHolderStrategy" class="org.springframework.security.core.context.SecurityContextHolder" factory-method="getContextHolderStrategy"/>
 </beans>

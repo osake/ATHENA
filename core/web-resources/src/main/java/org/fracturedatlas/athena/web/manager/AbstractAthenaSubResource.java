@@ -24,10 +24,15 @@ import java.util.List;
 import java.util.Map;
 import org.fracturedatlas.athena.client.PTicket;
 
-public interface AthenaSubResource {
+
+public class AbstractAthenaSubResource implements AthenaSubResource {
+
+    @Override
     public List<PTicket> execute(String parentType,
                                  Object parentId,
                                  String subResourceType,
                                  Map<String, List<String>> queryParams,
-                                 String username);
+                                 String username) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
 }

@@ -23,8 +23,10 @@ import com.sun.jersey.api.NotFoundException;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.lang.StringUtils;
@@ -41,12 +43,23 @@ import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolderStrategy;
+import org.springframework.security.core.userdetails.User;
 
 public class RecordManager {
 
     @Autowired
     ApaAdapter apa;
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
+    @Autowired
+    @javax.ws.rs.core.Context
+    ApplicationContext applicationContext;
+
+    @Autowired
+    SecurityContextHolderStrategy contextHolderStrategy;
 
     public static final String ID_DELIMITER = ",";
 
@@ -78,22 +91,46 @@ public class RecordManager {
 
         apa.deleteTicketProp(prop);
     }
-    public Set<PTicket> findTicketsByRelationship(String parentType, Object id, String childType) {
+    
+    public Collection<PTicket> findSubResources(String parentType,
+                                                 Object id,
+                                                 String childType,
+                                                 Map<String, List<String>> queryParams) {
 
+        //Check to see if the parent record exists
         PTicket ticket  = apa.getRecord(parentType, id);
         if(ticket == null) {
             throw new NotFoundException(StringUtils.capitalize(parentType) + " witn id [" + id + "] was not found");
         }
 
-        //TODO: move this somewhere sensible
-        String parentField = parentType + "Id";
+        //load the plugin.  If the plugin is found, let it do its thing.
+        AthenaSubResource plugin = (AthenaSubResource)applicationContext.getBean(childType + "SubResource");
+        if(plugin != null) {
+            String username = getCurrentUsername();
+            return plugin.execute(parentType, id, childType, queryParams, username);
+        } else {
+            //If no plugin was found, look for sub-resources in apa
+            //TODO: move this somewhere sensible
+            String parentField = parentType + "Id";
 
-        AthenaSearch athenaSearch = new AthenaSearch
-                .Builder(new AthenaSearchConstraint(parentField, Operator.EQUALS, IdAdapter.toString(id)))
-                .type(childType)
-                .build();
+            AthenaSearch athenaSearch = new AthenaSearch
+                    .Builder(new AthenaSearchConstraint(parentField, Operator.EQUALS, IdAdapter.toString(id)))
+                    .type(childType)
+                    .build();
 
-        return apa.findTickets(athenaSearch);
+            return apa.findTickets(athenaSearch);
+        }
+    }
+    
+    private String getCurrentUsername() {
+        Authentication authentication = contextHolderStrategy.getContext().getAuthentication();
+        if(authentication != null && authentication.getPrincipal() != null
+                                  && User.class.isAssignableFrom(authentication.getPrincipal().getClass()) ) {
+            User user = (User) authentication.getPrincipal();
+            return user.getUsername();
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -278,5 +315,21 @@ public class RecordManager {
 
     public void setApa(ApaAdapter apa) {
         this.apa = apa;
+    }
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+    }
+
+    public SecurityContextHolderStrategy getContextHolderStrategy() {
+        return contextHolderStrategy;
+    }
+
+    public void setContextHolderStrategy(SecurityContextHolderStrategy contextHolderStrategy) {
+        this.contextHolderStrategy = contextHolderStrategy;
     }
 }

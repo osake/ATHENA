@@ -62,10 +62,6 @@ public class RecordResource {
     @Autowired
     RecordManager recordManager;
 
-    @Autowired
-    @javax.ws.rs.core.Context
-    ApplicationContext applicationContext;
-
     Gson gson = JsonUtil.getGson();
 
     @GET
@@ -135,13 +131,12 @@ public class RecordResource {
     public Object search(@PathParam("parentType") String parentType,
                                      @PathParam("id") String id,
                                      @PathParam("childType") String childType,
-                                     @Context UriInfo uriInfo) throws NotFoundException {
+                                     @Context UriInfo ui) throws NotFoundException {
+        MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
         parentType = Inflector.getInstance().singularize(parentType);
         childType = Inflector.getInstance().singularize(childType);
         try{
-            return recordManager.findTicketsByRelationship(parentType, id, childType);
-//            AthenaSubResource plugin = (AthenaSubResource)applicationContext.getBean(childType + "Plugin");
-//            return plugin.execute(uriInfo);
+            return recordManager.findSubResources(parentType, id, childType, queryParams);
         } catch (InvalidFieldException ife) {
             throw new NotFoundException();
         }
