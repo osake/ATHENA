@@ -13,6 +13,7 @@
     <bean id="codeManager" class="org.fracturedatlas.athena.helper.codes.manager.CodeManager" autowire="autodetect"/>
     <bean id="recordManager" class="org.fracturedatlas.athena.web.manager.RecordManager" autowire="autodetect"/>
     <bean id="propFieldManager" class="org.fracturedatlas.athena.web.manager.PropFieldManager" autowire="autodetect"/>
+    <bean id="contextHolderStrategy" class="org.springframework.security.core.context.SecurityContextHolder" factory-method="getContextHolderStrategy"/>
 
     <!-- Obviously tests that need stage won't work -->
     <bean name="athenaStage" class="org.fracturedatlas.athena.web.JsonAthenaComponent">
