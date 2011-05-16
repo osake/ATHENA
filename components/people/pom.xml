@@ -160,7 +160,7 @@
 
         <dependency>
             <groupId>org.fracturedatlas.athena.plugin</groupId>
-            <artifactId>twitter-plugin</artifactId>
+            <artifactId>twitter-sub-resource</artifactId>
         </dependency>
     </dependencies>
 </project>

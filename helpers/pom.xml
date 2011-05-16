@@ -18,7 +18,7 @@
         <module>ticketfactory</module>
         <module>relationship-helper</module>
         <module>codes</module>
-        <module>twitter-plugin</module>
+        <module>twitter-sub-resource</module>
     </modules>
     <dependencies>
 

@@ -9,7 +9,6 @@
            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
                
     <bean id="recordManager" class="org.fracturedatlas.athena.web.manager.RecordManager" autowire="autodetect"/>
-    <bean id="tweetPlugin" class="org.fracturedatlas.athena.web.manager.TweetPlugin" autowire="autodetect"/>
     <bean id="recordResource" class="org.fracturedatlas.athena.web.resource.RecordResource" autowire="autodetect"/>
 
     <bean id="fieldResource" class="org.fracturedatlas.athena.web.resource.FieldResource" autowire="autodetect"/>

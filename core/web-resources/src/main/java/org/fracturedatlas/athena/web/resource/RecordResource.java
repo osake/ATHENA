@@ -50,7 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import org.fracturedatlas.athena.web.manager.AthenaPlugin;
+import org.fracturedatlas.athena.web.manager.AthenaSubResource;
 import org.springframework.context.ApplicationContext;
 
 @Path("")
@@ -140,7 +140,7 @@ public class RecordResource {
         childType = Inflector.getInstance().singularize(childType);
         try{
             return recordManager.findTicketsByRelationship(parentType, id, childType);
-//            AthenaPlugin plugin = (AthenaPlugin)applicationContext.getBean(childType + "Plugin");
+//            AthenaSubResource plugin = (AthenaSubResource)applicationContext.getBean(childType + "Plugin");
 //            return plugin.execute(uriInfo);
         } catch (InvalidFieldException ife) {
             throw new NotFoundException();
