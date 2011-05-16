@@ -94,7 +94,7 @@
       </dependency>
       <dependency>
         <groupId>org.fracturedatlas.athena.plugin</groupId>
-        <artifactId>twitter-plugin</artifactId>
+        <artifactId>twitter-sub-resource</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>
