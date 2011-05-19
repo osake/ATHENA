@@ -20,10 +20,7 @@
         <constructor-arg index="0" value="null"/>
         <constructor-arg index="1" value="4444"/>
         <constructor-arg index="2" value="null"/>
-        <constructor-arg index="3">
-            <bean class="org.springframework.security.core.context.SecurityContextHolder"
-                  factory-method="getContextHolderStrategy">
-            </bean>
+        <constructor-arg index="3" ref="contextHolderStrategy">
         </constructor-arg>
     </bean>
 </beans>

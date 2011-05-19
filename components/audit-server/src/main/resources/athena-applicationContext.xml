@@ -23,6 +23,7 @@
   <!-- BEANS -->
  <bean id="auditPersistance" class="org.fracturedatlas.athena.audit.persist.impl.AuditFlatFilePersistanceImpl"/>
 
+  <bean id="contextHolderStrategy" class="org.springframework.security.core.context.SecurityContextHolder" factory-method="getContextHolderStrategy"/>
   <import resource="beans.xml"/>
 
   <!-- JPA 

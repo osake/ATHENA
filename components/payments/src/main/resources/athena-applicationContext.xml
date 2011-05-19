@@ -18,6 +18,9 @@
             </list>
         </property>
     </bean>
+    <bean id="contextHolderStrategy" class="org.springframework.security.core.context.SecurityContextHolder" factory-method="getContextHolderStrategy"/>
+    
+    
     <bean id="processor" class="${athena.payments.processor}" autowire="autodetect">
         <constructor-arg index="0" value="${athena.payments.braintree.environment}"/>
         <constructor-arg index="1" value="${athena.payments.braintree.merchantId}"/>

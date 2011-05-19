@@ -20,6 +20,7 @@
         <module>payments</module>
         <module>stage</module>
         <module>admin</module>
+        <module>reports</module>
     </modules>
     <build>
         <plugins>

@@ -50,5 +50,6 @@
 
     <!-- BEANS -->
 
+    <bean id="contextHolderStrategy" class="org.springframework.security.core.context.SecurityContextHolder" factory-method="getContextHolderStrategy"/>
     <import resource="beans.xml"/>
 </beans>
