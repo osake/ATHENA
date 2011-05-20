@@ -41,7 +41,7 @@ public class ReportManager {
     public Object getReport(String reportType, Map<String, List<String>> queryParams) {
         try{
             Reporter reporter = (Reporter)applicationContext.getBean(reportType + "Report");
-        return reporter.getReport(queryParams);
+            return reporter.getReport(queryParams);
         } catch (NoSuchBeanDefinitionException noBean) {
             throw new NotFoundException("Could not find a report named " + reportType);
         }
