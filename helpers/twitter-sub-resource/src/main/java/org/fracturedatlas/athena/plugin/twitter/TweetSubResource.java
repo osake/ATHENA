@@ -36,6 +36,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.MultivaluedMap;
+import org.apache.commons.lang.StringUtils;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.web.exception.AthenaException;
@@ -61,6 +62,10 @@ public class TweetSubResource extends AbstractAthenaSubResource {
         String personId = IdAdapter.toString(parentId);
 
         PTicket person = recordManager.getTicket("person", personId);
+
+        if(person == null) {
+            throw new NotFoundException();
+        }
         
         ClientConfig cc = new DefaultClientConfig();
         Client c = Client.create(cc);
@@ -69,6 +74,13 @@ public class TweetSubResource extends AbstractAthenaSubResource {
         WebResource twitter = c.resource("http://api.twitter.com/1/statuses/user_timeline.json" );
 
         MultivaluedMap twitterQueryParams = new MultivaluedMapImpl();
+        String twitterHandle = person.get("twitterHandle");
+        
+        //Punch out if they have to handle set
+        if(StringUtils.isBlank(twitterHandle)) {
+            throw new NotFoundException();
+        }
+        
         twitterQueryParams.add("screen_name", person.get("twitterHandle"));
 
         ClientResponse response = twitter.queryParams(twitterQueryParams).get(ClientResponse.class);
