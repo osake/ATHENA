@@ -43,42 +43,42 @@ public class LiveTwitterTest {
         
     }
 
-    @Test
-    public void testGetTweets() {
-        PTicket person = new PTicket("person");
-        person.setId("3");
-        person.put("twitterHandle", "gsmoore");
-        PTicket action = new PTicket("action");
-        action.setId("355");
-        Set<PTicket> actions = new HashSet<PTicket>();
-        actions.add(action);
-
-        when(mockRecordManager.getTicket("person", person.getId())).thenReturn(person);
-        List<PTicket> tweets = tweetSubResource.execute("person", "3", "tweet", null, null);
-        assertNotNull(tweets);
-        assertNotNull(tweets.get(0).get("text"));
-
-    }
-
-    @Test
-    public void testGetTweetsNotFound() {
-        PTicket person = new PTicket("person");
-        person.setId("3");
-        person.put("twitterHandle", "no_way_someone_has_This_registered");
-        PTicket action = new PTicket("action");
-        action.setId("355");
-        Set<PTicket> actions = new HashSet<PTicket>();
-        actions.add(action);
-
-        when(mockRecordManager.getTicket("person", person.getId())).thenReturn(person);
-        try {
-            List<PTicket> tweets = tweetSubResource.execute("person", "3", "tweet", null, null);
-            fail("No NFE");
-        } catch (NotFoundException e) {
-            //cool
-        }
-
-    }
+//    @Test
+//    public void testGetTweets() {
+//        PTicket person = new PTicket("person");
+//        person.setId("3");
+//        person.put("twitterHandle", "gsmoore");
+//        PTicket action = new PTicket("action");
+//        action.setId("355");
+//        Set<PTicket> actions = new HashSet<PTicket>();
+//        actions.add(action);
+//
+//        when(mockRecordManager.getTicket("person", person.getId())).thenReturn(person);
+//        List<PTicket> tweets = tweetSubResource.execute("person", "3", "tweet", null, null);
+//        assertNotNull(tweets);
+//        assertNotNull(tweets.get(0).get("text"));
+//
+//    }
+//
+//    @Test
+//    public void testGetTweetsNotFound() {
+//        PTicket person = new PTicket("person");
+//        person.setId("3");
+//        person.put("twitterHandle", "no_way_someone_has_This_registered");
+//        PTicket action = new PTicket("action");
+//        action.setId("355");
+//        Set<PTicket> actions = new HashSet<PTicket>();
+//        actions.add(action);
+//
+//        when(mockRecordManager.getTicket("person", person.getId())).thenReturn(person);
+//        try {
+//            List<PTicket> tweets = tweetSubResource.execute("person", "3", "tweet", null, null);
+//            fail("No NFE");
+//        } catch (NotFoundException e) {
+//            //cool
+//        }
+//
+//    }
 
     @Test
     public void testGetTweetsNoTwitterHandleStored() {
@@ -100,36 +100,36 @@ public class LiveTwitterTest {
 
     }
 
-    @Test
-    public void testGetTweetsNoTwitterProp() {
-        PTicket person = new PTicket("person");
-        person.setId("3");
-        PTicket action = new PTicket("action");
-        action.setId("355");
-        Set<PTicket> actions = new HashSet<PTicket>();
-        actions.add(action);
-
-        when(mockRecordManager.getTicket("person", person.getId())).thenReturn(person);
-        try {
-            List<PTicket> tweets = tweetSubResource.execute("person", "3", "tweet", null, null);
-            fail("No NFE");
-        } catch (NotFoundException e) {
-            //cool
-        }
-
-    }
-
-    @Test
-    public void testGetTweetsNoPersonFound() {
-        when(mockRecordManager.getTicket("person", "3")).thenReturn(null);
-        try {
-            List<PTicket> tweets = tweetSubResource.execute("person", "3", "tweet", null, null);
-            fail("No NFE");
-        } catch (NotFoundException e) {
-            //cool
-        }
-
-    }
+//    @Test
+//    public void testGetTweetsNoTwitterProp() {
+//        PTicket person = new PTicket("person");
+//        person.setId("3");
+//        PTicket action = new PTicket("action");
+//        action.setId("355");
+//        Set<PTicket> actions = new HashSet<PTicket>();
+//        actions.add(action);
+//
+//        when(mockRecordManager.getTicket("person", person.getId())).thenReturn(person);
+//        try {
+//            List<PTicket> tweets = tweetSubResource.execute("person", "3", "tweet", null, null);
+//            fail("No NFE");
+//        } catch (NotFoundException e) {
+//            //cool
+//        }
+//
+//    }
+//
+//    @Test
+//    public void testGetTweetsNoPersonFound() {
+//        when(mockRecordManager.getTicket("person", "3")).thenReturn(null);
+//        try {
+//            List<PTicket> tweets = tweetSubResource.execute("person", "3", "tweet", null, null);
+//            fail("No NFE");
+//        } catch (NotFoundException e) {
+//            //cool
+//        }
+//
+//    }
 
     @Before
     public void before() throws Exception {

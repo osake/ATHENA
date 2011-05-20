@@ -43,6 +43,8 @@ import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.fracturedatlas.athena.web.manager.AbstractAthenaSubResource;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.fracturedatlas.athena.web.util.JsonUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -51,6 +53,8 @@ public class TweetSubResource extends AbstractAthenaSubResource {
 
     @Autowired
     RecordManager recordManager;
+    
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     @Override
     public List<PTicket> execute(String parentType, 
@@ -76,8 +80,11 @@ public class TweetSubResource extends AbstractAthenaSubResource {
         MultivaluedMap twitterQueryParams = new MultivaluedMapImpl();
         String twitterHandle = person.get("twitterHandle");
         
+        logger.debug("* Twitter handle for person [{}] is [{}]", personId, twitterHandle);
+        
         //Punch out if they have to handle set
         if(StringUtils.isBlank(twitterHandle)) {
+            logger.debug("* No twitter handle found for person [{}], not issuing Twitter request", personId);
             throw new NotFoundException();
         }
         
