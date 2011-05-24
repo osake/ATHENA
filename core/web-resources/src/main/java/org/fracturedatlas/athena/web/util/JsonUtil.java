@@ -40,7 +40,13 @@ public class JsonUtil {
                                 .registerTypeAdapter(PTicket.class, new JsonTicketSerializer())
                                 .registerTypeAdapter(java.util.Date.class, new DateTypeConverter());
 
+    static GsonBuilder gbWithoutNulls = new GsonBuilder()
+                                .setLongSerializationPolicy(LongSerializationPolicy.STRING)
+                                .registerTypeAdapter(PTicket.class, new JsonTicketSerializer())
+                                .registerTypeAdapter(java.util.Date.class, new DateTypeConverter());
+
     static Gson gson;
+    static Gson gsonWithoutNulls;
 
     public static Gson getGson() {
         if (gson == null) {
@@ -48,6 +54,14 @@ public class JsonUtil {
         }
 
         return gson;
+    }
+
+    public static Gson getGsonWithoutNulls() {
+        if (gsonWithoutNulls == null) {
+            gsonWithoutNulls = gbWithoutNulls.create();
+        }
+
+        return gsonWithoutNulls;
     }
 
     public synchronized static JsonObject mapToJson(MultivaluedMapImpl map) {

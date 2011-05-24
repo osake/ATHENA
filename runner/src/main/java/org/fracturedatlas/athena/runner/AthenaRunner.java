@@ -33,7 +33,7 @@ public class AthenaRunner {
         Server server = new Server(Integer.parseInt(port));
         ContextHandlerCollection contexts = new ContextHandlerCollection();
 
-        String[] appNames = new String[]{"tix","stage", "people", "orders", "payments","audit"};
+        String[] appNames = new String[]{"tix","stage", "people", "orders", "payments","reports", "audit"};
 
         for (String appName : appNames) {
             WebAppContext app = new WebAppContext();
@@ -53,11 +53,11 @@ public class AthenaRunner {
 
         server.start();
 
-        System.out.println("#");
-        System.out.println("#");
-        System.out.println("# Athena started on port " + port + ".  Have fun.");
-        System.out.println("#");
-        System.out.println("#");
+        System.out.println("@");
+        System.out.println("@");
+        System.out.println("@    Athena started on port " + port + ".  Have fun.");
+        System.out.println("@");
+        System.out.println("@");
 
         server.join();
 

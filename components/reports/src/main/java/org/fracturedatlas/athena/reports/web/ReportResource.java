@@ -31,6 +31,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.UriInfo;
 import org.fracturedatlas.athena.reports.manager.ReportManager;
+import org.fracturedatlas.athena.reports.model.AthenaReport;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public class ReportResource {
     
     @GET
     @Path("{reportType}/")
-    public Object search(@PathParam("reportType") String reportType,
+    public AthenaReport search(@PathParam("reportType") String reportType,
                          @Context UriInfo ui) throws NotFoundException { 
         MultivaluedMap<String, String> queryParams = ui.getQueryParameters(); 
         return reportManager.getReport(reportType, queryParams);
