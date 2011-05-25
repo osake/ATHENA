@@ -60,7 +60,5 @@ public class AthenaRunner {
         System.out.println("@");
 
         server.join();
-
-
     }
 }

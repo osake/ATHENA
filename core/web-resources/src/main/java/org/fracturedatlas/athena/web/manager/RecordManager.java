@@ -139,10 +139,6 @@ public class RecordManager {
         }
     }
 
-    /**
-     * @param queryParams
-     * @return
-     */
     public Set<PTicket> findTickets(String type, MultivaluedMap<String, String> queryParams) {
 
         List<String> values = null;
@@ -153,7 +149,15 @@ public class RecordManager {
         apaSearch.setType(type);
         for (String fieldName : queryParams.keySet()) {
             values = queryParams.get(fieldName);
+
+            if(values == null || values.size() == 0) {
+                throw new AthenaException("Found no values for search parameter ["+fieldName+"]");
+            }
+
             for (String operatorPrefixedValue : values) {
+                if(StringUtils.isBlank(operatorPrefixedValue)) {
+                    throw new AthenaException("Found no values for search parameter ["+fieldName+"]");
+                }
                 if (fieldName.startsWith("_")) {
                     apaSearch.setSearchModifier(fieldName, operatorPrefixedValue);
                 } else {
@@ -173,7 +177,10 @@ public class RecordManager {
                         }
                         value = operatorPrefixedValue.substring(start, operatorPrefixedValue.length());
                     }
-                    
+                    if(StringUtils.isBlank(value)) {
+                        throw new AthenaException("Found no values for search parameter ["+fieldName+"]");
+                    }
+
                     valueSet = parseValues(value);
                     apaSearch.addConstraint(fieldName, operator, valueSet);
                 }
