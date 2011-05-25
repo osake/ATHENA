@@ -380,17 +380,6 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         }
     }
 
-
-    private void enforceCorrectValueType(PropField propField, TicketProp prop, EntityManager em) throws InvalidValueException {
-        Long longId = LongUserType.massageToLong(propField.getId());
-        propField = em.find(PropField.class, longId);
-        if (!propField.getValueType().newTicketProp().getClass().getName().equals(prop.getClass().getName())) {
-            String err = "Value [" + prop.getValueAsString() + "] is not a valid value for the field [" + propField.getName() + "].  ";
-            err += "Field is of type [" + propField.getValueType().name() + "].";
-            throw new InvalidValueException(err);
-        }
-    }
-
     private void enforceStrict(PropField propField, String value) throws InvalidValueException {
 
         if (propField.getStrict()) {
@@ -1153,6 +1142,16 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     public void deletePropValue(PropValue propValue) {
         if (propValue != null) {
             deletePropValue(propValue.getPropField(), propValue.getId());
+        }
+    }
+    
+    private void enforceCorrectValueType(PropField propField, TicketProp prop, EntityManager em) throws InvalidValueException {
+        Long longId = LongUserType.massageToLong(propField.getId());
+        propField = em.find(PropField.class, longId);
+        if (!propField.getValueType().newTicketProp().getClass().getName().equals(prop.getClass().getName())) {
+            String err = "Value [" + prop.getValueAsString() + "] is not a valid value for the field [" + propField.getName() + "].  ";
+            err += "Field is of type [" + propField.getValueType().name() + "].";
+            throw new InvalidValueException(err);
         }
     }
 

@@ -50,7 +50,13 @@ public class ApaAdapterArrayTest extends BaseApaAdapterTest {
     @Test
     public void testSaveRecordWithArrayValue() {
         jim.getProps().put("teams", Arrays.asList(ravens.getIdAsString(), chiefs.getIdAsString()));
+        
         jim = apa.saveRecord(jim);
+        assertEquals(2, jim.getProps().get("teams").size());
+        assertTrue(jim.getProps().get("teams").contains(ravens.getIdAsString()));
+        assertTrue(jim.getProps().get("teams").contains(chiefs.getIdAsString()));
+        
+        jim = apa.getRecord(jim.getType(), jim.getId());
         assertEquals(2, jim.getProps().get("teams").size());
         assertTrue(jim.getProps().get("teams").contains(ravens.getIdAsString()));
         assertTrue(jim.getProps().get("teams").contains(chiefs.getIdAsString()));

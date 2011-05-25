@@ -80,7 +80,7 @@ public class ApaAdapterLongTextValueTest extends BaseApaAdapterTest {
         AthenaSearch search = new AthenaSearch.Builder().type("ticket").and("longTextField", Operator.EQUALS, "food?").build();
         try{
             apa.findTickets(search);
-            fail("Shoudl have thrown ApaException");
+            fail("Should have thrown ApaException");
         } catch (ApaException ae) {
             //pass!
         }

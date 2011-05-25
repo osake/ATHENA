@@ -20,10 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.persistence.EntityManager;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
+import org.fracturedatlas.athena.apa.impl.LongUserType;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.PropValue;
 import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;

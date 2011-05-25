@@ -42,6 +42,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
+import org.fracturedatlas.athena.apa.exception.InvalidPropException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
@@ -70,32 +71,34 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         fields = db.getCollection(fieldsCollectionName);
     }
 
-    public JpaRecord getTicket(String type, Object id) {
-        return toJpaRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), true);
+    public PTicket getRecord(String type, Object id) {
+        return toRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), true);
     }
 
-    public JpaRecord getTicket(String type, Object id, Boolean includeProps) {
-        return toJpaRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), includeProps);
+    public PTicket getRecord(String type, Object id, Boolean includeProps) {
+        return toRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), includeProps);
     }
 
     @Override
-    public JpaRecord saveTicket(JpaRecord t) {
+    public PTicket saveRecord(PTicket t) {
         BasicDBObject doc = new BasicDBObject();
 
-        JpaRecord savedTicket = getTicket(t.getType(), t.getId());
+        PTicket savedTicket = getRecord(t.getType(), t.getId());
 
         if(savedTicket == null) {
             ObjectId oid = new ObjectId();
-            t.setId(oid);
-            doc.put("_id", t.getId());
+            t.setId(oid.toString());
         }
 
-        doc.put("_id", t.getId());
+        doc.put("_id", ObjectId.massageToObjectId(t.getId()));
         doc.put("type", t.getType());
 
         BasicDBObject props = new BasicDBObject();
-        for(TicketProp prop : t.getTicketProps()) {
-            props.put(prop.getPropField().getName(), prop.getValue());
+        for(String key : t.getProps().keySet()) {
+            for(String val : t.getProps().get(key)) {
+                enforceCorrectValueType(key, t.get(key));
+                props.put(key, t.get(key));
+            }
         }
 
         doc.put("props", props);
@@ -103,6 +106,40 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         db.getCollection(t.getType()).save(doc);
 
         return t;
+    }
+    
+    private Boolean enforceCorrectValueType(String key, String value) {
+        //hacky, but this will throw an InvalidValueException if it doesn't work
+        //so that's good for us
+        PropField propField = getPropField(key);
+
+        if(propField == null) {
+            throw new InvalidPropException("Field with name [" + key + "] does not exist");
+        }
+
+        TicketProp ticketProp = propField.getValueType().newTicketProp();
+        ticketProp.setPropField(propField);
+        ticketProp.setValue(value);
+        
+        return true;
+    }
+    
+    @Override
+    public PTicket patchRecord(Object idToPatch, String type, PTicket patchRecord) {
+        PTicket existingRecord = getRecord(type, idToPatch);
+        
+        if(existingRecord == null) {
+            throw new ApaException("Record with id ["+idToPatch+"] and type ["+ type +"] was not found to patch");
+        }
+        if(patchRecord == null) {
+            return existingRecord;
+        }
+        
+        for(String key : patchRecord.getProps().keySet()) {
+            existingRecord.put(key, patchRecord.get(key));
+        }
+        return saveRecord(existingRecord);
+        
     }
 
     @Override
@@ -121,6 +158,11 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         for(AthenaSearchConstraint constraint : athenaSearch.getConstraints()) {
             PropField field = getPropField(constraint.getParameter());
             if(field != null) {
+                
+                if(field.getValueType().equals(ValueType.TEXT)) {
+                    throw new ApaException("Cannot search on a TEXT field");
+                }
+                
                 //load the field's value type so we can apaSearch for it with proper typing
                 TicketProp searchProp = field.getValueType().newTicketProp();
 
@@ -300,14 +342,14 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     private TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException {
         enforceStrict(prop.getPropField(), prop.getValueAsString());
         enforceCorrectValueType(prop.getPropField(), prop);
-        JpaRecord t = getTicket(prop.getTicket().getType(), prop.getTicket().getId());
-        t.addTicketProp(prop);
-        saveTicket(t);
+        PTicket t = getRecord(prop.getTicket().getType(), prop.getTicket().getId());
+        t.put(prop.getPropField().getName(), prop.getValueAsString());
+        saveRecord(t);
         return null;
     }
 
-    public Boolean deleteTicket(String type, Object id) {
-        JpaRecord t = getTicket(type, id);
+    public Boolean deleteRecord(String type, Object id) {
+        PTicket t = getRecord(type, id);
 
         if(t == null) {
             return false;
@@ -322,7 +364,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     public Boolean deleteTicket(JpaRecord t) {
-        return deleteTicket(t.getType(), t.getId());
+        return deleteRecord(t.getType(), t.getId());
     }
 
     @Override
@@ -402,7 +444,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                     logger.error(e.getMessage(),e);
                 }
 
-                ticketProp.setTicket(getTicket(type, ticketId, false));
+                //ticketProp.setTicket(getRecord(type, ticketId, false));
             }
         }
 
@@ -453,65 +495,26 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
     }
 
     private PTicket toRecord(DBObject recordObject) {
+        return toRecord(recordObject, true);
+    }
+
+    private PTicket toJpaRecord(DBObject recordObject) {
+        return toRecord(recordObject, true);
+    }
+
+    private PTicket toRecord(DBObject recordObject, Boolean includeProps) {
         PTicket t = null;
 
         if(recordObject != null) {
             t = new PTicket();
-            t.setId(recordObject.get("_id"));
-            t.setType((String)recordObject.get("type"));
-
-            DBObject propsObj = (DBObject)recordObject.get("props");
-            for(String key : propsObj.keySet()) {
-                Object val = propsObj.get(key);
-                PropField field = getPropField(key);
-                TicketProp ticketProp = field.getValueType().newTicketProp();
-                ticketProp.setPropField(field);
-
-                try {
-                    ticketProp.setValue(val);
-                } catch (Exception e) {
-                    logger.error(e.getMessage(),e);
-                    throw new ApaException("Problem converting DBObject to record:", e);
-                }
-
-                t.put(key, ticketProp.getValueAsString());
-            }
-        }
-
-        return t;
-    }
-
-    private JpaRecord toJpaRecord(DBObject recordObject) {
-        return toJpaRecord(recordObject, true);
-    }
-
-    private JpaRecord toJpaRecord(DBObject recordObject, Boolean includeProps) {
-        JpaRecord t = null;
-
-        if(recordObject != null) {
-            t = new JpaRecord();
-            t.setId(recordObject.get("_id"));
+            t.setId(recordObject.get("_id").toString());
             t.setType((String)recordObject.get("type"));
             
             if(includeProps) {
                 DBObject propsObj = (DBObject)recordObject.get("props");
                 for(String key : propsObj.keySet()) {
                     Object val = propsObj.get(key);
-                    PropField field = getPropField(key);
-                    TicketProp ticketProp = field.getValueType().newTicketProp();
-                    ticketProp.setId(null);
-                    ticketProp.setPropField(field);
-
-                    try {
-                        ticketProp.setValue(val);
-                    } catch (Exception e) {
-                        //TODO: This should throw something besides Exception
-                        logger.error(e.getMessage(),e);
-
-                    }
-
-                    ticketProp.setTicket(t);
-                    t.addTicketProp(ticketProp);
+                    t.put(key, (String)val);
                 }
             }
         }

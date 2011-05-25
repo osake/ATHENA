@@ -60,6 +60,7 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
         ticket = apa.getRecord(ticket.getType(), ticket.getId());
 
         assertNotNull(ticket.getId());
+        assertNotNull(ticket.getIdAsString());
         assertEquals(3, ticket.getProps().size());
         assertEquals("03", ticket.get("SEAT"));
         assertEquals("13", ticket.get("SEAT1"));
