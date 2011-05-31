@@ -101,6 +101,13 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             }
         }
 
+        for(String key : t.getSystemProps().keySet()) {
+            for(String val : t.getSystemProps().get(key)) {
+                enforceCorrectValueType(key, (String)val);
+                props.put(key, (String)val);
+            }
+        }
+
         doc.put("props", props);
 
         db.getCollection(t.getType()).save(doc);
@@ -514,7 +521,11 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 DBObject propsObj = (DBObject)recordObject.get("props");
                 for(String key : propsObj.keySet()) {
                     Object val = propsObj.get(key);
-                    t.put(key, (String)val);
+                    if(key.contains(":")) {
+                        t.getSystemProps().putSingle(key, (String)val);
+                    } else {
+                        t.put(key, (String)val);
+                    }
                 }
             }
         }
