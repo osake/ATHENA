@@ -42,6 +42,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
+import org.fracturedatlas.athena.apa.exception.InvalidFieldException;
 import org.fracturedatlas.athena.apa.exception.InvalidPropException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
@@ -97,14 +98,14 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         for(String key : t.getProps().keySet()) {
             for(String val : t.getProps().get(key)) {
                 enforceCorrectValueType(key, t.get(key));
-                props.put(key, t.get(key));
+                props.put(key, stringToType(key, t.get(key)));
             }
         }
 
         for(String key : t.getSystemProps().keySet()) {
             for(String val : t.getSystemProps().get(key)) {
                 enforceCorrectValueType(key, (String)val);
-                props.put(key, (String)val);
+                props.put(key, stringToType(key, (String)val));
             }
         }
 
@@ -149,6 +150,30 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         
     }
 
+    /**
+     * Casts a value from a PTicket to proper typing
+     * @param val
+     * @return the val with proper type
+     */
+    public Object stringToType(String key, String val) {
+        PropField field = getPropField(key);
+        TicketProp searchProp = field.getValueType().newTicketProp();
+        searchProp.setValue(val);
+        return searchProp.getValue();
+    }
+
+    /**
+     * Casts a value from a PTicket to proper typing
+     * @param val
+     * @return the val with proper type
+     */
+    public String typeToString(String key, Object val) {
+        PropField field = getPropField(key);
+        TicketProp searchProp = field.getValueType().newTicketProp();
+        searchProp.setValue(val);
+        return searchProp.getValueAsString();
+    }
+
     @Override
     public Set<PTicket> findTickets(AthenaSearch athenaSearch) {
         if(athenaSearch.getType() == null) {
@@ -182,7 +207,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
                 buildMongoQuery(currentQuery, PROPS_STRING + "." + field.getName(), constraint.getOper(), searchProp.getValue());
             } else {
-                //TODO: Serching for field that doesn't exist, ignore?
+                throw new InvalidFieldException("No Property Field called " + constraint.getParameter() + " exists.");
             }
         }
 
@@ -522,9 +547,9 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 for(String key : propsObj.keySet()) {
                     Object val = propsObj.get(key);
                     if(key.contains(":")) {
-                        t.getSystemProps().putSingle(key, (String)val);
+                        t.getSystemProps().putSingle(key, typeToString(key, val));
                     } else {
-                        t.put(key, (String)val);
+                        t.put(key, typeToString(key, val));
                     }
                 }
             }
