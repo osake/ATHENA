@@ -16,13 +16,22 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
- */
-package org.fracturedatlas.athena.reports.manager;
+*/
 
-import java.util.List;
-import java.util.Map;
-import org.fracturedatlas.athena.reports.model.AthenaReport;
+package org.fracturedatlas.athena.reports.model;
 
-public interface Reporter {
-    public AthenaReport getReport(Map<String, List<String>> queryParameters);
+public class GlanceEventReport extends GlanceReport {
+    Integer performancesOnSale;
+
+    public GlanceEventReport() {
+        super();
+    }
+
+    public Integer getPerformancesOnSale() {
+        return performancesOnSale;
+    }
+
+    public void setPerformancesOnSale(Integer performancesOnSale) {
+        this.performancesOnSale = performancesOnSale;
+    }
 }

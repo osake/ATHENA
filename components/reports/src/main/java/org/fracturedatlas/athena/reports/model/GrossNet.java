@@ -16,13 +16,38 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
- */
-package org.fracturedatlas.athena.reports.manager;
+*/
 
-import java.util.List;
-import java.util.Map;
-import org.fracturedatlas.athena.reports.model.AthenaReport;
+package org.fracturedatlas.athena.reports.model;
 
-public interface Reporter {
-    public AthenaReport getReport(Map<String, List<String>> queryParameters);
+
+public class GrossNet {
+    Double gross;
+    Double net;
+
+    public GrossNet(Double gross, Double net) {
+        this.gross = gross;
+        this.net = net;
+    }
+
+    public GrossNet(Integer gross, Integer net) {
+        this.gross = gross.doubleValue();
+        this.net = net.doubleValue();
+    }
+
+    public Double getGross() {
+        return gross;
+    }
+
+    public void setGross(Double gross) {
+        this.gross = gross;
+    }
+
+    public Double getNet() {
+        return net;
+    }
+
+    public void setNet(Double net) {
+        this.net = net;
+    }
 }

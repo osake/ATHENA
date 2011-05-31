@@ -16,16 +16,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
- */
-package org.fracturedatlas.athena.reports.manager;
+*/
 
-import java.util.List;
-import java.util.Map;
-import org.springframework.stereotype.Component;
+package org.fracturedatlas.athena.reports.model;
 
-@Component
-public class GlanceReport implements Reporter {
-    public Object getReport(Map<String, List<String>> queryParameters) {
-        return "SWEEEEET";
-    }
+public interface AthenaReport {
+
 }

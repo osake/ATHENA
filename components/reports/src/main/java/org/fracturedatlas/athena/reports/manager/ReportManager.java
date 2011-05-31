@@ -22,6 +22,7 @@ package org.fracturedatlas.athena.reports.manager;
 import com.sun.jersey.api.NotFoundException;
 import java.util.List;
 import java.util.Map;
+import org.fracturedatlas.athena.reports.model.AthenaReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -38,9 +39,9 @@ public class ReportManager {
     @javax.ws.rs.core.Context
     ApplicationContext applicationContext;
     
-    public Object getReport(String reportType, Map<String, List<String>> queryParams) {
+    public AthenaReport getReport(String reportType, Map<String, List<String>> queryParams) {
         try{
-            Reporter reporter = (Reporter)applicationContext.getBean(reportType + "Report");
+            Reporter reporter = (Reporter)applicationContext.getBean(reportType + "Reporter");
             return reporter.getReport(queryParams);
         } catch (NoSuchBeanDefinitionException noBean) {
             throw new NotFoundException("Could not find a report named " + reportType);

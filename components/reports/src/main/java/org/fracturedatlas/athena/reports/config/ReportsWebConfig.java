@@ -25,7 +25,7 @@ import javax.ws.rs.core.MediaType;
 public class ReportsWebConfig extends PackagesResourceConfig {
 
     public ReportsWebConfig() {
-        super ("org.fracturedatlas.athena.reports.web", 
+        super ("org.fracturedatlas.athena.reports",
                "org.fracturedatlas.athena.web.config", 
                "org.fracturedatlas.athena.web.exception");
 
