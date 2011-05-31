@@ -22,6 +22,29 @@
         </property>
     </bean>
 
+    <!-- OTHER COMPONENTS -->
+    <bean name="athenaStage" class="org.fracturedatlas.athena.web.JsonAthenaComponent">
+        <constructor-arg index="0" value="${athena.stage.hostname}"/>
+        <constructor-arg index="1" value="${athena.stage.port}"/>
+        <constructor-arg index="2" value="${athena.stage.deployedAs}"/>
+        <constructor-arg index="3">
+            <bean class="org.springframework.security.core.context.SecurityContextHolder"
+                  factory-method="getContextHolderStrategy">
+            </bean>
+        </constructor-arg>
+    </bean>
+    
+    <bean name="athenaTix" class="org.fracturedatlas.athena.web.JsonAthenaComponent">
+        <constructor-arg index="0" value="${athena.tix.hostname}"/>
+        <constructor-arg index="1" value="${athena.tix.port}"/>
+        <constructor-arg index="2" value="${athena.tix.deployedAs}"/>
+        <constructor-arg index="3">
+            <bean class="org.springframework.security.core.context.SecurityContextHolder"
+                  factory-method="getContextHolderStrategy">
+            </bean>
+        </constructor-arg>
+    </bean>
+
     <!-- BEANS -->
 
     <bean id="contextHolderStrategy" class="org.springframework.security.core.context.SecurityContextHolder" factory-method="getContextHolderStrategy"/>
