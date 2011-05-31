@@ -476,7 +476,9 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                     logger.error(e.getMessage(),e);
                 }
 
-                //ticketProp.setTicket(getRecord(type, ticketId, false));
+                JpaRecord hugeWorkaround = new JpaRecord(type);
+                hugeWorkaround.setId(ticketId);
+                ticketProp.setTicket(hugeWorkaround);
             }
         }
 
@@ -485,11 +487,10 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
     @Override
     public void deleteTicketProp(TicketProp prop) {
-        TicketProp ticketProp = null;
+        
         if(prop.getTicket() != null) {
             DBObject recordDoc = getRecordDocument(new BasicDBObject(), prop.getTicket().getType(), ObjectId.massageToObjectId(prop.getTicket().getId()));
             String fieldName = prop.getPropField().getName();
-
             if(recordDoc != null) {
                 DBObject propsObj = (DBObject)recordDoc.get("props");
                 if(propsObj.containsField(fieldName)) {
