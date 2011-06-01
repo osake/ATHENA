@@ -96,9 +96,17 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
 
         BasicDBObject props = new BasicDBObject();
         for(String key : t.getProps().keySet()) {
-            for(String val : t.getProps().get(key)) {
-                enforceCorrectValueType(key, t.get(key));
-                props.put(key, stringToType(key, t.get(key)));
+            List<String> vals = t.getProps().get(key);
+            List<Object> properlyTypedVals = new ArrayList<Object>();
+            if(vals.size() > 1) {
+                for(String val : vals) {
+                    enforceCorrectValueType(key, val);
+                    properlyTypedVals.add(stringToType(key, val));
+                }
+                props.put(key, properlyTypedVals);
+            } else {
+                enforceCorrectValueType(key, vals.get(0));
+                props.put(key, stringToType(key, vals.get(0)));
             }
         }
 
@@ -167,7 +175,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
      * @param val
      * @return the val with proper type
      */
-    public String typeToString(String key, Object val) {
+    public String coerceToClientTicketValue(String key, Object val) {
         PropField field = getPropField(key);
         TicketProp searchProp = field.getValueType().newTicketProp();
         searchProp.setValue(val);
@@ -235,6 +243,10 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         switch (o) {
             case EQUALS:
                 currentQuery.put(field, value);
+                return;
+            case MATCHES:
+                queryValue.put("$regex",value);
+                currentQuery.put(field, queryValue);
                 return;
             case GREATER_THAN:
                 queryValue.put("$gt",value);
@@ -548,9 +560,9 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
                 for(String key : propsObj.keySet()) {
                     Object val = propsObj.get(key);
                     if(key.contains(":")) {
-                        t.getSystemProps().putSingle(key, typeToString(key, val));
+                        t.getSystemProps().putSingle(key, coerceToClientTicketValue(key, val));
                     } else {
-                        t.put(key, typeToString(key, val));
+                        t.put(key, coerceToClientTicketValue(key, val));
                     }
                 }
             }

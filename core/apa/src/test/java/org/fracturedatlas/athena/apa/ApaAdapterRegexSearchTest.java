@@ -78,17 +78,6 @@ public class ApaAdapterRegexSearchTest extends BaseApaAdapterTest {
         assertEquals(0, tickets.size());
     }
 
-    @Test
-    public void testSearchWithRegexFail() {
-        try{
-            search.addConstraint("SECTION", Operator.MATCHES, "some_other_regex.*");
-            Set<PTicket> tickets = apa.findTickets(search);
-            fail("Looking for UnsupportedOperationException");
-        } catch (UnsupportedOperationException e) {
-            //pass
-        }
-    }
-
     @Before
     public void addTickets() throws Exception {
 
