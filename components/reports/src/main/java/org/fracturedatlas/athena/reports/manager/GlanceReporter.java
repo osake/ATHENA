@@ -27,6 +27,7 @@ import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.reports.model.AthenaReport;
 import org.fracturedatlas.athena.reports.model.GlanceEventReport;
 import org.fracturedatlas.athena.reports.model.GlancePerformanceReport;
+import org.fracturedatlas.athena.reports.model.GlanceReport;
 import org.fracturedatlas.athena.reports.model.GrossComped;
 import org.fracturedatlas.athena.reports.model.GrossNet;
 import org.fracturedatlas.athena.search.AthenaSearch;
@@ -157,19 +158,78 @@ public class GlanceReporter implements Reporter {
     public GlanceEventReport loadGlanceEventReport(String eventId, String organizationId) {
 
         GlanceEventReport report = new GlanceEventReport();
-        
-        report.setPerformancesOnSale(40);
+
+        AthenaSearch performancesSearch = new AthenaSearch.Builder()
+                                              .type("performance")
+                                              .and("eventId", Operator.EQUALS, eventId)
+                                              .and("state", Operator.EQUALS, "on_sale")
+                                              .and("organizationId", Operator.EQUALS, organizationId)
+                                              .build();
+
+        Collection<PTicket> performances = athenaStage.find("performance", performancesSearch);
+        report.setPerformancesOnSale(performances.size());
+
+        AthenaSearch search = new AthenaSearch.Builder()
+                                              .type("ticket")
+                                              .and("eventId", Operator.EQUALS, eventId)
+                                              .and("organizationId", Operator.EQUALS, organizationId)
+                                              .build();
+
+        /*
+         * HACK: TODO: This is nuts to do this twice.  Haven't had time to refactor it out.
+         */
+
+        Double originalPotential = 0D;
+        Double totalSales = 0D;
+        Double totalSalesToday = 0D;
+        Double potentialRemaining = 0D;
+        Integer totalTicketsSold = 0;
+        Integer totalTicketsSoldToday = 0;
+        Integer totalTicketsComped = 0;
+        Integer totalTicketsCompedToday = 0;
+        Integer totalTicketsAvailable = 0;
+
+        logger.debug("Searching for tickets matching {}", search);
+        Collection<PTicket> tickets = athenaTix.find("ticket", search);
+        logger.debug("Found {} tickets", tickets.size());
+        DateTime now = new DateTime();
+        for(PTicket ticket : tickets) {
+            originalPotential += Double.parseDouble(ticket.get("price"));
+            if("sold".equals(ticket.get("state"))) {
+                totalSales += Double.parseDouble(ticket.get("soldPrice"));
+                totalTicketsSold++;
+
+                if(soldToday(now, ticket)) {
+                    totalTicketsSoldToday++;
+                    totalSalesToday += Double.parseDouble(ticket.get("soldPrice"));
+                }
+            } else if ("comped".equals(ticket.get("state"))) {
+                totalTicketsSold++;
+                totalTicketsComped++;
+
+                if(soldToday(now, ticket)) {
+                    totalTicketsSoldToday++;
+                    totalTicketsCompedToday++;
+                }
+            } else if ("on_sale".equals(ticket.get("state"))) {
+                totalTicketsAvailable++;
+                potentialRemaining += Double.parseDouble(ticket.get("price"));
+            } else if ("off_sale".equals(ticket.get("state"))) {
+                potentialRemaining += Double.parseDouble(ticket.get("price"));
+            }
+        }
+
         report.getRevenue().setAdvanceSales(new GrossNet(300, 270));
-        report.getRevenue().setSoldToday(new GrossNet(90, 81));
-        report.getRevenue().setPotentialRemaining(new GrossNet(2885.74, 2558.33));
-        report.getRevenue().setOriginalPotential(new GrossNet(29635.55, 19885.02));
-        report.getRevenue().setTotalSales(new GrossNet(9959.99, 4562.25));
+        report.getRevenue().setSoldToday(new GrossNet(totalSalesToday, 0D));
+        report.getRevenue().setPotentialRemaining(new GrossNet(potentialRemaining, 0D));
+        report.getRevenue().setOriginalPotential(new GrossNet(originalPotential, 0D));
+        report.getRevenue().setTotalSales(new GrossNet(totalSales, 0D));
         report.getRevenue().setTotalPlayed(new GrossNet(4500.44, 4000.80));
 
-        report.getTickets().setSold(new GrossComped(100, 20));
-        report.getTickets().setSoldToday(new GrossComped(10, 0));
+        report.getTickets().setSold(new GrossComped(totalTicketsSold, totalTicketsComped));
+        report.getTickets().setSoldToday(new GrossComped(totalTicketsSoldToday, totalTicketsCompedToday));
         report.getTickets().setPlayed(new GrossComped(9, null));
-        report.getTickets().setAvailable(65);
+        report.getTickets().setAvailable(totalTicketsAvailable);
         
         return report;
     }
