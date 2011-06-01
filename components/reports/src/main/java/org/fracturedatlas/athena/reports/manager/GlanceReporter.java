@@ -31,7 +31,11 @@ import org.fracturedatlas.athena.reports.model.GrossComped;
 import org.fracturedatlas.athena.reports.model.GrossNet;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.Operator;
+import org.fracturedatlas.athena.util.date.DateUtil;
 import org.fracturedatlas.athena.web.exception.AthenaException;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,6 +47,8 @@ public class GlanceReporter implements Reporter {
 
     @Autowired
     AthenaComponent athenaTix;
+
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
 
     @Override
@@ -75,32 +81,75 @@ public class GlanceReporter implements Reporter {
         return queryParameters.get("performanceId") != null;
     }
 
+    private Boolean soldToday(DateTime now, PTicket ticket) {
+        try{
+            DateTime soldAt = DateUtil.parseDateTime(ticket.get("soldAt"));
+            return soldAt.isAfter(now.minusDays(1));
+        } catch (Exception e) {
+            logger.error("soldAt of ticket [{}] was either null or in incorrect format", ticket.getId());
+            logger.error("{}", e.getMessage());
+        }
+
+        return false;
+    }
+
     public GlancePerformanceReport loadGlancePerformanceReport(String performanceId, String organizationId) {
 
         GlancePerformanceReport report = new GlancePerformanceReport();
 
         AthenaSearch search = new AthenaSearch.Builder()
                                               .type("ticket")
-                                              .and(performanceId, Operator.EQUALS, performanceId)
-                                              .and(organizationId, Operator.EQUALS, organizationId)
+                                              .and("performanceId", Operator.EQUALS, performanceId)
+                                              .and("organizationId", Operator.EQUALS, organizationId)
                                               .build();
-        Collection<PTicket> tickets = athenaTix.find("ticket", search);
+        Double originalPotential = 0D;
         Double totalSales = 0D;
+        Double totalSalesToday = 0D;
+        Double potentialRemaining = 0D;
+        Integer totalTicketsSold = 0;
+        Integer totalTicketsSoldToday = 0;
+        Integer totalTicketsComped = 0;
+        Integer totalTicketsCompedToday = 0;
+        Integer totalTicketsAvailable = 0;
+
+        logger.debug("Searching for tickets matching {}", search);
+        Collection<PTicket> tickets = athenaTix.find("ticket", search);
+        logger.debug("Found {} tickets", tickets.size());
+        DateTime now = new DateTime();
         for(PTicket ticket : tickets) {
+            originalPotential += Double.parseDouble(ticket.get("price"));
             if("sold".equals(ticket.get("state"))) {
-                totalSales += Double.parseDouble(ticket.get("price"));
+                totalSales += Double.parseDouble(ticket.get("soldPrice"));
+                totalTicketsSold++;
+
+                if(soldToday(now, ticket)) {
+                    totalTicketsSoldToday++;
+                    totalSalesToday += Double.parseDouble(ticket.get("soldPrice"));
+                }
+            } else if ("comped".equals(ticket.get("state"))) {
+                totalTicketsSold++;
+                totalTicketsComped++;
+
+                if(soldToday(now, ticket)) {
+                    totalTicketsSoldToday++;
+                    totalTicketsCompedToday++;
+                }
+            } else if ("on_sale".equals(ticket.get("state"))) {
+                totalTicketsAvailable++;
+                potentialRemaining += Double.parseDouble(ticket.get("price"));
+            } else if ("off_sale".equals(ticket.get("state"))) {
+                potentialRemaining += Double.parseDouble(ticket.get("price"));
             }
         }
 
-        report.getRevenue().setAdvanceSales(new GrossNet(300, 270));
-        report.getRevenue().setSoldToday(new GrossNet(90, 81));
-        report.getRevenue().setPotentialRemaining(new GrossNet(2885.74, 2558.33));
-        report.getRevenue().setOriginalPotential(new GrossNet(29635.55, 19885.02));
+        report.getRevenue().setSoldToday(new GrossNet(totalSalesToday, 0D));
+        report.getRevenue().setPotentialRemaining(new GrossNet(potentialRemaining, 0D));
+        report.getRevenue().setOriginalPotential(new GrossNet(originalPotential, 0D));
         report.getRevenue().setTotalSales(new GrossNet(totalSales, 0D));
 
-        report.getTickets().setSold(new GrossComped(100, 20));
-        report.getTickets().setSoldToday(new GrossComped(10, 0));
-        report.getTickets().setAvailable(65);
+        report.getTickets().setSold(new GrossComped(totalTicketsSold, totalTicketsComped));
+        report.getTickets().setSoldToday(new GrossComped(totalTicketsSoldToday, totalTicketsCompedToday));
+        report.getTickets().setAvailable(totalTicketsAvailable);
 
         return report;
     }

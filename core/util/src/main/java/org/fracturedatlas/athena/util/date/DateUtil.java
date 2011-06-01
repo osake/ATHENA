@@ -53,6 +53,18 @@ public class DateUtil {
         }
     }
 
+    public static DateTime parseDateTime(String iso8061StrDateTime) throws ParseException {
+        if(iso8061StrDateTime == null) {
+            return null;
+        }
+
+        try{
+            return ATHENA_DATE_TIME_FORMAT.parseDateTime(iso8061StrDateTime);
+        } catch (IllegalArgumentException iae) {
+            return ATHENA_DATE_FORMAT.parseDateTime(iso8061StrDateTime);
+        }
+    }
+
     public static String formatDate(Date date) {
         if(date == null) {
             return null;
@@ -66,6 +78,22 @@ public class DateUtil {
             return null;
         } else {
             return ATHENA_DATE_TIME_FORMAT.print(date.getTime());
+        }
+    }
+
+    public static String formatDate(DateTime date) {
+        if(date == null) {
+            return null;
+        } else {
+            return ATHENA_DATE_TIME_FORMAT.print(date);
+        }
+    }
+
+    public static String formatTime(DateTime date) {
+        if(date == null) {
+            return null;
+        } else {
+            return ATHENA_DATE_TIME_FORMAT.print(date);
         }
     }
 }
