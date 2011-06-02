@@ -120,6 +120,8 @@ public class GlanceReporterTest {
 
         assertEquals(new Integer(2), report.getPerformancesOnSale());
 
+        assertEquals(new Double(170), report.getRevenue().getAdvanceSales().getGross());
+        assertEquals(new Double(50), report.getRevenue().getTotalPlayed().getGross());
         assertEquals(new Double(220), report.getRevenue().getTotalSales().getGross());
         assertEquals(new Double(100), report.getRevenue().getSoldToday().getGross());
         assertEquals(new Double(360), report.getRevenue().getPotentialRemaining().getGross());
@@ -160,8 +162,12 @@ public class GlanceReporterTest {
         performance19Tickets = new ArrayList<PTicket>();
         performances = new ArrayList<PTicket>();
 
-        DateTime lastWeek = new DateTime().minusWeeks(1);
-        DateTime fourHoursAgo = new DateTime().minusHours(4);
+        DateTime now = new DateTime();
+        DateTime lastWeek = now.minusWeeks(1);
+        DateTime sometimeAfterMidnight = now.toDateMidnight().toDateTime().plusMinutes(10);
+        DateTime yesterday = now.minusDays(1);
+        DateTime tomorrow = now.plusDays(1);
+        DateTime nextWeek = now.plusWeeks(1);
 
         /*
          * THREE PERFORMANCES 19, 20, 21
@@ -177,7 +183,7 @@ public class GlanceReporterTest {
 
 
         /*
-         * PERFORMANCE 19, Event 100
+         * PERFORMANCE 19, Event 100, plays next week
          */
 
         /*
@@ -185,6 +191,7 @@ public class GlanceReporterTest {
          */
         performance19Tickets.add(makeRecord("ticket",
                                "performanceId", "19",
+                               "performance", DateUtil.formatDate(nextWeek),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "sold",
@@ -192,6 +199,7 @@ public class GlanceReporterTest {
                                "soldAt", DateUtil.formatDate(lastWeek)));
         performance19Tickets.add(makeRecord("ticket",
                                "performanceId", "19",
+                               "performance", DateUtil.formatDate(nextWeek),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "sold",
@@ -199,6 +207,7 @@ public class GlanceReporterTest {
                                "soldAt", DateUtil.formatDate(lastWeek)));
         performance19Tickets.add(makeRecord("ticket",
                                "performanceId", "19",
+                               "performance", DateUtil.formatDate(nextWeek),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "sold",
@@ -210,24 +219,27 @@ public class GlanceReporterTest {
          */
         performance19Tickets.add(makeRecord("ticket",
                                "performanceId", "19",
+                               "performance", DateUtil.formatDate(nextWeek),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "sold",
                                "soldPrice", "25.00",
-                               "soldAt", DateUtil.formatDate(fourHoursAgo)));
+                               "soldAt", DateUtil.formatDate(sometimeAfterMidnight)));
         performance19Tickets.add(makeRecord("ticket",
                                "performanceId", "19",
+                               "performance", DateUtil.formatDate(nextWeek),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "sold",
                                "soldPrice", "25.00",
-                               "soldAt", DateUtil.formatDate(fourHoursAgo)));
+                               "soldAt", DateUtil.formatDate(sometimeAfterMidnight)));
 
         /*
          * One comped last week
          */
         performance19Tickets.add(makeRecord("ticket",
                                "performanceId", "19",
+                               "performance", DateUtil.formatDate(nextWeek),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "comped",
@@ -239,25 +251,28 @@ public class GlanceReporterTest {
          */
         performance19Tickets.add(makeRecord("ticket",
                                "performanceId", "19",
+                               "performance", DateUtil.formatDate(nextWeek),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "comped",
                                "soldPrice", "0",
-                               "soldAt", DateUtil.formatDate(fourHoursAgo)));
+                               "soldAt", DateUtil.formatDate(sometimeAfterMidnight)));
         performance19Tickets.add(makeRecord("ticket",
                                "performanceId", "19",
+                               "performance", DateUtil.formatDate(nextWeek),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "comped",
                                "soldPrice", "0",
-                               "soldAt", DateUtil.formatDate(fourHoursAgo)));
+                               "soldAt", DateUtil.formatDate(sometimeAfterMidnight)));
         performance19Tickets.add(makeRecord("ticket",
                                "performanceId", "19",
+                               "performance", DateUtil.formatDate(nextWeek),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "comped",
                                "soldPrice", "0",
-                               "soldAt", DateUtil.formatDate(fourHoursAgo)));
+                               "soldAt", DateUtil.formatDate(sometimeAfterMidnight)));
 
 
         /*
@@ -265,6 +280,7 @@ public class GlanceReporterTest {
          */
         performance19Tickets.add(makeRecord("ticket",
                                "performanceId", "19",
+                               "performance", DateUtil.formatDate(nextWeek),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "off_sale"));
@@ -274,11 +290,13 @@ public class GlanceReporterTest {
          */
         performance19Tickets.add(makeRecord("ticket",
                                "performanceId", "19",
+                               "performance", DateUtil.formatDate(nextWeek),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "on_sale"));
         performance19Tickets.add(makeRecord("ticket",
                                "performanceId", "19",
+                               "performance", DateUtil.formatDate(nextWeek),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "on_sale"));
@@ -286,7 +304,7 @@ public class GlanceReporterTest {
         tickets.addAll(performance19Tickets);
 
         /*
-         * PERFORMANCE 20, Event 100
+         * PERFORMANCE 20, Event 100, played yesterday
          */
 
         /*
@@ -294,35 +312,39 @@ public class GlanceReporterTest {
          */
         tickets.add(makeRecord("ticket",
                                "performanceId", "20",
+                               "performance", DateUtil.formatDate(yesterday),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "sold",
                                "soldPrice", "25.00",
-                               "soldAt", DateUtil.formatDate(fourHoursAgo)));
+                               "soldAt", DateUtil.formatDate(sometimeAfterMidnight)));
         tickets.add(makeRecord("ticket",
                                "performanceId", "20",
+                               "performance", DateUtil.formatDate(yesterday),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "sold",
                                "soldPrice", "25.00",
-                               "soldAt", DateUtil.formatDate(fourHoursAgo)));
+                               "soldAt", DateUtil.formatDate(sometimeAfterMidnight)));
 
         /*
          * Two on_sale
          */
         tickets.add(makeRecord("ticket",
                                "performanceId", "20",
+                               "performance", DateUtil.formatDate(yesterday),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "on_sale"));
         tickets.add(makeRecord("ticket",
                                "performanceId", "20",
+                               "performance", DateUtil.formatDate(yesterday),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "on_sale"));
 
         /*
-         * PERFORMANCE 21, Event 100
+         * PERFORMANCE 21, Event 100, plays tomorrow
          */
 
         /*
@@ -330,21 +352,25 @@ public class GlanceReporterTest {
          */
         tickets.add(makeRecord("ticket",
                                "performanceId", "21",
+                               "performance", DateUtil.formatDate(tomorrow),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "on_sale"));
         tickets.add(makeRecord("ticket",
                                "performanceId", "21",
+                               "performance", DateUtil.formatDate(tomorrow),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "on_sale"));
         tickets.add(makeRecord("ticket",
                                "performanceId", "21",
+                               "performance", DateUtil.formatDate(tomorrow),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "on_sale"));
         tickets.add(makeRecord("ticket",
                                "performanceId", "21",
+                               "performance", DateUtil.formatDate(tomorrow),
                                "organizationId", "33",
                                "price", "40.00",
                                "state", "on_sale"));

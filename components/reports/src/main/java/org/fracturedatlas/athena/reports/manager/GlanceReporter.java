@@ -85,9 +85,21 @@ public class GlanceReporter implements Reporter {
     private Boolean soldToday(DateTime now, PTicket ticket) {
         try{
             DateTime soldAt = DateUtil.parseDateTime(ticket.get("soldAt"));
-            return soldAt.isAfter(now.minusDays(1));
+            return soldAt.isAfter(now.toDateMidnight());
         } catch (Exception e) {
             logger.error("soldAt of ticket [{}] was either null or in incorrect format", ticket.getId());
+            logger.error("{}", e.getMessage());
+        }
+
+        return false;
+    }
+
+    private Boolean alreadyPlayed(DateTime now, PTicket ticket) {
+        try{
+            DateTime performanceTime = DateUtil.parseDateTime(ticket.get("performance"));
+            return performanceTime.isBefore(now);
+        } catch (Exception e) {
+            logger.error("performance time of ticket [{}] was either null or in incorrect format", ticket.getId());
             logger.error("{}", e.getMessage());
         }
 
@@ -182,12 +194,16 @@ public class GlanceReporter implements Reporter {
         Double originalPotential = 0D;
         Double totalSales = 0D;
         Double totalSalesToday = 0D;
+        Double totalAdvanceSales = 0D;
+        Double totalPlayed = 0D;
         Double potentialRemaining = 0D;
         Integer totalTicketsSold = 0;
         Integer totalTicketsSoldToday = 0;
         Integer totalTicketsComped = 0;
         Integer totalTicketsCompedToday = 0;
         Integer totalTicketsAvailable = 0;
+        Integer totalTicketsPlayed = 0;
+        Integer totalTicketsCompedAndPlayed = 0;
 
         logger.debug("Searching for tickets matching {}", search);
         Collection<PTicket> tickets = athenaTix.find("ticket", search);
@@ -203,6 +219,13 @@ public class GlanceReporter implements Reporter {
                     totalTicketsSoldToday++;
                     totalSalesToday += Double.parseDouble(ticket.get("soldPrice"));
                 }
+
+                if(alreadyPlayed(now, ticket)) {
+                    totalPlayed += Double.parseDouble(ticket.get("soldPrice"));
+                    totalTicketsPlayed++;
+                } else {
+                    totalAdvanceSales += Double.parseDouble(ticket.get("soldPrice"));
+                }
             } else if ("comped".equals(ticket.get("state"))) {
                 totalTicketsSold++;
                 totalTicketsComped++;
@@ -210,6 +233,10 @@ public class GlanceReporter implements Reporter {
                 if(soldToday(now, ticket)) {
                     totalTicketsSoldToday++;
                     totalTicketsCompedToday++;
+                }
+
+                if(alreadyPlayed(now, ticket)) {
+                    totalTicketsCompedAndPlayed++;
                 }
             } else if ("on_sale".equals(ticket.get("state"))) {
                 totalTicketsAvailable++;
@@ -219,16 +246,17 @@ public class GlanceReporter implements Reporter {
             }
         }
 
-        report.getRevenue().setAdvanceSales(new GrossNet(300, 270));
+
+        report.getRevenue().setAdvanceSales(new GrossNet(totalAdvanceSales, 0D));
         report.getRevenue().setSoldToday(new GrossNet(totalSalesToday, 0D));
         report.getRevenue().setPotentialRemaining(new GrossNet(potentialRemaining, 0D));
         report.getRevenue().setOriginalPotential(new GrossNet(originalPotential, 0D));
         report.getRevenue().setTotalSales(new GrossNet(totalSales, 0D));
-        report.getRevenue().setTotalPlayed(new GrossNet(4500.44, 4000.80));
+        report.getRevenue().setTotalPlayed(new GrossNet(totalPlayed, 0D));
 
         report.getTickets().setSold(new GrossComped(totalTicketsSold, totalTicketsComped));
         report.getTickets().setSoldToday(new GrossComped(totalTicketsSoldToday, totalTicketsCompedToday));
-        report.getTickets().setPlayed(new GrossComped(9, null));
+        report.getTickets().setPlayed(new GrossComped(totalTicketsPlayed, totalTicketsCompedAndPlayed));
         report.getTickets().setAvailable(totalTicketsAvailable);
         
         return report;
