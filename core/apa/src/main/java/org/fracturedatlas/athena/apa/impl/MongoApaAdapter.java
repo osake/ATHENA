@@ -122,7 +122,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         doc.put("props", props);
 
         db.getCollection(t.getType()).save(doc);
-        //addToIndex(t);
+        addToIndex(t);
 
         return t;
     }
@@ -198,8 +198,13 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
             return tickets;
         }
 
-        if(athenaSearch.isIndexSearch()) {
-            searchIndex(athenaSearch.getTerm());
+        if(athenaSearch.isQuerySearch()) {
+            Set<Object> ids = searchIndex(athenaSearch.getQuery());
+            for(Object id : ids) {
+                ObjectId mongoId = ObjectId.massageToObjectId(id);
+                tickets.add(getRecord(athenaSearch.getType(), mongoId));
+            }
+            return tickets;
         }
         
         for(AthenaSearchConstraint constraint : athenaSearch.getConstraints()) {

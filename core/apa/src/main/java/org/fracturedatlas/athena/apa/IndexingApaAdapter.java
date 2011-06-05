@@ -20,17 +20,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
@@ -61,6 +63,7 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
             List<String> vals = record.getProps().get(key);
             
             for(String val : vals) {
+                addToDocument(doc, key, val);
                 documentText.append(val).append(" ");
             }
         }
@@ -81,11 +84,14 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         doc.add(new Field(field, value, Field.Store.YES, Field.Index.ANALYZED));
     }
     
-    public void searchIndex(String term) {
+    /*
+     * Returns a set of ids
+     */
+    public Set<Object> searchIndex(String queryString) {
+        Set<Object> ids = new HashSet<Object>();
         try {
             int hitsPerPage = 10;
-            Term luceneTerm = new Term(DOC_TEXT, term);
-            TermQuery q = new TermQuery(luceneTerm);
+            Query q = new QueryParser(Version.LUCENE_32, DOC_TEXT, analyzer).parse(queryString);
             System.out.println(q);
             IndexSearcher searcher = new IndexSearcher(directory, true);
             TopDocs topDocs = searcher.search(q, 10);
@@ -96,10 +102,13 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
                 int docId = hits[i].doc;
                 Document d = searcher.doc(docId);
                 System.out.println((i + 1) + ". " + d.get("_id"));
+                ids.add(d.get("_id"));
                 System.out.println(d.get(DOC_TEXT));
             }
+            return ids;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
     }
 }

@@ -32,11 +32,23 @@ public class ApaAdapterIndexSearchTest extends BaseApaAdapterTest {
         super();
     }  
     
-    //@Test
+    //TODO: Add more to the index and re-test.  Test nothing found.  
+    //Inject directory so that files are used instead of ram
+    //add index directory to sekelton structure.  Add all this to JpaApaAdapter.  Benchmark
+    //against old search
+    
+    @Test
     public void searchIndex() {
-        AthenaSearch search = new AthenaSearch.Builder().type("person").term("actor").build();
+        AthenaSearch search = new AthenaSearch.Builder().type("person").query("Smith").build();
         Set<PTicket> people = apa.findTickets(search);
-        assertTrue(people.size() > 0);
+        assertEquals(2, people.size());
+    }
+    
+    @Test
+    public void searchIndexOnSpecificField() {
+        AthenaSearch search = new AthenaSearch.Builder().type("person").query("occupation:actor").build();
+        Set<PTicket> people = apa.findTickets(search);
+        assertEquals(2, people.size());
     }
 
     @After

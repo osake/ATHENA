@@ -32,7 +32,7 @@ public class AthenaSearch {
 
     public static final String LIMIT = "_limit";
     public static final String START = "_start";
-    public static final String TERM = "_term";
+    public static final String QUERY = "_q";
     public static final String ANY_VALUE = ".*";
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     
@@ -73,12 +73,12 @@ public class AthenaSearch {
         return searchModifiers;
     }
     
-    public Boolean isIndexSearch() {
-        return getSearchModifiers().get(TERM) != null;
+    public Boolean isQuerySearch() {
+        return getSearchModifiers().get(QUERY) != null;
     }
     
-    public String getTerm() {
-        return getSearchModifier(TERM);
+    public String getQuery() {
+        return getSearchModifier(QUERY);
     }
 
     public String getType() {
@@ -151,8 +151,8 @@ public class AthenaSearch {
             return this;
         }
 
-         public AthenaSearch.Builder term(String searchTerm) {
-            search.setSearchModifier(AthenaSearch.TERM, searchTerm);
+         public AthenaSearch.Builder query(String searchTerm) {
+            search.setSearchModifier(AthenaSearch.QUERY, searchTerm);
             return this;
         }
 
