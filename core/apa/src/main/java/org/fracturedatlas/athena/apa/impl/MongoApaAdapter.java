@@ -22,7 +22,6 @@ package org.fracturedatlas.athena.apa.impl;
 import java.net.UnknownHostException;
 
 import org.bson.types.ObjectId;
-import org.fracturedatlas.athena.apa.AbstractApaAdapter;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.PropValue;
@@ -39,6 +38,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.fracturedatlas.athena.apa.IndexingApaAdapter;
 import org.slf4j.Logger;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
@@ -54,7 +54,7 @@ import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
 import org.slf4j.LoggerFactory;
 
-public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
+public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
 
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     DB db = null;
@@ -70,6 +70,8 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         Mongo m = new Mongo(host, port);
         db = m.getDB(dbName);
         fields = db.getCollection(fieldsCollectionName);
+        
+        initializeIndex();
     }
 
     public PTicket getRecord(String type, Object id) {
@@ -120,6 +122,7 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
         doc.put("props", props);
 
         db.getCollection(t.getType()).save(doc);
+        //addToIndex(t);
 
         return t;
     }
@@ -195,6 +198,10 @@ public class MongoApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             return tickets;
         }
 
+        if(athenaSearch.isIndexSearch()) {
+            searchIndex(athenaSearch.getTerm());
+        }
+        
         for(AthenaSearchConstraint constraint : athenaSearch.getConstraints()) {
             PropField field = getPropField(constraint.getParameter());
             if(field != null) {

@@ -56,15 +56,6 @@ public interface ApaAdapter {
     public PTicket getRecord(String type, Object id);
 
     /**
-     * Save a record to the data store.  This method can be used to save new records and update existing tickets.
-     *
-     * @param t
-     * @return the ticket that was just saved
-     * @throws InvalidValueException
-     */
-    public JpaRecord saveTicket(JpaRecord t) throws InvalidValueException;
-
-    /**
      * Save a record to the data store.  If the record exists, its props will be overwritten
      * by props contained in record.  Props that exist on the existing record and not on the incoming record will be deleted.
      *

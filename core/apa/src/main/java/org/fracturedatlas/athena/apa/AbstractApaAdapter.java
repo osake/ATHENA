@@ -33,9 +33,7 @@ import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.search.AthenaSearch;
 
 /**
- * Abstract implementation of ApaAdapter as a convenience for developers seeking
- * to implement only a sub-set of features of ApaAdapter.  Also handy during development
- * so you don't need to stub a bunch of methods.
+ * Handy during development so you don't need to stub a bunch of methods.
  */
 public abstract class AbstractApaAdapter implements ApaAdapter {
     
@@ -43,12 +41,8 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     public PTicket getRecord(String type, Object id) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
-    
-    @Override
-    public JpaRecord saveTicket(JpaRecord t) throws InvalidValueException {
-        throw new UnsupportedOperationException("Gone.  Use saveRecord(JpaRecord) instead.");
-    }
 
+    /* TODO: Can this be eliminated */
     @Override
     public PTicket saveRecord(String type, PTicket record) {
         throw new UnsupportedOperationException("Unsupported operation");
@@ -144,7 +138,7 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
         throw new UnsupportedOperationException("Unsupported operation");
     }
     
-  
+    @Override
     public void deletePropValue(Object propFieldId, Object propValueId) {
         throw new UnsupportedOperationException("Unsupported operation");
     }

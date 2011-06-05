@@ -25,24 +25,21 @@ import javax.persistence.Query;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.fracturedatlas.athena.apa.AbstractApaAdapter;
 import org.fracturedatlas.athena.apa.ApaAdapter;
+import org.fracturedatlas.athena.apa.IndexingApaAdapter;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
 import org.fracturedatlas.athena.apa.exception.InvalidFieldException;
 import org.fracturedatlas.athena.apa.exception.InvalidPropException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.impl.LongUserType;
-import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.search.Operator;
 
-public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
-
-    private Boolean BLOW = false;
+public class JpaApaAdapter extends IndexingApaAdapter implements ApaAdapter {
 
     @Autowired
     private EntityManagerFactory emf;
@@ -95,7 +92,7 @@ public class JpaApaAdapter extends AbstractApaAdapter implements ApaAdapter {
             }
         }
     }
-
+    
     private JpaRecord saveRecord(JpaRecord t, EntityManager em) {
         boolean useTransaction = (em == null);
 
