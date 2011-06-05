@@ -36,6 +36,7 @@ public class ApaAdapterIndexSearchTest extends BaseApaAdapterTest {
     //Inject directory so that files are used instead of ram
     //add index directory to sekelton structure.  Add all this to JpaApaAdapter.  Benchmark
     //against old search
+    //remove from index
     
     @Test
     public void searchIndex() {
