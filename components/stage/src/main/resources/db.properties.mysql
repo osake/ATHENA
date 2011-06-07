@@ -3,6 +3,11 @@
 ############################
 
 #
+# Lucene indexing.  Leaving this value blank will disable indexing
+#
+athena.index.directory=../index/ATHENA-tix
+
+#
 # Proxool Connection Pooling
 #
 

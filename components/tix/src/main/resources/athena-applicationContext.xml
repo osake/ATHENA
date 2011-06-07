@@ -23,6 +23,7 @@
         </property>
     </bean>
 
+<!-- LUCENE CONFIG -->
 
     <bean id="indexFile" class="java.io.File">
       <constructor-arg value="${athena.index.directory}"/>
@@ -31,8 +32,10 @@
     <bean id="directory" class="org.apache.lucene.store.NIOFSDirectory">
       <constructor-arg ref="indexFile"/>
     </bean>
+    
+<!-- MONGO -->
 
-    <!-- MONGO
+    <!-- 
     <bean id="apa" class="org.fracturedatlas.athena.apa.impl.MongoApaAdapter" autowire="byName">
         <constructor-arg value="localhost"/>
         <constructor-arg type="java.lang.Integer" value="27017"/>
