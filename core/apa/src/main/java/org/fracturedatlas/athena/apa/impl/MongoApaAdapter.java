@@ -199,7 +199,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         }
 
         if(athenaSearch.isQuerySearch()) {
-            Set<Object> ids = searchIndex(athenaSearch.getQuery());
+            Set<Object> ids = searchIndex(athenaSearch);
             for(Object id : ids) {
                 tickets.add(getRecord(athenaSearch.getType(), id));
             }

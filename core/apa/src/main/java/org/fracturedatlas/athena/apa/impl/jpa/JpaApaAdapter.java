@@ -448,7 +448,7 @@ public class JpaApaAdapter extends IndexingApaAdapter implements ApaAdapter {
 
         if(athenaSearch.isQuerySearch()) {
             Set<PTicket> tickets = new HashSet<PTicket>();
-            Set<Object> ids = searchIndex(athenaSearch.getQuery());
+            Set<Object> ids = searchIndex(athenaSearch);
             for(Object id : ids) {
                 tickets.add(getRecord(athenaSearch.getType(), id));
             }

@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import java.util.Set;
+import java.util.Random;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
@@ -83,7 +84,68 @@ public class ApaAdapterIndexSearchTest extends BaseApaAdapterTest {
         assertTrue(people.contains(anne));
         assertEquals(1, people.size());
     }
+    
+    @Test
+    public void searchIndexWithLimit() {
+        addFishermen(5);
+        
+        AthenaSearch search = new AthenaSearch.Builder()
+                                              .type("person")
+                                              .query("fisherman")
+                                              .build();
+        Set<PTicket> people = apa.findTickets(search);
+        assertEquals(5, people.size());
+        
+        search = new AthenaSearch.Builder()
+                                              .type("person")
+                                              .query("fisherman")
+                                              .limit(3)
+                                              .build();
+        people = apa.findTickets(search);
+        assertEquals(3, people.size());
+    }
+    
+    @Test
+    public void searchIndexSecondPage() {
+        addFishermen(40);
+        
+        AthenaSearch search = new AthenaSearch.Builder()
+                                              .type("person")
+                                              .query("fisherman")
+                                              .build();
+        Set<PTicket> people = apa.findTickets(search);
+        assertEquals(10, people.size());
+        
+        search = new AthenaSearch.Builder()
+                                  .type("person")
+                                  .query("fisherman")
+                                  .limit(5)
+                                  .start(5)
+                                  .build();
+        people = apa.findTickets(search);
+        assertEquals(5, people.size());
+        
+        search = new AthenaSearch.Builder()
+                                  .type("person")
+                                  .query("fisherman")
+                                  .limit(6)
+                                  .start(8)
+                                  .build();
+        people = apa.findTickets(search);
+        assertEquals(6, people.size());
+    }
 
+    private void addFishermen(int howMany) {
+        Random r = new Random();
+        String alphabet = "1234567890qwertyuioplkjhgfddsazxcvbnmMNBVCXZASDFGHJKLPOIUYTREWQ";
+
+        for(int i=0; i<howMany; i++) {
+            addRecord("person",
+                      "firstName", Character.toString(alphabet.charAt(r.nextInt(alphabet.length()))),
+                      "occupation", "fisherman");
+        }
+    }
+    
     @After
     public void teardownTickets() {
         super.teardownTickets();

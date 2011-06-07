@@ -19,12 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.apa;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
@@ -38,10 +36,10 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.util.Version;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.id.IdAdapter;
+import org.fracturedatlas.athena.search.AthenaSearch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,27 +63,10 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
     
     public final static String DOC_TEXT = "text";
     
-    //TODO: add index directory to skeleton structure. Benchmark against old search    
+    //TODO: Benchmark against old search, preserve order of search
     
     public void initializeIndex() {
-//        if(StringUtils.isBlank(indexDirectory)) {
-//            logger.error("Index directory was not provided in db.properties:athena.index.directory");
-//            logger.error("Indexing is disabled, searches with _q will return []");
-//            indexingDisabled = true;
-//        } else {
-//        
-//            try {
-//                File f = new File(indexDirectory);
-//                directory = new NIOFSDirectory(f);
-                analyzer = new WhitespaceAnalyzer(Version.LUCENE_32);
-//                logger.debug("Index initialization complete");
-//                logger.debug("Index will be kept in {}", indexDirectory);
-//            } catch (IOException ioe) {
-//                logger.error("Could not open index directory provided in db.properties:athena.index.directory");
-//                logger.error("Indexing is disabled, searches with _q will return []");
-//                indexingDisabled = true;
-//            }
-//        }
+        analyzer = new WhitespaceAnalyzer(Version.LUCENE_32);
     }
     
     /*
@@ -169,21 +150,37 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
     
     /*
      * Returns a set of ids
+     * 
+     * TODO: Converting from hits to Set<PTicket>
+     * isn't preserving order of the results.  
      */
-    public Set<Object> searchIndex(String queryString) {
+    public Set<Object> searchIndex(AthenaSearch search) {
         Set<Object> ids = new HashSet<Object>();
         
         if(indexingDisabled) {
             return ids;
         }
         
+        String query = search.getQuery();
+        
+        Integer start = 0;
+        if(search.getStart() != null) {
+            start = search.getStart();
+        };
+        
+        Integer limit = 10;
+        if(search.getLimit() != null) {
+            limit = search.getLimit();
+        }
+        Integer numResults = start + limit;
+        
+        
         try {
-            int hitsPerPage = 10;
-            Query q = new QueryParser(Version.LUCENE_32, DOC_TEXT, analyzer).parse(queryString);
+            Query q = new QueryParser(Version.LUCENE_32, DOC_TEXT, analyzer).parse(query);
             IndexSearcher searcher = new IndexSearcher(directory, true);
-            TopDocs topDocs = searcher.search(q, 10);
+            TopDocs topDocs = searcher.search(q, numResults);
             ScoreDoc[] hits = topDocs.scoreDocs;
-            for(int i=0;i<hits.length;++i) {
+            for(int i=start;i<hits.length;++i) {
                 int docId = hits[i].doc;
                 Document d = searcher.doc(docId);
                 ids.add(d.get("_id"));
