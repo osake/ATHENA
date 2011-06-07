@@ -22,9 +22,14 @@
             </list>
         </property>
     </bean>
-    
-    <bean id="indexDirectory" class="java.lang.String">
+
+
+    <bean id="indexFile" class="java.io.File">
       <constructor-arg value="${athena.index.directory}"/>
+    </bean>
+    
+    <bean id="directory" class="org.apache.lucene.store.NIOFSDirectory">
+      <constructor-arg ref="indexFile"/>
     </bean>
 
     <!-- MONGO
@@ -55,7 +60,7 @@
 
     <bean id="apa" class="org.fracturedatlas.athena.apa.impl.jpa.JpaApaAdapter">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
-        <property name="indexDirectory" ref="indexDirectory"/>
+        <property name="directory" ref="directory"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">

@@ -50,15 +50,15 @@ import org.springframework.beans.factory.annotation.Autowired;
  * TODO: This should be refactored to use a decorator pattern
  */
 public abstract class IndexingApaAdapter extends AbstractApaAdapter {
-    
-    @Autowired
-    String indexDirectory;        
-            
+           
+    @Autowired  
     Directory directory;
+    
+    Analyzer analyzer;
+    
     Boolean indexingDisabled = false;
     
     IndexWriter indexWriter;
-    Analyzer analyzer;
     IndexWriterConfig config;
     
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -68,24 +68,24 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
     //TODO: add index directory to skeleton structure. Benchmark against old search    
     
     public void initializeIndex() {
-        if(StringUtils.isBlank(indexDirectory)) {
-            logger.error("Index directory was not provided in db.properties:athena.index.directory");
-            logger.error("Indexing is disabled, searches with _q will return []");
-            indexingDisabled = true;
-        } else {
-        
-            try {
-                File f = new File(indexDirectory);
-                directory = new NIOFSDirectory(f);
+//        if(StringUtils.isBlank(indexDirectory)) {
+//            logger.error("Index directory was not provided in db.properties:athena.index.directory");
+//            logger.error("Indexing is disabled, searches with _q will return []");
+//            indexingDisabled = true;
+//        } else {
+//        
+//            try {
+//                File f = new File(indexDirectory);
+//                directory = new NIOFSDirectory(f);
                 analyzer = new WhitespaceAnalyzer(Version.LUCENE_32);
-                logger.debug("Index initialization complete");
-                logger.debug("Index will be kept in {}", indexDirectory);
-            } catch (IOException ioe) {
-                logger.error("Could not open index directory provided in db.properties:athena.index.directory");
-                logger.error("Indexing is disabled, searches with _q will return []");
-                indexingDisabled = true;
-            }
-        }
+//                logger.debug("Index initialization complete");
+//                logger.debug("Index will be kept in {}", indexDirectory);
+//            } catch (IOException ioe) {
+//                logger.error("Could not open index directory provided in db.properties:athena.index.directory");
+//                logger.error("Indexing is disabled, searches with _q will return []");
+//                indexingDisabled = true;
+//            }
+//        }
     }
     
     /*
@@ -195,12 +195,12 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         }
     }
 
-    public String getIndexDirectory() {
-        return indexDirectory;
+    public Directory getDirectory() {
+        return directory;
     }
 
-    public void setIndexDirectory(String indexDirectory) {
-        this.indexDirectory = indexDirectory;
+    public void setDirectory(Directory directory) {
+        this.directory = directory;
     }
     
     public Boolean getIndexingDisabled() {
