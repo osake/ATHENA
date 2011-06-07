@@ -22,6 +22,10 @@
             </list>
         </property>
     </bean>
+    
+    <bean id="indexDirectory" class="java.lang.String">
+      <constructor-arg value="${athena.index.directory}"/>
+    </bean>
 
     <!-- MONGO
     <bean id="apa" class="org.fracturedatlas.athena.apa.impl.MongoApaAdapter" autowire="byName">
@@ -51,6 +55,7 @@
 
     <bean id="apa" class="org.fracturedatlas.athena.apa.impl.jpa.JpaApaAdapter">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
+        <property name="indexDirectory" ref="indexDirectory"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">

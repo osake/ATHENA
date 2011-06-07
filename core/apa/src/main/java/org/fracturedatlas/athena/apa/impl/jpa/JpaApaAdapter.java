@@ -45,6 +45,10 @@ public class JpaApaAdapter extends IndexingApaAdapter implements ApaAdapter {
     private EntityManagerFactory emf;
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
+    public JpaApaAdapter() {
+        initializeIndex();
+    }
+    
     @PersistenceUnit
     public void setEntityManagerFactory(EntityManagerFactory emf) {
         this.emf = emf;
@@ -239,6 +243,7 @@ public class JpaApaAdapter extends IndexingApaAdapter implements ApaAdapter {
             }
             existingTicket = saveRecord(existingTicket, em);
             em.getTransaction().commit();
+            addToIndex(existingTicket.toClientTicket());
             return existingTicket;
         } catch (ApaException e) {
             em.getTransaction().rollback();
@@ -271,6 +276,7 @@ public class JpaApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         }
         ticket.setType(type);
         ticket = saveRecord(ticket);
+        addToIndex(ticket.toClientTicket());
         return ticket;
     }
 
@@ -411,6 +417,7 @@ public class JpaApaAdapter extends IndexingApaAdapter implements ApaAdapter {
             em.remove(t);
             logger.trace("Deleted ticket: " + longId);
             em.getTransaction().commit();
+            deleteFromIndex(id);
             return true;
         } finally {
             cleanup(em);
@@ -438,6 +445,17 @@ public class JpaApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         Collection<JpaRecord> finishedTicketsList = null;
         Set<JpaRecord> finishedTicketsSet = null;
         Collection<JpaRecord> ticketsList = null;
+
+        if(athenaSearch.isQuerySearch()) {
+            Set<PTicket> tickets = new HashSet<PTicket>();
+            Set<Object> ids = searchIndex(athenaSearch.getQuery());
+            for(Object id : ids) {
+                tickets.add(getRecord(athenaSearch.getType(), id));
+            }
+            return tickets;
+        }
+        
+        
         try {
             //if there are no modifiers, grab all records of (type)
             if (CollectionUtils.isEmpty(athenaSearch.getConstraints())) {

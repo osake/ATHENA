@@ -28,28 +28,60 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 public class ApaAdapterIndexSearchTest extends BaseApaAdapterTest {
+    
+    PTicket anne;
+    PTicket jim;
+    
     public ApaAdapterIndexSearchTest() throws Exception {
         super();
     }  
-    
-    //TODO: Add more to the index and re-test.  Test nothing found.  
-    //Inject directory so that files are used instead of ram
-    //add index directory to sekelton structure.  Add all this to JpaApaAdapter.  Benchmark
-    //against old search
-    //remove from index
     
     @Test
     public void searchIndex() {
         AthenaSearch search = new AthenaSearch.Builder().type("person").query("Smith").build();
         Set<PTicket> people = apa.findTickets(search);
-        //assertEquals(2, people.size());
+        assertEquals(2, people.size());
+        assertTrue(people.contains(anne));
+        assertTrue(people.contains(jim));
+    }
+    
+    @Test
+    public void searchIndexAndGetNothing() {
+        AthenaSearch search = new AthenaSearch.Builder().type("person").query("crab").build();
+        Set<PTicket> people = apa.findTickets(search);
+        assertEquals(0, people.size());
     }
     
     @Test
     public void searchIndexOnSpecificField() {
         AthenaSearch search = new AthenaSearch.Builder().type("person").query("occupation:actor").build();
         Set<PTicket> people = apa.findTickets(search);
-        //assertEquals(2, people.size());
+        assertEquals(2, people.size());
+    }
+    
+    @Test
+    public void searchIndexOnSpecificFieldUnknownField() {
+        AthenaSearch search = new AthenaSearch.Builder().type("person").query("shoeSize:actor").build();
+        Set<PTicket> people = apa.findTickets(search);
+        assertEquals(0, people.size());
+    }
+    
+    @Test
+    public void searchIndexOnSpecificFieldAndGetNothing() {
+        AthenaSearch search = new AthenaSearch.Builder().type("person").query("occupation:racecar").build();
+        Set<PTicket> people = apa.findTickets(search);
+        assertEquals(0, people.size());
+    }
+    
+    @Test
+    public void searchIndexUpdatedIndex() {
+        anne.put("lastName", "Trent");
+        apa.saveRecord(anne);
+        
+        AthenaSearch search = new AthenaSearch.Builder().type("person").query("Trent").build();
+        Set<PTicket> people = apa.findTickets(search);
+        assertTrue(people.contains(anne));
+        assertEquals(1, people.size());
     }
 
     @After
@@ -63,11 +95,11 @@ public class ApaAdapterIndexSearchTest extends BaseApaAdapterTest {
         addPropField(ValueType.STRING, "lastName", StrictType.NOT_STRICT);
         addPropField(ValueType.STRING, "occupation", StrictType.NOT_STRICT);
         
-        addRecord("person",
+        jim = addRecord("person",
                   "firstName", "Jim",
                   "lastName", "Smith",
                   "occupation", "engineer");
-        addRecord("person",
+        anne = addRecord("person",
                   "firstName", "Anne",
                   "lastName", "Smith",
                   "occupation", "teacher");

@@ -201,8 +201,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         if(athenaSearch.isQuerySearch()) {
             Set<Object> ids = searchIndex(athenaSearch.getQuery());
             for(Object id : ids) {
-                ObjectId mongoId = ObjectId.massageToObjectId(id);
-                tickets.add(getRecord(athenaSearch.getType(), mongoId));
+                tickets.add(getRecord(athenaSearch.getType(), id));
             }
             return tickets;
         }
@@ -415,6 +414,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
             ObjectId oid = ObjectId.massageToObjectId(id);
             query.put("_id", oid);
             db.getCollection(type).remove(query);
+            deleteFromIndex(id);
             return true;
         }
     }
