@@ -58,10 +58,7 @@
 
     </bean>
 
-    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.jpa.JpaApaAdapter">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-        <property name="directory" ref="directory"/>
-    </bean>
+    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.jpa.JpaApaAdapter" autowire="byType"/>
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
