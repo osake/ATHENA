@@ -4,7 +4,7 @@
 ############################
 
 #
-# Lucene indexing.  Leaving this value blank will disable indexing
+# This is where Lucene will store indexing files.
 #
 athena.index.directory=../index/ATHENA-people
 
