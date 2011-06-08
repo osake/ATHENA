@@ -33,7 +33,15 @@ public class AthenaRunner {
         Server server = new Server(Integer.parseInt(port));
         ContextHandlerCollection contexts = new ContextHandlerCollection();
 
-        String[] appNames = new String[]{"tix","stage", "people", "orders", "payments","reports", "audit"};
+        String[] appNames = new String[]{
+                                         "tix"
+                                        ,"stage"
+                                        ,"people"
+                                        ,"orders"
+                                        ,"payments"
+                                        ,"reports"
+                                        ,"audit"
+                                        };
 
         for (String appName : appNames) {
             WebAppContext app = new WebAppContext();
