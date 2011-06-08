@@ -59,6 +59,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     DB db = null;
     DBCollection fields = null;
+    String fieldsCollectionName = null;
 
     //This is the mongo name for the props object within a record
     public static final String PROPS_STRING = "props";
@@ -67,6 +68,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
                            Integer port,
                            String dbName,
                            String fieldsCollectionName) throws UnknownHostException {
+        this.fieldsCollectionName = fieldsCollectionName;
         Mongo m = new Mongo(host, port);
         db = m.getDB(dbName);
         fields = db.getCollection(fieldsCollectionName);
@@ -80,6 +82,15 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
 
     public PTicket getRecord(String type, Object id, Boolean includeProps) {
         return toRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), includeProps);
+    }
+
+    @Override
+    public Set<String> getTypes(){
+        Set <String> types = new HashSet<String>();
+        types = db.getCollectionNames();
+        types.remove(fieldsCollectionName);
+        types.remove("system.indexes");
+        return types;
     }
 
     @Override

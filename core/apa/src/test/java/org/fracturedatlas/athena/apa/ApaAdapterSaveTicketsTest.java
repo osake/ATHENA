@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.apa;
 
+import java.util.Set;
 import org.fracturedatlas.athena.apa.exception.InvalidPropException;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.client.PTicket;
@@ -288,5 +289,36 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
         assertEquals("033", ticket.get("SEAT"));
         assertEquals("133", ticket.get("SEAT1"));
         assertEquals("233", ticket.get("SEAT2"));
+    }
+
+    //These may not run on mongo given that collections may be left over from previous tests.
+    @Test
+    public void testGetTypesNoTypes() {
+        Set<String> types = apa.getTypes();
+        assertEquals(0, types.size());
+    }
+
+    @Test
+    public void testGetTypes() {
+        addPropField(ValueType.STRING, "firstName", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "lastName", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "occupation", StrictType.NOT_STRICT);
+        addRecord("person",
+                  "firstName", "Ben",
+                  "lastName", "Bernake",
+                  "occupation", "banker");
+        addRecord("octopus",
+                  "firstName", "Ben",
+                  "lastName", "Affleck",
+                  "occupation", "actor");
+        addRecord("airplane",
+                  "firstName", "Matt",
+                  "lastName", "Damon",
+                  "occupation", "actor");
+        Set<String> types = apa.getTypes();
+        assertEquals(3, types.size());
+        assertTrue(types.contains("person"));
+        assertTrue(types.contains("octopus"));
+        assertTrue(types.contains("airplane"));
     }
 }

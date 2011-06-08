@@ -103,6 +103,7 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         Document doc = new Document();
         StringBuffer documentText = new StringBuffer();
         doc.add(new Field("_id", record.getIdAsString(), Field.Store.YES, Field.Index.ANALYZED));
+        doc.add(new Field("_type", record.getType(), Field.Store.YES, Field.Index.ANALYZED));
         
         for(String key : record.getProps().keySet()) {
             List<String> vals = record.getProps().get(key);

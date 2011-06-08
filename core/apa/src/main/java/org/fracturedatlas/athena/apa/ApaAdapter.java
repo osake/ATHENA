@@ -34,7 +34,7 @@ import org.fracturedatlas.athena.search.AthenaSearch;
 /**
  * The interface from Parakeet to a data store.
  *
- * Exceptions that extend from ApaException are RuntimeExceptions.  They are declared in
+ * Exceptions that extend from ApaException are RuntimeExceptions.  (TODO) They are declared in
  * the method declatations for convenience.  Implementors are <i>strongly encouraged</i> to throw the
  * exceptions where appropriate but they cannot be forced to do so.  Implementors that do not
  * throw exceptions noted in this interface should note that in their documentation.
@@ -43,7 +43,7 @@ import org.fracturedatlas.athena.search.AthenaSearch;
  *
  * For methods that take (Object id) as a parameter, implementors are responsible for casting this
  * value to the id format for their implementation.  If the id is of an invalid format, implementors
- * can throw a sensible subclass of RuntimeException.
+ * can throw a sensible subclass of ApaException.
  *
  */
 public interface ApaAdapter {
@@ -66,6 +66,14 @@ public interface ApaAdapter {
     public PTicket saveRecord(PTicket record);
 
     /**
+     * Save a record to the data store
+     * @param record
+     * @return the saved record
+     * @throws InvalidValueExcepion if this record contains a field/value pairing that is invalid
+     */
+    public PTicket saveRecord(String type, PTicket record);
+
+    /**
      * Update a record identified by idToPAtch with the props contained in patchRecord.
      * Props not included in patchRecord will be unchanged
      *
@@ -76,14 +84,6 @@ public interface ApaAdapter {
      * @throws InvalidValueExcepion if this record contains a field/value pairing that is invalid
      */
     public PTicket patchRecord(Object idToPatch, String type, PTicket patchRecord);
-
-    /**
-     * Save a record to the data store
-     * @param record
-     * @return the saved record
-     * @throws InvalidValueExcepion if this record contains a field/value pairing that is invalid
-     */
-    public PTicket saveRecord(String type, PTicket record);
 
     /**
      * Delete a ticket from the data store.  Implementors should delete all props associated with this ticket.
@@ -117,6 +117,12 @@ public interface ApaAdapter {
      * @return matching tickets, empty List if no tickets found
      */
     public Set<PTicket> findTickets(AthenaSearch search);
+    
+    /**
+     * Return a Set of distinct record types that are currently stored
+     * @returna Set of distinct types
+     */
+    public Set<String> getTypes();
 
     /**
      * get the ticketProp for the given id

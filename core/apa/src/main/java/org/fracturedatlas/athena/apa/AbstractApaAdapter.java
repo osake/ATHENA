@@ -69,12 +69,17 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public void deleteTicketProp(TicketProp prop) {
+    public Set<PTicket> findTickets(AthenaSearch search) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
     @Override
-    public Set<PTicket> findTickets(AthenaSearch search) {
+    public Set<String> getTypes() {
+        throw new UnsupportedOperationException("Unsupported operation");
+    }
+
+    @Override
+    public void deleteTicketProp(TicketProp prop) {
         throw new UnsupportedOperationException("Unsupported operation");
     }
     

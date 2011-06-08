@@ -64,6 +64,20 @@ public class JpaApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         }
     }
 
+    @Override
+    public Set<String> getTypes(){
+        EntityManager em = this.emf.createEntityManager();
+        Set<String> types = new HashSet<String>();
+        try{
+            Query query = em.createQuery("SELECT DISTINCT t.type FROM JpaRecord t");
+            List<String> values = query.getResultList();
+            logger.debug("PropValues are " + values.toString());
+            types.addAll(values);
+            return types;
+        } finally {
+            cleanup(em);
+        }
+    }
 
     private  JpaRecord getTicket(String type, Object id) {
         return getTicket(null, type, id);
