@@ -27,6 +27,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
@@ -60,13 +61,35 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
     IndexWriterConfig config;
     
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+
+    public static final Integer DEFAULT_PAGE_SIZE = 10;
     
     public final static String DOC_TEXT = "text";
     
-    //TODO: Benchmark against old search, preserve order of search
-    
+    //TODO: preserve order of search
+    /*
+     * Initialize any indexing.  Remember that this method is called BEFORE the
+     * directory is injected by spring.  Any operations that depend ont he availability
+     * of the index will not work.
+     */
     public void initializeIndex() {
         analyzer = new WhitespaceAnalyzer(Version.LUCENE_32);
+
+    }
+        
+    public Boolean rebuildNeeded() {
+        Boolean rebuildIndex = false;
+        try{
+            if(!IndexReader.indexExists(directory)) {
+                logger.debug("No index exists");
+                rebuildIndex = true;
+            }
+        } catch (Exception e) {
+            logger.debug("Exception while reading index {}", e.getMessage());
+            rebuildIndex = true;
+        }
+
+        return rebuildIndex;
     }
     
     /*
@@ -168,7 +191,7 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
             start = search.getStart();
         };
         
-        Integer limit = 10;
+        Integer limit = DEFAULT_PAGE_SIZE;
         if(search.getLimit() != null) {
             limit = search.getLimit();
         }
@@ -198,6 +221,18 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
 
     public void setDirectory(Directory directory) {
         this.directory = directory;
+        if(rebuildNeeded()) {
+            logger.info("Rebuilding index");
+            AthenaSearch search = new AthenaSearch.Builder().type("ticket").build();
+            Set<PTicket> records = findTickets(search);
+            logger.info("Indexing {} records of type {}", records.size(), "ticket");
+            long startTime = System.currentTimeMillis();
+            for(PTicket record : records) {
+                addToIndex(record);
+            }
+            long endTime = System.currentTimeMillis();
+            logger.info("Done.  Took {} millis", (endTime - startTime));
+        }
     }
     
     public Boolean getIndexingDisabled() {
