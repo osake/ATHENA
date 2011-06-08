@@ -224,15 +224,18 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         this.directory = directory;
         if(rebuildNeeded()) {
             logger.info("Rebuilding index");
-            AthenaSearch search = new AthenaSearch.Builder().type("ticket").build();
-            Set<PTicket> records = findTickets(search);
-            logger.info("Indexing {} records of type {}", records.size(), "ticket");
-            long startTime = System.currentTimeMillis();
-            for(PTicket record : records) {
-                addToIndex(record);
+            Set<String> types = getTypes();
+            for(String type : types) {
+                AthenaSearch search = new AthenaSearch.Builder().type(type).build();
+                Set<PTicket> records = findTickets(search);
+                logger.info("Indexing {} records of type {}", records.size(), type);
+                long startTime = System.currentTimeMillis();
+                for(PTicket record : records) {
+                    addToIndex(record);
+                }
+                long endTime = System.currentTimeMillis();
+                logger.info("Done.  Took {} millis", (endTime - startTime));
             }
-            long endTime = System.currentTimeMillis();
-            logger.info("Done.  Took {} millis", (endTime - startTime));
         }
     }
     
