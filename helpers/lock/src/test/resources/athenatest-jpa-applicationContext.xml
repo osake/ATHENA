@@ -15,6 +15,7 @@
 
     <bean id="apa" class="org.fracturedatlas.athena.apa.impl.jpa.JpaApaAdapter">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
+        <property name="indexingDisabledString" value="true"/>
     </bean>
 
 <!-- JPA -->

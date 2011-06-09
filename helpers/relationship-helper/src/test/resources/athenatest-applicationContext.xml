@@ -8,6 +8,7 @@
            http://www.springframework.org/schema/tx
            http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
     <context:component-scan base-package="org.fracturedatlas.athena"/>
+    <bean name="directory" class="org.apache.lucene.store.RAMDirectory"/>
     <import resource="athenatest-jpa-applicationContext.xml"/>
     <import resource="beans.xml"/>
 </beans>
