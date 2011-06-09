@@ -21,10 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.payments.processor;
 
 import com.sun.jersey.api.NotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
-import javax.ws.rs.WebApplicationException;
 import org.fracturedatlas.athena.payments.model.AuthorizationRequest;
 import org.fracturedatlas.athena.payments.model.AuthorizationResponse;
 
@@ -52,6 +52,24 @@ public class MockPaymentProcessor implements PaymentProcessor {
     HashMap<String, org.fracturedatlas.athena.payments.model.CreditCard> cards =
             new HashMap<String, org.fracturedatlas.athena.payments.model.CreditCard>();
 
+    static final List<String> VALID_CARD_NUMBERS = new ArrayList<String>();
+
+    static {
+        VALID_CARD_NUMBERS.add("4111111111111111");
+        VALID_CARD_NUMBERS.add("4005519200000004");
+        VALID_CARD_NUMBERS.add("4009348888881881");
+        VALID_CARD_NUMBERS.add("4012000033330026");
+        VALID_CARD_NUMBERS.add("4012000077777777");
+        VALID_CARD_NUMBERS.add("4012888888881881");
+        VALID_CARD_NUMBERS.add("4217651111111119");
+        VALID_CARD_NUMBERS.add("4500600000000061");
+        VALID_CARD_NUMBERS.add("5555555555554444");
+        VALID_CARD_NUMBERS.add("378282246310005");
+        VALID_CARD_NUMBERS.add("371449635398431");
+        VALID_CARD_NUMBERS.add("6011111111111117");
+        VALID_CARD_NUMBERS.add("3530111333300000");
+    }
+
     public MockPaymentProcessor() {
     }
 
@@ -65,9 +83,15 @@ public class MockPaymentProcessor implements PaymentProcessor {
         AuthorizationResponse authorizationResponse = new AuthorizationResponse();
         String someId = UUID.randomUUID().toString();
 
-        authorizationResponse.setSuccess(true);
-        authorizationResponse.setTransactionId(someId);
-
+        if(VALID_CARD_NUMBERS.contains(authorizationRequest.getCreditCard().getCardNumber())) {        
+            authorizationResponse.setSuccess(Boolean.FALSE);
+            authorizationResponse.setMessage("Declined");
+            return authorizationResponse;
+        } else {
+            authorizationResponse.setSuccess(true);
+            authorizationResponse.setTransactionId(someId);
+        }
+        
         if(authorizationRequest.getStoreCard()) {
             org.fracturedatlas.athena.payments.model.CreditCard card = authorizationRequest.getCreditCard();
             String token = UUID.randomUUID().toString();
