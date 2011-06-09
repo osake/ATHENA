@@ -46,8 +46,10 @@
         </property>
 
     </bean>
-    
-    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.jpa.JpaApaAdapter" autowire="byType"/>
+
+    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.jpa.JpaApaAdapter" autowire="byType">
+        <property name="indexingDisabledString" value="${athena.index.disabled}"/>
+    </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
         <property name="entityManagerFactory" ref="entityManagerFactory"/>

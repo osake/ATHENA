@@ -222,7 +222,7 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
 
     public void setDirectory(Directory directory) {
         this.directory = directory;
-        if(rebuildNeeded()) {
+        if(rebuildNeeded() && !indexingDisabled) {
             logger.info("Rebuilding index");
             Set<String> types = getTypes();
             for(String type : types) {
@@ -236,6 +236,8 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
                 long endTime = System.currentTimeMillis();
                 logger.info("Done.  Took {} millis", (endTime - startTime));
             }
+        } else if (indexingDisabled) {
+            logger.info("Logging is disabled");
         }
     }
     
@@ -245,5 +247,15 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
 
     public void setIndexingDisabled(Boolean indexingDisabled) {
         this.indexingDisabled = indexingDisabled;
+    }
+
+    /*
+     * This is such a hacky way to do this, but...
+     * IF the implementor fat-fingers the value such that is isn't a boolean "yes" or "truee"
+     * then Spring is going to choke on the auto-injection.  This method wraps it such that
+     * Anything that isn't "true" is going to map to false (adheres to Boolean.parseBoolean())
+     */
+    public void setIndexingDisabledString(String indexingDisabled) {
+        setIndexingDisabled(Boolean.parseBoolean(indexingDisabled));
     }
 }
