@@ -83,7 +83,7 @@ public class MockPaymentProcessor implements PaymentProcessor {
         AuthorizationResponse authorizationResponse = new AuthorizationResponse();
         String someId = UUID.randomUUID().toString();
 
-        if(VALID_CARD_NUMBERS.contains(authorizationRequest.getCreditCard().getCardNumber())) {        
+        if(!VALID_CARD_NUMBERS.contains(authorizationRequest.getCreditCard().getCardNumber())) {
             authorizationResponse.setSuccess(Boolean.FALSE);
             authorizationResponse.setMessage("Declined");
             return authorizationResponse;

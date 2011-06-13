@@ -124,6 +124,10 @@
         </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena.helper</groupId>
+            <artifactId>available-tickets</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.fracturedatlas.athena.helper</groupId>
             <artifactId>ticketfactory</artifactId>
         </dependency>
     </dependencies>
