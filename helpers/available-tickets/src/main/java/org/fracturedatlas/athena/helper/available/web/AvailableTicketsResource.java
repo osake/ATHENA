@@ -52,8 +52,6 @@ public class AvailableTicketsResource {
     @Autowired
     AvailableTicketsManager manager;
 
-    Gson gson = JsonUtil.getGson();
-
     public static final String CODE_TYPE = "code";
 
     @GET

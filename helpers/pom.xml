@@ -19,6 +19,7 @@
         <module>relationship-helper</module>
         <module>codes</module>
         <module>twitter-sub-resource</module>
+        <module>available-tickets</module>
     </modules>
     <dependencies>
 
