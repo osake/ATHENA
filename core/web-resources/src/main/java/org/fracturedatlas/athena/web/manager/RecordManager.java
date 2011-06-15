@@ -74,17 +74,29 @@ public class RecordManager {
      * @param id
      * @return 
      */
-    public Object getRecords(String type, Object id) {
+    public Object getRecords(String type, 
+                             String idOrSubCollectionName, 
+                             Map<String, List<String>> queryParams) {
         
-        
-        PTicket ticket = apa.getRecord(type, id);
+        //load the plugin.  If the plugin is found, let it do its thing.
+        AthenaSubCollection plugin = null;
+        try{
+             plugin = (AthenaSubCollection)applicationContext.getBean(idOrSubCollectionName + "SubCollection");
+        } catch (NoSuchBeanDefinitionException noBean) {
+            //it's okay
+        }
+        if(plugin != null) {
+            String username = getCurrentUsername();
+            return plugin.execute(type, idOrSubCollectionName, queryParams, username);
+        } else {        
+            PTicket ticket = apa.getRecord(type, idOrSubCollectionName);
 
-        //if (CollectionUtils.isEmpty(tickets)) {
-        if(ticket == null) {
-            type = StringUtils.capitalize(type);
-            throw new NotFoundException(type + " with id [" + id + "] was not found");
-        } else {
-            return ticket;
+            if(ticket == null) {
+                type = StringUtils.capitalize(type);
+                throw new NotFoundException(type + " with id [" + idOrSubCollectionName + "] was not found");
+            } else {
+                return ticket;
+            }
         }
     }
 

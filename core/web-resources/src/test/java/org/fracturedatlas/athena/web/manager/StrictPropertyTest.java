@@ -108,7 +108,7 @@ public class StrictPropertyTest extends BaseManagerTest {
         //return it to the correct value
         t.put("STRICT_PROP", "WXYZ");
 
-        PTicket savedTicket = (PTicket)manager.getRecords("ticket", t.getId());
+        PTicket savedTicket = (PTicket)manager.getRecords("ticket", t.getIdAsString(), null);
         savedTicket.setType("ticket");
         System.out.println(savedTicket);
         System.out.println(t);

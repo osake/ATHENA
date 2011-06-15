@@ -67,9 +67,11 @@ public class RecordResource {
 
     @GET
     @Path("{type}/{id}")
-    public Object get(@PathParam("type") String type, @PathParam("id") String id) throws NotFoundException {
+    public Object get(@PathParam("type") String type,
+                      @PathParam("id") String id,
+                      @Context UriInfo ui) throws NotFoundException {
         type = Inflector.getInstance().singularize(type);
-        return recordManager.getRecords(type, id);
+        return recordManager.getRecords(type, id, ui.getQueryParameters());
     }
 
     @DELETE
