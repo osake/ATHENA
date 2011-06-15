@@ -88,12 +88,13 @@ public class RecordManager {
         }
     }
 
-    public void deleteRecord(PTicket t) {
-        apa.deleteRecord(t);
-    }
-
     public void deleteRecord(String type, Object id) {
-        apa.deleteRecord(type, id);
+        PTicket ticket = apa.getRecord(type, id);
+        if (ticket == null) {
+            throw new NotFoundException(type + " with id [" + id + "] was not found");
+        } else {
+            apa.deleteRecord(ticket);
+        }
     }
 
     public void deletePropertyFromRecord(String type, String propName, Object ticketId)

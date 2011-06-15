@@ -76,12 +76,7 @@ public class RecordResource {
     @Path("{type}/{id}")
     public void delete(@PathParam("type") String type, @PathParam("id") String id) throws NotFoundException {
         type = Inflector.getInstance().singularize(type);
-//        PTicket ticket = recordManager.getRecords(type, id);
-//        if (ticket == null) {
-//            throw new NotFoundException(type + " with id [" + id + "] was not found");
-//        } else {
-//            recordManager.deleteRecord(ticket);
-//        }
+        recordManager.deleteRecord(type, id);
     }
 
     @DELETE
