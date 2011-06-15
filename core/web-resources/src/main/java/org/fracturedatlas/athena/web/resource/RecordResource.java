@@ -68,7 +68,7 @@ public class RecordResource {
     @Path("{type}/{id}")
     public Object get(@PathParam("type") String type, @PathParam("id") String id) throws NotFoundException {
         type = Inflector.getInstance().singularize(type);
-        PTicket ticket  = recordManager.getTicket(type, id);
+        PTicket ticket  = recordManager.getRecords(type, id);
         if (ticket == null) {
             type = StringUtils.capitalize(type);
             throw new NotFoundException(type + " with id [" + id + "] was not found");
@@ -81,11 +81,11 @@ public class RecordResource {
     @Path("{type}/{id}")
     public void delete(@PathParam("type") String type, @PathParam("id") String id) throws NotFoundException {
         type = Inflector.getInstance().singularize(type);
-        PTicket ticket  = recordManager.getTicket(type, id);
+        PTicket ticket  = recordManager.getRecords(type, id);
         if (ticket == null) {
             throw new NotFoundException(type + " with id [" + id + "] was not found");
         } else {
-            recordManager.deleteTicket(ticket);
+            recordManager.deleteRecord(ticket);
         }
     }
 
@@ -96,7 +96,7 @@ public class RecordResource {
                        @PathParam("name") String name) throws NotFoundException {
         type = Inflector.getInstance().singularize(type);
         try {
-            recordManager.deletePropertyFromTicket(type, name, id);
+            recordManager.deletePropertyFromRecord(type, name, id);
         } catch (ObjectNotFoundException onfe) {
             //Catching this because ONFE maps to a BAD_REQUEST.  Since the id's are on the URL
             //We want to throw a 404 instead
@@ -159,7 +159,7 @@ public class RecordResource {
         } 
         type = Inflector.getInstance().singularize(type);
 
-        return recordManager.findTickets(type, queryParams);
+        return recordManager.findRecords(type, queryParams);
     }
 
     /**

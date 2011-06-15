@@ -46,7 +46,7 @@ public class FindTicketsManagerTest {
         MultivaluedMap queryParams = new MultivaluedMapImpl();
         queryParams.put("searchParam", null);
         try{
-            manager.findTickets("someType", queryParams);
+            manager.findRecords("someType", queryParams);
             fail("Looking for AthenaException");
         } catch (AthenaException ae) {
             //cool
@@ -54,7 +54,7 @@ public class FindTicketsManagerTest {
 
         queryParams.put("searchParam", new ArrayList());
         try{
-            manager.findTickets("someType", queryParams);
+            manager.findRecords("someType", queryParams);
             fail("Looking for AthenaException");
         } catch (AthenaException ae) {
             //cool
@@ -64,7 +64,7 @@ public class FindTicketsManagerTest {
         vals.add("");
         queryParams.put("searchParam", vals);
         try{
-            manager.findTickets("someType", queryParams);
+            manager.findRecords("someType", queryParams);
             fail("Looking for AthenaException");
         } catch (AthenaException ae) {
             //cool
@@ -74,7 +74,7 @@ public class FindTicketsManagerTest {
         vals.add("eq");
         queryParams.put("searchParam", vals);
         try{
-            manager.findTickets("someType", queryParams);
+            manager.findRecords("someType", queryParams);
             fail("Looking for AthenaException");
         } catch (AthenaException ae) {
             //cool

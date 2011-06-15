@@ -64,19 +64,19 @@ public class RecordManager {
 
     public static final String ID_DELIMITER = ",";
 
-    public PTicket getTicket(String type, Object id) {
+    public PTicket getRecords(String type, Object id) {
         return apa.getRecord(type, id);
     }
 
-    public void deleteTicket(PTicket t) {
+    public void deleteRecord(PTicket t) {
         apa.deleteRecord(t);
     }
 
-    public void deleteTicket(String type, Object id) {
+    public void deleteRecord(String type, Object id) {
         apa.deleteRecord(type, id);
     }
 
-    public void deletePropertyFromTicket(String type, String propName, Object ticketId)
+    public void deletePropertyFromRecord(String type, String propName, Object ticketId)
             throws ObjectNotFoundException {
         TicketProp prop = apa.getTicketProp(propName, type, ticketId);
 
@@ -139,7 +139,7 @@ public class RecordManager {
         }
     }
 
-    public Set<PTicket> findTickets(String type, MultivaluedMap<String, String> queryParams) {
+    public Set<PTicket> findRecords(String type, MultivaluedMap<String, String> queryParams) {
 
         List<String> values = null;
         Operator operator;
