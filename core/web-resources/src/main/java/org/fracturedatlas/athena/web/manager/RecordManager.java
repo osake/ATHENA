@@ -64,8 +64,28 @@ public class RecordManager {
 
     public static final String ID_DELIMITER = ",";
 
-    public PTicket getRecords(String type, Object id) {
-        return apa.getRecord(type, id);
+    /**
+     * Checks to see if a spring bean is registered at "{id}SubCollection"
+     * If so, relevant info is passed to it then execute is called
+     * 
+     * If not, lookup for a record with id = id
+     * 
+     * @param type
+     * @param id
+     * @return 
+     */
+    public Object getRecords(String type, Object id) {
+        
+        
+        PTicket ticket = apa.getRecord(type, id);
+
+        //if (CollectionUtils.isEmpty(tickets)) {
+        if(ticket == null) {
+            type = StringUtils.capitalize(type);
+            throw new NotFoundException(type + " with id [" + id + "] was not found");
+        } else {
+            return ticket;
+        }
     }
 
     public void deleteRecord(PTicket t) {

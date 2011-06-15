@@ -52,6 +52,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import org.fracturedatlas.athena.web.manager.AthenaSubResource;
 import org.springframework.context.ApplicationContext;
+import org.springframework.util.CollectionUtils;
 
 @Path("")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -68,25 +69,19 @@ public class RecordResource {
     @Path("{type}/{id}")
     public Object get(@PathParam("type") String type, @PathParam("id") String id) throws NotFoundException {
         type = Inflector.getInstance().singularize(type);
-        PTicket ticket  = recordManager.getRecords(type, id);
-        if (ticket == null) {
-            type = StringUtils.capitalize(type);
-            throw new NotFoundException(type + " with id [" + id + "] was not found");
-        } else {
-            return ticket;
-        }
+        return recordManager.getRecords(type, id);
     }
 
     @DELETE
     @Path("{type}/{id}")
     public void delete(@PathParam("type") String type, @PathParam("id") String id) throws NotFoundException {
         type = Inflector.getInstance().singularize(type);
-        PTicket ticket  = recordManager.getRecords(type, id);
-        if (ticket == null) {
-            throw new NotFoundException(type + " with id [" + id + "] was not found");
-        } else {
-            recordManager.deleteRecord(ticket);
-        }
+//        PTicket ticket = recordManager.getRecords(type, id);
+//        if (ticket == null) {
+//            throw new NotFoundException(type + " with id [" + id + "] was not found");
+//        } else {
+//            recordManager.deleteRecord(ticket);
+//        }
     }
 
     @DELETE

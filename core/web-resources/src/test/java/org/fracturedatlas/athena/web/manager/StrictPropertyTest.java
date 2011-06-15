@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.web.manager;
 
+import java.util.List;
 import com.google.gson.Gson;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.client.PTicket;
@@ -107,7 +108,7 @@ public class StrictPropertyTest extends BaseManagerTest {
         //return it to the correct value
         t.put("STRICT_PROP", "WXYZ");
 
-        PTicket savedTicket = manager.getRecords("ticket", t.getId());
+        PTicket savedTicket = (PTicket)manager.getRecords("ticket", t.getId());
         savedTicket.setType("ticket");
         System.out.println(savedTicket);
         System.out.println(t);
