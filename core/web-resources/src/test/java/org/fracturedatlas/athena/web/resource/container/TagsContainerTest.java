@@ -53,7 +53,7 @@ public class TagsContainerTest extends BaseTixContainerTest {
     }
 
     @Test
-    public void testTageSubCollection() {
+    public void testTagsSubCollection() {
         
         String jsonResponse = tix.path(path + "tags")
                                      .type("application/json")
@@ -70,7 +70,7 @@ public class TagsContainerTest extends BaseTixContainerTest {
     }
 
     @Test
-    public void testTageSubCollectionUnknownType() {
+    public void testTagsSubCollectionUnknownType() {
         
         String jsonResponse = tix.path("unknowntypes/tags")
                                      .type("application/json")
@@ -92,28 +92,34 @@ public class TagsContainerTest extends BaseTixContainerTest {
         PTicket t3 = new PTicket("ticket");
         PTicket t4 = new PTicket("ticket");
         PTicket t5 = new PTicket("ticket");
+        PTicket t6 = new PTicket("ticket");
 
         t1.getProps().put("tags", Arrays.asList("standard", "sro"));
         t1.put("performanceId", "3");
         t2.getProps().put("tags", Arrays.asList("standard", "sro"));
-        t1.put("performanceId", "3");
+        t2.put("performanceId", "3");
         t3.getProps().put("tags", Arrays.asList("standard", "ada"));
-        t1.put("performanceId", "3");
+        t3.put("performanceId", "3");
         t4.getProps().put("tags", Arrays.asList("standard", "obstructed"));
-        t1.put("performanceId", "3");
+        t4.put("performanceId", "3");
         t5.getProps().put("tags", Arrays.asList("standard", "foo"));
-        t1.put("performanceId", "1");
+        t5.put("performanceId", "1");
+        
+        //6 has no tags   
+        t6.put("performanceId", "1");
 
         t1 = apa.saveRecord(t1);
         t2 = apa.saveRecord(t2);
         t3 = apa.saveRecord(t3);
         t4 = apa.saveRecord(t4);
         t5 = apa.saveRecord(t5);
+        t6 = apa.saveRecord(t6);
 
         recordsToDelete.add(t1);
         recordsToDelete.add(t2);
         recordsToDelete.add(t3);
         recordsToDelete.add(t4);
-        recordsToDelete.add(t5);        
+        recordsToDelete.add(t5);
+        recordsToDelete.add(t6);        
     }
 }

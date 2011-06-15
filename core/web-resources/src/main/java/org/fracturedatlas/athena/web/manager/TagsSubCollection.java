@@ -42,6 +42,9 @@ public class TagsSubCollection implements AthenaSubCollection {
     
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     
+    /*
+     * TODO: Pass along the query parameters to the apa search
+     */
     public Collection execute(String parentType,
                              String subCollectionType,
                              Map<String, List<String>> queryParams,
@@ -51,8 +54,14 @@ public class TagsSubCollection implements AthenaSubCollection {
         Set<PTicket> tickets = apa.findTickets(search);
         Set<String> tags = new HashSet<String>();
         for(PTicket ticket : tickets) {
-            tags.addAll(ticket.getProps().get("tags"));
+            nullSafeAddAllTags(tags, ticket);
         }
         return tags;
+    }
+    
+    private void nullSafeAddAllTags(Set<String> tags, PTicket ticket) {
+        if(ticket != null && ticket.getProps() != null && ticket.getProps().get("tags") != null) {
+            tags.addAll(ticket.getProps().get("tags"));
+        }
     }
 }
