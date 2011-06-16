@@ -17,22 +17,24 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
  */
-package org.fracturedatlas.athena.web.manager;
+package org.fracturedatlas.athena.plugin.tags.manager;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.ws.rs.core.MultivaluedMap;
 import org.fracturedatlas.athena.apa.ApaAdapter;
 import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.plugin.tags.model.Tag;
 import org.fracturedatlas.athena.search.AthenaSearch;
+import org.fracturedatlas.athena.web.manager.AthenaSubCollection;
+import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import sun.security.krb5.internal.Ticket;
 
 @Component("tagsSubCollection")
 public class TagsSubCollection implements AthenaSubCollection {
@@ -45,23 +47,34 @@ public class TagsSubCollection implements AthenaSubCollection {
     /*
      * TODO: Pass along the query parameters to the apa search
      */
-    public Collection execute(String parentType,
+    public Collection get(String parentType,
                              String subCollectionType,
-                             Map<String, List<String>> queryParams,
+                             MultivaluedMap<String, String> queryParams,
                              String username) {
         
-        AthenaSearch search = new AthenaSearch.Builder().type(parentType).build();
+        AthenaSearch search = RecordManager.convert(queryParams);
+        search.setType(parentType);
         Set<PTicket> tickets = apa.findTickets(search);
-        Set<String> tags = new HashSet<String>();
+        Map<String, Tag> tagMap = new HashMap<String, Tag>();
+        Set<Tag> tags = new HashSet<Tag>();
         for(PTicket ticket : tickets) {
-            nullSafeAddAllTags(tags, ticket);
+            nullSafeAddAllTags(tagMap, ticket);
         }
+        tags.addAll(tagMap.values());
         return tags;
     }
     
-    private void nullSafeAddAllTags(Set<String> tags, PTicket ticket) {
+    private void nullSafeAddAllTags(Map<String, Tag> tagMap, PTicket ticket) {
         if(ticket != null && ticket.getProps() != null && ticket.getProps().get("tags") != null) {
-            tags.addAll(ticket.getProps().get("tags"));
+            for(String tagText : ticket.getProps().get("tags")) {
+                Tag tag = tagMap.get(tagText);
+                if(tag == null) {
+                    tag = new Tag(tagText, 1);
+                } else {
+                    tag.setOccurrences(tag.getOccurrences() + 1);
+                }
+                tagMap.put(tagText, tag);
+            }
         }
     }
 }

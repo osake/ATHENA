@@ -17,20 +17,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
  */
-package org.fracturedatlas.athena.web.resource.container;
+package org.fracturedatlas.athena.plugin.tags;
 
+import org.fracturedatlas.athena.plugin.tags.model.Tag;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import com.google.gson.Gson;
-import com.sun.jersey.api.client.ClientResponse;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.search.AthenaSearch;
-import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -41,7 +37,7 @@ public class TagsContainerTest extends BaseTixContainerTest {
 
     String path = RECORDS_PATH;
     Gson gson = JsonUtil.getGson();
-    Type listType = new TypeToken<List<String>>(){}.getType();
+    Type listType = new TypeToken<List<Tag>>(){}.getType();
     
     public TagsContainerTest() throws Exception {
         super();
@@ -59,14 +55,48 @@ public class TagsContainerTest extends BaseTixContainerTest {
                                      .type("application/json")
                                      .get(String.class);
         
-        List<String> tags = gson.fromJson(jsonResponse, listType);
+        List<Tag> tags = gson.fromJson(jsonResponse, listType);
         assertNotNull(tags);
         assertEquals(5, tags.size());
-        assertTrue(tags.contains("standard"));
-        assertTrue(tags.contains("sro"));
-        assertTrue(tags.contains("ada"));
-        assertTrue(tags.contains("obstructed"));
-        assertTrue(tags.contains("foo"));
+        assertTrue(tags.contains(new Tag("standard", 5)));
+        assertTrue(tags.contains(new Tag("sro", 2)));
+        assertTrue(tags.contains(new Tag("ada", 1)));
+        assertTrue(tags.contains(new Tag("obstructed", 1)));
+        assertTrue(tags.contains(new Tag("foo", 1)));
+    }
+
+    @Test
+    public void testTagsSubCollectionWithSearch() {
+        
+        String jsonResponse = tix.path(path + "tags").queryParam("performanceId", "1")
+                                     .type("application/json")
+                                     .get(String.class);
+        
+        List<Tag> tags = gson.fromJson(jsonResponse, listType);
+        assertNotNull(tags);
+        assertEquals(2, tags.size());
+        assertTrue(tags.contains(new Tag("standard", 1)));
+        assertTrue(tags.contains(new Tag("foo", 1)));
+    }
+
+    @Test
+    public void testTagsSubCollectionNoTags() {
+        
+        addRecord("untagged", "performanceId", "2");
+        addRecord("untagged", "performanceId", "2");
+        addRecord("untagged", "performanceId", "2");
+        addRecord("untagged", "performanceId", "2");
+        addRecord("untagged", "performanceId", "2");
+        addRecord("untagged", "performanceId", "2");
+        
+        String jsonResponse = tix.path("untagged/tags")
+                                     .type("application/json")
+                                     .get(String.class);
+        
+        Type listType = new TypeToken<List<String>>(){}.getType();
+        List<Tag> tags = gson.fromJson(jsonResponse, listType);
+        assertNotNull(tags);
+        assertEquals(0, tags.size());
     }
 
     @Test
@@ -77,7 +107,7 @@ public class TagsContainerTest extends BaseTixContainerTest {
                                      .get(String.class);
         
         Type listType = new TypeToken<List<String>>(){}.getType();
-        List<String> tags = gson.fromJson(jsonResponse, listType);
+        List<Tag> tags = gson.fromJson(jsonResponse, listType);
         assertNotNull(tags);
         assertEquals(0, tags.size());
     }
