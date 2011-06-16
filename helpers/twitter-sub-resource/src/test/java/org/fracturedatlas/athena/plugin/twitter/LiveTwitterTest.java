@@ -53,7 +53,7 @@ public class LiveTwitterTest {
 //        Set<PTicket> actions = new HashSet<PTicket>();
 //        actions.add(action);
 //
-//        when(mockRecordManager.getTicket("person", person.getId())).thenReturn(person);
+//        when(mockRecordManager.getRecord("person", person.getId())).thenReturn(person);
 //        List<PTicket> tweets = tweetSubResource.execute("person", "3", "tweet", null, null);
 //        assertNotNull(tweets);
 //        assertNotNull(tweets.get(0).get("text"));
@@ -70,7 +70,7 @@ public class LiveTwitterTest {
 //        Set<PTicket> actions = new HashSet<PTicket>();
 //        actions.add(action);
 //
-//        when(mockRecordManager.getTicket("person", person.getId())).thenReturn(person);
+//        when(mockRecordManager.getRecord("person", person.getId())).thenReturn(person);
 //        try {
 //            List<PTicket> tweets = tweetSubResource.execute("person", "3", "tweet", null, null);
 //            fail("No NFE");
@@ -90,7 +90,7 @@ public class LiveTwitterTest {
         Set<PTicket> actions = new HashSet<PTicket>();
         actions.add(action);
 
-        when(mockRecordManager.getTicket("person", person.getId())).thenReturn(person);
+        when(mockRecordManager.getRecord("person", person.getId())).thenReturn(person);
         try {
             List<PTicket> tweets = tweetSubResource.execute("person", "3", "tweet", null, null);
             fail("No NFE");
@@ -109,7 +109,7 @@ public class LiveTwitterTest {
 //        Set<PTicket> actions = new HashSet<PTicket>();
 //        actions.add(action);
 //
-//        when(mockRecordManager.getTicket("person", person.getId())).thenReturn(person);
+//        when(mockRecordManager.getRecord("person", person.getId())).thenReturn(person);
 //        try {
 //            List<PTicket> tweets = tweetSubResource.execute("person", "3", "tweet", null, null);
 //            fail("No NFE");
@@ -121,7 +121,7 @@ public class LiveTwitterTest {
 //
 //    @Test
 //    public void testGetTweetsNoPersonFound() {
-//        when(mockRecordManager.getTicket("person", "3")).thenReturn(null);
+//        when(mockRecordManager.getRecord("person", "3")).thenReturn(null);
 //        try {
 //            List<PTicket> tweets = tweetSubResource.execute("person", "3", "tweet", null, null);
 //            fail("No NFE");

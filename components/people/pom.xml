@@ -110,5 +110,9 @@
             <groupId>org.fracturedatlas.athena.plugin</groupId>
             <artifactId>twitter-sub-resource</artifactId>
         </dependency>
+        <dependency>
+          <groupId>org.fracturedatlas.athena.plugin</groupId>
+          <artifactId>tags-sub-collection</artifactId>
+        </dependency>
     </dependencies>
 </project>

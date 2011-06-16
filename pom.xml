@@ -83,7 +83,7 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.fracturedatlas.athena.helper</groupId>
+        <groupId>org.fracturedatlas.athena.plugin</groupId>
         <artifactId>available-tickets</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -100,6 +100,11 @@
       <dependency>
         <groupId>org.fracturedatlas.athena.plugin</groupId>
         <artifactId>twitter-sub-resource</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.fracturedatlas.athena.plugin</groupId>
+        <artifactId>tags-sub-collection</artifactId>
         <version>${project.version}</version>
       </dependency>
     </dependencies>

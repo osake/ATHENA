@@ -95,6 +95,10 @@
                     <type>pom</type>
                     <scope>provided</scope>
                 </dependency>
+                <dependency>
+                  <groupId>org.fracturedatlas.athena.plugin</groupId>
+                  <artifactId>tags-sub-collection</artifactId>
+                </dependency>
             </dependencies>
         </profile>
     </profiles>

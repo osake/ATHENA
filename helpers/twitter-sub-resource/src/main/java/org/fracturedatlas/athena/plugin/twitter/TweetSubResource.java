@@ -65,7 +65,7 @@ public class TweetSubResource extends AbstractAthenaSubResource {
         List<PTicket> tweets = new ArrayList<PTicket>();
         String personId = IdAdapter.toString(parentId);
 
-        PTicket person = recordManager.getTicket("person", personId);
+        PTicket person = recordManager.getRecord("person", personId);
 
         if(person == null) {
             throw new NotFoundException();

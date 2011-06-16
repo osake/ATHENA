@@ -66,7 +66,7 @@ public class CodeManager {
 
     public Code getCode(Object id, Boolean loadTicketsIdsToo) {
         logger.debug("Geting code with id [{}]", id);
-        PTicket t = recordManager.getTicket(CODE, id);
+        PTicket t = recordManager.getRecord(CODE, id);
         if(t == null) {
             return null;
         } else {
@@ -95,7 +95,7 @@ public class CodeManager {
             throw new ObjectNotFoundException("Code with id ["+ codeId +"] was not found");
         }
         queryParams.add(code.getCodeAsFieldName(), Operator.MATCHES.getOperatorType() + ".*");
-        Set<PTicket> tickets = recordManager.findTickets(CODED_TYPE, queryParams);
+        Set<PTicket> tickets = recordManager.findRecords(CODED_TYPE, queryParams);
         tickets = cleanTickets(code, tickets);
         return tickets;
     }
@@ -136,7 +136,7 @@ public class CodeManager {
         if(code.getTickets() != null) {
             for(String ticketId : code.getTickets()) {
                 logger.debug("Looking up ticket with id [{}]", ticketId);
-                PTicket t = recordManager.getTicket(CODED_TYPE, ticketId);
+                PTicket t = recordManager.getRecord(CODED_TYPE, ticketId);
                 if( t != null ) {
                     logger.debug("Found ticket for this code:");
                     logger.debug("{}", t.toString());
@@ -216,7 +216,7 @@ public class CodeManager {
     }
 
     private void checkForCodeImmutability(Code code) {
-        PTicket codeRecord = recordManager.getTicket(CODE, code.getId());
+        PTicket codeRecord = recordManager.getRecord(CODE, code.getId());
         if(codeRecord == null) {
             throw new AthenaException("Trying to update code [" + code.getId() + "] but this code was not found");
         } else {
@@ -297,7 +297,7 @@ public class CodeManager {
     }
 
     public Set<PTicket> findCodes(MultivaluedMap<String, String> queryParams) {
-        return recordManager.findTickets(CODE, queryParams);
+        return recordManager.findRecords(CODE, queryParams);
     }
 
     public void verifyCode(Code code) {

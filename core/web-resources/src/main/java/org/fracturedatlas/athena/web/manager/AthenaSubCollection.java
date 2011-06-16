@@ -20,13 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.web.manager;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import org.fracturedatlas.athena.client.PTicket;
+import javax.ws.rs.core.MultivaluedMap;
 
 public interface AthenaSubCollection {
-    public Collection execute(String parentType,
+    public Collection get(String parentType,
                                  String subCollectionType,
-                                 Map<String, List<String>> queryParams,
+                                 MultivaluedMap<String, String> queryParams,
                                  String username);    
 }

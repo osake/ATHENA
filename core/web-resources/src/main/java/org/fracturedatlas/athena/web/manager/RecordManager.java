@@ -65,31 +65,30 @@ public class RecordManager {
     public static final String ID_DELIMITER = ",";
 
     /**
-     * Checks to see if a spring bean is registered at "{id}SubCollection"
-     * If so, relevant info is passed to it then execute is called
+     * Checks to see if a spring bean is registered at "{idOrSubCollectionName}SubCollection"
+     * If so, relevant info is passed to it then get is called
      * 
-     * If not, lookup for a record with id = id
-     * 
-     * @param type
-     * @param id
-     * @return 
+     * If not, lookup for a record with id = id.  If nothing is found, this method will throw a NotFoundEsxception
+     *
      */
     public Object getRecords(String type, 
                              String idOrSubCollectionName, 
-                             Map<String, List<String>> queryParams) {
+                             MultivaluedMap<String, String> queryParams) {
         
         //load the plugin.  If the plugin is found, let it do its thing.
         AthenaSubCollection plugin = null;
+        String beanName = idOrSubCollectionName + "SubCollection";
         try{
-             plugin = (AthenaSubCollection)applicationContext.getBean(idOrSubCollectionName + "SubCollection");
+            logger.debug("Looking for sub-collection bean named [{}].", beanName);
+            plugin = (AthenaSubCollection)applicationContext.getBean(beanName);
         } catch (NoSuchBeanDefinitionException noBean) {
-            //it's okay
+            logger.debug("No bean found under name [{}].  Will query APA store.", beanName);
         }
         if(plugin != null) {
             String username = getCurrentUsername();
-            return plugin.execute(type, idOrSubCollectionName, queryParams, username);
+            return plugin.get(type, idOrSubCollectionName, queryParams, username);
         } else {        
-            PTicket ticket = apa.getRecord(type, idOrSubCollectionName);
+            PTicket ticket = getRecord(type, idOrSubCollectionName);
 
             if(ticket == null) {
                 type = StringUtils.capitalize(type);
@@ -98,6 +97,19 @@ public class RecordManager {
                 return ticket;
             }
         }
+    }
+
+    /**
+     * Skips sub-collection check and goes right for the tickets.  
+     * 
+     * This method returns null if no record is found
+     * 
+     * @param type
+     * @param id
+     * @return 
+     */
+    public PTicket getRecord(String type, Object id) {       
+        return apa.getRecord(type, id);
     }
 
     public void deleteRecord(String type, Object id) {
@@ -174,12 +186,18 @@ public class RecordManager {
 
     public Set<PTicket> findRecords(String type, MultivaluedMap<String, String> queryParams) {
 
+        AthenaSearch search = convert(queryParams);
+        search.setType(type);
+        return apa.findTickets(search);
+    }
+    
+    public static AthenaSearch convert(MultivaluedMap<String, String> queryParams) {
+        
         List<String> values = null;
         Operator operator;
         String value;
         Set<String> valueSet = null;
         AthenaSearch apaSearch = new AthenaSearch();
-        apaSearch.setType(type);
         for (String fieldName : queryParams.keySet()) {
             values = queryParams.get(fieldName);
 
@@ -218,12 +236,11 @@ public class RecordManager {
                     apaSearch.addConstraint(fieldName, operator, valueSet);
                 }
             }
-        }
-
-        return apa.findTickets(apaSearch);
+        }    
+        return apaSearch;
     }
 
-    static Set<String> parseValues(String valueString) {
+    public static Set<String> parseValues(String valueString) {
         HashSet<String> values = new HashSet<String>();
         valueString = StringUtils.trimToEmpty(valueString);
         valueString = StringUtils.strip(valueString, "()");

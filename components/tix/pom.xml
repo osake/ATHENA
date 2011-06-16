@@ -123,12 +123,16 @@
             <artifactId>codes</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.fracturedatlas.athena.helper</groupId>
+            <groupId>org.fracturedatlas.athena.plugin</groupId>
             <artifactId>available-tickets</artifactId>
         </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena.helper</groupId>
             <artifactId>ticketfactory</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.fracturedatlas.athena.plugin</groupId>
+            <artifactId>tags-sub-collection</artifactId>
         </dependency>
     </dependencies>
 </project>

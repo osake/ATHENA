@@ -73,7 +73,7 @@ public class CodeManagerTest {
     @Test
     public void testGetCode() throws Exception {
         Code savedCode = manager.getCode(SAMPLE_ID);
-        verify(mockRecordManager, times(1)).getTicket(CodeManager.CODE, SAMPLE_ID);
+        verify(mockRecordManager, times(1)).getRecord(CodeManager.CODE, SAMPLE_ID);
         assertNotNull(savedCode);
         assertNotNull(savedCode.getId());
         assertSavedcodeIsCorrect(savedCode, code);
@@ -84,7 +84,7 @@ public class CodeManagerTest {
     @Test
     public void testGetCodeDoesNotExist() throws Exception {
         assertNull(manager.getCode("32orino3n"));
-        verify(mockRecordManager, times(1)).getTicket(CodeManager.CODE, "32orino3n");
+        verify(mockRecordManager, times(1)).getRecord(CodeManager.CODE, "32orino3n");
     }
 
     //@Test
@@ -103,12 +103,12 @@ public class CodeManagerTest {
     @Test
     public void testDeleteCodeFromTicketThatDoesntHaveCode() throws Exception {
         manager.deleteCodeFromTicket(SAMPLE_ID, sampleTicket.getId());
-        verify(mockRecordManager, times(1)).getTicket(CodeManager.CODE, SAMPLE_ID);
+        verify(mockRecordManager, times(1)).getRecord(CodeManager.CODE, SAMPLE_ID);
     }
 
     @Test
     public void testDeleteCodeFromTicket() throws Exception {
-        when(mockRecordManager.getTicket("ticket", sampleTicket.getId())).thenReturn(targetTicket);
+        when(mockRecordManager.getRecord("ticket", sampleTicket.getId())).thenReturn(targetTicket);
         TicketProp mockProp = new StringTicketProp(null, SAMPLE_ID);
         when(mockApa.getTicketProp(code.getCodeAsFieldName(), CodeManager.CODE, targetTicket.getId())).thenReturn(mockProp);
 
@@ -129,7 +129,7 @@ public class CodeManagerTest {
         assertSavedcodeIsCorrect(createdCode, code);
         assertEquals(createdCode.getTickets(), code.getTickets());
 
-        verify(mockRecordManager, times(1)).getTicket("ticket", sampleTicket.getId());
+        verify(mockRecordManager, times(1)).getRecord("ticket", sampleTicket.getId());
         verify(mockRecordManager, times(code.getTickets().size())).updateRecord("ticket", targetTicket);
         verify(mockRecordManager, times(1)).createRecord(CodeManager.CODE, targetCode);
         verify(mockApa, times(1)).getPropField(targetPropField.getName());
@@ -167,7 +167,7 @@ public class CodeManagerTest {
         PTicket createdCodeRecord = createdCode.toRecord();
         Code updatedCode = manager.saveCode(createdCode);
 
-        verify(mockRecordManager, times(2)).getTicket("ticket", sampleTicket.getId());
+        verify(mockRecordManager, times(2)).getRecord("ticket", sampleTicket.getId());
         verify(mockRecordManager, times(2)).updateRecord(CodeManager.CODED_TYPE, sampleTicket);
         verify(mockRecordManager, times(1)).updateRecord(CodeManager.CODE, createdCodeRecord);
     }
@@ -187,7 +187,7 @@ public class CodeManagerTest {
             //pass
         }
 
-        verify(mockRecordManager, times(1)).getTicket("ticket", sampleTicket.getId());
+        verify(mockRecordManager, times(1)).getRecord("ticket", sampleTicket.getId());
         verify(mockRecordManager, times(1)).updateRecord(CodeManager.CODED_TYPE, sampleTicket);
         verify(mockRecordManager, times(0)).updateRecord(CodeManager.CODE, createdCodeRecord);
     }
@@ -201,11 +201,11 @@ public class CodeManagerTest {
         PTicket createdCodeRecord = createdCode.toRecord();
         createdCode.getTickets().add(anotherSampleTicket.getIdAsString());
         anotherSampleTicket.put(createdCode.getCode(), createdCode.getId());
-        when(mockRecordManager.getTicket(CodeManager.CODED_TYPE, anotherSampleTicket.getId())).thenReturn(anotherSampleTicket);
+        when(mockRecordManager.getRecord(CodeManager.CODED_TYPE, anotherSampleTicket.getId())).thenReturn(anotherSampleTicket);
 
         Code updatedCode = manager.saveCode(createdCode);
 
-        verify(mockRecordManager, times(2)).getTicket(CodeManager.CODED_TYPE, sampleTicket.getId());
+        verify(mockRecordManager, times(2)).getRecord(CodeManager.CODED_TYPE, sampleTicket.getId());
         verify(mockRecordManager, times(2)).updateRecord(CodeManager.CODED_TYPE, sampleTicket);
         verify(mockRecordManager, times(1)).updateRecord(CodeManager.CODED_TYPE, anotherSampleTicket);
         verify(mockRecordManager, times(1)).updateRecord(CodeManager.CODE, createdCodeRecord);
@@ -394,8 +394,8 @@ public class CodeManagerTest {
         MockitoAnnotations.initMocks(this);
         createSampleObjects();
 
-        when(mockRecordManager.getTicket("ticket", sampleTicket.getId())).thenReturn(sampleTicket);
-        when(mockRecordManager.getTicket(CodeManager.CODE, SAMPLE_ID)).thenReturn(targetCodeWithId);
+        when(mockRecordManager.getRecord("ticket", sampleTicket.getId())).thenReturn(sampleTicket);
+        when(mockRecordManager.getRecord(CodeManager.CODE, SAMPLE_ID)).thenReturn(targetCodeWithId);
         when(mockRecordManager.updateRecord("ticket", targetTicket)).thenReturn(targetTicket);
         when(mockRecordManager.createRecord(CodeManager.CODE, targetCode)).thenReturn(targetCodeWithId);
 
