@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,7 +58,6 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
     
     Boolean indexingDisabled = false;
     
-    IndexWriter indexWriter;
     IndexWriterConfig config;
     
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
@@ -74,6 +74,7 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
      */
     public void initializeIndex() {
         analyzer = new WhitespaceAnalyzer(Version.LUCENE_32);
+        config = new IndexWriterConfig(Version.LUCENE_32, analyzer);
 
     }
         
@@ -93,7 +94,51 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
     }
     
     /*
-     * Will not search for record before inserting it into the index
+     * Will not search for record before inserting it into the index.
+     * Will create and close its own indexWriter
+     */
+    public void addAllToIndex(Collection<PTicket> records) {
+        if(records == null || records.size() == 0 || indexingDisabled) {
+            return;
+        }
+        
+        IndexWriter indexWriter = null;
+        config = new IndexWriterConfig(Version.LUCENE_32, analyzer);
+        
+        try{
+            indexWriter = new IndexWriter(directory, config);
+            for(PTicket record : records) {
+                Document doc = new Document();
+                StringBuffer documentText = new StringBuffer();
+                doc.add(new Field("_id", record.getIdAsString(), Field.Store.YES, Field.Index.ANALYZED));
+                doc.add(new Field("_type", record.getType(), Field.Store.YES, Field.Index.ANALYZED));
+
+                for(String key : record.getProps().keySet()) {
+                    List<String> vals = record.getProps().get(key);
+
+                    for(String val : vals) {
+                        addToDocument(doc, key, val);
+                        documentText.append(val).append(" ");
+                    }
+                }
+                addToDocument(doc, DOC_TEXT, documentText.toString());        
+                indexWriter.addDocument(doc);    
+            }
+        
+            indexWriter.optimize();
+        } catch (NullPointerException npe) {
+            logger.error("Null pointer exception coming.  Did you call initializeIndex() ?");
+            npe.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            cleanup(indexWriter);
+        }
+    }
+    
+    /*
+     * Will not search for record before inserting it into the index.
+     * Will create and close its own indexWriter
      */
     public void addToIndex(PTicket record) {
         if(record == null || record.getId() == null || indexingDisabled) {
@@ -115,16 +160,20 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         }
         addToDocument(doc, DOC_TEXT, documentText.toString());
         
+        IndexWriter indexWriter = null;
         try{
             config = new IndexWriterConfig(Version.LUCENE_32, analyzer);
             indexWriter = new IndexWriter(directory, config);
             indexWriter.addDocument(doc);
+            indexWriter.optimize();
             indexWriter.close();
         } catch (NullPointerException npe) {
             logger.error("Null pointer exception coming.  Did you call initializeIndex() ?");
             npe.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            cleanup(indexWriter);
         }
     }
     
@@ -141,19 +190,37 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         }
         String id = IdAdapter.toString(oid);
         
+        IndexWriter indexWriter = null;
         try{
             config = new IndexWriterConfig(Version.LUCENE_32, analyzer);
             indexWriter = new IndexWriter(directory, config);
             indexWriter.deleteDocuments(new Term("_id", id));
+            indexWriter.optimize();
             indexWriter.close();
         } catch (NullPointerException npe) {
             logger.error("Null pointer exception coming.  Did you call initializeIndex() ?");
             npe.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            cleanup(indexWriter);
         }
         
     }   
+    
+    private void cleanup(IndexWriter iw) {
+        if(iw == null) {
+            return;
+        }
+        
+        try{
+            iw.close();
+        } catch (IOException ioe) {
+            logger.error("Error trying to close index writer");
+            logger.error("{}", ioe.getClass().getName());
+            logger.error("{}", ioe.getMessage());
+        }
+    }
     
     /*
      * Will search the index for record.id and delete the document if found,
@@ -230,9 +297,7 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
                 Set<PTicket> records = findTickets(search);
                 logger.info("Indexing {} records of type {}", records.size(), type);
                 long startTime = System.currentTimeMillis();
-                for(PTicket record : records) {
-                    addToIndex(record);
-                }
+                addAllToIndex(records);
                 long endTime = System.currentTimeMillis();
                 logger.info("Done.  Took {} millis", (endTime - startTime));
             }
