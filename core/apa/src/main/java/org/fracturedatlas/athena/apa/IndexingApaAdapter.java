@@ -59,6 +59,7 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
     Boolean indexingDisabled = false;
     
     IndexWriterConfig config;
+    IndexSearcher searcher;
     
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -268,7 +269,6 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         
         try {
             Query q = new QueryParser(Version.LUCENE_32, DOC_TEXT, analyzer).parse(query);
-            IndexSearcher searcher = new IndexSearcher(directory, true);
             TopDocs topDocs = searcher.search(q, numResults);
             ScoreDoc[] hits = topDocs.scoreDocs;
             for(int i=start;i<hits.length;++i) {
@@ -289,6 +289,14 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
 
     public void setDirectory(Directory directory) {
         this.directory = directory;
+        try{
+            if(!indexingDisabled) {
+                searcher = new IndexSearcher(directory, true);
+            }
+        } catch (IOException ioe) {
+            logger.error("Could not instantiate an index searcher.  Indexing is disabled");
+            indexingDisabled = true;
+        }
         if(rebuildNeeded() && !indexingDisabled) {
             logger.info("Rebuilding index");
             Set<String> types = getTypes();
