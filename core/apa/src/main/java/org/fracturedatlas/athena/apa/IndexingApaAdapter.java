@@ -31,6 +31,8 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.LogDocMergePolicy;
+import org.apache.lucene.index.LogMergePolicy;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
@@ -38,6 +40,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
+import org.apache.lucene.store.NoSuchDirectoryException;
 import org.apache.lucene.util.Version;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.id.IdAdapter;
@@ -59,11 +62,14 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
     Boolean indexingDisabled = false;
     
     IndexWriterConfig config;
-    IndexSearcher searcher;
+    
+    //do not use this directly, call getSearcher() instead
+    static IndexSearcher searcher;
     
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     public static final Integer DEFAULT_PAGE_SIZE = 10;
+    public static final Integer MERGE_FACTOR = 20;
     
     public final static String DOC_TEXT = "text";
     
@@ -76,6 +82,9 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
     public void initializeIndex() {
         analyzer = new WhitespaceAnalyzer(Version.LUCENE_32);
         config = new IndexWriterConfig(Version.LUCENE_32, analyzer);
+        LogMergePolicy mergePolicy = new LogDocMergePolicy();
+        mergePolicy.setMergeFactor(MERGE_FACTOR);
+        config.setMergePolicy(mergePolicy);
 
     }
         
@@ -269,11 +278,12 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         
         try {
             Query q = new QueryParser(Version.LUCENE_32, DOC_TEXT, analyzer).parse(query);
-            TopDocs topDocs = searcher.search(q, numResults);
+            IndexSearcher indexSearcher = getSearcher();
+            TopDocs topDocs = indexSearcher.search(q, numResults);
             ScoreDoc[] hits = topDocs.scoreDocs;
             for(int i=start;i<hits.length;++i) {
                 int docId = hits[i].doc;
-                Document d = searcher.doc(docId);
+                Document d = indexSearcher.doc(docId);
                 ids.add(d.get("_id"));
             }
             return ids;
@@ -286,17 +296,31 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
     public Directory getDirectory() {
         return directory;
     }
+    
+    private IndexSearcher getSearcher() {
+        
+        if(searcher == null) {
+            try{
+                if(!indexingDisabled) {
+                    searcher = new IndexSearcher(directory, true);
+                    return searcher;
+                }
+            } catch (NoSuchDirectoryException ioe) {
+                logger.error("Could not instantiate an index searcher.  Index does not exist.  Add some items to the index and try again.");
+                logger.error(ioe.getMessage());
+            } catch (IOException ioe) {
+                logger.error("Could not instantiate an index searcher.  Indexing is will now be disabled");
+                logger.error(ioe.getMessage());
+                logger.error("{}", ioe);
+                indexingDisabled = true;
+            }
+        }
+        
+        return searcher;
+    }
 
     public void setDirectory(Directory directory) {
         this.directory = directory;
-        try{
-            if(!indexingDisabled) {
-                searcher = new IndexSearcher(directory, true);
-            }
-        } catch (IOException ioe) {
-            logger.error("Could not instantiate an index searcher.  Indexing is disabled");
-            indexingDisabled = true;
-        }
         if(rebuildNeeded() && !indexingDisabled) {
             logger.info("Rebuilding index");
             Set<String> types = getTypes();
@@ -310,7 +334,7 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
                 logger.info("Done.  Took {} millis", (endTime - startTime));
             }
         } else if (indexingDisabled) {
-            logger.info("Logging is disabled");
+            logger.info("Indexing is disabled.  Re-enable indexing by setting athena.index.disabled=false in db.properties");
         }
     }
     
