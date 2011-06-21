@@ -153,9 +153,13 @@ public class ApaAdapterIndexSearchTest extends BaseApaAdapterTest {
     
     @Before
     public void setup() {
-        addPropField(ValueType.STRING, "firstName", StrictType.NOT_STRICT);
-        addPropField(ValueType.STRING, "lastName", StrictType.NOT_STRICT);
-        addPropField(ValueType.STRING, "occupation", StrictType.NOT_STRICT);
+        try{
+            addPropField(ValueType.STRING, "firstName", StrictType.NOT_STRICT);
+            addPropField(ValueType.STRING, "lastName", StrictType.NOT_STRICT);
+            addPropField(ValueType.STRING, "occupation", StrictType.NOT_STRICT);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         
         jim = addRecord("person",
                   "firstName", "Jim",

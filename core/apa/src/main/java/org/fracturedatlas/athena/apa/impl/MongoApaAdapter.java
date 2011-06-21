@@ -76,6 +76,21 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         initializeIndex();
     }
 
+    public MongoApaAdapter(String host,
+                           Integer port,
+                           String dbName,
+                           String fieldsCollectionName,
+                           String user,
+                           String pass) throws UnknownHostException {
+        this.fieldsCollectionName = fieldsCollectionName;
+        Mongo m = new Mongo(host, port);
+        db = m.getDB(dbName);
+        db.authenticate(user, pass.toCharArray());
+        fields = db.getCollection(fieldsCollectionName);
+        
+        initializeIndex();
+    }
+
     public PTicket getRecord(String type, Object id) {
         return toRecord(getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(id)), true);
     }

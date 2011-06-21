@@ -318,9 +318,23 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         
         return searcher;
     }
+    
+    private void closeSearcher() {
+        if(searcher != null) {
+            try{
+                searcher.close();
+            } catch(IOException ioe) {
+                logger.error("Could not close searcher");
+                logger.error("{}", ioe);
+            }
+        }
+        
+        searcher = null;
+    }
 
     public void setDirectory(Directory directory) {
         this.directory = directory;
+        closeSearcher();
         if(rebuildNeeded() && !indexingDisabled) {
             logger.info("Rebuilding index");
             Set<String> types = getTypes();
