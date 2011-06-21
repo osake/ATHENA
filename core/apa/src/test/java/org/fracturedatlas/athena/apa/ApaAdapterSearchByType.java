@@ -64,6 +64,17 @@ public class ApaAdapterSearchByType extends BaseApaAdapterTest {
         assertEquals(1, tickets.size());
     }
 
+    @Test
+    public void testFindRecordsUnknownType() {
+
+        search = new AthenaSearch.Builder()
+                              .type("system.indexes")
+                              .build();
+        Collection<PTicket> tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(0, tickets.size());
+    }
+
     @Before
     public void addTickets() throws Exception {
 

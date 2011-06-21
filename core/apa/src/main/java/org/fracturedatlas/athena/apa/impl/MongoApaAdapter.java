@@ -38,6 +38,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 import org.fracturedatlas.athena.apa.IndexingApaAdapter;
 import org.slf4j.Logger;
 import org.fracturedatlas.athena.apa.exception.ApaException;
@@ -102,9 +103,14 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
     @Override
     public Set<String> getTypes(){
         Set <String> types = new HashSet<String>();
+        Set <String> outTypes = new HashSet<String>();
         types = db.getCollectionNames();
         types.remove(fieldsCollectionName);
-        types.remove("system.indexes");
+        for(String type : types) {
+            if(!type.startsWith("system.")) {
+                outTypes.add(type);
+            }
+        }
         return types;
     }
 
@@ -266,7 +272,11 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         recordsCursor = setSkip(recordsCursor, athenaSearch.getSearchModifiers().get(AthenaSearch.START));
 
         for(DBObject recordObject : recordsCursor) {
-            tickets.add(toRecord(recordObject));
+            try {
+                tickets.add(toRecord(recordObject));
+            } catch (ApaException ae) {
+                logger.error("ApaException when converting search result to record, skipping");
+            }
         }
         return tickets;
     }
@@ -594,20 +604,27 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         PTicket t = null;
 
         if(recordObject != null) {
-            t = new PTicket();
-            t.setId(recordObject.get("_id").toString());
-            t.setType((String)recordObject.get("type"));
-            
-            if(includeProps) {
-                DBObject propsObj = (DBObject)recordObject.get("props");
-                for(String key : propsObj.keySet()) {
-                    Object val = propsObj.get(key);
-                    if(key.contains(":")) {
-                        t.getSystemProps().putSingle(key, coerceToClientTicketValue(key, val));
-                    } else {
-                        t.put(key, coerceToClientTicketValue(key, val));
+            try{
+                t = new PTicket();
+                t.setId(recordObject.get("_id").toString());
+                t.setType((String)recordObject.get("type"));
+
+                if(includeProps) {
+                    DBObject propsObj = (DBObject)recordObject.get("props");
+                    for(String key : propsObj.keySet()) {
+                        Object val = propsObj.get(key);
+                        if(key.contains(":")) {
+                            t.getSystemProps().putSingle(key, coerceToClientTicketValue(key, val));
+                        } else {
+                            t.put(key, coerceToClientTicketValue(key, val));
+                        }
                     }
                 }
+            } catch (Exception e) {
+                logger.error("Problem converting document to record");
+                logger.error("This does not appear to be an Athena Record object:");
+                logger.error("{}", recordObject);
+                throw new ApaException(e.getMessage());
             }
         }
 
