@@ -264,6 +264,9 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         
         String query = search.getQuery();
         
+        query = query + " AND _type:" + search.getType();
+        System.out.println(query);
+        
         Integer start = 0;
         if(search.getStart() != null) {
             start = search.getStart();

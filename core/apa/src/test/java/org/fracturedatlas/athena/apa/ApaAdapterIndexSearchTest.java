@@ -133,6 +133,25 @@ public class ApaAdapterIndexSearchTest extends BaseApaAdapterTest {
                                   .build();
         people = apa.findTickets(search);
         assertEquals(6, people.size());
+        
+        //now search for one specific guy
+        PTicket specificGuy = people.toArray(new PTicket[people.size()])[0];
+        String firstName = specificGuy.get("firstName");
+        
+        search = new AthenaSearch.Builder()
+                                  .type("person")
+                                  .query("fisherman firstName:" + firstName)
+                                  .build();
+        people = apa.findTickets(search);
+        assertEquals(1, people.size());
+        
+        search = new AthenaSearch.Builder()
+                                  .type("person")
+                                  .query("fisherman AND firstName:" + firstName)
+                                  .build();
+        people = apa.findTickets(search);
+        assertEquals(1, people.size());
+        
     }
 
     private void addFishermen(int howMany) {
