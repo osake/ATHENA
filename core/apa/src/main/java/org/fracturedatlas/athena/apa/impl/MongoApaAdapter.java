@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 */
 package org.fracturedatlas.athena.apa.impl;
 
+import com.mongodb.BasicDBList;
 import java.net.UnknownHostException;
 
 import org.bson.types.ObjectId;
@@ -38,7 +39,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.apache.commons.lang.StringUtils;
 import org.fracturedatlas.athena.apa.IndexingApaAdapter;
 import org.slf4j.Logger;
 import org.fracturedatlas.athena.apa.exception.ApaException;
@@ -107,7 +107,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         types = db.getCollectionNames();
         types.remove(fieldsCollectionName);
         for(String type : types) {
-            if(!type.startsWith("system.")) {
+            if(!type.startsWith("system.") && !type.equals(fieldsCollectionName)) {
                 outTypes.add(type);
             }
         }
@@ -206,15 +206,12 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
     }
 
     /**
-     * Casts a value from a PTicket to proper typing
+     * Casts a value from an object to a string using the valueType of key
      * @param val
-     * @return the val with proper type
+     * @return the val as String
      */
     public String coerceToClientTicketValue(String key, Object val) {
-        System.out.println("***************************************");
-        System.out.println(key);
         PropField field = getPropField(key);
-        System.out.println(field);
         TicketProp searchProp = field.getValueType().newTicketProp();
         searchProp.setValue(val);
         return searchProp.getValueAsString();
@@ -554,6 +551,50 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
     }
 
     @Override
+    public List<TicketProp> getTicketProps(String fieldName, String type, Object ticketId) {
+        TicketProp ticketProp = null;
+        List<TicketProp> outProps = null;
+        DBObject recordDoc = getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(ticketId));
+
+        if(recordDoc != null) {
+            DBObject propsObj = (DBObject)recordDoc.get("props");
+            if(propsObj.containsField(fieldName)) {
+                outProps = new ArrayList<TicketProp>();
+                PropField field = getPropField(fieldName);
+
+                Object props = propsObj.get(fieldName);
+                if(props.getClass().isAssignableFrom(BasicDBList.class)) {
+                    for(Object o : (BasicDBList)props) {
+                        outProps.add(makeTicketProp(type, ticketId, field, o));                        
+                    }
+                } else {
+                    outProps.add(makeTicketProp(type, ticketId, field, props));     
+                }
+            }
+        }
+
+        return outProps;
+    }
+    
+    private TicketProp makeTicketProp(String type, Object ticketId, PropField field, Object value) {
+        TicketProp ticketProp = field.getValueType().newTicketProp();
+        ticketProp.setId(null);
+        ticketProp.setPropField(field);
+
+        try {
+            ticketProp.setValue(value);
+        } catch (Exception e) {
+            //TODO: This should throw something besides Exception
+            logger.error(e.getMessage(),e);
+        }
+
+        JpaRecord hugeWorkaround = new JpaRecord(type);
+        hugeWorkaround.setId(ticketId);
+        ticketProp.setTicket(hugeWorkaround);
+        return ticketProp;
+    }
+    
+    @Override
     public void deleteTicketProp(TicketProp prop) {
         
         if(prop.getTicket() != null) {
@@ -599,10 +640,6 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         return toRecord(recordObject, true);
     }
 
-    private PTicket toJpaRecord(DBObject recordObject) {
-        return toRecord(recordObject, true);
-    }
-
     private PTicket toRecord(DBObject recordObject, Boolean includeProps) {
         PTicket t = null;
 
@@ -619,14 +656,20 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
                         if(key.contains(":")) {
                             t.getSystemProps().putSingle(key, coerceToClientTicketValue(key, val));
                         } else {
-                            //t.put(key, coerceToClientTicketValue(key, val));
+                            if(val.getClass().isAssignableFrom(BasicDBList.class)) {
+                                BasicDBList valList = (BasicDBList)val;            
+                                for(Object o : valList) {
+                                    t.getProps().add(key, coerceToClientTicketValue(key, o));
+                                }
+                            } else {
+                                t.put(key, coerceToClientTicketValue(key, val));
+                            }
                         }
                     }
                 }
             } catch (Exception e) {
                 logger.error("Problem converting document to record");
                 logger.error("This does not appear to be an Athena Record object:");
-                logger.error("{}", e);
                 logger.error("{}", recordObject);
                 throw new ApaException(e.getMessage());
             }

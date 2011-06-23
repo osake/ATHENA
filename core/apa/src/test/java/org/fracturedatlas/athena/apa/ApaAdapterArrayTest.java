@@ -53,80 +53,84 @@ public class ApaAdapterArrayTest extends BaseApaAdapterTest {
 
         jim = apa.saveRecord(jim);
         assertEquals(2, jim.getProps().get("teams").size());
-        System.out.println(jim);
-//        assertTrue(jim.getProps().get("teams").contains(ravens.getIdAsString()));
-//        assertTrue(jim.getProps().get("teams").contains(chiefs.getIdAsString()));
-//
-//        jim = apa.getRecord(jim.getType(), jim.getId());
-//        assertEquals(2, jim.getProps().get("teams").size());
-//        assertTrue(jim.getProps().get("teams").contains(ravens.getIdAsString()));
-//        assertTrue(jim.getProps().get("teams").contains(chiefs.getIdAsString()));
+        assertTrue(jim.getProps().get("teams").contains(ravens.getIdAsString()));
+        assertTrue(jim.getProps().get("teams").contains(chiefs.getIdAsString()));
+        assertTrue(jim.get("name").equals("Jim"));
+
+        jim = apa.getRecord(jim.getType(), jim.getId());
+        assertEquals(2, jim.getProps().get("teams").size());
+        assertTrue(jim.getProps().get("teams").contains(ravens.getIdAsString()));
+        assertTrue(jim.getProps().get("teams").contains(chiefs.getIdAsString()));
+        assertTrue(jim.get("name").equals("Jim"));
     }
-//
-//    @Test
-//    public void testSaveRecordAddArrayValue() {
-//        jim.getProps().put("teams", Arrays.asList(ravens.getIdAsString(), chiefs.getIdAsString()));
-//        jim = apa.saveRecord(jim);
-//        jim.getProps().add("teams", raiders.getIdAsString());
-//        jim = apa.saveRecord(jim);
-//        assertEquals(3, jim.getProps().get("teams").size());
-//        assertTrue(jim.getProps().get("teams").contains(ravens.getIdAsString()));
-//        assertTrue(jim.getProps().get("teams").contains(chiefs.getIdAsString()));
-//        assertTrue(jim.getProps().get("teams").contains(raiders.getIdAsString()));
-//    }
-//
-//    @Test
-//    public void testSaveRecordReduceArrayValues() {
-//        jim.getProps().add("teams", ravens.getIdAsString());
-//        jim.getProps().add("teams", chiefs.getIdAsString());
-//        jim.getProps().add("teams", raiders.getIdAsString());
-//        jim = apa.saveRecord(jim);
-//        assertEquals(3, jim.getProps().get("teams").size());
-//        jim.getProps().put("teams", Arrays.asList(ravens.getIdAsString(), chiefs.getIdAsString()));
-//        jim = apa.saveRecord(jim);
-//        assertEquals(2, jim.getProps().get("teams").size());
-//        assertTrue(jim.getProps().get("teams").contains(ravens.getIdAsString()));
-//        assertTrue(jim.getProps().get("teams").contains(chiefs.getIdAsString()));
-//    }
-//
-//    @Test
-//    public void testSaveRecordDeleteArrayValue() {
-//        jim.getProps().add("teams", ravens.getIdAsString());
-//        jim.getProps().add("teams", chiefs.getIdAsString());
-//        jim.getProps().add("teams", raiders.getIdAsString());
-//        jim = apa.saveRecord(jim);
-//        assertEquals(3, jim.getProps().get("teams").size());
-//        jim.getProps().remove("teams");
-//        jim = apa.saveRecord(jim);
-//        assertNull(jim.getProps().get("teams"));
-//    }
-//
-//    @Test
-//    public void testSaveRecordWithInvalidArrayValue() {
-//        ravens.getProps().put("gameTimes", Arrays.asList("2010-04-04T02:02:02Z", "notadate"));
-//        try{
-//            jim = apa.saveRecord(ravens);
-//            fail("Needed Apa Exception");
-//        } catch (InvalidValueException e) {
-//            //pass
-//        }
-//    }
-//
-//    @Test
-//    public void testUpdateRecordWithInvalidArrayValue() {
-//        ravens.getProps().put("gameTimes", Arrays.asList("2010-04-04T02:02:02Z"));
-//        ravens = apa.saveRecord(ravens);
-//        ravens.getProps().add("gameTimes", "notadate");
-//        try{
-//            ravens = apa.saveRecord(ravens);
-//            fail("Needed Apa Exception");
-//        } catch (InvalidValueException e) {
-//            //pass
-//        }
-//    }
-//
+
+    @Test
+    public void testSaveRecordAddArrayValue() {
+        jim.getProps().add("teams", ravens.getIdAsString());
+        jim.getProps().add("teams", chiefs.getIdAsString());
+        jim = apa.saveRecord(jim);
+        jim = apa.getRecord(jim.getType(), jim.getId());
+        jim.getProps().add("teams", raiders.getIdAsString());
+        assertEquals(3, jim.getProps().get("teams").size());
+        assertTrue(jim.getProps().get("teams").contains(ravens.getIdAsString()));
+        assertTrue(jim.getProps().get("teams").contains(chiefs.getIdAsString()));
+        assertTrue(jim.getProps().get("teams").contains(raiders.getIdAsString()));
+    }
+
+    @Test
+    public void testSaveRecordReduceArrayValues() {
+        jim.getProps().add("teams", ravens.getIdAsString());
+        jim.getProps().add("teams", chiefs.getIdAsString());
+        jim.getProps().add("teams", raiders.getIdAsString());
+        jim = apa.saveRecord(jim);
+        assertEquals(3, jim.getProps().get("teams").size());
+        jim.getProps().put("teams", Arrays.asList(ravens.getIdAsString(), chiefs.getIdAsString()));
+        jim = apa.saveRecord(jim);
+        assertEquals(2, jim.getProps().get("teams").size());
+        assertTrue(jim.getProps().get("teams").contains(ravens.getIdAsString()));
+        assertTrue(jim.getProps().get("teams").contains(chiefs.getIdAsString()));
+    }
+
+    @Test
+    public void testSaveRecordDeleteArrayValue() {
+        jim.getProps().add("teams", ravens.getIdAsString());
+        jim.getProps().add("teams", chiefs.getIdAsString());
+        jim.getProps().add("teams", raiders.getIdAsString());
+        jim = apa.saveRecord(jim);
+        assertEquals(3, jim.getProps().get("teams").size());
+        jim.getProps().remove("teams");
+        jim = apa.saveRecord(jim);
+        assertNull(jim.getProps().get("teams"));
+    }
+
+    @Test
+    public void testSaveRecordWithInvalidArrayValue() {
+        ravens.getProps().put("gameTimes", Arrays.asList("2010-04-04T02:02:02Z", "notadate"));
+        try{
+            jim = apa.saveRecord(ravens);
+            fail("Needed Apa Exception");
+        } catch (InvalidValueException e) {
+            //pass
+        }
+    }
+
+    @Test
+    public void testUpdateRecordWithInvalidArrayValue() {
+        ravens.getProps().add("gameTimes", "2010-04-04T02:02:02Z");
+        ravens = apa.saveRecord(ravens);
+        ravens.getProps().add("gameTimes", "notadate");
+        try{
+            ravens = apa.saveRecord(ravens);
+            fail("Needed Apa Exception");
+        } catch (InvalidValueException e) {
+            //pass
+        }
+    }
+
     @Before
     public void setup() {
+        
+        
         /* fans */
         addPropField(ValueType.STRING,"name",Boolean.FALSE);
         addPropField(ValueType.STRING,"teams",Boolean.FALSE);

@@ -265,7 +265,7 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         String query = search.getQuery();
         
         query = query + " AND _type:" + search.getType();
-        System.out.println(query);
+        logger.debug("{}", query);
         
         Integer start = 0;
         if(search.getStart() != null) {
@@ -356,7 +356,7 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
     }
     
     public Boolean getIndexingDisabled() {
-        return indexingDisabled;
+        return this.indexingDisabled;
     }
 
     public void setIndexingDisabled(Boolean indexingDisabled) {
