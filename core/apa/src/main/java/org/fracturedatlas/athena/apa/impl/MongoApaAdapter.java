@@ -211,7 +211,10 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
      * @return the val with proper type
      */
     public String coerceToClientTicketValue(String key, Object val) {
+        System.out.println("***************************************");
+        System.out.println(key);
         PropField field = getPropField(key);
+        System.out.println(field);
         TicketProp searchProp = field.getValueType().newTicketProp();
         searchProp.setValue(val);
         return searchProp.getValueAsString();
@@ -616,13 +619,14 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
                         if(key.contains(":")) {
                             t.getSystemProps().putSingle(key, coerceToClientTicketValue(key, val));
                         } else {
-                            t.put(key, coerceToClientTicketValue(key, val));
+                            //t.put(key, coerceToClientTicketValue(key, val));
                         }
                     }
                 }
             } catch (Exception e) {
                 logger.error("Problem converting document to record");
                 logger.error("This does not appear to be an Athena Record object:");
+                logger.error("{}", e);
                 logger.error("{}", recordObject);
                 throw new ApaException(e.getMessage());
             }

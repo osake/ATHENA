@@ -291,13 +291,6 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
         assertEquals("233", ticket.get("SEAT2"));
     }
 
-    //These may not run on mongo given that collections may be left over from previous tests.
-    @Test
-    public void testGetTypesNoTypes() {
-        Set<String> types = apa.getTypes();
-        assertEquals(0, types.size());
-    }
-
     @Test
     public void testGetTypes() {
         addPropField(ValueType.STRING, "firstName", StrictType.NOT_STRICT);
