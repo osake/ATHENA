@@ -108,6 +108,9 @@ public class ApaAdapterIndexSearchTest extends BaseApaAdapterTest {
     @Test
     public void searchIndexSecondPage() {
         addFishermen(40);
+        PTicket specificGuy = addRecord("person",
+                      "firstName", "Charlie",
+                      "occupation", "fisherman");
         
         AthenaSearch search = new AthenaSearch.Builder()
                                               .type("person")
@@ -135,7 +138,6 @@ public class ApaAdapterIndexSearchTest extends BaseApaAdapterTest {
         assertEquals(6, people.size());
         
         //now search for one specific guy
-        PTicket specificGuy = people.toArray(new PTicket[people.size()])[0];
         String firstName = specificGuy.get("firstName");
         
         search = new AthenaSearch.Builder()
