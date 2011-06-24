@@ -449,6 +449,11 @@ public class JpaApaAdapter extends IndexingApaAdapter implements ApaAdapter {
      */
     @Override
     public Set<PTicket> findTickets(AthenaSearch athenaSearch) {
+        
+        if(athenaSearch.getType() == null) {
+            throw new ApaException("You must specify a record type when doing a search");
+        }
+        
         logger.debug("Searching for tickets:");
         logger.debug("{}", athenaSearch);
 

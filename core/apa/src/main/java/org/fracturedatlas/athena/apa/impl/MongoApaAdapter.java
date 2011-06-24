@@ -115,6 +115,12 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
     }
 
     @Override
+    public PTicket saveRecord(String type, PTicket t) {
+        t.setType(type);
+        return saveRecord(t);
+    }
+
+    @Override
     public PTicket saveRecord(PTicket t) {
         BasicDBObject doc = new BasicDBObject();
 
@@ -132,22 +138,27 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         for(String key : t.getProps().keySet()) {
             List<String> vals = t.getProps().get(key);
             List<Object> properlyTypedVals = new ArrayList<Object>();
+            List<String> properlyTypedStrings = new ArrayList<String>();
             if(vals.size() > 1) {
                 for(String val : vals) {
-                    enforceCorrectValueType(key, val);
-                    properlyTypedVals.add(stringToType(key, val));
+                    TicketProp prop = enforceCorrectValueType(key, val);
+                    properlyTypedVals.add(prop.getValue());
+                    properlyTypedStrings.add(prop.getValueAsString());
                 }
                 props.put(key, properlyTypedVals);
+                t.getProps().put(key, properlyTypedStrings);
             } else {
-                enforceCorrectValueType(key, vals.get(0));
-                props.put(key, stringToType(key, vals.get(0)));
+                TicketProp prop = enforceCorrectValueType(key, vals.get(0));
+                props.put(key, prop.getValue());
+                t.put(key, prop.getValueAsString());
             }
         }
 
         for(String key : t.getSystemProps().keySet()) {
             for(String val : t.getSystemProps().get(key)) {
-                enforceCorrectValueType(key, (String)val);
-                props.put(key, stringToType(key, (String)val));
+                TicketProp prop = enforceCorrectValueType(key, (String)val);
+                props.put(key, prop.getValue());
+                t.put(key, prop.getValueAsString());
             }
         }
 
@@ -159,7 +170,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         return t;
     }
     
-    private Boolean enforceCorrectValueType(String key, String value) {
+    private TicketProp enforceCorrectValueType(String key, String value) {
         //hacky, but this will throw an InvalidValueException if it doesn't work
         //so that's good for us
         PropField propField = getPropField(key);
@@ -172,7 +183,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         ticketProp.setPropField(propField);
         ticketProp.setValue(value);
         
-        return true;
+        return ticketProp;
     }
     
     @Override
@@ -252,21 +263,27 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
                 }
                 
                 //load the field's value type so we can apaSearch for it with proper typing
-                TicketProp searchProp = field.getValueType().newTicketProp();
+                //UNLESS THIS IS AN IN QUERY because we have to preserve the array
+                if(constraint.getOper().equals(Operator.IN)) {
+                    buildMongoQuery(currentQuery, PROPS_STRING + "." + field.getName(), constraint.getOper(), constraint.getValueSet());
+                } else {
+                    TicketProp searchProp = field.getValueType().newTicketProp();
 
-                try{
-                    searchProp.setValue(constraint.getValue());
-                } catch (Exception e) {
-                    //searching on a param with a bad type (like apaSearch a boolean field for "4"
-                    //TODO: Handle it
+                    try{
+                        searchProp.setValue(constraint.getValue());
+                    } catch (Exception e) {
+                        //searching on a param with a bad type (like apaSearch a boolean field for "4"
+                        //TODO: Handle it
+                    }
+
+                    buildMongoQuery(currentQuery, PROPS_STRING + "." + field.getName(), constraint.getOper(), searchProp.getValue());
                 }
-
-                buildMongoQuery(currentQuery, PROPS_STRING + "." + field.getName(), constraint.getOper(), searchProp.getValue());
             } else {
                 throw new InvalidFieldException("No Property Field called " + constraint.getParameter() + " exists.");
             }
         }
 
+        logger.debug("Querying: [{}]", currentQuery);
         DBCursor recordsCursor = db.getCollection(athenaSearch.getType()).find(currentQuery);
         recordsCursor = setLimit(recordsCursor, athenaSearch.getSearchModifiers().get(AthenaSearch.LIMIT));
         recordsCursor = setSkip(recordsCursor, athenaSearch.getSearchModifiers().get(AthenaSearch.START));

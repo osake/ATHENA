@@ -19,29 +19,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.web.resource.container;
 
-import org.fracturedatlas.athena.search.AthenaSearch;
-import com.google.gson.Gson;
 import com.sun.jersey.api.client.ClientResponse;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
 import javax.ws.rs.core.MediaType;
-import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.apa.impl.jpa.BooleanTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
-import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
-import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
+import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.Operator;
+import java.text.ParseException;
+import org.joda.time.DateTime;
+import com.google.gson.Gson;
+import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
+import org.fracturedatlas.athena.util.date.DateUtil;
 import org.fracturedatlas.athena.web.util.BaseTixContainerTest;
 import org.fracturedatlas.athena.web.util.JsonUtil;
-import org.fracturedatlas.athena.util.date.DateUtil;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -140,7 +130,7 @@ public class SaveRecordContainerTest extends BaseTixContainerTest {
         addPropField(ValueType.INTEGER, "PRICE", Boolean.FALSE);
         addPropField(ValueType.BOOLEAN, "SECTION", Boolean.FALSE);
         PTicket pTicket =  new PTicket();
-        pTicket.put("PRICE", "4");
+        pTicket.put("PRICE", "4528");
         pTicket.put("SECTION", "true");
         pTicket.put("BAD_FIELD", "BAD_FISH");
 
@@ -150,11 +140,8 @@ public class SaveRecordContainerTest extends BaseTixContainerTest {
 
         //make sure nothing got saved
         AthenaSearch as = new AthenaSearch();
-        as.addConstraint("PRICE", Operator.EQUALS, "4");
-        assertEquals(0, apa.findTickets(as).size());
-
-        as = new AthenaSearch();
-        as.addConstraint("SECTION", Operator.EQUALS, "true");
+        as.setType("ticket");
+        as.addConstraint("PRICE", Operator.EQUALS, "4258");
         assertEquals(0, apa.findTickets(as).size());
     }
 
@@ -169,7 +156,17 @@ public class SaveRecordContainerTest extends BaseTixContainerTest {
         assertRecordsEqual(pTicket, savedPTicket, false);
 
         PTicket retrTicket = apa.getRecord("ticket", savedPTicket.getId());
-        assertRecordsEqual(retrTicket, savedPTicket, true);
+        assertEquals(savedPTicket.get("PRICE"), retrTicket.get("PRICE"));
+        assertEquals(savedPTicket.get("SECTION"), retrTicket.get("SECTION"));
+        assertEquals(savedPTicket.get("DESCRIPTION"), retrTicket.get("DESCRIPTION"));
+        try {
+            DateTime one = DateUtil.parseDateTime(savedPTicket.get("TIME"));
+            DateTime two = DateUtil.parseDateTime(retrTicket.get("TIME"));
+            assertTrue(one.isEqual(two));
+        } catch (ParseException pe) {
+            fail("Could not parse date returned from ATHENA");
+        }
+        
     }
 
     public PTicket createSampleRecord() {

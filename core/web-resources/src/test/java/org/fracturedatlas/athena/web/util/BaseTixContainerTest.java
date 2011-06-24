@@ -73,6 +73,13 @@ public abstract class BaseTixContainerTest extends JerseyTest {
         ApplicationContext context = new ClassPathXmlApplicationContext("testApplicationContext.xml");
         apa = (ApaAdapter)context.getBean("apa");
     }
+    
+    public void queueForDeletionAndAddType(List<PTicket> records, String type) {
+        for(PTicket r : records) {
+            r.setType(type);
+            recordsToDelete.add(r);
+        }
+    }
 
     public void teardownRecords() {
         for (PTicket t : recordsToDelete) {

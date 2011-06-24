@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 
+import org.fracturedatlas.athena.apa.exception.ApaException;
 import java.util.Collection;
 import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
@@ -38,6 +39,20 @@ public class ApaAdapterSearchByType extends BaseApaAdapterTest {
 
     public ApaAdapterSearchByType() {
         super();
+    }
+
+    @Test
+    public void testFindRecordsByTypeNoType() {
+
+        search = new AthenaSearch.Builder()
+                              .and(new AthenaSearchConstraint("SOLD", Operator.EQUALS, "true"))
+                              .build();
+        try{
+            Collection<PTicket> tickets = apa.findTickets(search);
+            fail("ApaException needed");
+        } catch (ApaException e) {
+            //pass
+        }
     }
 
     @Test
