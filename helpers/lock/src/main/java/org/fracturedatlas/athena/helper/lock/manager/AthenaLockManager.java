@@ -94,6 +94,7 @@ public class AthenaLockManager {
         AthenaSearch apaSearch = new AthenaSearch
                                   .Builder(new AthenaSearchConstraint(AthenaLockManager.LOCK_ID, Operator.EQUALS, id))
                                   .and(new AthenaSearchConstraint(AthenaLockManager.LOCKED_BY_API_KEY, Operator.EQUALS, getCurrentUsername()))
+                                  .type("ticket")
                                   .build();
 
         Collection<PTicket> tickets = apa.findTickets(apaSearch);
@@ -320,6 +321,7 @@ public class AthenaLockManager {
 
     private Set<PTicket> getTicketsInTransaction(String lockId) {
         AthenaSearch search = new AthenaSearch();
+        search.setType("ticket");
         search.addConstraint(AthenaLockManager.LOCK_ID, Operator.EQUALS, lockId);
         Set<PTicket> ticketsInTransaction = apa.findTickets(search);
         return ticketsInTransaction;
