@@ -28,6 +28,7 @@ import javax.persistence.Entity;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import org.apache.commons.lang.StringUtils;
 import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.slf4j.Logger;
@@ -63,7 +64,14 @@ public class DateTimeTicketProp extends TicketProp implements Serializable {
             value = null;
         } else {
             try {
-                setValue((Date)o);
+                if(o.getClass().isAssignableFrom(Date.class)) {
+                    setValue((Date)o);
+                } else if(o.getClass().isAssignableFrom(String.class)) {
+                    setValue((String)o); 
+                } else {
+                    //this'll get caught in the exception block below
+                    throw new Exception("Unable to parse value into date");
+                }
             } catch (Exception e) {
                 throw new InvalidValueException(buildExceptionMessage(o.toString(), propField), e);
             }
@@ -79,7 +87,7 @@ public class DateTimeTicketProp extends TicketProp implements Serializable {
             value = null;
         } else {
             try {
-                setValue(DateUtil.parseDate(s));
+                setValue(DateUtil.parseDate(StringUtils.trim(s)));
             } catch (Exception pe) {
                 throw new InvalidValueException(buildExceptionMessage(s, propField), pe);
             }
