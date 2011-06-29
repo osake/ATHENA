@@ -1,0 +1,6 @@
+audit.hostname=http://cd49619c.dotcloud.com/
+audit.port=80
+audit.componentName=audit
+audit.endpoint=audit
+
+audit.fieldsToScrub=cardNumber,cvv,expirationDate

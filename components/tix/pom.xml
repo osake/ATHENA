@@ -37,7 +37,7 @@
                                 <phase>validate</phase>
                                 <configuration>
                                     <target>
-                                        <copy file="src/main/resources/db.properties.mysql" tofile="src/main/resources/db.properties" overwrite="true" />
+                                        <copy file="src/main/resources/audit-client.properties.athenadev.dotcloud" tofile="src/main/resources/audit-client.properties" overwrite="true" />
                                     </target>
                                 </configuration>
                                 <goals>
@@ -127,6 +127,7 @@
                                 <phase>validate</phase>
                                 <configuration>
                                     <target>
+                                        <copy file="src/main/resources/audit-client.properties.local" tofile="src/main/resources/audit-client.properties" overwrite="true" />
                                         <copy file="src/main/resources/db.properties.derby" tofile="src/main/resources/db.properties" overwrite="true" />
                                     </target>
                                 </configuration>

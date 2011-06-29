@@ -1,0 +1,6 @@
+audit.hostname=localhost
+audit.port=8080
+audit.componentName=audit
+audit.endpoint=audit
+
+audit.fieldsToScrub=cardNumber,cvv,expirationDate
