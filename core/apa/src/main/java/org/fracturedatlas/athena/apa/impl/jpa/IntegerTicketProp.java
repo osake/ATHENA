@@ -48,7 +48,22 @@ public class IntegerTicketProp extends TicketProp implements Serializable {
     }
 
     public void setValue(Object o) {
-        setValue((Integer)o);
+        if(o == null) {
+            value = null;
+        } else {
+            try {
+                if(o.getClass().isAssignableFrom(Integer.class)) {
+                    setValue((Integer)o);
+                } else if(o.getClass().isAssignableFrom(String.class)) {
+                    setValue((String)o); 
+                } else {
+                    //this'll get caught in the exception block below
+                    throw new Exception("Unable to parse value into Integer");
+                }
+            } catch (Exception e) {
+                throw new InvalidValueException(buildExceptionMessage(o.toString(), propField), e);
+            }
+        }
     }
 
     public void setValue(String s) {

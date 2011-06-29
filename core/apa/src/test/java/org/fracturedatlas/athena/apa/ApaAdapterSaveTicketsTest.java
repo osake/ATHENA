@@ -70,6 +70,32 @@ public class ApaAdapterSaveTicketsTest extends BaseApaAdapterTest {
     }
 
     @Test
+    public void testSaveTicketIncludeType() {
+        addPropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT);
+        addPropField(ValueType.STRING, "SEAT2", StrictType.NOT_STRICT);
+
+        PTicket ticket = new PTicket();
+        ticket.put("SEAT", "03");
+        ticket.put("SEAT1", "13");
+        ticket.put("SEAT2", "23");
+
+        ticket = apa.saveRecord("record", ticket);
+        assertNotNull(ticket.getId());
+        ticketsToDelete.add(ticket);
+
+        ticket = apa.getRecord(ticket.getType(), ticket.getId());
+
+        assertNotNull(ticket.getId());
+        assertNotNull(ticket.getIdAsString());
+        assertEquals(3, ticket.getProps().size());
+        assertEquals("03", ticket.get("SEAT"));
+        assertEquals("13", ticket.get("SEAT1"));
+        assertEquals("23", ticket.get("SEAT2"));
+
+    }
+
+    @Test
     public void testSaveTicketIncorrectType() {
         addPropField(ValueType.STRING, "SEAT", StrictType.NOT_STRICT);
         addPropField(ValueType.STRING, "SEAT1", StrictType.NOT_STRICT);

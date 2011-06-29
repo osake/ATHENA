@@ -107,7 +107,7 @@ public interface ApaAdapter {
     /**
      * Search for tickets that match all criteria in search.
      *
-     * Type must be specified, but search constraints may be empty.  This method must honor start, end, and limit modifiers.
+     * Type must be specified (and if type is not provided, throw an ApaException), but search constraints may be empty.  This method must honor start, end, and limit modifiers.
      *
      * Implementors may decide to not allow searching if the underlying type is not conducive to seearching (either for performance or otherwise)
      * One example is ValueText.TEXT.  In a RDBMS, TEXT is usually mapped to TEXT, CLOB, or LONG VARCHAR types which are not

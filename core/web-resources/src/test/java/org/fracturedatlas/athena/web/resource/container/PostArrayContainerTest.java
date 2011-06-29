@@ -64,8 +64,9 @@ public class PostArrayContainerTest extends BaseTixContainerTest {
                                      .post(String.class, gson.toJson(ticket));
 
         PTicket pTicket = gson.fromJson(jsonResponse,  PTicket.class);
-        assertNotNull(pTicket);
+        pTicket.setType("ticket");
         recordsToDelete.add(pTicket);
+        assertNotNull(pTicket);
     }
 
     @Test
@@ -84,10 +85,10 @@ public class PostArrayContainerTest extends BaseTixContainerTest {
 
         PTicket[] tickets = gson.fromJson(jsonResponse,  PTicket[].class);
         List<PTicket> savedTicketList = Arrays.asList(tickets);
+        queueForDeletionAndAddType(savedTicketList, "ticket");
         assertEquals(1, savedTicketList.size());
         assertNotNull(savedTicketList.get(0).getId());
         assertRecordsEqual(ticket, savedTicketList.get(0), Boolean.FALSE);
-        recordsToDelete.addAll(savedTicketList);
     }
 
     @Test
@@ -111,6 +112,7 @@ public class PostArrayContainerTest extends BaseTixContainerTest {
 
         PTicket[] tickets = gson.fromJson(jsonResponse,  PTicket[].class);
         List<PTicket> savedTicketList = Arrays.asList(tickets);
+        queueForDeletionAndAddType(savedTicketList, "ticket");
         assertEquals(2, savedTicketList.size());
 
         for(PTicket t : savedTicketList) {
@@ -128,8 +130,6 @@ public class PostArrayContainerTest extends BaseTixContainerTest {
                 fail("One of the returned tickets does not match");
             }
         }
-
-        recordsToDelete.addAll(savedTicketList);
     }
 
     @Test

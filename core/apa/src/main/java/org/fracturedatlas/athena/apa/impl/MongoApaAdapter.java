@@ -115,6 +115,12 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
     }
 
     @Override
+    public PTicket saveRecord(String type, PTicket t) {
+        t.setType(type);
+        return saveRecord(t);
+    }
+
+    @Override
     public PTicket saveRecord(PTicket t) {
         BasicDBObject doc = new BasicDBObject();
 
@@ -131,23 +137,13 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         BasicDBObject props = new BasicDBObject();
         for(String key : t.getProps().keySet()) {
             List<String> vals = t.getProps().get(key);
-            List<Object> properlyTypedVals = new ArrayList<Object>();
-            if(vals.size() > 1) {
-                for(String val : vals) {
-                    enforceCorrectValueType(key, val);
-                    properlyTypedVals.add(stringToType(key, val));
-                }
-                props.put(key, properlyTypedVals);
-            } else {
-                enforceCorrectValueType(key, vals.get(0));
-                props.put(key, stringToType(key, vals.get(0)));
-            }
+            typeAndLoadProps(props, t, key, vals);
         }
 
+        //TODO: Should use a system_props property instead of shoving them all in props
         for(String key : t.getSystemProps().keySet()) {
             for(String val : t.getSystemProps().get(key)) {
-                enforceCorrectValueType(key, (String)val);
-                props.put(key, stringToType(key, (String)val));
+                typeAndLoadProps(props, t, key, val);
             }
         }
 
@@ -159,7 +155,43 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         return t;
     }
     
-    private Boolean enforceCorrectValueType(String key, String value) {
+    private void typeAndLoadProps(BasicDBObject props,
+                                  PTicket record,
+                                  String key,
+                                  String val) {
+        List<String> vals = new ArrayList<String>();
+        vals.add(val);
+        typeAndLoadProps(props, record, key, val);
+    }
+    
+    private void typeAndLoadProps(BasicDBObject props,
+                                  PTicket record,
+                                  String key,
+                                  List<String> vals) {
+        List<Object> properlyTypedVals = new ArrayList<Object>();
+        List<String> properlyTypedStrings = new ArrayList<String>();
+        for(String val : vals) {
+            TicketProp prop = enforceValueTypeAndStrict(key, val);
+            properlyTypedVals.add(prop.getValue());
+            properlyTypedStrings.add(prop.getValueAsString());
+        }
+        
+        if(vals.size() == 1) {
+            props.put(key, properlyTypedVals.get(0));
+            record.put(key, properlyTypedStrings.get(0));            
+        } else {
+            props.put(key, properlyTypedVals);
+            record.getProps().put(key, properlyTypedStrings);        
+        }
+    }
+    
+    private TicketProp enforceValueTypeAndStrict(String key, String val) {
+        TicketProp prop = enforceCorrectValueType(key, val);
+        enforceStrict(key, val);     
+        return prop;
+    }
+    
+    private TicketProp enforceCorrectValueType(String key, String value) {
         //hacky, but this will throw an InvalidValueException if it doesn't work
         //so that's good for us
         PropField propField = getPropField(key);
@@ -172,7 +204,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         ticketProp.setPropField(propField);
         ticketProp.setValue(value);
         
-        return true;
+        return ticketProp;
     }
     
     @Override
@@ -252,21 +284,31 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
                 }
                 
                 //load the field's value type so we can apaSearch for it with proper typing
-                TicketProp searchProp = field.getValueType().newTicketProp();
+                //UNLESS THIS IS AN IN QUERY because we have to preserve the array
+                if(constraint.getOper().equals(Operator.IN)) {
+                    Set<Object> properlyTypedValues = new HashSet<Object>();
+                    for(String s : constraint.getValueSet()) {
+                        properlyTypedValues.add(makeTicketProp(null, null, field, s).getValue()); 
+                    }
+                    buildMongoQuery(currentQuery, PROPS_STRING + "." + field.getName(), constraint.getOper(), properlyTypedValues);
+                } else {
+                    TicketProp searchProp = field.getValueType().newTicketProp();
 
-                try{
-                    searchProp.setValue(constraint.getValue());
-                } catch (Exception e) {
-                    //searching on a param with a bad type (like apaSearch a boolean field for "4"
-                    //TODO: Handle it
+                    try{
+                        searchProp.setValue(constraint.getValue());
+                    } catch (Exception e) {
+                        //searching on a param with a bad type (like apaSearch a boolean field for "4"
+                        //TODO: Handle it
+                    }
+
+                    buildMongoQuery(currentQuery, PROPS_STRING + "." + field.getName(), constraint.getOper(), searchProp.getValue());
                 }
-
-                buildMongoQuery(currentQuery, PROPS_STRING + "." + field.getName(), constraint.getOper(), searchProp.getValue());
             } else {
                 throw new InvalidFieldException("No Property Field called " + constraint.getParameter() + " exists.");
             }
         }
 
+        logger.error("Querying: [{}]", currentQuery);
         DBCursor recordsCursor = db.getCollection(athenaSearch.getType()).find(currentQuery);
         recordsCursor = setLimit(recordsCursor, athenaSearch.getSearchModifiers().get(AthenaSearch.LIMIT));
         recordsCursor = setSkip(recordsCursor, athenaSearch.getSearchModifiers().get(AthenaSearch.START));
@@ -576,6 +618,10 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         return outProps;
     }
     
+    /*
+     * Will create a TicketProp from the PropField.  Will not search the database for the TicketProp,
+     * but rather "fake" one
+     */
     private TicketProp makeTicketProp(String type, Object ticketId, PropField field, Object value) {
         TicketProp ticketProp = field.getValueType().newTicketProp();
         ticketProp.setId(null);
@@ -724,6 +770,22 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
             String err = "Value [" + prop.getValueAsString() + "] is not a valid value for the field [" + propField.getName() + "].  ";
             err += "Field is of type [" + propField.getValueType().name() + "].";
             throw new InvalidValueException(err);
+        }
+    }
+
+    private void enforceStrict(String fieldName, String value) throws InvalidValueException {
+
+        PropField propField = getPropField(fieldName);
+        if (propField.getStrict()) {
+            Collection<PropValue> propValues = propField.getPropValues();
+
+            //TODO: Should be using a .contains method here or something
+            for (PropValue propValue : propValues) {
+                if (propValue.getPropValue().equals(value)) {
+                    return;
+                }
+            }
+            throw new InvalidValueException("Value [" + value + "] is not a valid value for the strict field [" + propField.getName() + "]");
         }
     }
 

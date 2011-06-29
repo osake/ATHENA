@@ -9,11 +9,10 @@
        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
     <context:component-scan base-package="org.fracturedatlas.athena"/>
 
-    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.MongoApaAdapter" autowire="autodetect">
-        <constructor-arg value="localhost"/>
-        <constructor-arg type="java.lang.Integer" value="27017"/>
-        <constructor-arg value="test"/>
-        <constructor-arg value="records"/>
-        <constructor-arg value="fields"/>
+    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.MongoApaAdapter" autowire="byType">
+        <constructor-arg index="0" value="localhost"/>
+        <constructor-arg type="java.lang.Integer" index="1" value="27017"/>
+        <constructor-arg index="2" value="test"/>
+        <constructor-arg index="3" value="athena_fields"/>
     </bean>
 </beans>
