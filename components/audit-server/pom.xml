@@ -15,7 +15,35 @@
 
   </parent>
 
-    <profiles>
+    <profiles>      
+    
+        <!--
+         *
+         *
+         * Generate a self-contanted war file that can be deployed to a container
+         *
+         *
+        -->
+        <profile>
+            <id>dotcloud</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <finalName>athena</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>2.0</version>
+                        <configuration>
+                            <warName>audit</warName>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        
         <profile>
             <id>runner</id>
             <activation>
