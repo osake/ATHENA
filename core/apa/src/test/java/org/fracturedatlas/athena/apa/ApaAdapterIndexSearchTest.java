@@ -75,6 +75,22 @@ public class ApaAdapterIndexSearchTest extends BaseApaAdapterTest {
     }
     
     @Test
+    public void searchIndexAddRecord() {
+        PTicket bonk = addRecord("person",
+                  "firstName", "Bonk",
+                  "lastName", "Smith",
+                  "occupation", "ruffian");
+        
+        
+        AthenaSearch search = new AthenaSearch.Builder().type("person").query("Smith").build();
+        Set<PTicket> people = apa.findTickets(search);
+        assertEquals(3, people.size());
+        assertTrue(people.contains(anne));
+        assertTrue(people.contains(jim));
+        assertTrue(people.contains(bonk));
+    }
+    
+    @Test
     public void searchIndexUpdatedIndex() {
         anne.put("lastName", "Trent");
         apa.saveRecord(anne);

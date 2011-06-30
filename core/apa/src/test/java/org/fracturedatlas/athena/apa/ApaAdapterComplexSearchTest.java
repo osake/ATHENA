@@ -348,6 +348,30 @@ public class ApaAdapterComplexSearchTest extends BaseApaAdapterTest {
 
     }
 
+    @Test
+    public void testFindTicketsDateRangeNegativeOffset() {
+
+        search = getSearcher();
+        search.addConstraint("PERFORMANCE", Operator.GREATER_THAN, "2010-10-05T00:00:00-00:00");
+        search.addConstraint("PERFORMANCE", Operator.LESS_THAN, "2010-10-07T00:00:00-00:00");
+        Collection<PTicket> tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(2, tickets.size());
+
+    }
+
+    @Test
+    public void testFindTicketsDateRangePositiveOffset() {
+
+        search = getSearcher();
+        search.addConstraint("PERFORMANCE", Operator.GREATER_THAN, "2010-10-05T00:00:00+00:00");
+        search.addConstraint("PERFORMANCE", Operator.LESS_THAN, "2010-10-07T00:00:00+00:00");
+        Collection<PTicket> tickets = apa.findTickets(search);
+        assertNotNull(tickets);
+        assertEquals(2, tickets.size());
+
+    }
+
     @Before
     public void addTickets() throws Exception {
 

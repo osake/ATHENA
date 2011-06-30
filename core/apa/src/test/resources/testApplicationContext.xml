@@ -6,6 +6,21 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
     <context:component-scan base-package="org.fracturedatlas.athena"/>
 
+<!-- Testing indexing in RAM -->
     <bean name="directory" class="org.apache.lucene.store.RAMDirectory"/>
+    
+<!-- Testing indexing on filesystem -->
+<!--
+
+    <bean id="indexFile" class="java.io.File">
+      <constructor-arg value="/opt/athena/index/ATHENA-people/"/>
+    </bean>
+    
+    <bean id="directory" class="org.apache.lucene.store.NIOFSDirectory">
+      <constructor-arg ref="indexFile"/>
+    </bean>
+     -->
+
+    
     <import resource="testApplicationContext-jpa.xml"/>
 </beans>
