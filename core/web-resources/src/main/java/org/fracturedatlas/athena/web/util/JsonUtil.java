@@ -30,6 +30,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 import java.util.List;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.util.date.DateTypeConverter;
+import org.fracturedatlas.athena.util.date.DateTimeTypeConverter;
 import org.fracturedatlas.athena.web.serialization.JsonTicketSerializer;
 
 public class JsonUtil {
@@ -38,12 +39,14 @@ public class JsonUtil {
                                 .serializeNulls()
                                 .setLongSerializationPolicy(LongSerializationPolicy.STRING)
                                 .registerTypeAdapter(PTicket.class, new JsonTicketSerializer())
-                                .registerTypeAdapter(java.util.Date.class, new DateTypeConverter());
+                                .registerTypeAdapter(java.util.Date.class, new DateTypeConverter())
+                                .registerTypeAdapter(org.joda.time.DateTime.class, new DateTimeTypeConverter());
 
     static GsonBuilder gbWithoutNulls = new GsonBuilder()
                                 .setLongSerializationPolicy(LongSerializationPolicy.STRING)
                                 .registerTypeAdapter(PTicket.class, new JsonTicketSerializer())
-                                .registerTypeAdapter(java.util.Date.class, new DateTypeConverter());
+                                .registerTypeAdapter(java.util.Date.class, new DateTypeConverter())
+                                .registerTypeAdapter(org.joda.time.DateTime.class, new DateTimeTypeConverter());
 
     static Gson gson;
     static Gson gsonWithoutNulls;
