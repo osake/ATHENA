@@ -40,12 +40,9 @@ import org.joda.time.DateTime;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class GlanceReporterTest {
+public class GlanceReporterTest extends ReporterTest {
 
     GlanceReporter reporter = new GlanceReporter();
-
-    @Mock private AthenaComponent mockStage;
-    @Mock private AthenaComponent mockTix;
 
     List<PTicket> performances;
     List<PTicket> tickets;
@@ -149,8 +146,7 @@ public class GlanceReporterTest {
     }
 
     @Before
-    public void mockit() throws Exception {
-        MockitoAnnotations.initMocks(this);
+    public void setup() throws Exception {
         createSampleObjects();
 
         reporter.setAthenaStage(mockStage);
