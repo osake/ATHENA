@@ -19,15 +19,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.reports.manager;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.fracturedatlas.athena.client.AthenaComponent;
+import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.reports.model.AthenaReport;
 import org.fracturedatlas.athena.reports.model.statement.Expenses;
 import org.fracturedatlas.athena.reports.model.statement.ExpensesRow;
 import org.fracturedatlas.athena.reports.model.statement.Sales;
 import org.fracturedatlas.athena.reports.model.statement.SalesRow;
 import org.fracturedatlas.athena.reports.model.statement.Statement;
+import org.fracturedatlas.athena.search.AthenaSearch;
+import org.fracturedatlas.athena.search.Operator;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,24 +53,83 @@ public class StatementReporter implements Reporter {
     @Override
     public AthenaReport getReport(Map<String, List<String>> queryParameters) {
         
+        ParamChecker.check(queryParameters, "organizationId", "performanceId");
+        String performanceId = queryParameters.get("performanceId").get(0);
+        String organizationId = queryParameters.get("organizationId").get(0);
+        
         /*
          * PERFORMANCES
          */
         Sales sales = new Sales();
-        sales.addPerformance(new SalesRow(new DateTime(), 22, 2, 5900, 4000, 3000));
+        
+        AthenaSearch search = new AthenaSearch.Builder()
+                                              .type("ticket")
+                                              .and("performanceId", Operator.EQUALS, performanceId)
+                                              .and("organizationId", Operator.EQUALS, organizationId)
+                                              .build();
+        
+        athenaTix.find("ticket", search);
+        
+        Integer totalTicketsSold = 0;
+        Integer totalTicketsComped = 0;
+        Integer originalPotential = 0;
+        Integer grossRevenue = 0;
+
+        logger.debug("Searching for tickets matching {}", search);
+        Collection<PTicket> tickets = athenaTix.find("ticket", search);
+        logger.debug("Found {} tickets", tickets.size());
+        DateTime now = new DateTime();
+        for(PTicket ticket : tickets) {
+            originalPotential += Integer.parseInt(ticket.get("price"));
+            if("sold".equals(ticket.get("state"))) {
+                totalTicketsSold++;
+            } else if ("comped".equals(ticket.get("state"))) {
+                totalTicketsComped++;
+            }
+        }
+        
+        
+        sales.addPerformance(new SalesRow(new DateTime(), 
+                                          totalTicketsSold, 
+                                          totalTicketsComped, 5900, 4000, 3000));
         
         /*
          * EXPENSES
          */
         Expenses expenses = new Expenses();
-        expenses.addExpense(new ExpensesRow("Ticket fees", "50", "$2.00", 100));
-        expenses.addExpense(new ExpensesRow("Credit card processing", "49", "10%", 490));
-        expenses.setTotal(new ExpensesRow("Total", "", "", 590));
+        Integer ticketFees = (totalTicketsSold - totalTicketsComped) * 2;
+        expenses.addExpense(new ExpensesRow("Ticket fees", Integer.toString(totalTicketsSold), "$2.00", ticketFees));
+        Integer creditCardProcessingFees = 3456;
+        expenses.addExpense(new ExpensesRow("Credit card processing", "$" + Integer.toString(grossRevenue), "3.5%", creditCardProcessingFees));
+        expenses.setTotal(new ExpensesRow("Total", "", "", ticketFees + creditCardProcessingFees));
         
+        /**
+         * TODO: 
+         * should tickets sold include comps?  It DOES in the glace remport, but feels wrong here
+         * CCprocessing calculation
+         * Potential, gross, net revs
+         * Finish tests
+         */
         
         Statement s = new Statement(sales, expenses);
         
         return s;
+    }
+
+    public AthenaComponent getAthenaStage() {
+        return athenaStage;
+    }
+
+    public void setAthenaStage(AthenaComponent athenaStage) {
+        this.athenaStage = athenaStage;
+    }
+
+    public AthenaComponent getAthenaTix() {
+        return athenaTix;
+    }
+
+    public void setAthenaTix(AthenaComponent athenaTix) {
+        this.athenaTix = athenaTix;
     }
     
 }
