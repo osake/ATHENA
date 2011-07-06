@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.reports.manager;
 
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ import org.fracturedatlas.athena.reports.model.statement.SalesRow;
 import org.fracturedatlas.athena.reports.model.statement.Statement;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.Operator;
+import org.fracturedatlas.athena.util.date.DateUtil;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,9 @@ public class StatementReporter implements Reporter {
 
     @Autowired
     AthenaComponent athenaTix;
+
+    @Autowired
+    AthenaComponent athenaOrders;
 
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -68,48 +73,90 @@ public class StatementReporter implements Reporter {
                                               .and("organizationId", Operator.EQUALS, organizationId)
                                               .build();
         
-        athenaTix.find("ticket", search);
+        logger.debug("Searching for tickets matching {}", search);
+        Collection<PTicket> tickets = athenaTix.find("ticket", search);
         
         Integer totalTicketsSold = 0;
         Integer totalTicketsComped = 0;
         Integer originalPotential = 0;
-        Integer grossRevenue = 0;
+        DateTime performanceDate = null;
 
-        logger.debug("Searching for tickets matching {}", search);
-        Collection<PTicket> tickets = athenaTix.find("ticket", search);
         logger.debug("Found {} tickets", tickets.size());
         DateTime now = new DateTime();
         for(PTicket ticket : tickets) {
-            originalPotential += Integer.parseInt(ticket.get("price"));
             if("sold".equals(ticket.get("state"))) {
                 totalTicketsSold++;
             } else if ("comped".equals(ticket.get("state"))) {
                 totalTicketsComped++;
             }
+            
+            originalPotential += Integer.parseInt(ticket.get("price"));
+            
+            //HACK: This saves another call to athenaStage to get the date.  Just pull the date off of the ticket.
+            if(performanceDate == null) {
+                try{
+                    performanceDate = DateUtil.parseDateTime(ticket.get("performance"));
+                } catch (ParseException pe) {
+                    logger.error("Performance date on ticket [{}] is malformed: [{}]", ticket.getId(), ticket.get("performance"));
+                    logger.error("{}", pe);
+                    performanceDate = null;
+                }
+            }
+            
+        }
+        
+        search = new AthenaSearch.Builder()
+                                 .type("item")
+                                 .and("performanceId", Operator.EQUALS, performanceId)
+                                 .and("productType", Operator.EQUALS, "AthenaTicket")
+                                 .build();  
+        
+        Collection<PTicket> items = athenaOrders.find("item", search);
+        
+        Integer grossRevenue = 0;
+        Integer netRevenue = 0;
+        
+        for(PTicket item : items) {
+            String state = item.get("state");
+            
+            /*
+             * TODO: Brittle
+             * state == null means purchased item
+             * state == returned is a ticket that has been exchanged
+             * state == refunded is a returned item
+             * state == refund is THE ITEM THAT REPRESENTS THE RETURN ON THE ORDER PAGE         
+             * 
+             * We need to consider, null, refunded (which will have a positive price), refund (which will have a negative price)
+             * returned items have no corresponding negative entry, so we need to skip those
+             */
+            if(state == null || state.equals("refunded") || state.equals("refund")) {
+                netRevenue += Integer.parseInt(item.get("net"));
+                grossRevenue += Integer.parseInt(item.get("price"));
+            }
         }
         
         
-        sales.addPerformance(new SalesRow(new DateTime(), 
+        sales.addPerformance(new SalesRow(performanceDate, 
                                           totalTicketsSold, 
-                                          totalTicketsComped, 5900, 4000, 3000));
+                                          totalTicketsComped, 
+                                          originalPotential, grossRevenue, netRevenue));
         
         /*
          * EXPENSES
          */
         Expenses expenses = new Expenses();
-        Integer ticketFees = (totalTicketsSold - totalTicketsComped) * 2;
+        Integer ticketFees = (totalTicketsSold) * 200;
         expenses.addExpense(new ExpensesRow("Ticket fees", Integer.toString(totalTicketsSold), "$2.00", ticketFees));
-        Integer creditCardProcessingFees = 3456;
-        expenses.addExpense(new ExpensesRow("Credit card processing", "$" + Integer.toString(grossRevenue), "3.5%", creditCardProcessingFees));
-        expenses.setTotal(new ExpensesRow("Total", "", "", ticketFees + creditCardProcessingFees));
         
-        /**
-         * TODO: 
-         * should tickets sold include comps?  It DOES in the glace remport, but feels wrong here
-         * CCprocessing calculation
-         * Potential, gross, net revs
-         * Finish tests
-         */
+        Integer revenueSubjectToCCFees = grossRevenue - ticketFees;
+        Double doubleRevenueSubjectToCCFees = (double)revenueSubjectToCCFees / 100;
+        String strRevenueSubjectToCCFees = String.format("%.2f", doubleRevenueSubjectToCCFees);
+        
+        Double creditCardProcessingFees = revenueSubjectToCCFees * .035;
+        Long longCCfees = Math.round(creditCardProcessingFees);
+        Integer intCCFees = longCCfees.intValue();
+        expenses.addExpense(new ExpensesRow("Credit card processing", "$" + strRevenueSubjectToCCFees, "3.5%", intCCFees));
+        expenses.setTotal(new ExpensesRow("Total", "", "", ticketFees + intCCFees));
         
         Statement s = new Statement(sales, expenses);
         
@@ -130,6 +177,14 @@ public class StatementReporter implements Reporter {
 
     public void setAthenaTix(AthenaComponent athenaTix) {
         this.athenaTix = athenaTix;
+    }
+
+    public AthenaComponent getAthenaOrders() {
+        return athenaOrders;
+    }
+
+    public void setAthenaOrders(AthenaComponent athenaOrders) {
+        this.athenaOrders = athenaOrders;
     }
     
 }

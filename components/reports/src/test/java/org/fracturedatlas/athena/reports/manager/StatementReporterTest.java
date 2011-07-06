@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.reports.manager;
 
+import org.fracturedatlas.athena.reports.model.statement.Expenses;
 import org.junit.Before;
 import org.fracturedatlas.athena.reports.model.statement.SalesRow;
 import org.fracturedatlas.athena.reports.model.statement.Statement;
@@ -39,7 +40,9 @@ import static org.junit.Assert.*;
 public class StatementReporterTest extends ReporterTest {
     StatementReporter reporter = new StatementReporter();
     
+    PTicket performance;
     List<PTicket> tickets;
+    List<PTicket> items;
     DateTime now = new DateTime();
     DateTime lastWeek = now.minusWeeks(1);
     DateTime performanceTime = now.minusDays(1);
@@ -70,7 +73,6 @@ public class StatementReporterTest extends ReporterTest {
         queryParams.put("performanceId", Arrays.asList("20"));
         queryParams.put("organizationId", Arrays.asList("33"));
 
-
         AthenaSearch athenaSearch = new AthenaSearch.Builder()
                                               .type("ticket")
                                               .and("performanceId", Operator.EQUALS, "20")
@@ -78,24 +80,61 @@ public class StatementReporterTest extends ReporterTest {
                                               .build();
 
         when(mockTix.find("ticket", athenaSearch)).thenReturn(tickets);
+
+
+        AthenaSearch itemSearch = new AthenaSearch.Builder()
+                                 .type("item")
+                                 .and("performanceId", Operator.EQUALS, "20")
+                                 .and("productType", Operator.EQUALS, "AthenaTicket")
+                                 .build();  
+        when(mockOrders.find("item", itemSearch)).thenReturn(items);
         
         Statement statement = (Statement)reporter.getReport(queryParams);
         assertEquals(1, statement.getSales().getPerformances().size());
         SalesRow row = statement.getSales().getPerformances().get(0);
+        assertEquals(performanceTime.withMillisOfSecond(0), row.getDatetime());
         assertEquals(new Integer(4), row.getTicketsSold());
         assertEquals(new Integer(1), row.getTicketsComped());
-        //assertEquals(new Double(13000), row.getGrossRevenue());
+        assertEquals(new Integer(28000), row.getPotentialRevenue());
+        assertEquals(new Integer(13000), row.getGrossRevenue());
+        assertEquals(new Integer(11574), row.getNetRevenue());
+        
+        Expenses expenses = statement.getExpenses();
+        assertNotNull(expenses);
+        assertEquals(2, expenses.getExpenses().size());
+        
+        assertEquals("Ticket fees", expenses.getExpenses().get(0).getDescription());
+        assertEquals("4", expenses.getExpenses().get(0).getUnits());
+        assertEquals("$2.00", expenses.getExpenses().get(0).getRate());
+        assertEquals(new Integer(800), expenses.getExpenses().get(0).getExpense());
+        
+        assertEquals("Credit card processing", expenses.getExpenses().get(1).getDescription());
+        assertEquals("$122.00", expenses.getExpenses().get(1).getUnits());
+        assertEquals("3.5%", expenses.getExpenses().get(1).getRate());
+        assertEquals(new Integer(427), expenses.getExpenses().get(1).getExpense());
+        
+        assertEquals("Total", expenses.getTotal().getDescription());
+        assertEquals("", expenses.getTotal().getUnits());
+        assertEquals("", expenses.getTotal().getRate());
+        assertEquals(new Integer(1227), expenses.getTotal().getExpense());
     }
     
     @Before
     public void injectMocks() {
         reporter.setAthenaStage(mockStage);
         reporter.setAthenaTix(mockTix);
+        reporter.setAthenaOrders(mockOrders);
     }
     
     @Before
     public void createTickets() {
         tickets = new ArrayList<PTicket>();
+        items = new ArrayList<PTicket>();
+        
+        performance = makeRecord("performance",
+                                    "eventId", "100",
+                                    "state", "on_sale",
+                                    "id", "20");
         
         /*
          * Two tickets sold for $40 in section ABC
@@ -121,6 +160,26 @@ public class StatementReporterTest extends ReporterTest {
                                "soldAt", DateUtil.formatDate(lastWeek)));
         
         /*
+         * And their corresponding order items
+         */
+        items.add(makeRecord("item",
+                            "price","4000",
+                            "performanceId","20",
+                            "net","3667",
+                            "orderId","32768",
+                            "productId","32768",
+                            "productType","AthenaTicket",
+                            "realizedPrice","3800"));
+        items.add(makeRecord("item",
+                            "price","4000",
+                            "performanceId","20",
+                            "net","3667",
+                            "orderId","32768",
+                            "productId","32768",
+                            "productType","AthenaTicket",
+                            "realizedPrice","3800"));
+        
+        /*
          * Two tickets sold for $25 in section XYZ
          */        
         tickets.add(makeRecord("ticket",
@@ -142,6 +201,26 @@ public class StatementReporterTest extends ReporterTest {
                                "soldPrice", "2500",
                                "section", "XYZ",
                                "soldAt", DateUtil.formatDate(lastWeek)));
+        
+        /*
+         * And their corresponding order items
+         */
+        items.add(makeRecord("item",
+                            "price","2500",
+                            "performanceId","20",
+                            "net","2120",
+                            "orderId","32768",
+                            "productId","32768",
+                            "productType","AthenaTicket",
+                            "realizedPrice","2300"));
+        items.add(makeRecord("item",
+                            "price","2500",
+                            "performanceId","20",
+                            "net","2120",
+                            "orderId","32768",
+                            "productId","32768",
+                            "productType","AthenaTicket",
+                            "realizedPrice","2300"));
         
         /*
          * One ticket unsold in section ABC

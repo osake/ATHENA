@@ -33,6 +33,7 @@ import static org.junit.Assert.*;
 public abstract class ReporterTest {
     @Mock protected AthenaComponent mockStage;
     @Mock protected AthenaComponent mockTix;
+    @Mock protected AthenaComponent mockOrders;
     
     @Before
     public void mockit() throws Exception {
