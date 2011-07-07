@@ -118,21 +118,8 @@ public class StatementReporter implements Reporter {
         
         for(PTicket item : items) {
             String state = item.get("state");
-            
-            /*
-             * TODO: Brittle
-             * state == null means purchased item
-             * state == returned is a ticket that has been exchanged
-             * state == refunded is a returned item
-             * state == refund is THE ITEM THAT REPRESENTS THE RETURN ON THE ORDER PAGE         
-             * 
-             * We need to consider, null, refunded (which will have a positive price), refund (which will have a negative price)
-             * returned items have no corresponding negative entry, so we need to skip those
-             */
-            if(state == null || state.equals("refunded") || state.equals("refund")) {
-                netRevenue += Integer.parseInt(item.get("net"));
-                grossRevenue += Integer.parseInt(item.get("price"));
-            }
+            netRevenue += Integer.parseInt(item.get("net"));
+            grossRevenue += Integer.parseInt(item.get("price"));
         }
         
         
