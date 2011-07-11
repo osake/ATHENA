@@ -308,7 +308,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
             }
         }
 
-        logger.error("Querying: [{}]", currentQuery);
+        logger.debug("Querying: [{}]", currentQuery);
         DBCursor recordsCursor = db.getCollection(athenaSearch.getType()).find(currentQuery);
         recordsCursor = setLimit(recordsCursor, athenaSearch.getSearchModifiers().get(AthenaSearch.LIMIT));
         recordsCursor = setSkip(recordsCursor, athenaSearch.getSearchModifiers().get(AthenaSearch.START));

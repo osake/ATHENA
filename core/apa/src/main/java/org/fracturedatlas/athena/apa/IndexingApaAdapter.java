@@ -63,8 +63,8 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
     
     IndexWriterConfig config;
     
-    //do not use this directly, call getSearcher() instead
-    static IndexSearcher searcher;
+    //do not use this directly, call getWriter() instead
+    static IndexWriter writer;
     
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
@@ -112,11 +112,10 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
             return;
         }
         
-        IndexWriter indexWriter = null;
         config = new IndexWriterConfig(Version.LUCENE_32, analyzer);
         
         try{
-            indexWriter = new IndexWriter(directory, config);
+            IndexWriter indexWriter = getWriter();
             for(PTicket record : records) {
                 Document doc = new Document();
                 StringBuffer documentText = new StringBuffer();
@@ -141,8 +140,6 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
             npe.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            cleanup(indexWriter);
         }
     }
     
@@ -156,7 +153,7 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         }
         
         Document doc = new Document();
-        StringBuffer documentText = new StringBuffer();
+        StringBuilder documentText = new StringBuilder();
         doc.add(new Field("_id", record.getIdAsString(), Field.Store.YES, Field.Index.ANALYZED));
         doc.add(new Field("_type", record.getType(), Field.Store.YES, Field.Index.ANALYZED));
         
@@ -170,20 +167,16 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         }
         addToDocument(doc, DOC_TEXT, documentText.toString());
         
-        IndexWriter indexWriter = null;
         try{
-            config = new IndexWriterConfig(Version.LUCENE_32, analyzer);
-            indexWriter = new IndexWriter(directory, config);
+            IndexWriter indexWriter = getWriter();
             indexWriter.addDocument(doc);
             indexWriter.optimize();
-            indexWriter.close();
         } catch (NullPointerException npe) {
             logger.error("Null pointer exception coming.  Did you call initializeIndex() ?");
             npe.printStackTrace();
         } catch (IOException e) {
+            logger.error("IOException when writing to index {}", e);
             e.printStackTrace();
-        } finally {
-            cleanup(indexWriter);
         }
     }
     
@@ -202,33 +195,37 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         
         IndexWriter indexWriter = null;
         try{
-            config = new IndexWriterConfig(Version.LUCENE_32, analyzer);
-            indexWriter = new IndexWriter(directory, config);
+            indexWriter = getWriter();
             indexWriter.deleteDocuments(new Term("_id", id));
             indexWriter.optimize();
-            indexWriter.close();
         } catch (NullPointerException npe) {
             logger.error("Null pointer exception coming.  Did you call initializeIndex() ?");
             npe.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            cleanup(indexWriter);
         }
         
     }   
     
-    private void cleanup(IndexWriter iw) {
-        if(iw == null) {
-            return;
+    private void cleanup(IndexSearcher searcher, IndexReader reader) {
+        if(searcher != null) {
+            try{
+                searcher.close();
+            } catch (IOException ioe) {
+                logger.error("Error trying to close index searcher");
+                logger.error("{}", ioe.getClass().getName());
+                logger.error("{}", ioe.getMessage());
+            }
         }
         
-        try{
-            iw.close();
-        } catch (IOException ioe) {
-            logger.error("Error trying to close index writer");
-            logger.error("{}", ioe.getClass().getName());
-            logger.error("{}", ioe.getMessage());
+        if(reader != null) {
+            try{
+                reader.close();
+            } catch (IOException ioe) {
+                logger.error("Error trying to close index writer");
+                logger.error("{}", ioe.getClass().getName());
+                logger.error("{}", ioe.getMessage());
+            }
         }
     }
     
@@ -281,7 +278,8 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         
         try {
             Query q = new QueryParser(Version.LUCENE_32, DOC_TEXT, analyzer).parse(query);
-            IndexSearcher indexSearcher = getSearcher();
+            IndexReader reader = IndexReader.open(getWriter(), false);
+            IndexSearcher indexSearcher = new IndexSearcher(reader);
             TopDocs topDocs = indexSearcher.search(q, numResults);
             ScoreDoc[] hits = topDocs.scoreDocs;
             for(int i=start;i<hits.length;++i) {
@@ -289,6 +287,8 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
                 Document d = indexSearcher.doc(docId);
                 ids.add(d.get("_id"));
             }
+            reader.close();
+            indexSearcher.close();
             return ids;
         } catch (Exception e) {
             e.printStackTrace();
@@ -300,13 +300,14 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         return directory;
     }
     
-    private IndexSearcher getSearcher() {
+    private IndexWriter getWriter() {
         
-        if(searcher == null) {
+        if(writer == null) {
             try{
                 if(!indexingDisabled) {
-                    searcher = new IndexSearcher(directory, true);
-                    return searcher;
+                    config = new IndexWriterConfig(Version.LUCENE_32, analyzer);
+                    writer = new IndexWriter(directory, config);
+                    return writer;
                 }
             } catch (NoSuchDirectoryException ioe) {
                 logger.error("Could not instantiate an index searcher.  Index does not exist.  Add some items to the index and try again.");
@@ -319,25 +320,25 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
             }
         }
         
-        return searcher;
+        return writer;
     }
     
-    private void closeSearcher() {
-        if(searcher != null) {
+    private void closeWriter() {
+        if(writer != null) {
             try{
-                searcher.close();
+                writer.close();
             } catch(IOException ioe) {
                 logger.error("Could not close searcher");
                 logger.error("{}", ioe);
             }
         }
         
-        searcher = null;
+        writer = null;
     }
 
     public void setDirectory(Directory directory) {
         this.directory = directory;
-        closeSearcher();
+        closeWriter();
         if(rebuildNeeded() && !indexingDisabled) {
             logger.info("Rebuilding index");
             Set<String> types = getTypes();

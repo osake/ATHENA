@@ -214,6 +214,28 @@ public class SearchContainerTest extends BaseTixContainerTest {
 
     }
 
+    @Test
+    public void testFindTicketsDateRangeNegativeOffset() {
+        MultivaluedMap queryParams = new MultivaluedMapImpl();
+        queryParams.add("PERFORMANCE", "gt2010-10-02T00:33:50-04:00");
+        queryParams.add("PERFORMANCE", "lt2010-10-04T23:33:50-04:00");
+        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        PTicket[] tickets = gson.fromJson(jsonString,  PTicket[].class);
+        assertNotNull(tickets);
+        assertEquals(3, tickets.length);
+    }
+
+    @Test
+    public void testFindTicketsDateRangePositiveOffset() {
+        MultivaluedMap queryParams = new MultivaluedMapImpl();
+        queryParams.add("PERFORMANCE", "gt2010-10-02T00:33:50+00:00");
+        queryParams.add("PERFORMANCE", "lt2010-10-04T23:33:50+00:00");
+        String jsonString = tix.path(path).queryParams(queryParams).get(String.class);
+        PTicket[] tickets = gson.fromJson(jsonString,  PTicket[].class);
+        assertNotNull(tickets);
+        assertEquals(3, tickets.length);
+    }
+
    @Before
     public void addTickets() throws Exception {
 
