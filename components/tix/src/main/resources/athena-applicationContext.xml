@@ -31,12 +31,14 @@
 <!-- MONGO -->
 
     <bean id="apa" class="org.fracturedatlas.athena.apa.impl.MongoApaAdapter" autowire="byType">
-        <constructor-arg value="mongo.athenatest.dotcloud.com"/>
-        <constructor-arg type="java.lang.Integer" value="8001"/>
+        <constructor-arg value="localhost"/>
+        <constructor-arg type="java.lang.Integer" value="27017"/>
         <constructor-arg value="tix"/>
         <constructor-arg value="athena_fields"/>
+        <!--
         <constructor-arg value="athena"/>
         <constructor-arg value="aqn%5673!3SW"/>
+        -->
         <property name="indexingDisabledString" value="${athena.index.disabled}"/>
     </bean> 
 
