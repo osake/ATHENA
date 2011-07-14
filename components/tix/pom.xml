@@ -37,7 +37,7 @@
                                 <phase>validate</phase>
                                 <configuration>
                                     <target>
-                                        <copy file="src/main/resources/audit-client.properties.athenadev.dotcloud" tofile="src/main/resources/audit-client.properties" overwrite="true" />
+                                        <copy file="src/main/resources/context.xml_runner" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
                                     </target>
                                 </configuration>
                                 <goals>
@@ -66,22 +66,6 @@
                     </plugin>
                 </plugins>
             </build>
-
-            <dependencies>
-                <dependency>
-                    <groupId>org.fracturedatlas.athena.helper</groupId>
-                    <artifactId>relationship-helper</artifactId>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.fracturedatlas.athena.plugin</groupId>
-                    <artifactId>twitter-sub-resource</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.fracturedatlas.athena.plugin</groupId>
-                    <artifactId>tags-sub-collection</artifactId>
-                </dependency>
-            </dependencies>
                 
         </profile>
 
@@ -98,14 +82,14 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <build>
-                <finalName>${project.name}-runner</finalName>
+                <finalName>athena-runner</finalName>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
                         <version>2.0</version>
                         <configuration>
-                            <warName>${project.name}-runner</warName>
+                            <warName>athena-runner</warName>
                             <webResources>
                                 <resource>
                                     <directory>${basedir}/src/main/resources</directory>
@@ -127,8 +111,8 @@
                                 <phase>validate</phase>
                                 <configuration>
                                     <target>
-                                        <copy file="src/main/resources/audit-client.properties.local" tofile="src/main/resources/audit-client.properties" overwrite="true" />
                                         <copy file="src/main/resources/db.properties.derby" tofile="src/main/resources/db.properties" overwrite="true" />
+                                        <copy file="src/main/resources/context.xml_runner" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
                                     </target>
                                 </configuration>
                                 <goals>
@@ -140,8 +124,8 @@
                                 <phase>install</phase>
                                 <configuration>
                                     <target>
-                                        <copy file="target/${project.name}-runner.war" tofile="../../runner/src/main/skeleton/athena/components/${project.name}/war/${project.name}.war" />
-                                        <copy todir="../../runner/src/main/skeleton/athena/components/${project.name}/config">
+                                        <copy file="target/athena-runner.war" tofile="../../runner/src/main/skeleton/athena/components/athena/war/athena.war" />
+                                        <copy todir="../../runner/src/main/skeleton/athena/components/athena/config">
                                             <fileset dir="src/main/resources" includes="db.properties*" />
                                         </copy>
                                         <copy todir="../../runner/src/main/skeleton/athena/components/shared/config">
@@ -180,27 +164,28 @@
             <artifactId>sdk</artifactId>
             <type>pom</type>
         </dependency>
-        <dependency>
-            <groupId>org.fracturedatlas.athena</groupId>
-            <artifactId>audit-client</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.fracturedatlas.athena.helper</groupId>
             <artifactId>lock</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.fracturedatlas.athena.helper</groupId>
             <artifactId>codes</artifactId>
+        </dependency> 
+        <dependency>
+            <groupId>org.fracturedatlas.athena</groupId>
+            <artifactId>reports</artifactId>
+            <version>1.1.0-SNAPSHOT</version>
+            <type>jar</type>
+        </dependency>
+        <dependency> 
+            <groupId>org.fracturedatlas.athena.helper</groupId>
+            <artifactId>ticketfactory</artifactId>
         </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena.plugin</groupId>
             <artifactId>available-tickets</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.fracturedatlas.athena.helper</groupId>
-            <artifactId>ticketfactory</artifactId>
         </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena.plugin</groupId>

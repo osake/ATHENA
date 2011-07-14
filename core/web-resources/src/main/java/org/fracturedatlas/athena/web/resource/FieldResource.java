@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@Path("/meta/fields")
+@Path("/fields")
 @Consumes({"application/json"})
 @Produces({"application/json"})
 public class FieldResource {

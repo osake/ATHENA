@@ -34,13 +34,8 @@ public class AthenaRunner {
         ContextHandlerCollection contexts = new ContextHandlerCollection();
 
         String[] appNames = new String[]{
-                                         "tix"
-                                        ,"stage"
-                                        ,"people"
-                                        ,"orders"
+                                         "athena"
                                         ,"payments"
-                                        ,"reports"
-                                        ,"audit"
                                         };
 
         for (String appName : appNames) {

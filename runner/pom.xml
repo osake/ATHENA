@@ -67,19 +67,19 @@
                                         <copy file="../core/web-resources/target/web-resources-jar-with-dependencies.jar" tofile="src/main/skeleton/athena/components/shared/lib/web-resources.jar" />
                                         <copy todir="src/main/skeleton/athena/ddl">
                                             <fileset dir="../ddl" defaultexcludes="true">
-                                               <include name="**/*" />
+                                                <include name="**/*" />
                                             </fileset>
                                         </copy>
                                         <delete includeemptydirs="true">
                                             <fileset dir="src/main/skeleton/athena/log/" defaultexcludes="true">
-                                               <exclude name=".gitignore" />
-                                               <include name="**/*" />
+                                                <exclude name=".gitignore" />
+                                                <include name="**/*" />
                                             </fileset>
                                         </delete>
                                         <delete includeemptydirs="true">
                                             <fileset dir="src/main/skeleton/athena/db/" defaultexcludes="true">
-                                               <exclude name=".gitignore" />
-                                               <include name="**/*" />
+                                                <exclude name=".gitignore" />
+                                                <include name="**/*" />
                                             </fileset>
                                         </delete>
                                         <tar destfile="target/athena-${project.version}.tar" basedir="src/main/skeleton" excludes="**/.gitignore" />
@@ -93,6 +93,19 @@
                     </plugin>
                 </plugins>
             </build>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-server</artifactId>
+                    <version>7.2.2.v20101205</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-webapp</artifactId>
+                    <version>7.2.2.v20101205</version>
+                </dependency>
+            </dependencies>
         </profile>
     </profiles>
 
@@ -108,17 +121,4 @@
             <url>http://maven2.fracturedatlas.org:8081/nexus/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>7.2.2.v20101205</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-webapp</artifactId>
-            <version>7.2.2.v20101205</version>
-        </dependency>
-    </dependencies>
 </project>

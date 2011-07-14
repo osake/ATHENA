@@ -185,8 +185,11 @@ public class RecordManager {
     }
 
     public Set<PTicket> findRecords(String type, MultivaluedMap<String, String> queryParams) {
-
         AthenaSearch search = convert(queryParams);
+        return findRecords(type, search);
+    }
+
+    public Set<PTicket> findRecords(String type, AthenaSearch search) {
         search.setType(type);
         return apa.findTickets(search);
     }

@@ -11,7 +11,54 @@
   <name>reports</name>
   <packaging>war</packaging>
   <version>1.1.0-SNAPSHOT</version>
-  <profiles>
+  <profiles>   
+        <!--
+         *
+         *
+         * Generate Athena-runner artifacts
+         *
+         *
+        -->
+        <profile>
+            <id>war</id>
+            <build>
+                <finalName>reports</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>2.2</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>install-file</goal>
+                                </goals>
+                                <configuration>
+                                    <packaging>jar</packaging>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <groupId>${project.groupId}</groupId>
+                                    <version>${project.version}</version>
+                                    <file>${project.build.directory}/${project.artifactId}.jar</file>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
 
         <!--
          *
@@ -25,63 +72,47 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-      <build>
-        <finalName>${project.name}-runner</finalName>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-war-plugin</artifactId>
-            <version>2.0</version>
-            <configuration>
-              <warName>${project.name}-runner</warName>
-              <webResources>
-                <resource>
-                  <directory>${basedir}/src/main/resources</directory>
-                  <excludes>
-                    <exclude>
-                                            *.properties*
-                    </exclude>
-                  </excludes>
-                </resource>
-              </webResources>
-            </configuration>
-          </plugin>
-          <plugin>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.6</version>
-            <executions>
-              <execution>
-                <id>copy-properties</id>
-                <phase>install</phase>
-                <configuration>
-                  <target>
-                    <copy file="target/${project.name}-runner.war" tofile="../../runner/src/main/skeleton/athena/components/${project.name}/war/${project.name}.war" />
-                    <copy todir="../../runner/src/main/skeleton/athena/components/${project.name}/config">
-                      <fileset dir="src/main/resources" includes="*.properties*" />
-                    </copy>
-                  </target>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
+             <build>
+                <finalName>reports</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <version>2.2</version>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>install-file</goal>
+                                </goals>
+                                <configuration>
+                                    <packaging>jar</packaging>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <groupId>${project.groupId}</groupId>
+                                    <version>${project.version}</version>
+                                    <file>${project.build.directory}/${project.artifactId}.jar</file>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
     </profile>
   </profiles>
 
   <dependencies>
-
-    <!-- ATHENA -->
-
-    <!-- ATHENA sdk is inherited from components pom -->
-
-    <dependency>
-        <groupId>org.fracturedatlas.athena</groupId>
-        <artifactId>audit-client</artifactId>
-    </dependency>
 
 
     <!-- JERSEY -->

@@ -61,11 +61,11 @@ public class TicketFactoryManager {
 
         AthenaSearchConstraint sectionSearch = new AthenaSearchConstraint("chartId", Operator.EQUALS, chartId);
         AthenaSearch athenaSearch = new AthenaSearch.Builder(sectionSearch).build();
+        logger.debug("Finding sections for chart [{}]", chartId);
         Collection<PTicket> sections = athenaStage.find("section", athenaSearch);
+        logger.debug("Found [{}] sections", sections.size());
 
         ArrayList<PTicket> ticketsToCreate = new ArrayList<PTicket>();
-
-        logger.info("[{}] sections", sections.size());
 
         //for each section
         for(PTicket section : sections) {

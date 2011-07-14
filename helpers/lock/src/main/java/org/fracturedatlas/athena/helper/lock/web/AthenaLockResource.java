@@ -42,7 +42,7 @@ import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Path("/meta/locks")
+@Path("/locks")
 @Consumes({"application/json"})
 @Produces({"application/json"})
 @Component
