@@ -225,7 +225,7 @@ You can send the entire customer if needed, but only the id is necessary
     PUT /payments/cards/{id}
     {"expirationDate":"12/2012","cardholderName":"Joe Cool","token":"9f9p","id":"9f9p","customer":{"id":"485254"}}
 
-**You cannot update a card number for a saved credit card** so do the cardNumber field in your PUT request.  If you include a number, updated or otherwise, ATHENA will return a 400 - Bad Request.
+**You cannot update a card number for a saved credit card** so don't modify the cardNumber field in your PUT request.  If you include a number, updated or otherwise, ATHENA will ignore it.
 
 *Response*
 
