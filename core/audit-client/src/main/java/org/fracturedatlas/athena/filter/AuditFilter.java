@@ -120,7 +120,7 @@ public class AuditFilter implements ContainerRequestFilter, ContainerResponseFil
                 byte[] requestEntity = message.getBytes();
                 printEntity(b, requestEntity);
 
-                request.setEntityInputStream(new ByteArrayInputStream(requestEntity));
+                request.setEntityInputStream(new ByteArrayInputStream(out.toByteArray()));
                 return request;
             } catch (IOException ex) {
                 throw new ContainerException(ex);
