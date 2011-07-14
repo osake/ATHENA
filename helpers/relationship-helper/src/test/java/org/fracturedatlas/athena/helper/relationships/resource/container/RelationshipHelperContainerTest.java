@@ -43,7 +43,7 @@ public class RelationshipHelperContainerTest extends BaseContainerTest {
 
     @Test
     public void testFindTicketsByRelationship() {
-        path = "/meta/relationships/people/" + IdAdapter.toString(jimmy.getId());
+        path = PATH + "/people/" + IdAdapter.toString(jimmy.getId());
         String jsonString = tix.path(path).get(String.class);
         PTicket[] tickets = gson.fromJson(jsonString, PTicket[].class);
         assertEquals(1, tickets.length);
@@ -52,7 +52,7 @@ public class RelationshipHelperContainerTest extends BaseContainerTest {
 
     @Test
     public void testFindTicketsByRelationship2() {
-        path = "/meta/relationships/people/" + IdAdapter.toString(bobby.getId());
+        path = PATH + "/people/" + IdAdapter.toString(bobby.getId());
         String jsonString = tix.path(path).get(String.class);
         PTicket[] tickets = gson.fromJson(jsonString, PTicket[].class);
         assertEquals(3, tickets.length);
@@ -61,7 +61,7 @@ public class RelationshipHelperContainerTest extends BaseContainerTest {
 
     @Test
     public void testFindTicketsByRelationshipNone() {
-        path = "/meta/relationships/people/0";
+        path = PATH + "/people/0";
         String jsonString = tix.path(path).get(String.class);
         PTicket[] tickets = gson.fromJson(jsonString, PTicket[].class);
         assertEquals(0, tickets.length);
@@ -69,7 +69,7 @@ public class RelationshipHelperContainerTest extends BaseContainerTest {
 
     @Test
     public void testFindTicketsByRelationshipUnknownType() {
-        path = "/meta/relationships/monkeys/0";
+        path = PATH + "/monkeys/0";
         String jsonString = tix.path(path).get(String.class);
         PTicket[] tickets = gson.fromJson(jsonString, PTicket[].class);
         assertEquals(0, tickets.length);

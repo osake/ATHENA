@@ -37,7 +37,7 @@ import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.helper.relationships.manager.RelationshipHelperManager;
 import org.springframework.stereotype.Component;
 
-@Path("/meta/relationships")
+@Path("/relationships")
 @Consumes({"application/json"})
 @Produces({"application/json"})
 @Component
