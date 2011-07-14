@@ -159,9 +159,9 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
                                   PTicket record,
                                   String key,
                                   String val) {
-        List<String> vals = new ArrayList<String>();
-        vals.add(val);
-        typeAndLoadProps(props, record, key, val);
+        List<String> valueList = new ArrayList<String>();
+        valueList.add(val);
+        typeAndLoadProps(props, record, key, valueList);
     }
     
     private void typeAndLoadProps(BasicDBObject props,

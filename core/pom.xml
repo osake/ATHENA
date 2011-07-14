@@ -17,6 +17,7 @@
         <module>client</module>
         <module>apa</module>
         <module>web-resources</module>
+        <module>audit-client</module>
         <module>sdk</module>
     </modules>
 

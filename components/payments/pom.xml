@@ -70,21 +70,25 @@
 
     <dependencies>
 
+        <!-- 
+          THIS IS SOLELY SO THAT PAYMENTS CAN TALK TO SECURITY.  It's a hack solution and should be refactored out.
+          Best solution is to put a security module into core an include the pom here
+          -->
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.6</version>
+        </dependency>
+
         <!-- ATHENA -->
+        <!-- 
+          And this is also a little bloat right here.  All Payments needs is the WebConfig class, util, AthenaComponent (maybe) and the client
+          -->
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>sdk</artifactId>
             <type>pom</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.fracturedatlas.athena</groupId>
-                    <artifactId>web-resources</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.fracturedatlas.athena</groupId>
-                    <artifactId>apa</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- BRAINTREE -->

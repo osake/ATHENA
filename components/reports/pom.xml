@@ -9,108 +9,8 @@
   <groupId>org.fracturedatlas.athena</groupId>
   <artifactId>reports</artifactId>
   <name>reports</name>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   <version>1.1.0-SNAPSHOT</version>
-  <profiles>   
-        <!--
-         *
-         *
-         * Generate Athena-runner artifacts
-         *
-         *
-        -->
-        <profile>
-            <id>war</id>
-            <build>
-                <finalName>reports</finalName>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <version>2.2</version>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-install-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>install-file</goal>
-                                </goals>
-                                <configuration>
-                                    <packaging>jar</packaging>
-                                    <artifactId>${project.artifactId}</artifactId>
-                                    <groupId>${project.groupId}</groupId>
-                                    <version>${project.version}</version>
-                                    <file>${project.build.directory}/${project.artifactId}.jar</file>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!--
-         *
-         *
-         * Generate Athena-runner artifacts
-         *
-         *
-        -->
-    <profile>
-      <id>runner</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-             <build>
-                <finalName>reports</finalName>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <version>2.2</version>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-install-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>install-file</goal>
-                                </goals>
-                                <configuration>
-                                    <packaging>jar</packaging>
-                                    <artifactId>${project.artifactId}</artifactId>
-                                    <groupId>${project.groupId}</groupId>
-                                    <version>${project.version}</version>
-                                    <file>${project.build.directory}/${project.artifactId}.jar</file>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-    </profile>
-  </profiles>
 
   <dependencies>
 
@@ -175,19 +75,6 @@
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
       <version>1.8.5</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-      <version>10.7.1.1</version>
-    </dependency>
-
-    <!-- DO NOT FEED THE BEARS -->
-    <dependency>
-      <groupId>com.sun.grizzly</groupId>
-      <artifactId>grizzly-servlet-webserver</artifactId>
-      <version>1.9.8</version>
       <scope>test</scope>
     </dependency>
 

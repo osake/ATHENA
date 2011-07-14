@@ -29,5 +29,9 @@
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>web-resources</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.fracturedatlas.athena</groupId>
+            <artifactId>audit-client</artifactId>
+        </dependency>
     </dependencies>
 </project>
