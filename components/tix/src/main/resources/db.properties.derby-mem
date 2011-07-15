@@ -14,7 +14,7 @@ athena.index.directory=../index/ATHENA-tix
 # Seting this to "true" will disable indexing and _q searches will return []
 # ANY OTHER VALUE (including blank) will enable indexing (see Boolean.parseBoolean)
 #
-athena.index.disabled=true
+athena.index.disabled=false
 
 #
 # Proxool Connection Pooling
