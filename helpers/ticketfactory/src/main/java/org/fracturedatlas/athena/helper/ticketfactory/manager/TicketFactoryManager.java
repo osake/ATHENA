@@ -70,7 +70,7 @@ public class TicketFactoryManager {
         //for each section
         for(PTicket section : sections) {
             Integer capacity = Integer.parseInt(section.get("capacity"));
-            logger.info("capacity of section [{}] is [{}]", section.getId(), capacity);
+            logger.debug("capacity of section [{}] is [{}]", section.getId(), capacity);
             for(int seatNum = 0; seatNum < capacity; seatNum++) {
                 PTicket ticket = new PTicket();
                 ticket.put("price", section.get("price"));
@@ -83,19 +83,19 @@ public class TicketFactoryManager {
                 ticket.put("eventId", eventId);
                 ticket.put("state", INITIAL_STATE);
 
-                logger.info("Creating ticket, save below: ");
-                logger.info(ticket.toString());
+                logger.debug("Creating ticket, save below: ");
+                logger.debug(ticket.toString());
                 ticketsToCreate.add(ticket);
 
             }
         }
 
-        logger.info("[{}] tickets to create", ticketsToCreate.size());
+        logger.debug("[{}] tickets to create", ticketsToCreate.size());
 
         for(PTicket ticket : ticketsToCreate) {
             try{
-                logger.info("Saving ticket: ");
-                logger.info(ticket.toString());
+                logger.debug("Saving ticket: ");
+                logger.debug(ticket.toString());
                 ticketManager.createRecord("ticket", ticket);
             } catch (Exception e) {
                 //TODO: Cleanup tickets that we created
