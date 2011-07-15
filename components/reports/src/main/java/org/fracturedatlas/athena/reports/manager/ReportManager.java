@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.reports.manager;
 
 import com.sun.jersey.api.NotFoundException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.fracturedatlas.athena.reports.model.AthenaReport;
@@ -39,9 +40,22 @@ public class ReportManager {
     @javax.ws.rs.core.Context
     ApplicationContext applicationContext;
     
+    private static HashMap<String, Reporter> cachedReporters = new HashMap<String, Reporter>(); 
+    
     public AthenaReport getReport(String reportType, Map<String, List<String>> queryParams) {
         try{
-            Reporter reporter = (Reporter)applicationContext.getBean(reportType + "Reporter");
+            logger.debug("Looking up reporter");
+            long start = System.currentTimeMillis();
+            
+            String reporterName = reportType + "Reporter";
+            
+            Reporter reporter = cachedReporters.get(reporterName);
+            
+            if(reporter == null) {
+                reporter = (Reporter)applicationContext.getBean(reporterName);
+            }
+            long end = System.currentTimeMillis();
+            logger.debug("Found reporter in [{}ms], reporting", end-start);
             return reporter.getReport(queryParams);
         } catch (NoSuchBeanDefinitionException noBean) {
             throw new NotFoundException("Could not find a report named " + reportType);

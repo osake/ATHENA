@@ -107,6 +107,7 @@ public class GlanceReporter implements Reporter {
     }
 
     public GlancePerformanceReport loadGlancePerformanceReport(String performanceId, String organizationId) {
+        long start = System.currentTimeMillis();
 
         GlancePerformanceReport report = new GlancePerformanceReport();
 
@@ -125,10 +126,17 @@ public class GlanceReporter implements Reporter {
         Integer totalTicketsCompedToday = 0;
         Integer totalTicketsAvailable = 0;
 
+      
         logger.debug("Searching for tickets matching {}", search);
+        long searchStart = System.currentTimeMillis();
         Collection<PTicket> tickets = athenaTix.find("ticket", search);
+        long searchEnd = System.currentTimeMillis();
+        logger.debug("Search took [{}ms]", searchEnd-searchStart);
         logger.debug("Found {} tickets", tickets.size());
         DateTime now = new DateTime();
+        
+        long calStart = System.currentTimeMillis();
+        
         for(PTicket ticket : tickets) {
             originalPotential += Double.parseDouble(ticket.get("price"));
             if("sold".equals(ticket.get("state"))) {
@@ -154,6 +162,9 @@ public class GlanceReporter implements Reporter {
                 potentialRemaining += Double.parseDouble(ticket.get("price"));
             }
         }
+        
+        long calEnd = System.currentTimeMillis();
+        logger.debug("Calculations took [{}ms]", calEnd-calStart);
 
         report.getRevenue().setSoldToday(new GrossNet(totalSalesToday, 0D));
         report.getRevenue().setPotentialRemaining(new GrossNet(potentialRemaining, 0D));
@@ -164,6 +175,8 @@ public class GlanceReporter implements Reporter {
         report.getTickets().setSoldToday(new GrossComped(totalTicketsSoldToday, totalTicketsCompedToday));
         report.getTickets().setAvailable(totalTicketsAvailable);
 
+        long end = System.currentTimeMillis();
+        logger.debug("Glance report loaded in [{}ms]", end-start);
         return report;
     }
     

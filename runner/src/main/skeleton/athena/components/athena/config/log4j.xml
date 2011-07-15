@@ -5,8 +5,8 @@
 
     <!-- ATHENA -->
     <appender name="Athena" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="../log/ATHENA-Tix.log"/>
-        <param name="Threshold" value="INFO"/>
+        <param name="File" value="../log/ATHENA.log"/>
+        <param name="Threshold" value="DEBUG"/>
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d{HH:mm:ss.SSS} %-5p [%t] %c{1} %m%n"/>
@@ -30,10 +30,18 @@
     <logger name="com.sun.jersey">
         <level value="WARN"/>
     </logger>
+    <logger name="com.sun.jersey">
+        <level value="WARN"/>
+    </logger>
+    <logger name="org.fracturedatlas.athena">
+        <level value="INFO"/>
+    </logger>
+    <logger name="org.fracturedatlas.athena.reports.manager">
+        <level value="DEBUG"/>
+    </logger>
 
     <root>
-        <!-- Set root logger level to DEBUG and its only appender to Athena -->
-        <priority value ="DEBUG" />
+        <priority value ="INFO" />
         <appender-ref ref="Athena" />
     </root>
 </log4j:configuration>
