@@ -30,9 +30,6 @@
     <logger name="com.sun.jersey">
         <level value="WARN"/>
     </logger>
-    <logger name="com.sun.jersey">
-        <level value="WARN"/>
-    </logger>
     <logger name="org.fracturedatlas.athena">
         <level value="INFO"/>
     </logger>
