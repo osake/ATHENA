@@ -8,21 +8,19 @@
        http://www.springframework.org/schema/tx
        http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
-
-    <bean name="athenaStage" class="org.fracturedatlas.athena.web.JsonAthenaComponent">
-        <constructor-arg index="0" value="${athena.stage.hostname}"/>
-        <constructor-arg index="1" value="${athena.stage.port}"/>
-        <constructor-arg index="2" value="${athena.stage.deployedAs}"/>
-        <constructor-arg index="3">
-            <bean class="org.springframework.security.core.context.SecurityContextHolder"
-                  factory-method="getContextHolderStrategy">
-            </bean>
-        </constructor-arg>
-    </bean>
-
     <bean id="recordManager" class="org.fracturedatlas.athena.web.manager.RecordManager" autowire="autodetect"/>
     <bean id="recordResource" class="org.fracturedatlas.athena.web.resource.RecordResource" autowire="autodetect"/>
 
     <bean id="fieldResource" class="org.fracturedatlas.athena.web.resource.FieldResource" autowire="autodetect"/>
     <bean id="propFieldManager" class="org.fracturedatlas.athena.web.manager.PropFieldManager" autowire="autodetect"/>
+    
+    <!-- OTHER COMPONENTS -->
+    <bean name="athenaStage" class="org.fracturedatlas.athena.web.IntimateAthenaComponent">
+    </bean>
+    
+    <bean name="athenaTix" class="org.fracturedatlas.athena.web.IntimateAthenaComponent">
+    </bean>
+    
+    <bean name="athenaOrders" class="org.fracturedatlas.athena.web.IntimateAthenaComponent">
+    </bean>
 </beans>

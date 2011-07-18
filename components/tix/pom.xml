@@ -16,16 +16,11 @@
 
         <!--
          *
-         *
-         * Generate a self-contanted war file that can be deployed to a container
-         *
+         * Generate standalone war files for Fractured Atlas' staging environment
          *
         -->
         <profile>
-            <id>war</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
+            <id>fa-staging</id>
             <build>
                 <finalName>athena</finalName>
                 <plugins>
@@ -37,7 +32,7 @@
                                 <phase>validate</phase>
                                 <configuration>
                                     <target>
-                                        <copy file="src/main/resources/context.xml_runner" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
+                                        <copy file="src/main/resources/context.xml_war" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
                                     </target>
                                 </configuration>
                                 <goals>
@@ -56,9 +51,8 @@
                                 <resource>
                                     <directory>${basedir}/src/main/resources</directory>
                                     <excludes>
-                                        <exclude>db.properties.derby</exclude>
-                                        <exclude>db.properties.derby-mem</exclude>
-                                        <exclude>db.properties.mysql</exclude>
+                                        <exclude>context.xml_*</exclude>
+                                        <exclude>db.properties*</exclude>
                                     </excludes>
                                 </resource>
                             </webResources>
@@ -72,7 +66,7 @@
         <!--
          *
          *
-         * Generate Athena-runner artifacts
+         * Generate artifacts with the Athena standalone runner package
          *
          *
         -->
@@ -129,9 +123,9 @@
                                             <fileset dir="src/main/resources" includes="db.properties*" />
                                         </copy>
                                         <copy todir="../../runner/src/main/skeleton/athena/components/shared/config">
-                                            <fileset dir="src/main/resources" includes="components.properties" />
                                             <fileset dir="src/main/resources" includes="security.properties" />
-                                            <fileset dir="src/main/resources" includes="audit-client.properties" />
+                                            <fileset dir="src/main/resources" includes="logging.properties" />
+                                            <fileset dir="src/main/resources" includes="log4j.xml" />
                                         </copy>
                                     </target>
                                 </configuration>
