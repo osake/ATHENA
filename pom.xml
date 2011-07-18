@@ -139,7 +139,6 @@
           <username>parakeetdb</username>
           <password>parakeetdb</password>
           <srcFiles>
-            <srcFile>../../ddl/athena-audit.sql</srcFile>
             <srcFile>../../ddl/athena-ddl.sql</srcFile>
           </srcFiles>
           <skip>${skipTests}</skip>
