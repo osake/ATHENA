@@ -49,7 +49,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
     protected ApaAdapter apa;
     protected final static String TIX_URI = "http://localhost:9998/tix";
     protected final static String RECORDS_PATH = "/tickets/";
-    protected final static String FIELDS_PATH = "/meta/fields/";
+    protected final static String FIELDS_PATH = "/fields/";
 
     protected List<PTicket> recordsToDelete = new ArrayList<PTicket>();
     protected List<PropField> propFieldsToDelete = new ArrayList<PropField>();
