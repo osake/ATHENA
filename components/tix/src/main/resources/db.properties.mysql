@@ -5,7 +5,7 @@
 #
 # This is where Lucene will store indexing files.
 #
-athena.index.directory=../index/ATHENA-tix
+athena.index.directory=../index/ATHENA
 
 #
 # Seting this to "true" will disable indexing and _q searches will return []

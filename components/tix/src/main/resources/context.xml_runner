@@ -17,7 +17,6 @@
         <property name="locations">
             <list>
                 <value>classpath:db.properties</value>
-                <value>classpath:components.properties</value>
                 <value>classpath:security.properties</value>
             </list>
         </property>
@@ -76,15 +75,5 @@
 
     <bean id="contextHolderStrategy" class="org.springframework.security.core.context.SecurityContextHolder" factory-method="getContextHolderStrategy"/>
     <import resource="beans.xml"/>
-    
-    <!-- OTHER COMPONENTS -->
-    <bean name="athenaStage" class="org.fracturedatlas.athena.web.IntimateAthenaComponent">
-    </bean>
-    
-    <bean name="athenaTix" class="org.fracturedatlas.athena.web.IntimateAthenaComponent">
-    </bean>
-    
-    <bean name="athenaOrders" class="org.fracturedatlas.athena.web.IntimateAthenaComponent">
-    </bean>
 
 </beans>
