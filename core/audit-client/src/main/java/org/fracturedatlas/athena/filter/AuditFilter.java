@@ -16,7 +16,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -29,9 +30,8 @@ import org.fracturedatlas.athena.util.Scrubber;
 /**
  * This class is largely derived from the source code Jersey's LoggingFilter 
  * (com.sun.jersey.api.container.filter.LoggingFilter) however we wanted to tweak the way logging was done
- * and nearly every method int hat class was private so that extending the class to override one method was impossible
+ * and nearly every method in that class was private so that extending the class to override one method was impossible
  */
-
 public class AuditFilter implements ContainerRequestFilter, ContainerResponseFilter {
     /**
      * If true the request and response entities (if present) will not be logged.
@@ -42,7 +42,7 @@ public class AuditFilter implements ContainerRequestFilter, ContainerResponseFil
     public static final String FEATURE_LOGGING_DISABLE_ENTITY
             = "com.sun.jersey.config.feature.logging.DisableEntitylogging";
 
-    private static final Logger LOGGER = Logger.getLogger(AuditFilter.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuditFilter.class.getName());
 
     private static final String NOTIFICATION_PREFIX = "* ";
     
@@ -61,7 +61,7 @@ public class AuditFilter implements ContainerRequestFilter, ContainerResponseFil
 
    static {
         try {
-            Configuration props = new PropertiesConfiguration("audit-client.properties");
+            Configuration props = new PropertiesConfiguration("logging.properties");
              fieldsToScrub = props.getList("audit.fieldsToScrub");
         } catch (ConfigurationException e) {
             e.printStackTrace();
@@ -77,12 +77,6 @@ public class AuditFilter implements ContainerRequestFilter, ContainerResponseFil
         this(LOGGER);
     }
 
-    /**
-     * Create a logging filter logging the request and response to
-     * a JDK logger.
-     *
-     * @param logger the logger to log requests and responses.
-     */
     public AuditFilter(Logger logger) {
         this.logger = logger;
     }
