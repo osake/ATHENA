@@ -4,8 +4,7 @@
 
 
     <!-- ATHENA -->
-    <appender name="Athena" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="../log/ATHENA.log"/>
+    <appender name="Athena" class="org.apache.log4j.ConsoleAppender">
         <param name="Threshold" value="INFO"/>
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">

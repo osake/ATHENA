@@ -13,33 +13,16 @@
     <version>1.1.0-SNAPSHOT</version>
     <profiles>        
     
-    <!--
+        <!--
          *
-         * Generate standalone war files for Fractured Atlas' staging environment
+         * Generate standalone war files for Fractured Atlas' local development environment
          *
         -->
         <profile>
-            <id>fa-staging</id>
+            <id>fa-local</id>
             <build>
                 <finalName>payments</finalName>
                 <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <phase>validate</phase>
-                                <configuration>
-                                    <target>
-                                      <!-- put the correct files copy here -->
-                                    </target>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
@@ -50,7 +33,6 @@
                                 <resource>
                                     <directory>${basedir}/src/main/resources</directory>
                                     <excludes>
-                                        <!-- copy braintree info here -->
                                         <exclude>context.xml_*</exclude>
                                         <exclude>db.properties*</exclude>
                                     </excludes>
@@ -60,7 +42,68 @@
                     </plugin>
                 </plugins>
             </build>
-                
+        </profile>
+
+        <!--
+         *
+         * Generate standalone war files for Fractured Atlas' production environment
+         *
+        -->
+        <profile>
+            <id>fa-production</id>
+            <build>
+                <finalName>payments</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>2.0</version>
+                        <configuration>
+                            <warName>payments</warName>
+                            <webResources>
+                                <resource>
+                                    <directory>${basedir}/src/main/resources</directory>
+                                    <excludes>
+                                        <exclude>context.xml_*</exclude>
+                                        <exclude>db.properties*</exclude>
+                                    </excludes>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!--
+         *
+         * Generate standalone war files for Fractured Atlas' staging environment
+         *
+        -->
+        <profile>
+            <id>fa-staging</id>
+            <build>
+                <finalName>payments</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>2.0</version>
+                        <configuration>
+                            <warName>payments</warName>
+                            <webResources>
+                                <resource>
+                                    <directory>${basedir}/src/main/resources</directory>
+                                    <excludes>
+                                        <exclude>context.xml_*</exclude>
+                                        <exclude>db.properties*</exclude>
+                                    </excludes>
+                                </resource>
+                            </webResources>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
         <!-- This profile is for generating Athena-runner artifacts -->
