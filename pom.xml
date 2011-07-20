@@ -89,6 +89,11 @@
       </dependency>
       <dependency>
         <groupId>org.fracturedatlas.athena.helper</groupId>
+        <artifactId>health-check</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.fracturedatlas.athena.helper</groupId>
         <artifactId>ticketfactory</artifactId>
         <version>${project.version}</version>
       </dependency>

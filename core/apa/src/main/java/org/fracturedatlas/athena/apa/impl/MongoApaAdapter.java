@@ -36,6 +36,7 @@ import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -64,6 +65,8 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
 
     //This is the mongo name for the props object within a record
     public static final String PROPS_STRING = "props";
+    
+    static HashMap<Object, PropField> cachedFields = new HashMap<Object, PropField>();
 
     public MongoApaAdapter(String host,
                            Integer port,
@@ -147,7 +150,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
             }
         }
 
-        doc.put("props", props);
+        doc.put(PROPS_STRING, props);
 
         db.getCollection(t.getType()).save(doc);
         addToIndex(t);
@@ -250,7 +253,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
     }
 
     @Override
-    public Set<PTicket> findTickets(AthenaSearch athenaSearch) {
+    public Set<PTicket> findTickets(AthenaSearch athenaSearch) {        
         if(athenaSearch.getType() == null) {
             throw new ApaException("You must specify a record type when doing a search");
         }
@@ -312,7 +315,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         DBCursor recordsCursor = db.getCollection(athenaSearch.getType()).find(currentQuery);
         recordsCursor = setLimit(recordsCursor, athenaSearch.getSearchModifiers().get(AthenaSearch.LIMIT));
         recordsCursor = setSkip(recordsCursor, athenaSearch.getSearchModifiers().get(AthenaSearch.START));
-
+        
         for(DBObject recordObject : recordsCursor) {
             try {
                 tickets.add(toRecord(recordObject));
@@ -395,6 +398,12 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
      */
     @Override
     public PropField getPropField(Object idOrName) {
+        
+        PropField field = cachedFields.get(idOrName);
+        if(field != null) {
+            return field;
+        }
+        
         BasicDBObject query = new BasicDBObject();
 
         ObjectId objectId = ObjectId.massageToObjectId(idOrName);
@@ -410,6 +419,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
             return null;
         } else {
             PropField propField = toField(doc);
+            cachedFields.put(idOrName, propField);
             return propField;
         }
     }
@@ -568,7 +578,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         DBObject recordDoc = getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(ticketId));
 
         if(recordDoc != null) {
-            DBObject propsObj = (DBObject)recordDoc.get("props");
+            DBObject propsObj = (DBObject)recordDoc.get(PROPS_STRING);
             if(propsObj.containsField(fieldName)) {
                 PropField field = getPropField(fieldName);
 
@@ -599,7 +609,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         DBObject recordDoc = getRecordDocument(new BasicDBObject(), type, ObjectId.massageToObjectId(ticketId));
 
         if(recordDoc != null) {
-            DBObject propsObj = (DBObject)recordDoc.get("props");
+            DBObject propsObj = (DBObject)recordDoc.get(PROPS_STRING);
             if(propsObj.containsField(fieldName)) {
                 outProps = new ArrayList<TicketProp>();
                 PropField field = getPropField(fieldName);
@@ -647,11 +657,11 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
             DBObject recordDoc = getRecordDocument(new BasicDBObject(), prop.getTicket().getType(), ObjectId.massageToObjectId(prop.getTicket().getId()));
             String fieldName = prop.getPropField().getName();
             if(recordDoc != null) {
-                DBObject propsObj = (DBObject)recordDoc.get("props");
+                DBObject propsObj = (DBObject)recordDoc.get(PROPS_STRING);
                 if(propsObj.containsField(fieldName)) {
                     propsObj.removeField(fieldName);
                 }
-                recordDoc.put("props", propsObj);
+                recordDoc.put(PROPS_STRING, propsObj);
                 db.getCollection(prop.getTicket().getType()).save(recordDoc);
             }
         }
@@ -696,7 +706,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
                 t.setType((String)recordObject.get("type"));
 
                 if(includeProps) {
-                    DBObject propsObj = (DBObject)recordObject.get("props");
+                    DBObject propsObj = (DBObject)recordObject.get(PROPS_STRING);
                     for(String key : propsObj.keySet()) {
                         Object val = propsObj.get(key);
                         if(key.contains(":")) {

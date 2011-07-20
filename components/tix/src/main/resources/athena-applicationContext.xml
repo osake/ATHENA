@@ -24,22 +24,56 @@
 
 <!-- LUCENE CONFIG -->
 
+    <bean id="indexFile" class="java.io.File">
+      <constructor-arg value="${athena.index.directory}"/>
+    </bean>
     
-    <bean id="directory" class="org.apache.lucene.store.RAMDirectory"/>
+    <bean id="directory" class="org.apache.lucene.store.NIOFSDirectory">
+      <constructor-arg ref="indexFile"/>
+    </bean>
     
 <!-- MONGO -->
 
-    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.MongoApaAdapter" autowire="byType">
+    <!-- 
+    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.MongoApaAdapter" autowire="byName">
         <constructor-arg value="localhost"/>
         <constructor-arg type="java.lang.Integer" value="27017"/>
         <constructor-arg value="tix"/>
-        <constructor-arg value="athena_fields"/>
+        <constructor-arg value="fields"/>
+    </bean> -->
+    
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="persistenceUnitName" value="athena"/>
+
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+                <!-- This should be set to the dialect class -->
+                <property name="databasePlatform" value="${athena.hibernate.dialect}"/>
+                <property name="showSql" value="${athena.hibernate.showSql}"/>
+            </bean>
+        </property>
+        <property name="jpaPropertyMap">
+          <map>
+            <entry key="hibernate.hbm2ddl.auto" value="${athena.hibernate.hbm2ddl.auto}"/>
+          </map>
+        </property>
+
+    </bean>
+
+    <bean id="apa" class="org.fracturedatlas.athena.apa.impl.jpa.JpaApaAdapter" autowire="byType">
         <property name="indexingDisabledString" value="${athena.index.disabled}"/>
-    </bean> 
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <!-- BEANS -->
 
     <bean id="contextHolderStrategy" class="org.springframework.security.core.context.SecurityContextHolder" factory-method="getContextHolderStrategy"/>
     <import resource="beans.xml"/>
-    
+
 </beans>

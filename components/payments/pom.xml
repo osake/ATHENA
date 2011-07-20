@@ -178,6 +178,10 @@
             <artifactId>sdk</artifactId>
             <type>pom</type>
         </dependency>
+        <dependency>
+            <groupId>org.fracturedatlas.athena.helper</groupId>
+            <artifactId>health-check</artifactId>
+        </dependency>
 
         <!-- BRAINTREE -->
 

@@ -21,6 +21,7 @@
         <module>twitter-sub-resource</module>
         <module>available-tickets</module>
         <module>tags-sub-collection</module>
+        <module>health-check</module>
     </modules>
     <dependencies>
 
