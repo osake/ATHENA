@@ -4,8 +4,7 @@
 
 
     <!-- ATHENA -->
-    <appender name="Athena" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="../log/ATHENA.log"/>
+    <appender name="Athena" class="org.apache.log4j.ConsoleAppender">
         <param name="Threshold" value="DEBUG"/>
         <param name="Append" value="true"/>
         <layout class="org.apache.log4j.PatternLayout">
@@ -30,10 +29,13 @@
         <level value="WARN"/>
     </logger>
     <logger name="org.fracturedatlas.athena">
-        <level value="DEBUG"/>
+        <level value="INFO"/>
+    </logger>
+    <logger name="org.fracturedatlas.athena.filter">
+        <level value="INFO"/>
     </logger>
     <logger name="org.fracturedatlas.athena.reports.manager">
-        <level value="DEBUG"/>
+        <level value="INFO"/>
     </logger>
 
     <root>

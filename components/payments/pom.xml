@@ -34,11 +34,31 @@
                                     <directory>${basedir}/src/main/resources</directory>
                                     <excludes>
                                         <exclude>context.xml_*</exclude>
+                                        <exclude>*_runner</exclude>
+                                        <exclude>*.sample</exclude>
                                         <exclude>db.properties*</exclude>
                                     </excludes>
                                 </resource>
                             </webResources>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <configuration>
+                                    <target>
+                                        <copy file="${basedir}/../../assembly/log4j.xml_local" tofile="src/main/resources/log4j.xml" overwrite="true" />
+                                        <copy file="${basedir}/../../assembly/security.properties_local" tofile="src/main/resources/security.properties" overwrite="true" />
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -65,11 +85,31 @@
                                     <directory>${basedir}/src/main/resources</directory>
                                     <excludes>
                                         <exclude>context.xml_*</exclude>
+                                        <exclude>*_runner</exclude>
+                                        <exclude>*.sample</exclude>
                                         <exclude>db.properties*</exclude>
                                     </excludes>
                                 </resource>
                             </webResources>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <configuration>
+                                    <target>
+                                        <copy file="${basedir}/../../assembly/log4j.xml_production" tofile="src/main/resources/log4j.xml" overwrite="true" />
+                                        <copy file="${basedir}/../../assembly/security.properties_production" tofile="src/main/resources/security.properties" overwrite="true" />
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -96,11 +136,31 @@
                                     <directory>${basedir}/src/main/resources</directory>
                                     <excludes>
                                         <exclude>context.xml_*</exclude>
+                                        <exclude>*_runner</exclude>
+                                        <exclude>*.sample</exclude>
                                         <exclude>db.properties*</exclude>
                                     </excludes>
                                 </resource>
                             </webResources>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <configuration>
+                                    <target>
+                                        <copy file="${basedir}/../../assembly/log4j.xml_staging" tofile="src/main/resources/log4j.xml" overwrite="true" />
+                                        <copy file="${basedir}/../../assembly/security.properties_staging" tofile="src/main/resources/security.properties" overwrite="true" />
+                                    </target>
+                                </configuration>
+                                <goals>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
@@ -143,6 +203,7 @@
                                     <target>
                                         <copy file="target/${project.name}-runner.war" tofile="../../runner/src/main/skeleton/athena/components/${project.name}/war/${project.name}.war" />
                                         <copy file="src/main/resources/processor.properties.sample" tofile="../../runner/src/main/skeleton/athena/components/${project.name}/config/processor.properties" />
+                                        <copy file="src/main/resources/security.properties_runner" tofile="src/main/resources/security.properties" overwrite="true" />
                                     </target>
                                 </configuration>
                                 <goals>

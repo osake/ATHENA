@@ -33,7 +33,8 @@
                                 <configuration>
                                     <target>
                                         <copy file="${basedir}/../../assembly/context.xml_local" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
-                                        <copy file="src/main/resources/log4j.xml_local" tofile="src/main/resources/log4j.xml" overwrite="true" />
+                                        <copy file="${basedir}/../../assembly/log4j.xml_local" tofile="src/main/resources/log4j.xml" overwrite="true" />
+                                        <copy file="${basedir}/../../assembly/security.properties_local" tofile="src/main/resources/security.properties" overwrite="true" />
                                     </target>
                                 </configuration>
                                 <goals>
@@ -53,6 +54,7 @@
                                     <directory>${basedir}/src/main/resources</directory>
                                     <excludes>
                                         <exclude>context.xml_*</exclude>
+                                        <exclude>*_runner</exclude>
                                         <exclude>db.properties.*</exclude>
                                     </excludes>
                                 </resource>
@@ -83,6 +85,7 @@
                                     <target>
                                         <copy file="${basedir}/../../assembly/context.xml_production" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
                                         <copy file="${basedir}/../../assembly/log4j.xml_production" tofile="src/main/resources/log4j.xml" overwrite="true" />
+                                        <copy file="${basedir}/../../assembly/security.properties_production" tofile="src/main/resources/security.properties" overwrite="true" />
                                     </target>
                                 </configuration>
                                 <goals>
@@ -102,6 +105,7 @@
                                     <directory>${basedir}/src/main/resources</directory>
                                     <excludes>
                                         <exclude>context.xml_*</exclude>
+                                        <exclude>*_runner</exclude>
                                         <exclude>db.properties*</exclude>
                                     </excludes>
                                 </resource>
@@ -132,6 +136,7 @@
                                     <target>
                                         <copy file="${basedir}/../../assembly/context.xml_staging" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
                                         <copy file="${basedir}/../../assembly/log4j.xml_staging" tofile="src/main/resources/log4j.xml" overwrite="true" />
+                                        <copy file="${basedir}/../../assembly/security.properties_staging" tofile="src/main/resources/security.properties" overwrite="true" />
                                     </target>
                                 </configuration>
                                 <goals>
@@ -151,6 +156,7 @@
                                     <directory>${basedir}/src/main/resources</directory>
                                     <excludes>
                                         <exclude>context.xml_*</exclude>
+                                        <exclude>*_runner</exclude>
                                         <exclude>db.properties*</exclude>
                                     </excludes>
                                 </resource>
@@ -199,13 +205,14 @@
                         <version>1.6</version>
                         <executions>
                             <execution>
-                                <id>copy-properties-to-derby</id>
+                                <id>copy-properties-in-validation</id>
                                 <phase>validate</phase>
                                 <configuration>
                                     <target>
                                         <copy file="src/main/resources/db.properties.derby" tofile="src/main/resources/db.properties" overwrite="true" />
                                         <copy file="src/main/resources/context.xml_runner" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
-                                        <copy file="src/main/resources/log4j.xml_local" tofile="src/main/resources/log4j.xml" overwrite="true" />
+                                        <copy file="src/main/resources/log4j.xml_runner" tofile="src/main/resources/log4j.xml" overwrite="true" />
+                                        <copy file="src/main/resources/security.properties_runner" tofile="src/main/resources/security.properties" overwrite="true" />
                                     </target>
                                 </configuration>
                                 <goals>
@@ -246,6 +253,10 @@
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>sdk</artifactId>
             <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.fracturedatlas.athena.helper</groupId>
+            <artifactId>health-check</artifactId>
         </dependency>
 
         <dependency>
