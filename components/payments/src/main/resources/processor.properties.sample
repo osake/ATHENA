@@ -1,9 +1,0 @@
-athena.payments.processor=org.fracturedatlas.athena.payments.processor.MockPaymentProcessor
-
-#
-# Braintree-specific settings
-#
-athena.payments.braintree.environment=SANDBOX
-athena.payments.braintree.merchantId=
-athena.payments.braintree.publicKey=
-athena.payments.braintree.privateKey=
