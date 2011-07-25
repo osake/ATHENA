@@ -52,6 +52,7 @@
                                     <target>
                                         <copy file="${basedir}/../../assembly/log4j.xml_local" tofile="src/main/resources/log4j.xml" overwrite="true" />
                                         <copy file="${basedir}/../../assembly/security.properties_local" tofile="src/main/resources/security.properties" overwrite="true" />
+                                        <copy file="${basedir}/../../assembly/processor.properties_local" tofile="src/main/resources/processor.properties" overwrite="true" />
                                     </target>
                                 </configuration>
                                 <goals>
@@ -103,6 +104,7 @@
                                     <target>
                                         <copy file="${basedir}/../../assembly/log4j.xml_production" tofile="src/main/resources/log4j.xml" overwrite="true" />
                                         <copy file="${basedir}/../../assembly/security.properties_production" tofile="src/main/resources/security.properties" overwrite="true" />
+                                        <copy file="${basedir}/../../assembly/processor.properties_production" tofile="src/main/resources/processor.properties" overwrite="true" />
                                     </target>
                                 </configuration>
                                 <goals>
@@ -154,6 +156,7 @@
                                     <target>
                                         <copy file="${basedir}/../../assembly/log4j.xml_staging" tofile="src/main/resources/log4j.xml" overwrite="true" />
                                         <copy file="${basedir}/../../assembly/security.properties_staging" tofile="src/main/resources/security.properties" overwrite="true" />
+                                        <copy file="${basedir}/../../assembly/processor.properties_staging" tofile="src/main/resources/processor.properties" overwrite="true" />
                                     </target>
                                 </configuration>
                                 <goals>
