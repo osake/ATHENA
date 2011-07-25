@@ -21,19 +21,6 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
-  <distributionManagement>
-    <repository>
-      <id>releases</id>
-      <name>Fractured Atlas Releases</name>
-      <url>http://maven2.fracturedatlas.org:8081/nexus/content/repositories/releases/</url>
-    </repository>
-    <snapshotRepository>
-      <id>snapshots</id>
-      <name>Fractured Atlas Snapshots</name>
-      <url>http://maven2.fracturedatlas.org:8081/nexus/content/repositories/snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
-
   <dependencyManagement>
     <dependencies>
       <dependency>

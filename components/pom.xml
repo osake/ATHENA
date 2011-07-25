@@ -59,35 +59,6 @@
         </dependency>
     </dependencies>
 
-    <repositories>
-        <repository>
-            <id>fractured-atlas-releases</id>
-            <name>Fractured Atlas Releases</name>
-            <url>http://nexus.fracturedatlas.org:8081/nexus/content/repositories/releases/</url>
-            <layout>default</layout>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-                <updatePolicy>never</updatePolicy>
-                <checksumPolicy>ignore</checksumPolicy>
-            </releases>
-        </repository>
-        <repository>
-            <id>fractured-atlas-snapshots</id>
-            <name>Fractured Atlas Snapshots</name>
-            <url>http://nexus.fracturedatlas.org:8081/nexus/content/repositories/snapshots/</url>
-            <layout>default</layout>
-            <snapshots>
-                <enabled>false</enabled>
-                <checksumPolicy>ignore</checksumPolicy>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
     <pluginRepositories>
         <pluginRepository>
             <id>maven2-repository.dev.java.net</id>
