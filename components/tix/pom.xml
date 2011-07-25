@@ -5,11 +5,11 @@
     <artifactId>tix</artifactId>
     <name>tix</name>
     <packaging>war</packaging>
-    <version>1.1.0-beta-00</version>
+    <version>1.1.0-beta-01-SNAPSHOT</version>
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
         <artifactId>components</artifactId>
-        <version>1.1.0-beta-00</version>
+        <version>1.1.0-beta-01-SNAPSHOT</version>
     </parent>
 
     <profiles>
@@ -270,7 +270,7 @@
         <dependency>
             <groupId>org.fracturedatlas.athena</groupId>
             <artifactId>reports</artifactId>
-            <version>1.1.0-beta-00</version>
+            <version>1.1.0-beta-01-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency> 
