@@ -152,7 +152,7 @@
         <version>2.0</version>
         <configuration>
           <preparationGoals>clean</preparationGoals>
-          <goals>deploy -DskipTests=true</goals>
+          <goals>install -DskipTests=true</goals>
         </configuration>
       </plugin>
     </plugins>
