@@ -5,11 +5,11 @@
     <artifactId>codes</artifactId>
     <name>codes</name>
     <packaging>jar</packaging>
-    <version>1.1.0-beta-01-SNAPSHOT</version>
+    <version>1.1.0</version>
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
         <artifactId>helpers</artifactId>
-        <version>1.1.0-beta-01-SNAPSHOT</version>
+        <version>1.1.0</version>
     </parent>
     <build>
         <finalName>codes</finalName>
