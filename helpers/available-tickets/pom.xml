@@ -5,11 +5,11 @@
     <artifactId>available-tickets</artifactId>
     <name>available-tickets</name>
     <packaging>jar</packaging>
-    <version>1.1.0</version>
+    <version>1.2.0-beta-00-SNAPSHOT</version>
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
         <artifactId>helpers</artifactId>
-        <version>1.1.0</version>
+        <version>1.2.0-beta-00-SNAPSHOT</version>
     </parent>
     <build>
         <finalName>available-tickets</finalName>
