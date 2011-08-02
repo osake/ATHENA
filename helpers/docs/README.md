@@ -19,8 +19,8 @@ The docs helper provides a RESTFul resource for storing text files, links, and b
 
 * organizationId - The organization that this document belongs to
 * title - The document title
-* type - The document type, available types are ARTICLE, FILE, LINK
-* permissionLevel - The permission level of the document: PUBLIC, PRIVATE, EXECUTIVE.  Note that these permissions are enforced in the client, not in Athena
+* type - The document type, available types are: article, file, link
+* permissionLevel - The permission level of the document: public, private, executive.  Note that these permissions are enforced in the client, not in Athena
 * isPublic - A boolean property marking this document as public
 * sharedWith - An array or organizationIds that this document is available to
 * description - A description of the document
@@ -34,8 +34,8 @@ POST a document to /docs.  Include the following information.
     {
       "organizationId": "3",
       "title": "First Document",
-      "type": "ARTICLE",
-      "permissionLevel": "EXECUTIVE",
+      "type": "article",
+      "permissionLevel": "executive",
       "isPublic": false,
       "sharedWith": [],
       "description": "A sample document",
@@ -50,8 +50,8 @@ Example response:
       "updatedAt": 2011-04-05T04:04:54Z,
       "organizationId": "3",
       "title": "First Document",
-      "type": "ARTICLE",
-      "permissionLevel": "EXECUTIVE",
+      "type": "article",
+      "permissionLevel": "executive",
       "isPublic": false,
       "sharedWith": [],
       "description": "A sample document",
@@ -66,8 +66,8 @@ POST a document to /docs.  Include the following information.
     {
       "organizationId": "3",
       "title": "First Document",
-      "type": "LINK",
-      "permissionLevel": "EXECUTIVE",
+      "type": "link",
+      "permissionLevel": "executive",
       "isPublic": false,
       "sharedWith": [],
       "description": "A sample document",
@@ -89,8 +89,8 @@ PUT the document to /docs/{id}.  Include the following information.
       "id": "3aef4",
       "organizationId": "3",
       "title": "First Document",
-      "type": "ARTICLE",
-      "permissionLevel": "EXECUTIVE",
+      "type": "article",
+      "permissionLevel": "executive",
       "isPublic": false,
       "sharedWith": [],
       "description": "A sample document",
@@ -105,8 +105,8 @@ Example response:
       "updatedAt": 2011-04-05T04:15:54Z,
       "organizationId": "3",
       "title": "First Document",
-      "type": "ARTICLE",
-      "permissionLevel": "EXECUTIVE",
+      "type": "article",
+      "permissionLevel": "executive",
       "isPublic": false,
       "sharedWith": [],
       "description": "A sample document",
@@ -125,8 +125,8 @@ Example response:
       "updatedAt": 2011-04-05T04:15:54Z,
       "organizationId": "3",
       "title": "First Document",
-      "type": "ARTICLE",
-      "permissionLevel": "EXECUTIVE",
+      "type": "article",
+      "permissionLevel": "executive",
       "isPublic": false,
       "sharedWith": [],
       "description": "A sample document",
@@ -141,8 +141,8 @@ Example response for type FILE
       "updatedAt": 2011-04-05T04:15:54Z,
       "organizationId": "3",
       "title": "First Document",
-      "type": "FILE",
-      "permissionLevel": "EXECUTIVE",
+      "type": "file",
+      "permissionLevel": "executive",
       "isPublic": false,
       "sharedWith": [],
       "description": "A sample document",
@@ -155,7 +155,7 @@ Searching adheres to normal ATHENA conventions.
 
 Get all documents with EXECUTIVE permissions
 
-    GET /docs?permissionLevel=EXECUTIVE
+    GET /docs?permissionLevel=executive
     
 Get all documents created after June 4
 
@@ -169,7 +169,7 @@ You can append the type to the GET string for convenience
     
 And also append search terms to refine further
 
-    GET /docs/articles?permissionLevel=EXECUTIVE
+    GET /docs/articles?permissionLevel=executive
     
 ## Searching the index
 
