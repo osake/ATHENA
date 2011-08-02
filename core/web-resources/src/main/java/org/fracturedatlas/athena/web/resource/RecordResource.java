@@ -198,10 +198,18 @@ public class RecordResource {
     @PUT
     @Path("{type}/{id}")
     public Object update(@PathParam("type") String type, @PathParam("id") String id, PTicket pTicket) throws Exception {
-        logger.debug("PUT: [{}]", pTicket);
         type = Inflector.getInstance().singularize(type);
         PTicket ticket  = recordManager.updateRecord(type, pTicket, id);
         return ticket;
+    }    
+    
+    @PUT
+    @Consumes({MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON})
+    @Path("{type}/{id}/{subResource}")
+    public Object save(@PathParam("type") String type, 
+                       @PathParam("id") String id, 
+                       @PathParam("subResource") String subResource) throws Exception {
+        return null;
     }
 
     /**
