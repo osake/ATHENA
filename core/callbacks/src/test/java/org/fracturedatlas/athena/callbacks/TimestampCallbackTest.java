@@ -42,6 +42,14 @@ public class TimestampCallbackTest {
     }   
     
     @Test
+    public void testTimestampTypeWithNoCallbacks() throws Exception {
+        PTicket record = new PTicket();
+        record.setType("phone");
+        manager.beforeSave(record.getType(),record);
+        assertEquals(0, record.getProps().keySet().size());
+    }
+    
+    @Test
     public void testTimestamp() throws Exception {
         PTicket record = new PTicket();
         record.setType("doc");

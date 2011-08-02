@@ -24,6 +24,7 @@ import java.util.List;
 import org.fracturedatlas.athena.client.PTicket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -41,11 +42,15 @@ public class CallbackManager {
     
     public void beforeSave(String type, PTicket record) {
         String beanName = type + "Callbacks";
-        HashMap<String, List<AthenaCallback>> callbackMap = (HashMap<String, List<AthenaCallback>>)applicationContext.getBean(beanName);
-        List<AthenaCallback> callbacks = callbackMap.get("beforeSave");
+        try{
+            HashMap<String, List<AthenaCallback>> callbackMap = (HashMap<String, List<AthenaCallback>>)applicationContext.getBean(beanName);
+            List<AthenaCallback> callbacks = callbackMap.get("beforeSave");
         
-        for(AthenaCallback callback : callbacks) {
-            callback.beforeSave(record);
+            for(AthenaCallback callback : callbacks) {
+                callback.beforeSave(record);
+            }
+        } catch (NoSuchBeanDefinitionException noBean) {
+            logger.debug("No clalbacks found for type [{}]", type);
         }
     }
 
