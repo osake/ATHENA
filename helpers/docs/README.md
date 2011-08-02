@@ -24,9 +24,7 @@ The docs helper provides a RESTFul resource for storing text files, links, and b
 * isPublic - A boolean property marking this document as public
 * sharedWith - An array or organizationIds that this document is available to
 * description - A description of the document
-* body - The actual text of an ARTICLE document
-* link - The link of a LINK document
-* location - The binary file's location on Amazon S3
+* body - The actual text of an ARTICLE document, the link of a link document, or the location of a file document
 
 ## Creating a document
 
