@@ -31,10 +31,12 @@ import java.util.Set;
 import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.lang.StringUtils;
 import org.fracturedatlas.athena.apa.ApaAdapter;
+import org.fracturedatlas.athena.callbacks.*;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
+import org.fracturedatlas.athena.callbacks.CallbackManager;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
@@ -61,6 +63,9 @@ public class RecordManager {
 
     @Autowired
     SecurityContextHolderStrategy contextHolderStrategy;
+    
+    @Autowired
+    CallbackManager callbackManager;
 
     public static final String ID_DELIMITER = ",";
 
@@ -296,7 +301,7 @@ public class RecordManager {
 
     /**
      * TODO: This method saves the records, then if one save fails it rolls back and deletes any records that it has saved to this point.
-     * This is an edge case where it saves a record, some other client modifies the record, then this thread deletes that record in a rollback.
+     * There is an edge case where it saves a record, some other client modifies the record, then this thread deletes that record in a rollback.
      * @param type
      * @param records
      * @return
@@ -325,17 +330,19 @@ public class RecordManager {
     }
 
     public PTicket createRecord(String type, PTicket record) {
+        callbackManager.beforeSave(type, record);
         return apa.saveRecord(type, record);
     }
 
     public PTicket updateRecord(String type, PTicket record) {
 
-        PTicket ticket  = apa.getRecord(type, record.getId());
+        PTicket ticket = apa.getRecord(type, record.getId());
 
         if (ticket == null) {
             throw new NotFoundException();
         }
 
+        callbackManager.beforeSave(type, record);
         return apa.saveRecord(type, record);
     }
 
@@ -348,6 +355,7 @@ public class RecordManager {
 
             try {
                 outRecords.add(apa.patchRecord(id, type, patch));
+                //TODO: Rollback
             } catch (ApaException ae) {
                 throw new ObjectNotFoundException(ae.getMessage());
             }

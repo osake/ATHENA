@@ -191,8 +191,6 @@ public class RecordResource {
     /**
      * Update an existing record.  If a property is specified twice, the latter value will be used.
      *
-     * If a property is unspecified, it wil not be changed, meaning: you CANNOT delete properties from a record via PUT
-     *
      * @param json the json representation of a client ticket (PTicket
      * @return the saved ticket
      * @throws Exception if the json was malformed

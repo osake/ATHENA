@@ -23,4 +23,5 @@
     
     <bean name="athenaOrders" class="org.fracturedatlas.athena.web.IntimateAthenaComponent">
     </bean>
+    <import resource="callbacks.xml"/>
 </beans>
