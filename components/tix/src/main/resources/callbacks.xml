@@ -9,6 +9,7 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
     <context:component-scan base-package="org.fracturedatlas.athena.web"/>
     
+    <!--
     <bean id="timestampCallback" class="org.fracturedatlas.athena.callbacks.TimestampCallback"/>
     
     <util:list id="docBeforeSave">
@@ -20,4 +21,5 @@
             <ref bean="docBeforeSave"/>
         </entry>
     </util:map>
+    -->
 </beans>

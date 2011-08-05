@@ -95,11 +95,6 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.fracturedatlas.athena.helper</groupId>
-        <artifactId>uploads</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.fracturedatlas.athena.plugin</groupId>
         <artifactId>twitter-sub-resource</artifactId>
         <version>${project.version}</version>

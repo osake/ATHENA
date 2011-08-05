@@ -202,15 +202,6 @@ public class RecordResource {
         PTicket ticket  = recordManager.updateRecord(type, pTicket, id);
         return ticket;
     }    
-    
-    @PUT
-    @Consumes({MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON})
-    @Path("{type}/{id}/{subResource}")
-    public Object save(@PathParam("type") String type, 
-                       @PathParam("id") String id, 
-                       @PathParam("subResource") String subResource) throws Exception {
-        return null;
-    }
 
     /**
      * Apply the properties in pTicket to the ids listed in the URL

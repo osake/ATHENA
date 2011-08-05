@@ -22,7 +22,6 @@
         <module>available-tickets</module>
         <module>tags-sub-collection</module>
         <module>health-check</module>
-        <module>attachments</module>
     </modules>
     <dependencies>
 
