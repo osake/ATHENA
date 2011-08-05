@@ -127,6 +127,8 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
     public PTicket saveRecord(PTicket t) {
         BasicDBObject doc = new BasicDBObject();
 
+        //TODO: I don't think this has to load up the entire record any longer
+        //Just chekc to see if the id exists, then we overwrite it.
         PTicket savedTicket = getRecord(t.getType(), t.getId());
 
         if(savedTicket == null) {
