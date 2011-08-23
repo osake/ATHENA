@@ -278,7 +278,9 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         
         
         try {
-            Query q = new QueryParser(Version.LUCENE_32, DOC_TEXT, analyzer).parse(query);
+            QueryParser queryParser = new QueryParser(Version.LUCENE_32, DOC_TEXT, analyzer);
+            queryParser.setAllowLeadingWildcard(true);
+            Query q = queryParser.parse(query);
             IndexReader reader = IndexReader.open(getWriter(), false);
             IndexSearcher indexSearcher = new IndexSearcher(reader);
             TopDocs topDocs = indexSearcher.search(q, numResults);

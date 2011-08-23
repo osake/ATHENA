@@ -55,6 +55,23 @@ public class ApaAdapterIndexSearchTest extends BaseApaAdapterTest {
     } 
     
     @Test
+    public void searchIndexPartialMatch() {
+        AthenaSearch search = new AthenaSearch.Builder().type("person").query("Smit*").build();
+        Set<PTicket> people = apa.findTickets(search);
+        assertEquals(2, people.size());
+        assertTrue(people.contains(anne));
+        assertTrue(people.contains(jim));
+    } 
+    
+    @Test
+    public void searchIndexPartialMatchWithTerm() {
+        AthenaSearch search = new AthenaSearch.Builder().type("person").query("*mith AND firstName:Jim").build();
+        Set<PTicket> people = apa.findTickets(search);
+        assertEquals(1, people.size());
+        assertTrue(people.contains(jim));
+    } 
+    
+    @Test
     public void searchIndexCaseInsensitive() {
         AthenaSearch search = new AthenaSearch.Builder().type("person").query("SmItH").build();
         Set<PTicket> people = apa.findTickets(search);
