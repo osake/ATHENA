@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
  */
-package org.fracturedatlas.athena.apa;
+package org.fracturedatlas.athena.apa.indexing;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -42,6 +42,7 @@ import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NoSuchDirectoryException;
 import org.apache.lucene.util.Version;
+import org.fracturedatlas.athena.apa.AbstractApaAdapter;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
@@ -80,7 +81,7 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
      * of the index will not work.
      */
     public void initializeIndex() {
-        analyzer = new WhitespaceAnalyzer(Version.LUCENE_32);
+        analyzer = new WhitespaceLowerCaseAnalyzer();
         config = new IndexWriterConfig(Version.LUCENE_32, analyzer);
         LogMergePolicy mergePolicy = new LogDocMergePolicy();
         mergePolicy.setMergeFactor(MERGE_FACTOR);

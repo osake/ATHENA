@@ -44,6 +44,31 @@ public class ApaAdapterIndexSearchTest extends BaseApaAdapterTest {
         assertEquals(2, people.size());
         assertTrue(people.contains(anne));
         assertTrue(people.contains(jim));
+    } 
+    
+    @Test
+    public void searchIndexWithTerm() {
+        AthenaSearch search = new AthenaSearch.Builder().type("person").query("Smith AND firstName:Jim").build();
+        Set<PTicket> people = apa.findTickets(search);
+        assertEquals(1, people.size());
+        assertTrue(people.contains(jim));
+    } 
+    
+    @Test
+    public void searchIndexCaseInsensitive() {
+        AthenaSearch search = new AthenaSearch.Builder().type("person").query("SmItH").build();
+        Set<PTicket> people = apa.findTickets(search);
+        assertEquals(2, people.size());
+        assertTrue(people.contains(anne));
+        assertTrue(people.contains(jim));
+    }
+    
+    @Test
+    public void searchIndexCaseInsensitiveWithTerm() {
+        AthenaSearch search = new AthenaSearch.Builder().type("person").query("SmItH AND firstName:jim").build();
+        Set<PTicket> people = apa.findTickets(search);
+        assertEquals(1, people.size());
+        assertTrue(people.contains(jim));
     }
     
     @Test

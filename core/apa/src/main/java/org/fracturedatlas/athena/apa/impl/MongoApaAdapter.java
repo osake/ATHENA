@@ -40,7 +40,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.fracturedatlas.athena.apa.IndexingApaAdapter;
+import org.fracturedatlas.athena.apa.indexing.IndexingApaAdapter;
 import org.slf4j.Logger;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
