@@ -136,6 +136,12 @@ public class PTicket {
         getProps().putSingle(key, value);
     }
     
+    public void putIfNotNull(String key, String value) {
+        if(value != null) {
+            put(key, value);
+        }
+    }
+    
     public void add(String key, String value) {
         getProps().add(key, value);
     }

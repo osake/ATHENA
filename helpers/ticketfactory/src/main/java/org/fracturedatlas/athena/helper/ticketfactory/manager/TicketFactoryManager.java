@@ -21,8 +21,10 @@ package org.fracturedatlas.athena.helper.ticketfactory.manager;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.model.Ticket;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
@@ -45,6 +47,22 @@ public class TicketFactoryManager {
 
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
+    public void createTicketsForSection(PTicket section) {
+        PTicket chart = athenaStage.get("chart", section.get("chartId"));
+        PTicket performance = athenaStage.get("performance", chart.get("performanceId"));
+        PTicket event = athenaStage.get("event", performance.get("eventId"));            
+        
+        ArrayList<Ticket> ticketsToCreate = new ArrayList<Ticket>();
+        Integer capacity = Integer.parseInt(section.get("capacity"));
+        logger.debug("Capacity is [{}], creating tickets", capacity);
+        for(int seatNum = 0; seatNum < capacity; seatNum++) {
+            Ticket ticket = new Ticket(section, performance, event, INITIAL_STATE);
+            ticketsToCreate.add(ticket);
+        }
+
+        saveTickets(ticketsToCreate);
+    }
+
     public void createTickets(PTicket pTicket) {
         String performanceId = (String)pTicket.getId();
         PTicket performance = athenaStage.get("performance", performanceId);
@@ -65,38 +83,31 @@ public class TicketFactoryManager {
         Collection<PTicket> sections = athenaStage.find("section", athenaSearch);
         logger.debug("Found [{}] sections", sections.size());
 
-        ArrayList<PTicket> ticketsToCreate = new ArrayList<PTicket>();
+        ArrayList<Ticket> ticketsToCreate = new ArrayList<Ticket>();
 
         //for each section
         for(PTicket section : sections) {
             Integer capacity = Integer.parseInt(section.get("capacity"));
             logger.debug("capacity of section [{}] is [{}]", section.getId(), capacity);
             for(int seatNum = 0; seatNum < capacity; seatNum++) {
-                PTicket ticket = new PTicket();
-                ticket.put("price", section.get("price"));
-                ticket.put("performanceId", performanceId);
-                ticket.put("performance", performance.get("datetime"));
-                ticket.put("organizationId", performance.get("organizationId"));
-                ticket.put("section", section.get("name"));
-                ticket.put("venue", event.get("venue"));
-                ticket.put("event", event.get("name"));
-                ticket.put("eventId", eventId);
-                ticket.put("state", INITIAL_STATE);
-
-                logger.debug("Creating ticket, save below: ");
-                logger.debug(ticket.toString());
+                Ticket ticket = new Ticket(section, performance, event, INITIAL_STATE);
                 ticketsToCreate.add(ticket);
 
             }
         }
 
+        saveTickets(ticketsToCreate);
+    }
+    
+    private void saveTickets(List<Ticket> ticketsToCreate) {
         logger.debug("[{}] tickets to create", ticketsToCreate.size());
 
-        for(PTicket ticket : ticketsToCreate) {
+        for(Ticket ticket : ticketsToCreate) {
             try{
+                PTicket pt = ticket.toPTicket();
                 logger.debug("Saving ticket: ");
-                logger.debug(ticket.toString());
-                ticketManager.createRecord("ticket", ticket);
+                logger.debug(pt.toString());
+                ticketManager.createRecord("ticket", pt);
             } catch (Exception e) {
                 //TODO: Cleanup tickets that we created
                 //Finally, an exception here is something that we can't recover from, so it's okay to throw

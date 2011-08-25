@@ -46,19 +46,38 @@ public class TicketFactoryResource {
     TicketFactoryManager ticketFactoryManager;
 
     @POST
-    @Path("")
-    public Object postCreateTickets(PTicket pTicket) throws Exception {
-        return createTickets(pTicket);
+    @Path("/section")
+    public Object postCreateForSection(PTicket section) throws Exception {
+        return createTickets(section);
     }
 
     @PUT
-    @Path("{id}")
-    public Object putCreateTickets(PTicket pTicket) throws Exception {
-        return createTickets(pTicket);
+    @Path("/section/{sectionId}")
+    public Object putCreateForSection(PTicket section) throws Exception {
+        return createTickets(section);
     }
 
-    public Object createTickets(PTicket pTicket) throws Exception {
-        ticketFactoryManager.createTickets(pTicket);
+    @POST
+    @Path("/performance")
+    public Object postCreateTickets(PTicket performance) throws Exception {
+        return createTickets(performance);
+    }
+
+    @PUT
+    @Path("/performance/{performanceId}")
+    public Object putCreateTickets(PTicket performance) throws Exception {
+        return createTickets(performance);
+    }
+
+    public Object createTickets(PTicket performance) throws Exception {
+        ticketFactoryManager.createTickets(performance);
+        return Response.status(Response.Status.OK).
+                type("text/plain").
+                build();
+    }
+
+    public Object createTicketForSection(PTicket section) throws Exception {
+        ticketFactoryManager.createTicketsForSection(section);
         return Response.status(Response.Status.OK).
                 type("text/plain").
                 build();
