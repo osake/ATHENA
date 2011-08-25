@@ -31,12 +31,10 @@ import java.util.Set;
 import javax.ws.rs.core.MultivaluedMap;
 import org.apache.commons.lang.StringUtils;
 import org.fracturedatlas.athena.apa.ApaAdapter;
-import org.fracturedatlas.athena.callbacks.*;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
-import org.fracturedatlas.athena.callbacks.CallbackManager;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
@@ -63,9 +61,6 @@ public class RecordManager {
 
     @Autowired
     SecurityContextHolderStrategy contextHolderStrategy;
-    
-    @Autowired
-    CallbackManager callbackManager;
 
     public static final String ID_DELIMITER = ",";
 
@@ -330,7 +325,6 @@ public class RecordManager {
     }
 
     public PTicket createRecord(String type, PTicket record) {
-        callbackManager.beforeSave(type, record);
         return apa.saveRecord(type, record);
     }
 
@@ -342,7 +336,6 @@ public class RecordManager {
             throw new NotFoundException();
         }
 
-        callbackManager.beforeSave(type, record);
         return apa.saveRecord(type, record);
     }
 

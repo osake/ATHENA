@@ -74,10 +74,9 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
     
     public final static String DOC_TEXT = "text";
     
-    //TODO: preserve order of search
     /*
      * Initialize any indexing.  Remember that this method is called BEFORE the
-     * directory is injected by spring.  Any operations that depend ont he availability
+     * directory is injected by spring.  Any operations that depend on the availability
      * of the index will not work.
      */
     public void initializeIndex() {
