@@ -92,7 +92,7 @@ public class LiveTwitterTest {
 
         when(mockRecordManager.getRecord("person", person.getId())).thenReturn(person);
         try {
-            List<PTicket> tweets = tweetSubResource.execute("person", "3", "tweet", null, null);
+            List<PTicket> tweets = tweetSubResource.find("person", "3", "tweet", null, null);
             fail("No NFE");
         } catch (NotFoundException e) {
             //cool

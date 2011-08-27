@@ -22,6 +22,8 @@ package org.fracturedatlas.athena.helper.ticketfactory.manager;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import javax.ws.rs.core.MultivaluedMap;
 import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.model.Ticket;
@@ -29,27 +31,73 @@ import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.web.exception.AthenaException;
+import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
+import org.fracturedatlas.athena.web.manager.AbstractAthenaSubResource;
+import org.fracturedatlas.athena.web.manager.AthenaSubCollection;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
-public class TicketFactoryManager {
+@Component("createticketSubResource")
+public class TicketFactoryManager extends AbstractAthenaSubResource {
 
     @Autowired
     private AthenaComponent athenaStage;
 
     @Autowired
     private RecordManager ticketManager;
-    private static String INITIAL_STATE = "off_sale";
+    public static String INITIAL_STATE = "off_sale";
 
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
-    public void createTicketsForSection(PTicket section) {
+    /*
+     * sectionBody must be a valid section AND it must have performanceId included in
+     * it's entity body
+     */
+    @Override
+    public List<PTicket> save(String parentType, 
+                                 Object parentId,
+                                 String subResourceType,
+                                 Map<String, List<String>> queryParams,
+                                 PTicket sectionBody,
+                                 String username) throws ObjectNotFoundException {
+        List<Ticket> createdTickets = new ArrayList<Ticket>();
+        
+        if("section".equals(parentType)) {
+            PTicket section = athenaStage.get("section", parentId);
+            if(section == null) {
+                throw new ObjectNotFoundException("No section found with id ["+parentId+"]");
+            }
+
+            if(!parentId.equals(sectionBody.getIdAsString())) {
+                throw new AthenaException("Requested to create tickets for section ["+parentId+"] but sent section with id ["+sectionBody.getIdAsString()+"]");
+            }
+            
+            if(sectionBody.get("performanceId") == null) {
+                throw new AthenaException("Must include performanceId in request body");
+            }
+
+            createdTickets = createTicketsForSection(sectionBody);
+        } else if ("performance".equals(parentType)) {
+            PTicket performance = athenaStage.get("performance", parentId);
+            createdTickets = createTickets(performance);
+        } else {
+            throw new ObjectNotFoundException("Cannot create tickets for [" + parentType + "]");
+        }
+        
+        ArrayList<PTicket> pTickets = new ArrayList<PTicket>();
+        for(Ticket ticket : createdTickets) {
+            pTickets.add(ticket.toPTicket());
+        }
+        
+        return pTickets;
+    }
+    
+    public List<Ticket> createTicketsForSection(PTicket section) {
         PTicket chart = athenaStage.get("chart", section.get("chartId"));
-        PTicket performance = athenaStage.get("performance", chart.get("performanceId"));
+        PTicket performance = athenaStage.get("performance", section.get("performanceId"));
         PTicket event = athenaStage.get("event", performance.get("eventId"));            
         
         ArrayList<Ticket> ticketsToCreate = new ArrayList<Ticket>();
@@ -61,9 +109,10 @@ public class TicketFactoryManager {
         }
 
         saveTickets(ticketsToCreate);
+        return ticketsToCreate;
     }
 
-    public void createTickets(PTicket pTicket) {
+    public List<Ticket> createTickets(PTicket pTicket) {
         String performanceId = (String)pTicket.getId();
         PTicket performance = athenaStage.get("performance", performanceId);
 
@@ -97,6 +146,7 @@ public class TicketFactoryManager {
         }
 
         saveTickets(ticketsToCreate);
+        return ticketsToCreate;
     }
     
     private void saveTickets(List<Ticket> ticketsToCreate) {
@@ -132,8 +182,4 @@ public class TicketFactoryManager {
     public void setTicketManager(RecordManager ticketManager) {
         this.ticketManager = ticketManager;
     }
-
-
-
-    
 }

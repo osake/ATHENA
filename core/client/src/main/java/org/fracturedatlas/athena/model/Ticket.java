@@ -55,7 +55,7 @@ public class Ticket extends ApaModel {
         this.price = Integer.parseInt(section.get("price"));
         this.performanceId = performance.getIdAsString();
         try {
-            this.performance = DateUtil.parseDateTime(performance.get("performance"));
+            this.performance = DateUtil.parseDateTime(performance.get("datetime"));
         } catch (ParseException ex) {
             logger.error("Could not parse parformance date [{}]", performance.get("performance"));
             setPerformance(null);
@@ -66,6 +66,9 @@ public class Ticket extends ApaModel {
         this.event = event.get("name");
         this.eventId = event.getIdAsString();
         this.state = state;
+        
+        this.organizationId = performance.get("organizationId");
+        logger.error("Setting organizationId to [{}]", this.organizationId);
     }
 
     public PTicket toPTicket() {

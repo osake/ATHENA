@@ -107,13 +107,13 @@ public class SubResourceManagerTest {
         actionList.addAll(actions);
 
         when(mockApa.getRecord("person", "3")).thenReturn(person);
-        when(mockSubResource.execute(eq("person"), eq("3"), eq("blogpost"), Matchers.anyMap(), eq("jowens33"))).thenReturn(actionList);
+        when(mockSubResource.find(eq("person"), eq("3"), eq("blogpost"), Matchers.anyMap(), eq("jowens33"))).thenReturn(actionList);
         when(mockApplicationContext.getBean("blogpostSubResource")).thenReturn(mockSubResource);
         
         Collection<PTicket> records = manager.findSubResources("person", "3", "blogpost", null);
         assertEquals(1, records.size());
         assertEquals("231", records.iterator().next().getId());
-        verify(mockSubResource, times(1)).execute(eq("person"), eq("3"), eq("blogpost"), Matchers.anyMap(), eq("jowens33"));
+        verify(mockSubResource, times(1)).find(eq("person"), eq("3"), eq("blogpost"), Matchers.anyMap(), eq("jowens33"));
     }
 
     @Before

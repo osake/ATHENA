@@ -23,11 +23,18 @@ package org.fracturedatlas.athena.web.manager;
 import java.util.List;
 import java.util.Map;
 import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 
 public interface AthenaSubResource {
-    public List<PTicket> execute(String parentType,
+    public List<PTicket> find(String parentType,
                                  Object parentId,
                                  String subResourceType,
                                  Map<String, List<String>> queryParams,
                                  String username);
+    public List<PTicket> save(String parentType,
+                                 Object parentId,
+                                 String subResourceType,
+                                 Map<String, List<String>> queryParams,
+                                 PTicket body,
+                                 String username) throws ObjectNotFoundException ;
 }

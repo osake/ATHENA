@@ -133,6 +133,26 @@ public class RecordResource {
             throw new NotFoundException();
         }
     }
+    
+    @POST
+    @Path("{parentType}/{id}/{childType}")
+    public Object saveSubResource(@PathParam("parentType") String parentType,
+                         @PathParam("id") String id,
+                         @PathParam("childType") String childType,
+                         @Context UriInfo ui,
+                         PTicket body) throws NotFoundException {
+        MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
+        parentType = Inflector.getInstance().singularize(parentType);
+        childType = Inflector.getInstance().singularize(childType);
+        try{
+            return recordManager.saveSubResource(parentType, id, childType, queryParams, body);
+        } catch (InvalidFieldException ife) {
+            throw new NotFoundException();
+        } catch (ObjectNotFoundException onfe) {
+            logger.error(onfe.getMessage(),onfe);
+            throw new NotFoundException(onfe.getMessage());
+        }
+    }
 
     /**
      * Get tickets based on criteria specified in ui.getQueryParameters()

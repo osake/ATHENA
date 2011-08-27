@@ -137,6 +137,30 @@ public class RecordManager {
 
         apa.deleteTicketProp(prop);
     }
+
+    public Collection<PTicket> saveSubResource(String parentType,
+                                                 Object id,
+                                                 String childType,
+                                                 Map<String, List<String>> queryParams,
+                                                 PTicket body) throws ObjectNotFoundException {
+
+        //Check to see if the parent record exists
+        PTicket ticket  = apa.getRecord(parentType, id);
+        if(ticket == null) {
+            throw new NotFoundException(StringUtils.capitalize(parentType) + " witn id [" + id + "] was not found");
+        }
+
+        //load the plugin.  If the plugin is found, let it do its thing.
+        AthenaSubResource plugin = null;
+        try{
+            plugin = (AthenaSubResource)applicationContext.getBean(childType + "SubResource");
+            logger.debug("Plugin found [{}]", plugin.getClass().getName());
+            String username = getCurrentUsername();
+            return plugin.save(parentType, id, childType, queryParams, body, username);
+        } catch (NoSuchBeanDefinitionException noBean) {
+            throw new AthenaException("Cannot save to sub-resource " + childType);
+        }
+    }
     
     public Collection<PTicket> findSubResources(String parentType,
                                                  Object id,
@@ -157,9 +181,11 @@ public class RecordManager {
             //it's okay
         }
         if(plugin != null) {
+            logger.debug("Plugin found [{}]", plugin.getClass().getName());
             String username = getCurrentUsername();
-            return plugin.execute(parentType, id, childType, queryParams, username);
+            return plugin.find(parentType, id, childType, queryParams, username);
         } else {
+            logger.debug("No plugin found, searching sub-resources"); 
             //If no plugin was found, look for sub-resources in apa
             //TODO: move this somewhere sensible
             String parentField = parentType + "Id";

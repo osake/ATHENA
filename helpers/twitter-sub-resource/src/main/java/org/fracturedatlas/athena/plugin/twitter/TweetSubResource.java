@@ -57,7 +57,7 @@ public class TweetSubResource extends AbstractAthenaSubResource {
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     @Override
-    public List<PTicket> execute(String parentType, 
+    public List<PTicket> find(String parentType, 
                                  Object parentId,
                                  String subResourceType,
                                  Map<String, List<String>> queryParams,

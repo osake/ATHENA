@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.helper.ticketfactory.manager;
 
+import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.fracturedatlas.athena.client.AthenaComponent;
@@ -57,6 +59,51 @@ public class TicketFactoryManagerTest {
     @Mock private AthenaComponent mockStage;
     @Mock private RecordManager mockTicketManager;
 
+    //For example, POSTing to /people/4444/createtickets
+    @Test
+    public void testCreateTicketsForUnknownParentType() throws Exception {
+        try {
+            List<PTicket> createdTickets = manager.save("dolphin", 
+                                                    sampleSection1.getIdAsString(), 
+                                                    "createticket", 
+                                                    null, 
+                                                    sampleSection1, 
+                                                    null); 
+            fail("Should have thrown ONFE");
+        } catch (ObjectNotFoundException onfe) {
+            //pass
+        }       
+    }
+    
+    @Test
+    public void testCreateTicketsForSection() throws Exception {
+        sampleSection1.put("performanceId", samplePerformance.getIdAsString());
+        sampleSection1.put("capacity", "1");
+        List<PTicket> createdTickets = manager.save("section", 
+                                                    sampleSection1.getIdAsString(), 
+                                                    "createticket", 
+                                                    null, 
+                                                    sampleSection1, 
+                                                    null);
+        assertEquals(1, createdTickets.size());
+        PTicket pTicket = createdTickets.get(0);
+        System.out.println(pTicket);
+        assertEquals(sampleSection1.get("price"), pTicket.get("price"));
+        assertEquals(sampleEvent.getIdAsString(), pTicket.get("eventId"));
+        assertEquals(sampleEvent.get("name"), pTicket.get("event"));
+        assertEquals(TicketFactoryManager.INITIAL_STATE, pTicket.get("state"));
+        assertEquals(samplePerformance.getIdAsString(), pTicket.get("performanceId"));
+        assertEquals(samplePerformance.get("datetime"), pTicket.get("performance"));
+        assertEquals(sampleEvent.get("venue"), pTicket.get("venue"));
+        assertEquals(sampleSection1.get("name"), pTicket.get("section"));
+        assertEquals(SAMPLE_ORG_ID, pTicket.get("organizationId"));
+        verify(mockStage).get("performance", samplePerformance.getId());
+        verify(mockStage).get("chart", sampleSeatChart.getId());
+        verify(mockStage).get("event", sampleEvent.getId());
+        verify(mockStage).get("section", sampleSection1.getIdAsString());
+        verify(mockTicketManager, times(Integer.parseInt(sampleSection1.get("capacity")))).createRecord(eq("ticket"), argThat(isAPTicket));
+    }
+
     @Test
     public void testCreateTickets() throws Exception {
         manager.createTickets(samplePerformance);
@@ -79,7 +126,7 @@ public class TicketFactoryManagerTest {
         samplePerformance.setId("49");
         samplePerformance.put("chartId", (String)sampleSeatChart.getId());
         samplePerformance.put("organizationId", SAMPLE_ORG_ID);
-        samplePerformance.put("eventId", (String)sampleEvent.getId());
+        samplePerformance.put("eventId", sampleEvent.getIdAsString());
         samplePerformance.put("datetime", "2010-03-20T20:20:11-04:00");
         when(mockStage.get("performance", samplePerformance.getId())).thenReturn(null);
         try{
@@ -149,6 +196,7 @@ public class TicketFactoryManagerTest {
 
         sampleSection1 = new PTicket();
         sampleSection1.setId("24");
+        sampleSection1.put("chartId", sampleSeatChart.getIdAsString());
         sampleSection1.put("capacity", orchestraSeats.toString());
         sampleSection1.put("price", "25");
         sampleSection1.put("name", "Orchestra");
@@ -156,6 +204,7 @@ public class TicketFactoryManagerTest {
 
         sampleSection2 = new PTicket();
         sampleSection2.setId("25");
+        sampleSection1.put("chartId", sampleSeatChart.getIdAsString());
         sampleSection2.put("capacity", balconySeats.toString());
         sampleSection2.put("price", "10");
         sampleSection2.put("name", "Balcony");
@@ -180,6 +229,7 @@ public class TicketFactoryManagerTest {
         when(mockStage.get("performance", samplePerformance.getId())).thenReturn(samplePerformance);
         when(mockStage.get("chart", sampleSeatChart.getId())).thenReturn(sampleSeatChart);
         when(mockStage.get("event", sampleEvent.getId())).thenReturn(sampleEvent);
+        when(mockStage.get("section", sampleSection1.getIdAsString())).thenReturn(sampleSection1);
         when(mockStage.find("section", athenaSearch)).thenReturn(sections);
         when(mockStage.save("performance", samplePerformance)).thenReturn(samplePerformance);
 
