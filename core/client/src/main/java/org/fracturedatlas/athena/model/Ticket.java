@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.model;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.util.date.DateUtil;
@@ -31,6 +32,7 @@ public class Ticket extends ApaModel {
 
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     
+    String id;
     String performanceId;
     DateTime performance;
     String section;
@@ -50,6 +52,7 @@ public class Ticket extends ApaModel {
         fromPTicket(pTicket);
     }
     
+    
     public Ticket(PTicket section, PTicket performance, PTicket event, String state) {
         super();
         this.price = Integer.parseInt(section.get("price"));
@@ -68,11 +71,27 @@ public class Ticket extends ApaModel {
         this.state = state;
         
         this.organizationId = performance.get("organizationId");
-        logger.error("Setting organizationId to [{}]", this.organizationId);
+    }
+    
+    public static List<Ticket> fromCollection(List<PTicket> pTickets) {
+        List<Ticket> tickets = new ArrayList<Ticket>();
+        for(PTicket pTicket : pTickets) {
+            tickets.add(new Ticket(pTicket));
+        }
+        return tickets;
+    }
+    
+    public static List<PTicket> toCollection(List<Ticket> tickets) {
+        List<PTicket> pTickets = new ArrayList<PTicket>();
+        for(Ticket ticket : tickets) {
+            pTickets.add(ticket.toPTicket());
+        }
+        return pTickets;
     }
 
     public PTicket toPTicket() {
         PTicket pTicket = new PTicket();
+        pTicket.setId(this.id);
         pTicket.putIfNotNull("performanceId", performanceId);
         pTicket.putIfNotNull("performance", DateUtil.formatDate(performance));
         pTicket.putIfNotNull("section", section);
@@ -92,6 +111,7 @@ public class Ticket extends ApaModel {
     }
     
     public void fromPTicket(PTicket pTicket) {
+        setId(pTicket.getIdAsString());
         setPerformanceId(pTicket.get("performanceId"));
         try {
             setPerformance(DateUtil.parseDateTime(pTicket.get("performance")));
@@ -115,6 +135,14 @@ public class Ticket extends ApaModel {
             setSoldAt(null);
         }
         setTags(pTicket.getProps().get("tags"));
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
     
     public String getBuyerId() {

@@ -87,10 +87,7 @@ public class TicketFactoryManager extends AbstractAthenaSubResource {
             throw new ObjectNotFoundException("Cannot create tickets for [" + parentType + "]");
         }
         
-        ArrayList<PTicket> pTickets = new ArrayList<PTicket>();
-        for(Ticket ticket : createdTickets) {
-            pTickets.add(ticket.toPTicket());
-        }
+        List<PTicket> pTickets = Ticket.toCollection(createdTickets);
         
         return pTickets;
     }
@@ -108,8 +105,7 @@ public class TicketFactoryManager extends AbstractAthenaSubResource {
             ticketsToCreate.add(ticket);
         }
 
-        saveTickets(ticketsToCreate);
-        return ticketsToCreate;
+        return saveTickets(ticketsToCreate);
     }
 
     public List<Ticket> createTickets(PTicket pTicket) {
@@ -145,26 +141,12 @@ public class TicketFactoryManager extends AbstractAthenaSubResource {
             }
         }
 
-        saveTickets(ticketsToCreate);
-        return ticketsToCreate;
+        return saveTickets(ticketsToCreate);
     }
     
-    private void saveTickets(List<Ticket> ticketsToCreate) {
-        logger.debug("[{}] tickets to create", ticketsToCreate.size());
-
-        for(Ticket ticket : ticketsToCreate) {
-            try{
-                PTicket pt = ticket.toPTicket();
-                logger.debug("Saving ticket: ");
-                logger.debug(pt.toString());
-                ticketManager.createRecord("ticket", pt);
-            } catch (Exception e) {
-                //TODO: Cleanup tickets that we created
-                //Finally, an exception here is something that we can't recover from, so it's okay to throw
-                //our hands up in the air and cry with a HTTP 500
-                throw new RuntimeException(e);
-            }
-        }
+    private List<Ticket> saveTickets(List<Ticket> ticketsToCreate) {
+        List<PTicket> createdPTickets = ticketManager.createRecords("ticket", Ticket.toCollection(ticketsToCreate));
+        return Ticket.fromCollection(createdPTickets);
     }
 
     public AthenaComponent getAthenaStage() {
