@@ -4,14 +4,14 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.fracturedatlas.athena</groupId>
-        <version>1.2.0-beta-00</version>
+        <version>1.2.0-beta-01-SNAPSHOT</version>
     </parent>
     <groupId>org.fracturedatlas.athena</groupId>
     <artifactId>admin</artifactId>
     <name>admin</name>
     <packaging>jar</packaging>
 
-    <version>1.2.0-beta-00</version>
+    <version>1.2.0-beta-01-SNAPSHOT</version>
 
     
 
