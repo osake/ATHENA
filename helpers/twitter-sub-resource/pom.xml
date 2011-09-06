@@ -4,11 +4,11 @@
   <parent>
     <artifactId>helpers</artifactId>
     <groupId>org.fracturedatlas.athena</groupId>
-    <version>1.2.0-beta-01-SNAPSHOT</version>
+    <version>1.2.0</version>
   </parent>
   <groupId>org.fracturedatlas.athena.plugin</groupId>
   <artifactId>twitter-sub-resource</artifactId>
-  <version>1.2.0-beta-01-SNAPSHOT</version>
+  <version>1.2.0</version>
   <name>twitter-sub-resource</name>
   <url>http://maven.apache.org</url>
   <dependencies>
