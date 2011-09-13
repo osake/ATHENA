@@ -21,11 +21,20 @@ package org.fracturedatlas.athena.callbacks;
 
 import org.fracturedatlas.athena.client.PTicket;
 
-public interface AthenaCallback {
+public class AbstractAthenaCallback implements AthenaCallback {
     
-    public void afterGet(PTicket record);
+    @Override
+    public void afterGet(PTicket record) {
+        throw new UnsupportedOperationException("afterGet is not implemented in this callback");
+    }
     
-    public void beforeSave(PTicket record);
-    public void afterSave(PTicket record);
+    @Override
+    public void beforeSave(PTicket record) {
+        throw new UnsupportedOperationException("beforeSave is not implemented in this callback");
+    }
     
+    @Override
+    public void afterSave(PTicket record) {
+        throw new UnsupportedOperationException("afterSave is not implemented in this callback");
+    }
 }

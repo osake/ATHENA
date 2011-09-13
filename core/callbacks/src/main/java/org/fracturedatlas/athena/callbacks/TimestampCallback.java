@@ -23,7 +23,9 @@ import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.joda.time.DateTime;
 
-public class TimestampCallback implements AthenaCallback {
+public class TimestampCallback extends AbstractAthenaCallback {
+    
+    @Override
     public void beforeSave(PTicket record) {
         DateTime now = new DateTime();
         

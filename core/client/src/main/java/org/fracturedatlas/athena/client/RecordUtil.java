@@ -17,15 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
  */
-package org.fracturedatlas.athena.callbacks;
+package org.fracturedatlas.athena.client;
 
-import org.fracturedatlas.athena.client.PTicket;
-
-public interface AthenaCallback {
-    
-    public void afterGet(PTicket record);
-    
-    public void beforeSave(PTicket record);
-    public void afterSave(PTicket record);
-    
+public class RecordUtil {
+    public static Boolean hasPersonInformation(PTicket record) {
+        return ( record != null
+              && record.get("firstName") != null
+              && record.get("lastName") != null
+              && record.get("email") != null);
+    }
 }
