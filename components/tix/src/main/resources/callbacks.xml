@@ -9,17 +9,19 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
     <context:component-scan base-package="org.fracturedatlas.athena.web"/>
     
-    <!--
-    <bean id="timestampCallback" class="org.fracturedatlas.athena.callbacks.TimestampCallback"/>
     
-    <util:list id="docBeforeSave">
-        <ref bean="timestampCallback"/>
+    <bean id="createPeopleRecordCallback" 
+          class="org.fracturedatlas.athena.callbacks.CreatePeopleRecordCallback" 
+          autowire="byName"/>
+
+    <util:list id="orderAfterSave">
+        <ref bean="createPeopleRecordCallback"/>
     </util:list>
     
-    <util:map id="docCallbacks" map-class="java.util.HashMap">
-        <entry key="beforeSave">
-            <ref bean="docBeforeSave"/>
+    <util:map id="orderCallbacks" map-class="java.util.HashMap">
+        <entry key="afterSave">
+            <ref bean="orderAfterSave"/>
         </entry>
     </util:map>
-    -->
+
 </beans>

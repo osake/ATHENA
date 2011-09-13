@@ -19,16 +19,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.callbacks;
 
+import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.client.RecordUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component("createPeopleRecord")
 public class CreatePeopleRecordCallback extends AbstractAthenaCallback {
+    
+    @Autowired
+    AthenaComponent athenaPeople;
     
     @Override
     public void beforeSave(PTicket record) {
         if(RecordUtil.hasPersonInformation(record)) {
             createPersonRecord(record);
         }
+    }
+    
+    public void createPersonRecord(PTicket record) {
+        PTicket newPerson = new PTicket();
+        newPerson.add("firstName", record.get("firstName"));
+        newPerson.add("lastName", record.get("lastName"));
+        newPerson.add("email", record.get("email"));
+        athenaPeople.save("person", newPerson);
     }
 }

@@ -24,6 +24,7 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +36,7 @@ import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
+import org.fracturedatlas.athena.callbacks.AthenaCallback;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
@@ -351,7 +353,23 @@ public class RecordManager {
     }
 
     public PTicket createRecord(String type, PTicket record) {
-        return apa.saveRecord(type, record);
+        PTicket createdRecord = apa.saveRecord(type, record);
+        fireAfterSave(type, record);
+        return createdRecord;
+    }
+    
+    public void fireAfterSave(String type, PTicket record) {
+        List<AthenaCallback> afterSaveCallbacks = null;
+        try{
+            HashMap callbacks = (HashMap)applicationContext.getBean(type + "Callbacks");
+            List<AthenaCallback> callbackList = (List<AthenaCallback>)callbacks.get("afterSave");
+            for(AthenaCallback callback : callbackList) {
+                callback.afterSave(record);
+            }
+        } catch (NoSuchBeanDefinitionException noBean) {
+            logger.error("Could not find callback bean");
+            logger.error("{}", noBean);
+        }        
     }
 
     public PTicket updateRecord(String type, PTicket record) {
