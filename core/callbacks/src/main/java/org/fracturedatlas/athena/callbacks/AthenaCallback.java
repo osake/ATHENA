@@ -23,9 +23,7 @@ import org.fracturedatlas.athena.client.PTicket;
 
 public interface AthenaCallback {
     
-    public void afterGet(PTicket record);
-    
-    public void beforeSave(PTicket record);
-    public void afterSave(PTicket record);
+    public PTicket beforeSave(String type, PTicket record);
+    public PTicket afterSave(String type, PTicket record);
     
 }

@@ -148,29 +148,29 @@ public class SaveRecordContainerTest extends BaseTixContainerTest {
         assertEquals(0, apa.findTickets(as).size());
     }
 
-//    @Test
-//    public void testCreateTicketBooleanProp() {
-//
-//        PTicket pTicket = createSampleRecord();
-//
-//        String createdTicketJson = tix.path(path).type("application/json").post(String.class, gson.toJson(pTicket));
-//        PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
-//        assertNotNull(savedPTicket.getId());
-//        assertRecordsEqual(pTicket, savedPTicket, false);
-//
-//        PTicket retrTicket = apa.getRecord("ticket", savedPTicket.getId());
-//        assertEquals(savedPTicket.get("PRICE"), retrTicket.get("PRICE"));
-//        assertEquals(savedPTicket.get("SECTION"), retrTicket.get("SECTION"));
-//        assertEquals(savedPTicket.get("DESCRIPTION"), retrTicket.get("DESCRIPTION"));
-//        try {
-//            DateTime one = DateUtil.parseDateTime(savedPTicket.get("TIME"));
-//            DateTime two = DateUtil.parseDateTime(retrTicket.get("TIME"));
-//            assertTrue(one.isEqual(two));
-//        } catch (ParseException pe) {
-//            fail("Could not parse date returned from ATHENA");
-//        }
-//        
-//    }
+    @Test
+    public void testCreateTicketBooleanProp() {
+
+        PTicket pTicket = createSampleRecord();
+
+        String createdTicketJson = tix.path(path).type("application/json").post(String.class, gson.toJson(pTicket));
+        PTicket savedPTicket = gson.fromJson(createdTicketJson, PTicket.class);
+        assertNotNull(savedPTicket.getId());
+        assertRecordsEqual(pTicket, savedPTicket, false);
+
+        PTicket retrTicket = apa.getRecord("ticket", savedPTicket.getId());
+        assertEquals(savedPTicket.get("PRICE"), retrTicket.get("PRICE"));
+        assertEquals(savedPTicket.get("SECTION"), retrTicket.get("SECTION"));
+        assertEquals(savedPTicket.get("DESCRIPTION"), retrTicket.get("DESCRIPTION"));
+        try {
+            DateTime one = DateUtil.parseDateTime(savedPTicket.get("TIME"));
+            DateTime two = DateUtil.parseDateTime(retrTicket.get("TIME"));
+            assertTrue(one.isEqual(two));
+        } catch (ParseException pe) {
+            fail("Could not parse date returned from ATHENA");
+        }
+        
+    }
 
     public PTicket createSampleRecord() {
         PTicket t = new PTicket();

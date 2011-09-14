@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.callbacks;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.fracturedatlas.athena.client.PTicket;
@@ -31,27 +32,55 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CallbackManager {
-    Logger logger = LoggerFactory.getLogger(CallbackManager.class);
+    static Logger logger = LoggerFactory.getLogger(CallbackManager.class);
     
     @Autowired
     @javax.ws.rs.core.Context
     ApplicationContext applicationContext;
     
-    public CallbackManager() { 
-    }
-    
-    public void beforeSave(String type, PTicket record) {
-        String beanName = type + "Callbacks";
+    public PTicket beforeSave(String type, PTicket record) {
         try{
-            HashMap<String, List<AthenaCallback>> callbackMap = (HashMap<String, List<AthenaCallback>>)applicationContext.getBean(beanName);
-            List<AthenaCallback> callbacks = callbackMap.get("beforeSave");
+            List<AthenaCallback> callbacks = loadCallbacks("beforeSave", type);
         
             for(AthenaCallback callback : callbacks) {
-                callback.beforeSave(record);
+                record = callback.beforeSave(type, record);
             }
         } catch (NoSuchBeanDefinitionException noBean) {
-            logger.debug("No clalbacks found for type [{}]", type);
+            logger.debug("No callbacks found for type [{}]", type);
         }
+        
+        return record;
+    }
+    
+    public PTicket afterSave(String type, PTicket record) {
+        try{
+            List<AthenaCallback> callbacks = loadCallbacks("afterSave", type);
+        
+            for(AthenaCallback callback : callbacks) {
+                record = callback.afterSave(type, record);
+            }
+        } catch (NoSuchBeanDefinitionException noBean) {
+            logger.debug("No callbacks found for type [{}]", type);
+        }
+        
+        return record;
+    }
+    
+    public List<AthenaCallback> loadCallbacks(String callbackType, String type) {
+        String beanName = type + "Callbacks";
+        HashMap<String, List<AthenaCallback>> callbackMap = (HashMap<String, List<AthenaCallback>>)applicationContext.getBean(beanName);
+
+        if(callbackMap == null) {
+            return new ArrayList<AthenaCallback>();
+        }
+
+        List<AthenaCallback> callbacks = callbackMap.get(callbackType);   
+        
+        if(callbacks == null) {
+            return new ArrayList<AthenaCallback>();
+        }
+        
+        return callbacks;
     }
 
     public ApplicationContext getApplicationContext() {

@@ -26,7 +26,7 @@ import org.joda.time.DateTime;
 public class TimestampCallback extends AbstractAthenaCallback {
     
     @Override
-    public void beforeSave(PTicket record) {
+    public PTicket beforeSave(String type, PTicket record) {
         DateTime now = new DateTime();
         
         String s = record.get("createdAt");
@@ -34,6 +34,8 @@ public class TimestampCallback extends AbstractAthenaCallback {
             record.put("createdAt", DateUtil.formatDate(now));
         }
         record.put("updatedAt", DateUtil.formatDate(now));
+        
+        return record;
     }
     
 }

@@ -19,9 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.callbacks;
 
+import java.util.Collection;
+import java.util.List;
 import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.client.RecordUtil;
+import org.fracturedatlas.athena.search.AthenaSearch;
+import org.fracturedatlas.athena.search.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,17 +35,54 @@ public class CreatePeopleRecordCallback extends AbstractAthenaCallback {
     AthenaComponent athenaPeople;
     
     @Override
-    public void beforeSave(PTicket record) {
+    public PTicket afterSave(String type, PTicket record) {
         if(RecordUtil.hasPersonInformation(record)) {
+            
             createPersonRecord(record);
         }
+        return removePersonRecordInformation(record);
     }
     
     public void createPersonRecord(PTicket record) {
-        PTicket newPerson = new PTicket();
-        newPerson.add("firstName", record.get("firstName"));
-        newPerson.add("lastName", record.get("lastName"));
-        newPerson.add("email", record.get("email"));
-        athenaPeople.save("person", newPerson);
+        
+        PTicket existingPerson = findPerson(record.get("email"));
+        
+        if(existingPerson == null) {    
+            PTicket newPerson = new PTicket();
+            newPerson.add("firstName", record.get("firstName"));
+            newPerson.add("lastName", record.get("lastName"));
+            newPerson.add("email", record.get("email"));
+            existingPerson = athenaPeople.save("person", newPerson);
+        }
+        
+        record.add("personId", existingPerson.getIdAsString());
+    }
+        
+    public PTicket findPerson(String email) {
+        AthenaSearch search = new AthenaSearch.Builder()
+                                  .type("person")
+                                  .and("email", Operator.EQUALS, email)
+                                  .build();
+        Collection<PTicket> people = athenaPeople.find("person", search);
+        if(people.size() == 0) {
+            return null;
+        } else {
+            return people.iterator().next();
+        }
+    }
+    
+    public PTicket removePersonRecordInformation(PTicket record) {
+        record.getProps().remove("firstName");
+        record.getProps().remove("lastName");
+        record.getProps().remove("email");
+        return record;
+    }
+
+    public AthenaComponent getAthenaPeople() {
+        return athenaPeople;
+    }
+
+    public void setAthenaPeople(AthenaComponent athenaPeople) {
+        this.athenaPeople = athenaPeople;
     }
 }

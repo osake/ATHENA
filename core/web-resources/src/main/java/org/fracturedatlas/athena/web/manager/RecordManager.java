@@ -37,6 +37,7 @@ import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.callbacks.AthenaCallback;
+import org.fracturedatlas.athena.callbacks.CallbackManager;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
@@ -63,6 +64,9 @@ public class RecordManager {
 
     @Autowired
     SecurityContextHolderStrategy contextHolderStrategy;
+    
+    @Autowired
+    CallbackManager callbackManager;
 
     public static final String ID_DELIMITER = ",";
 
@@ -333,7 +337,7 @@ public class RecordManager {
         List<PTicket> outRecords = new ArrayList<PTicket>();
         try {
             for(PTicket record : records) {
-                outRecords.add(apa.saveRecord(type, record));
+                outRecords.add(saveWithCallbacks(type, record));
             }
         } catch (RuntimeException e) {
             logger.error("Exception while saving records [{}]", e);
@@ -353,23 +357,14 @@ public class RecordManager {
     }
 
     public PTicket createRecord(String type, PTicket record) {
-        PTicket createdRecord = apa.saveRecord(type, record);
-        fireAfterSave(type, record);
-        return createdRecord;
+        return saveWithCallbacks(type, record);
     }
     
-    public void fireAfterSave(String type, PTicket record) {
-        List<AthenaCallback> afterSaveCallbacks = null;
-        try{
-            HashMap callbacks = (HashMap)applicationContext.getBean(type + "Callbacks");
-            List<AthenaCallback> callbackList = (List<AthenaCallback>)callbacks.get("afterSave");
-            for(AthenaCallback callback : callbackList) {
-                callback.afterSave(record);
-            }
-        } catch (NoSuchBeanDefinitionException noBean) {
-            logger.error("Could not find callback bean");
-            logger.error("{}", noBean);
-        }        
+    public PTicket saveWithCallbacks(String type, PTicket record) {
+        record = callbackManager.beforeSave(type, record);
+        PTicket createdRecord = apa.saveRecord(type, record);
+        createdRecord = callbackManager.afterSave(type, createdRecord);
+        return createdRecord;        
     }
 
     public PTicket updateRecord(String type, PTicket record) {
@@ -380,7 +375,7 @@ public class RecordManager {
             throw new NotFoundException();
         }
 
-        return apa.saveRecord(type, record);
+        return saveWithCallbacks(type, record);
     }
 
     public List<PTicket> updateRecords(String type, List<String> idList, PTicket patch) throws ObjectNotFoundException {
@@ -417,7 +412,7 @@ public class RecordManager {
             throw new AthenaException("Requested update to [" + idToUpdate + "] but sent record with id [" + record.getId() + "]");
         }
 
-        return apa.saveRecord(type, record);
+        return saveWithCallbacks(type, record);
     }
 
     public ApaAdapter getApa() {
