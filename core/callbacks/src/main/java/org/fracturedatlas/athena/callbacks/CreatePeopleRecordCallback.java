@@ -52,6 +52,7 @@ public class CreatePeopleRecordCallback extends AbstractAthenaCallback {
             newPerson.add("firstName", record.get("firstName"));
             newPerson.add("lastName", record.get("lastName"));
             newPerson.add("email", record.get("email"));
+            newPerson.add("organizationId", record.get("organizationId"));
             existingPerson = athenaPeople.save("person", newPerson);
         }
         
