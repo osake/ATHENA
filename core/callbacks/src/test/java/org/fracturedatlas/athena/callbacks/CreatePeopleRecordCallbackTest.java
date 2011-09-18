@@ -47,6 +47,7 @@ public class CreatePeopleRecordCallbackTest {
         order.put("firstName", "Jim");
         order.put("lastName", "Smith");
         order.put("email", "jim@example.com");
+        order.put("organizationId", "1");
         order.put("orderId", "349409409");        
         
         AthenaSearch search = new AthenaSearch.Builder()
@@ -71,6 +72,7 @@ public class CreatePeopleRecordCallbackTest {
         order.put("firstName", "Jim");
         order.put("lastName", "Smith");
         order.put("email", "jim@example.com");
+        order.put("organizationId", "1");
         order.put("orderId", "349409409");
         
         AthenaSearch search = new AthenaSearch.Builder()
@@ -126,6 +128,7 @@ public class CreatePeopleRecordCallbackTest {
         inboundPerson.put("firstName", "Jim");
         inboundPerson.put("lastName", "Smith");
         inboundPerson.put("email", "jim@example.com");
+        inboundPerson.put("organizationId", "1");
         
         savedPerson = new PTicket();
         savedPerson.setId("45");

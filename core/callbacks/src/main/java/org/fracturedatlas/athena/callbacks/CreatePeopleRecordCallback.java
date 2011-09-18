@@ -49,14 +49,13 @@ public class CreatePeopleRecordCallback extends AbstractAthenaCallback {
         
         if(existingPerson == null) {    
             PTicket newPerson = new PTicket();
-            newPerson.add("firstName", record.get("firstName"));
-            newPerson.add("lastName", record.get("lastName"));
-            newPerson.add("email", record.get("email"));
-            newPerson.add("organizationId", record.get("organizationId"));
+            newPerson.put("firstName", record.get("firstName"));
+            newPerson.put("lastName", record.get("lastName"));
+            newPerson.put("email", record.get("email"));
+            newPerson.put("organizationId", record.get("organizationId"));
             existingPerson = athenaPeople.save("person", newPerson);
         }
-        
-        record.add("personId", existingPerson.getIdAsString());
+        record.put("personId", existingPerson.getIdAsString());
     }
         
     public PTicket findPerson(String email) {
