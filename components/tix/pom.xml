@@ -323,6 +323,10 @@
             <groupId>org.fracturedatlas.athena.helper</groupId>
             <artifactId>ticketfactory</artifactId>
         </dependency>
+        <dependency> 
+            <groupId>org.fracturedatlas.athena.plugin</groupId>
+            <artifactId>doorlist</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.fracturedatlas.athena.plugin</groupId>
             <artifactId>available-tickets</artifactId>

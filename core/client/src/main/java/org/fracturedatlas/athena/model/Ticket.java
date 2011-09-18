@@ -22,6 +22,7 @@ package org.fracturedatlas.athena.model;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.joda.time.DateTime;
@@ -71,6 +72,14 @@ public class Ticket extends ApaModel {
         this.state = state;
         
         this.organizationId = performance.get("organizationId");
+    }
+    
+    public static List<Ticket> fromSet(Set<PTicket> pTickets) {
+        List<Ticket> tickets = new ArrayList<Ticket>();
+        for(PTicket pTicket : pTickets) {
+            tickets.add(new Ticket(pTicket));
+        }
+        return tickets;
     }
     
     public static List<Ticket> fromCollection(List<PTicket> pTickets) {

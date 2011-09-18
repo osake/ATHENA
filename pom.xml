@@ -101,6 +101,11 @@
       </dependency>
       <dependency>
         <groupId>org.fracturedatlas.athena.plugin</groupId>
+        <artifactId>doorlist</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.fracturedatlas.athena.plugin</groupId>
         <artifactId>tags-sub-collection</artifactId>
         <version>${project.version}</version>
       </dependency>
