@@ -20,10 +20,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.client;
 
 public class RecordUtil {
-    public static Boolean hasPersonInformation(PTicket record) {
+    public static Boolean hasCompletePersonInformation(PTicket record) {
         return ( record != null
               && record.get("firstName") != null
               && record.get("lastName") != null
               && record.get("email") != null);
+    }
+    
+    public static Boolean hasAnyPersonInformation(PTicket record) {
+        return ( record != null
+              && (record.get("firstName") != null
+              || record.get("lastName") != null
+              || record.get("email") != null));
     }
 }

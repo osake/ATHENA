@@ -42,6 +42,74 @@ public class CreatePeopleRecordCallbackTest {
     CreatePeopleRecordCallback callback = new CreatePeopleRecordCallback();
     
     @Test
+    public void saveOrderWithPeopleId() {
+        PTicket order = new PTicket();
+        order.put("firstName", "Jim");
+        order.put("lastName", "Smith");
+        order.put("email", "jim@example.com");
+        order.put("personId", "95159");
+        order.put("organizationId", "1");
+        order.put("orderId", "349409409");        
+        
+        AthenaSearch search = new AthenaSearch.Builder()
+                                  .type("person")
+                                  .and("email", Operator.EQUALS, "jim@example.com")
+                                  .build();
+        
+        List<PTicket> noResults = new ArrayList<PTicket>();
+        
+        order = callback.beforeSave("order", order);
+        verify(mockPeople, times(0)).find("person", search);
+        
+        assertEquals(order.get("personId"), "95159");
+        assertNull(order.get("firstName"));
+        assertNull(order.get("lastName"));
+        assertNull(order.get("email"));
+    }
+
+    @Test
+    public void saveOrderAndCreatePersonRecordWithoutEmail() {
+        PTicket order = new PTicket();
+        order.put("firstName", "Jim");
+        order.put("lastName", "Smith");
+        order.put("orderId", "349409409"); 
+        order.put("organizationId", "1");       
+        
+        AthenaSearch search = new AthenaSearch.Builder()
+                                  .type("person")
+                                  .and("email", Operator.EQUALS, "")
+                                  .build();
+        
+        verify(mockPeople, times(0)).find("person", search);
+        
+        
+        PTicket aPerson = new PTicket();
+        aPerson.put("firstName", "Jim");
+        aPerson.put("lastName", "Smith");
+        aPerson.put("organizationId", "1");
+        
+        PTicket anotherPerson = new PTicket();
+        anotherPerson.setId("45");
+        anotherPerson.put("firstName", "Jim");
+        anotherPerson.put("lastName", "Smith");
+        anotherPerson.put("organizationId", "1");
+        when(mockPeople.save("person", aPerson)).thenReturn(anotherPerson);
+        
+        order = callback.beforeSave("order", order);
+        
+        PTicket partialPerson = new PTicket();
+        partialPerson.put("firstName", "Jim");
+        partialPerson.put("lastName", "Smith");
+        partialPerson.put("organizationId", "1");
+        verify(mockPeople, times(1)).save("person", partialPerson);
+        
+        assertEquals("45", order.get("personId"));
+        assertNull(order.get("firstName"));
+        assertNull(order.get("lastName"));
+        assertNull(order.get("email"));
+    }
+    
+    @Test
     public void saveOrderAndCreatePersonRecord() {
         PTicket order = new PTicket();
         order.put("firstName", "Jim");
@@ -58,7 +126,7 @@ public class CreatePeopleRecordCallbackTest {
         List<PTicket> noResults = new ArrayList<PTicket>();
         when(mockPeople.find("person", search)).thenReturn(noResults);
         
-        callback.afterSave("order", order);
+        order = callback.beforeSave("order", order);
         
         assertEquals(order.get("personId"), "45");
         assertNull(order.get("firstName"));
@@ -84,7 +152,7 @@ public class CreatePeopleRecordCallbackTest {
         results.add(savedPerson);
         when(mockPeople.find("person", search)).thenReturn(results);
         
-        callback.afterSave("order", order);
+        order = callback.beforeSave("order", order);
         
         
         verify(mockPeople, times(1)).find("person", search);
@@ -98,16 +166,16 @@ public class CreatePeopleRecordCallbackTest {
     @Test
     public void saveOrderWithoutPeopleInformation() {
         PTicket order = new PTicket();
-        order.put("orderId", "349409409");
+        order.put("orderId", "349409409"); 
+        order.put("organizationId", "1"); 
         
         AthenaSearch search = new AthenaSearch.Builder()
                                   .type("person")
                                   .and("email", Operator.EQUALS, "")
                                   .build();
         
+        order = callback.beforeSave("order", order);
         verify(mockPeople, times(0)).find("person", search);
-        
-        callback.afterSave("order", order);
         
         assertNull(order.get("personId"));
         assertNull(order.get("firstName"));
@@ -135,5 +203,6 @@ public class CreatePeopleRecordCallbackTest {
         savedPerson.put("firstName", "Jim");
         savedPerson.put("lastName", "Smith");
         savedPerson.put("email", "jim@example.com");
+        inboundPerson.put("organizationId", "1");
     }
 }

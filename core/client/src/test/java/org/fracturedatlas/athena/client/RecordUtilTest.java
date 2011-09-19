@@ -32,18 +32,38 @@ public class RecordUtilTest {
     }
     
     @Test
+    public void testHasNoPeopleInformation() {
+        record.put("orderId", "349409409"); 
+        record.put("organizationId", "1"); 
+        assertFalse(RecordUtil.hasAnyPersonInformation(record));
+    } 
+    
+    @Test
+    public void testHasAnyPeopleInformation() {
+        record.add("firstName", "Joe");
+        record.add("lastName", "Smith");
+        assertTrue(RecordUtil.hasAnyPersonInformation(record));
+    } 
+    
+    @Test
+    public void testHasAnyPeopleInformation2() {
+        record.add("firstName", "Joe");
+        assertTrue(RecordUtil.hasAnyPersonInformation(record));
+    } 
+    
+    @Test
     public void testHasPeopleInformation() {
         record.add("firstName", "Joe");
         record.add("lastName", "Smith");
         record.add("email", "test@example.com");
-        assertTrue(RecordUtil.hasPersonInformation(record));
+        assertTrue(RecordUtil.hasCompletePersonInformation(record));
     } 
     
     @Test
     public void testHasIncompletePeopleInformation() {
         record.add("firstName", "Joe");
         record.add("email", "test@example.com");
-        assertFalse(RecordUtil.hasPersonInformation(record));
+        assertFalse(RecordUtil.hasCompletePersonInformation(record));
     } 
     
     @Test
@@ -53,13 +73,13 @@ public class RecordUtilTest {
         record.add("email", "test@example.com");
         record.add("height", "74");
         record.add("orders", "109");
-        assertTrue(RecordUtil.hasPersonInformation(record));
+        assertTrue(RecordUtil.hasCompletePersonInformation(record));
     } 
     
     @Test
     public void testHasPeopleInformationNullRecord() {
         record = null;
-        assertFalse(RecordUtil.hasPersonInformation(record));
+        assertFalse(RecordUtil.hasCompletePersonInformation(record));
     } 
     
     @Test
@@ -68,6 +88,6 @@ public class RecordUtilTest {
         record.add("email", "test@example.com");
         record.add("height", "74");
         record.add("orders", "109");
-        assertFalse(RecordUtil.hasPersonInformation(record));
+        assertFalse(RecordUtil.hasCompletePersonInformation(record));
     }
 }

@@ -14,13 +14,13 @@
           class="org.fracturedatlas.athena.callbacks.CreatePeopleRecordCallback" 
           autowire="byName"/>
 
-    <util:list id="orderAfterSave">
+    <util:list id="orderBeforeSave">
         <ref bean="createPeopleRecordCallback"/>
     </util:list>
     
     <util:map id="orderCallbacks" map-class="java.util.HashMap">
-        <entry key="afterSave">
-            <ref bean="orderAfterSave"/>
+        <entry key="beforeSave">
+            <ref bean="orderBeforeSave"/>
         </entry>
     </util:map>
 

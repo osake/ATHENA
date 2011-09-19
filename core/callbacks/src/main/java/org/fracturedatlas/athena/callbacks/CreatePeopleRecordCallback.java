@@ -20,14 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.callbacks;
 
 import java.util.Collection;
-import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.fracturedatlas.athena.client.AthenaComponent;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.client.RecordUtil;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.Operator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 public class CreatePeopleRecordCallback extends AbstractAthenaCallback {
     
@@ -35,30 +34,43 @@ public class CreatePeopleRecordCallback extends AbstractAthenaCallback {
     AthenaComponent athenaPeople;
     
     @Override
-    public PTicket afterSave(String type, PTicket record) {
-        if(RecordUtil.hasPersonInformation(record)) {
-            
-            createPersonRecord(record);
+    public PTicket beforeSave(String type, PTicket record) {
+        if(RecordUtil.hasAnyPersonInformation(record) && record.get("personId") == null) {            
+            record = createPersonRecord(record);
         }
         return removePersonRecordInformation(record);
     }
     
-    public void createPersonRecord(PTicket record) {
+    public PTicket createPersonRecord(PTicket record) {
         
-        PTicket existingPerson = findPerson(record.get("email"));
+        PTicket existingPerson = null;
         
-        if(existingPerson == null) {    
+        if(StringUtils.isNotBlank(record.get("email"))) {
+            existingPerson = findPerson(record.get("email"));
+        }
+        
+        if(existingPerson == null) { 
             PTicket newPerson = new PTicket();
             newPerson.put("firstName", record.get("firstName"));
             newPerson.put("lastName", record.get("lastName"));
-            newPerson.put("email", record.get("email"));
+            
+            if(StringUtils.isNotBlank(record.get("email"))) {
+                newPerson.put("email", record.get("email"));
+            }
+            
             newPerson.put("organizationId", record.get("organizationId"));
             existingPerson = athenaPeople.save("person", newPerson);
         }
         record.put("personId", existingPerson.getIdAsString());
+        return record;
     }
         
     public PTicket findPerson(String email) {
+        
+        if(email == null) {
+            return null;
+        }
+        
         AthenaSearch search = new AthenaSearch.Builder()
                                   .type("person")
                                   .and("email", Operator.EQUALS, email)
