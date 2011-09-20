@@ -46,6 +46,38 @@ public class RecordUtilTest {
     } 
     
     @Test
+    public void testHasSomeBlankPeopleInformation() {
+        record.add("firstName", "");
+        record.add("lastName", "");
+        assertFalse(RecordUtil.hasAnyPersonInformation(record));
+    } 
+    
+    @Test
+    public void testHasCompleteBlankPeopleInformation() {
+        record.add("firstName", "");
+        record.add("lastName", "");        
+        record.add("email", "");
+
+        assertFalse(RecordUtil.hasAnyPersonInformation(record));
+    } 
+    
+    @Test
+    public void testHasSomeBlankPeopleInformation2() {
+        record.add("firstName", "");
+        record.add("lastName", "Jim");
+        assertTrue(RecordUtil.hasAnyPersonInformation(record));
+    } 
+    
+    @Test
+    public void testHasCompleteBlankPeopleInformation2() {
+        record.add("firstName", "");
+        record.add("lastName", "Throne");        
+        record.add("email", "");
+
+        assertTrue(RecordUtil.hasAnyPersonInformation(record));
+    } 
+    
+    @Test
     public void testHasAnyPeopleInformation2() {
         record.add("firstName", "Joe");
         assertTrue(RecordUtil.hasAnyPersonInformation(record));
