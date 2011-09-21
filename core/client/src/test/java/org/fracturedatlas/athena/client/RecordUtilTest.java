@@ -49,7 +49,7 @@ public class RecordUtilTest {
     public void testHasSomeBlankPeopleInformation() {
         record.add("firstName", "");
         record.add("lastName", "");
-        assertFalse(RecordUtil.hasAnyPersonInformation(record));
+        assertTrue(RecordUtil.hasAnyPersonInformation(record));
     } 
     
     @Test
@@ -58,7 +58,7 @@ public class RecordUtilTest {
         record.add("lastName", "");        
         record.add("email", "");
 
-        assertFalse(RecordUtil.hasAnyPersonInformation(record));
+        assertTrue(RecordUtil.hasAnyPersonInformation(record));
     } 
     
     @Test

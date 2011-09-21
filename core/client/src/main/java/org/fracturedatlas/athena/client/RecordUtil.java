@@ -24,15 +24,15 @@ import org.apache.commons.lang.StringUtils;
 public class RecordUtil {
     public static Boolean hasCompletePersonInformation(PTicket record) {
         return ( record != null
-              && StringUtils.isNotBlank(record.get("firstName"))
-              && StringUtils.isNotBlank(record.get("lastName"))
-              && StringUtils.isNotBlank(record.get("email")));
+              && record.get("firstName") != null
+              && record.get("lastName") != null
+              && record.get("email") != null);
     }
     
     public static Boolean hasAnyPersonInformation(PTicket record) {
         return ( record != null
-              && (StringUtils.isNotBlank(record.get("firstName"))
-              ||  StringUtils.isNotBlank(record.get("lastName"))
-              ||  StringUtils.isNotBlank(record.get("email"))));
+              && (record.get("firstName") != null
+              ||  record.get("lastName") != null
+              ||  record.get("email") != null));
     }
 }
