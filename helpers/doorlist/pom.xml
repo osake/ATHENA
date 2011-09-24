@@ -4,11 +4,11 @@
   <parent>
     <artifactId>helpers</artifactId>
     <groupId>org.fracturedatlas.athena</groupId>
-    <version>1.3.0</version>
+    <version>1.4.0-SNAPSHOT</version>
   </parent>
   <groupId>org.fracturedatlas.athena.plugin</groupId>
   <artifactId>doorlist</artifactId>
-  <version>1.3.0</version>
+  <version>1.4.0-SNAPSHOT</version>
   <name>doorlist</name>
   <url>http://maven.apache.org</url>
   <dependencies>
