@@ -37,11 +37,13 @@ public class AthenaSearch {
 
     public static final String LIMIT = "_limit";
     public static final String START = "_start";
+    public static final String INCLUDE = "_include";
     public static final String QUERY = "_q";
     public static final String ANY_VALUE = ".*";
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     
     ArrayList<AthenaSearchConstraint> asc = new ArrayList<AthenaSearchConstraint>();
+    List<String> includes = new ArrayList<String>();
     Map<String, String> searchModifiers = new HashMap<String, String>();
 
     String type;
@@ -102,6 +104,14 @@ public class AthenaSearch {
         return getIntegerModifier(LIMIT);
     }
 
+    public List<String> getIncludes() {
+        return includes;
+    }
+
+    public void setIncludes(List<String> includes) {
+        this.includes = includes;
+    }
+
     /**
      * Get the start of this search
      * @return the start, null if start has not been set
@@ -143,6 +153,11 @@ public class AthenaSearch {
 
         public AthenaSearch.Builder and(AthenaSearchConstraint sc) {
             search.addConstraint(sc);
+            return this;
+        }
+
+        public AthenaSearch.Builder include(String subType) {
+            search.getIncludes().add(subType);
             return this;
         }
 
