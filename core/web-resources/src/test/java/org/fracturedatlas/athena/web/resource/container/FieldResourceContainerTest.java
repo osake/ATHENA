@@ -79,8 +79,7 @@ public class FieldResourceContainerTest extends BaseTixContainerTest {
     }
 
     @Test
-    public void testGetFieldJson() throws Exception {
-
+    public void testGetFieldJson() throws Exception {        
         String path = FIELDS_PATH + testField.getId() + ".json";
         String propFieldString = tix.path(path).get(String.class);
         assertNotNull(propFieldString);

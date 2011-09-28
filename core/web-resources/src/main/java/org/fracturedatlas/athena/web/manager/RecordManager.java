@@ -24,7 +24,6 @@ import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -36,13 +35,12 @@ import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
-import org.fracturedatlas.athena.callbacks.AthenaCallback;
 import org.fracturedatlas.athena.callbacks.CallbackManager;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
-import org.fracturedatlas.athena.web.exception.AthenaException;
+import org.fracturedatlas.athena.exception.AthenaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,113 +215,13 @@ public class RecordManager {
     }
 
     public Set<PTicket> findRecords(String type, MultivaluedMap<String, String> queryParams) {
-        AthenaSearch search = convert(queryParams);
+        AthenaSearch search = new AthenaSearch(queryParams);
         return findRecords(type, search);
     }
 
     public Set<PTicket> findRecords(String type, AthenaSearch search) {
         search.setType(type);
         return apa.findTickets(search);
-    }
-    
-    public static AthenaSearch convert(MultivaluedMap<String, String> queryParams) {
-        
-        List<String> values = null;
-        Operator operator;
-        String value;
-        Set<String> valueSet = null;
-        AthenaSearch apaSearch = new AthenaSearch();
-        for (String fieldName : queryParams.keySet()) {
-            values = queryParams.get(fieldName);
-
-            if(values == null || values.size() == 0) {
-                throw new AthenaException("Found no values for search parameter ["+fieldName+"]");
-            }
-
-            for (String operatorPrefixedValue : values) {
-                if(StringUtils.isBlank(operatorPrefixedValue)) {
-                    throw new AthenaException("Found no values for search parameter ["+fieldName+"]");
-                }
-                if (fieldName.startsWith("_")) {
-                    apaSearch.setSearchModifier(fieldName, operatorPrefixedValue);
-                } else {
-                    int start = 0;
-
-                    if(operatorPrefixedValue.length() < 2) { 
-                        operator = Operator.EQUALS;
-                        value = operatorPrefixedValue;
-                    } else {
-                        //If the operator isn't found, this defaults to equals
-                        operator = Operator.fromType(operatorPrefixedValue.substring(0, 2));
-                        start = 2;
-
-                        if(operator == null) {
-                            operator = Operator.EQUALS;
-                            start = 0;
-                        }
-                        value = operatorPrefixedValue.substring(start, operatorPrefixedValue.length());
-                    }
-                    if(StringUtils.isBlank(value)) {
-                        throw new AthenaException("Found no values for search parameter ["+fieldName+"]");
-                    }
-
-                    valueSet = parseValues(value);
-                    apaSearch.addConstraint(fieldName, operator, valueSet);
-                }
-            }
-        }    
-        return apaSearch;
-    }
-
-    public static Set<String> parseValues(String valueString) {
-        HashSet<String> values = new HashSet<String>();
-        valueString = StringUtils.trimToEmpty(valueString);
-        valueString = StringUtils.strip(valueString, "()");
-        valueString = StringUtils.trimToEmpty(valueString);
-        CharacterIterator it = new StringCharacterIterator(valueString);
-        boolean inString = false;
-        int begin = 0;
-        int end = 0;
-        int numValues = 0;
-        StringBuilder sb = new StringBuilder();
-        // Iterate over the characters in the forward direction
-        for (char ch = it.first(); ch != CharacterIterator.DONE; ch = it.next()) {
-            if (ch == '\"') {
-                inString = true;
-                ch = it.next();
-                sb = new StringBuilder();
-                for (; ch != CharacterIterator.DONE; ch = it.next()) {
-                    if (ch == '\\') {
-                        // skip any " in a string
-                        sb.append(ch);
-                        ch = it.next();
-                    } else if (ch == '\"') {
-                        break;
-                    }
-                    sb.append(ch);
-                }
-                inString = false;
-                values.add(StringUtils.trimToEmpty(sb.toString()));
-            } else if (ch == ',') {
-                // new value
-            } else if (" \t\n\r".indexOf(ch) > -1) {
-                //skip whitespace
-            } else {
-                // not a comma, whitespace or a string start
-                sb = new StringBuilder();
-                for (; ch != CharacterIterator.DONE; ch = it.next()) {
-                    if (ch == ',') {
-                        break;
-                    }
-                    sb.append(ch);
-                }
-                inString = false;
-                values.add(StringUtils.trimToEmpty(sb.toString()));
-
-            }
-        }
-
-        return values;
     }
 
     /**

@@ -24,7 +24,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 import java.util.ArrayList;
 import javax.ws.rs.core.MultivaluedMap;
 import org.fracturedatlas.athena.apa.ApaAdapter;
-import org.fracturedatlas.athena.web.exception.AthenaException;
+import org.fracturedatlas.athena.exception.AthenaException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

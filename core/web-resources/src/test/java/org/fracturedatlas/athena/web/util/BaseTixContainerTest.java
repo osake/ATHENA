@@ -29,6 +29,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.MultivaluedMap;
 import org.springframework.context.ApplicationContext;
@@ -69,7 +70,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
         Client c = Client.create(cc);
         tix = c.resource(TIX_URI);
         tix.addFilter(new LoggingFilter());
-
+        
         ApplicationContext context = new ClassPathXmlApplicationContext("testApplicationContext.xml");
         apa = (ApaAdapter)context.getBean("apa");
     }
@@ -86,7 +87,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
             try {
                 apa.deleteRecord(t.getType(), t.getId());
             } catch (Exception ignored) {
-                ignored.printStackTrace();
+                //ignored.printStackTrace();
             }
         }
 
@@ -94,7 +95,7 @@ public abstract class BaseTixContainerTest extends JerseyTest {
             try {
                     apa.deletePropField(pf);
             } catch (Exception ignored) {
-                ignored.printStackTrace();
+                //ignored.printStackTrace();
             }
         }
     }
@@ -173,7 +174,6 @@ public abstract class BaseTixContainerTest extends JerseyTest {
     public PTicket createRecord(String type, String... keyValues) {
         PTicket t = new PTicket(type);
         for(int i=0; i < keyValues.length; i+=2) {
-            System.out.println(keyValues[i]);
             t.put(keyValues[i], keyValues[i+1]);
         }
         return t;

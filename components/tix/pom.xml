@@ -1,217 +1,217 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.fracturedatlas.athena</groupId>
+  <artifactId>tix</artifactId>
+  <name>tix</name>
+  <packaging>war</packaging>
+  <version>1.4.0-SNAPSHOT</version>
+  <parent>
     <groupId>org.fracturedatlas.athena</groupId>
-    <artifactId>tix</artifactId>
-    <name>tix</name>
-    <packaging>war</packaging>
+    <artifactId>components</artifactId>
     <version>1.4.0-SNAPSHOT</version>
-    <parent>
-        <groupId>org.fracturedatlas.athena</groupId>
-        <artifactId>components</artifactId>
-        <version>1.4.0-SNAPSHOT</version>
-    </parent>
+  </parent>
 
-    <profiles>
+  <profiles>
 
         <!--
          *
          * Generate standalone war files for Fractured Atlas' local development environment
          *
         -->
-        <profile>
-            <id>fa-local</id>
-            <build>
-                <finalName>athena</finalName>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <phase>validate</phase>
-                                <configuration>
-                                    <target>
-                                        <copy file="${basedir}/../../assembly/context.xml_local" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
-                                        <copy file="${basedir}/../../assembly/log4j.xml_local" tofile="src/main/resources/log4j.xml" overwrite="true" />
-                                        <copy file="${basedir}/../../assembly/security.properties_local" tofile="src/main/resources/security.properties" overwrite="true" />
-                                    </target>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <version>2.0</version>
-                        <configuration>
-                            <warName>athena</warName>
-                            <webResources>
-                                <resource>
-                                    <directory>${basedir}/src/main/resources</directory>
-                                    <excludes>
-                                        <exclude>context.xml_*</exclude>
-                                        <exclude>*_runner</exclude>
-                                        <exclude>db.properties.*</exclude>
-                                    </excludes>
-                                </resource>
-                            </webResources>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+    <profile>
+      <id>fa-local</id>
+      <build>
+        <finalName>athena</finalName>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <phase>validate</phase>
+                <configuration>
+                  <target>
+                    <copy file="${basedir}/../../assembly/context.xml_local" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
+                    <copy file="${basedir}/../../assembly/log4j.xml_local" tofile="src/main/resources/log4j.xml" overwrite="true" />
+                    <copy file="${basedir}/../../assembly/security.properties_local" tofile="src/main/resources/security.properties" overwrite="true" />
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.0</version>
+            <configuration>
+              <warName>athena</warName>
+              <webResources>
+                <resource>
+                  <directory>${basedir}/src/main/resources</directory>
+                  <excludes>
+                    <exclude>context.xml_*</exclude>
+                    <exclude>*_runner</exclude>
+                    <exclude>db.properties.*</exclude>
+                  </excludes>
+                </resource>
+              </webResources>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
         <!--
          *
          * Generate standalone war files for Fractured Atlas' production environment
          *
         -->
-        <profile>
-            <id>fa-production</id>
-            <build>
-                <finalName>athena</finalName>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <phase>validate</phase>
-                                <configuration>
-                                    <target>
-                                        <copy file="${basedir}/../../assembly/context.xml_production" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
-                                        <copy file="${basedir}/../../assembly/log4j.xml_production" tofile="src/main/resources/log4j.xml" overwrite="true" />
-                                        <copy file="${basedir}/../../assembly/security.properties_production" tofile="src/main/resources/security.properties" overwrite="true" />
-                                    </target>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <version>2.0</version>
-                        <configuration>
-                            <warName>athena</warName>
-                            <webResources>
-                                <resource>
-                                    <directory>${basedir}/src/main/resources</directory>
-                                    <excludes>
-                                        <exclude>context.xml_*</exclude>
-                                        <exclude>*_runner</exclude>
-                                        <exclude>db.properties*</exclude>
-                                    </excludes>
-                                </resource>
-                            </webResources>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+    <profile>
+      <id>fa-production</id>
+      <build>
+        <finalName>athena</finalName>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <phase>validate</phase>
+                <configuration>
+                  <target>
+                    <copy file="${basedir}/../../assembly/context.xml_production" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
+                    <copy file="${basedir}/../../assembly/log4j.xml_production" tofile="src/main/resources/log4j.xml" overwrite="true" />
+                    <copy file="${basedir}/../../assembly/security.properties_production" tofile="src/main/resources/security.properties" overwrite="true" />
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.0</version>
+            <configuration>
+              <warName>athena</warName>
+              <webResources>
+                <resource>
+                  <directory>${basedir}/src/main/resources</directory>
+                  <excludes>
+                    <exclude>context.xml_*</exclude>
+                    <exclude>*_runner</exclude>
+                    <exclude>db.properties*</exclude>
+                  </excludes>
+                </resource>
+              </webResources>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
         <!--
          *
          * Generate standalone war files for Fractured Atlas' staging environment
          *
         -->
-        <profile>
-            <id>fa-staging</id>
-            <build>
-                <finalName>athena</finalName>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <phase>validate</phase>
-                                <configuration>
-                                    <target>
-                                        <copy file="${basedir}/../../assembly/context.xml_staging" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
-                                        <copy file="${basedir}/../../assembly/log4j.xml_staging" tofile="src/main/resources/log4j.xml" overwrite="true" />
-                                        <copy file="${basedir}/../../assembly/security.properties_staging" tofile="src/main/resources/security.properties" overwrite="true" />
-                                    </target>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <version>2.0</version>
-                        <configuration>
-                            <warName>athena</warName>
-                            <webResources>
-                                <resource>
-                                    <directory>${basedir}/src/main/resources</directory>
-                                    <excludes>
-                                        <exclude>context.xml_*</exclude>
-                                        <exclude>*_runner</exclude>
-                                        <exclude>db.properties*</exclude>
-                                    </excludes>
-                                </resource>
-                            </webResources>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+    <profile>
+      <id>fa-staging</id>
+      <build>
+        <finalName>athena</finalName>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <phase>validate</phase>
+                <configuration>
+                  <target>
+                    <copy file="${basedir}/../../assembly/context.xml_staging" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
+                    <copy file="${basedir}/../../assembly/log4j.xml_staging" tofile="src/main/resources/log4j.xml" overwrite="true" />
+                    <copy file="${basedir}/../../assembly/security.properties_staging" tofile="src/main/resources/security.properties" overwrite="true" />
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.0</version>
+            <configuration>
+              <warName>athena</warName>
+              <webResources>
+                <resource>
+                  <directory>${basedir}/src/main/resources</directory>
+                  <excludes>
+                    <exclude>context.xml_*</exclude>
+                    <exclude>*_runner</exclude>
+                    <exclude>db.properties*</exclude>
+                  </excludes>
+                </resource>
+              </webResources>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
         
-        <profile>
-            <id>fa-ar</id>
-            <build>
-                <finalName>athena</finalName>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <phase>validate</phase>
-                                <configuration>
-                                    <target>
-                                        <copy file="${basedir}/../../assembly/context.xml_ar" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
-                                        <copy file="${basedir}/../../assembly/log4j.xml_ar" tofile="src/main/resources/log4j.xml" overwrite="true" />
-                                        <copy file="${basedir}/../../assembly/security.properties_ar" tofile="src/main/resources/security.properties" overwrite="true" />
-                                    </target>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <version>2.0</version>
-                        <configuration>
-                            <warName>athena</warName>
-                            <webResources>
-                                <resource>
-                                    <directory>${basedir}/src/main/resources</directory>
-                                    <excludes>
-                                        <exclude>context.xml_*</exclude>
-                                        <exclude>*_runner</exclude>
-                                        <exclude>db.properties.*</exclude>
-                                    </excludes>
-                                </resource>
-                            </webResources>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
+    <profile>
+      <id>fa-ar</id>
+      <build>
+        <finalName>athena</finalName>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <phase>validate</phase>
+                <configuration>
+                  <target>
+                    <copy file="${basedir}/../../assembly/context.xml_ar" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
+                    <copy file="${basedir}/../../assembly/log4j.xml_ar" tofile="src/main/resources/log4j.xml" overwrite="true" />
+                    <copy file="${basedir}/../../assembly/security.properties_ar" tofile="src/main/resources/security.properties" overwrite="true" />
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.0</version>
+            <configuration>
+              <warName>athena</warName>
+              <webResources>
+                <resource>
+                  <directory>${basedir}/src/main/resources</directory>
+                  <excludes>
+                    <exclude>context.xml_*</exclude>
+                    <exclude>*_runner</exclude>
+                    <exclude>db.properties.*</exclude>
+                  </excludes>
+                </resource>
+              </webResources>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
 
         <!--
          *
@@ -220,120 +220,120 @@
          *
          *
         -->
-        <profile>
-            <id>runner</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <finalName>athena-runner</finalName>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-war-plugin</artifactId>
-                        <version>2.0</version>
-                        <configuration>
-                            <warName>athena-runner</warName>
-                            <webResources>
-                                <resource>
-                                    <directory>${basedir}/src/main/resources</directory>
-                                    <excludes>
-                                        <exclude>
+    <profile>
+      <id>runner</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <finalName>athena-runner</finalName>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.0</version>
+            <configuration>
+              <warName>athena-runner</warName>
+              <webResources>
+                <resource>
+                  <directory>${basedir}/src/main/resources</directory>
+                  <excludes>
+                    <exclude>
                                             *.properties*
-                                        </exclude>
-                                    </excludes>
-                                </resource>
-                            </webResources>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <id>copy-properties-in-validation</id>
-                                <phase>validate</phase>
-                                <configuration>
-                                    <target>
-                                        <copy file="src/main/resources/db.properties.derby" tofile="src/main/resources/db.properties" overwrite="true" />
-                                        <copy file="src/main/resources/context.xml_runner" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
-                                        <copy file="src/main/resources/log4j.xml_runner" tofile="src/main/resources/log4j.xml" overwrite="true" />
-                                        <copy file="src/main/resources/security.properties_runner" tofile="src/main/resources/security.properties" overwrite="true" />
-                                    </target>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>copy-properties</id>
-                                <phase>install</phase>
-                                <configuration>
-                                    <target>
-                                        <copy file="target/athena-runner.war" tofile="../../runner/src/main/skeleton/athena/components/athena/war/athena.war" />
-                                        <copy todir="../../runner/src/main/skeleton/athena/components/athena/config">
-                                            <fileset dir="src/main/resources" includes="db.properties*" />
-                                        </copy>
-                                        <copy todir="../../runner/src/main/skeleton/athena/components/shared/config">
-                                            <fileset dir="src/main/resources" includes="security.properties" />
-                                            <fileset dir="src/main/resources" includes="logging.properties" />
-                                            <fileset dir="src/main/resources" includes="log4j.xml" />
-                                        </copy>
-                                    </target>
-                                </configuration>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+                    </exclude>
+                  </excludes>
+                </resource>
+              </webResources>
+            </configuration>
+          </plugin>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.6</version>
+            <executions>
+              <execution>
+                <id>copy-properties-in-validation</id>
+                <phase>validate</phase>
+                <configuration>
+                  <target>
+                    <copy file="src/main/resources/db.properties.derby" tofile="src/main/resources/db.properties" overwrite="true" />
+                    <copy file="src/main/resources/context.xml_runner" tofile="src/main/resources/athena-applicationContext.xml" overwrite="true" />
+                    <copy file="src/main/resources/log4j.xml_runner" tofile="src/main/resources/log4j.xml" overwrite="true" />
+                    <copy file="src/main/resources/security.properties_runner" tofile="src/main/resources/security.properties" overwrite="true" />
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>copy-properties</id>
+                <phase>install</phase>
+                <configuration>
+                  <target>
+                    <copy file="target/athena-runner.war" tofile="../../runner/src/main/skeleton/athena/components/athena/war/athena.war" />
+                    <copy todir="../../runner/src/main/skeleton/athena/components/athena/config">
+                      <fileset dir="src/main/resources" includes="db.properties*" />
+                    </copy>
+                    <copy todir="../../runner/src/main/skeleton/athena/components/shared/config">
+                      <fileset dir="src/main/resources" includes="security.properties" />
+                      <fileset dir="src/main/resources" includes="logging.properties" />
+                      <fileset dir="src/main/resources" includes="log4j.xml" />
+                    </copy>
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
-    <dependencies>
+  <dependencies>
 
         <!-- ATHENA -->
-        <dependency>
-            <groupId>org.fracturedatlas.athena</groupId>
-            <artifactId>sdk</artifactId>
-            <type>pom</type>
-        </dependency>
-        <dependency>
-            <groupId>org.fracturedatlas.athena.helper</groupId>
-            <artifactId>health-check</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.fracturedatlas.athena</groupId>
+      <artifactId>sdk</artifactId>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.fracturedatlas.athena.helper</groupId>
+      <artifactId>health-check</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.fracturedatlas.athena.helper</groupId>
-            <artifactId>lock</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.fracturedatlas.athena.helper</groupId>
-            <artifactId>codes</artifactId>
-        </dependency> 
-        <dependency>
-            <groupId>org.fracturedatlas.athena</groupId>
-            <artifactId>reports</artifactId>
-            <version>1.4.0-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
-        <dependency> 
-            <groupId>org.fracturedatlas.athena.helper</groupId>
-            <artifactId>ticketfactory</artifactId>
-        </dependency>
-        <dependency> 
-            <groupId>org.fracturedatlas.athena.plugin</groupId>
-            <artifactId>doorlist</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.fracturedatlas.athena.plugin</groupId>
-            <artifactId>available-tickets</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.fracturedatlas.athena.plugin</groupId>
-            <artifactId>tags-sub-collection</artifactId>
-        </dependency>
-    </dependencies>
+    <dependency>
+      <groupId>org.fracturedatlas.athena.helper</groupId>
+      <artifactId>lock</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.fracturedatlas.athena.helper</groupId>
+      <artifactId>codes</artifactId>
+    </dependency> 
+    <dependency>
+      <groupId>org.fracturedatlas.athena</groupId>
+      <artifactId>reports</artifactId>
+      <version>1.4.0-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+    <dependency> 
+      <groupId>org.fracturedatlas.athena.helper</groupId>
+      <artifactId>ticketfactory</artifactId>
+    </dependency>
+    <dependency> 
+      <groupId>org.fracturedatlas.athena.plugin</groupId>
+      <artifactId>doorlist</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.fracturedatlas.athena.plugin</groupId>
+      <artifactId>available-tickets</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.fracturedatlas.athena.plugin</groupId>
+      <artifactId>tags-sub-collection</artifactId>
+    </dependency>
+  </dependencies>
 </project>

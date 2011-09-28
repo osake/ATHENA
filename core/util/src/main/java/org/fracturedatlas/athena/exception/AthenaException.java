@@ -17,20 +17,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/
 
  */
-package org.fracturedatlas.athena.web.exception;
+package org.fracturedatlas.athena.exception;
 
-import org.fracturedatlas.athena.exception.AthenaException;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+public class AthenaException extends RuntimeException {
 
-@Provider
-public class AthenaExceptionMapper implements ExceptionMapper<AthenaException> {
-
-    public Response toResponse(AthenaException ex) {
-        return Response.status(Response.Status.BAD_REQUEST).
-                entity(ex.getMessage()).
-                type("text/plain").
-                build();
+    public AthenaException(String message) {
+        super(message);
     }
+
+    public AthenaException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

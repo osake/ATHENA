@@ -13,3 +13,4 @@ runner.jar
 *.war
 runner/src/main/skeleton/athena/components/*/config/*.properties*
 deploy.sh*
+unit-test-db

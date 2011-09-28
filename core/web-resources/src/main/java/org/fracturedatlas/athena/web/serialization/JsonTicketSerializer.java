@@ -45,7 +45,7 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.id.IdAdapter;
-import org.fracturedatlas.athena.web.exception.AthenaException;
+import org.fracturedatlas.athena.exception.AthenaException;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 
 @Provider

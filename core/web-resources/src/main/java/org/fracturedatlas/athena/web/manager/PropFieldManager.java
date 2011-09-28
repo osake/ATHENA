@@ -28,7 +28,7 @@ import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.PropValue;
 import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.util.AllowedCharacterCheck;
-import org.fracturedatlas.athena.web.exception.AthenaException;
+import org.fracturedatlas.athena.exception.AthenaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

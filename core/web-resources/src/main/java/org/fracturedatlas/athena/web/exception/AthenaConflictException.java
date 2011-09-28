@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.web.exception;
 
+import org.fracturedatlas.athena.exception.AthenaException;
+
 public class AthenaConflictException extends AthenaException {
     public AthenaConflictException(String message) {
         super(message);
