@@ -31,13 +31,12 @@ import javax.ws.rs.Produces;
 
 import com.sun.jersey.api.NotFoundException;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.core.Context;
+import org.fracturedatlas.athena.exception.AthenaException;
 import org.fracturedatlas.athena.helper.lock.manager.AthenaLockManager;
 import org.fracturedatlas.athena.helper.lock.model.AthenaLock;
-import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

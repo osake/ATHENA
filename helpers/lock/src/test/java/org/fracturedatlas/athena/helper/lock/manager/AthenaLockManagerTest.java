@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.helper.lock.manager;
 
+import org.fracturedatlas.athena.exception.AthenaException;
 import com.google.gson.Gson;
 import com.sun.jersey.api.NotFoundException;
 import java.util.ArrayList;
@@ -37,8 +38,6 @@ import org.fracturedatlas.athena.helper.lock.exception.TicketsLockedException;
 import org.fracturedatlas.athena.helper.lock.model.AthenaLock;
 import org.fracturedatlas.athena.helper.lock.model.AthenaLockStatus;
 import org.fracturedatlas.athena.util.date.DateUtil;
-import org.fracturedatlas.athena.web.exception.AthenaException;
-import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import org.fracturedatlas.athena.web.util.JsonUtil;
 import org.joda.time.DateTime;
 import org.junit.After;

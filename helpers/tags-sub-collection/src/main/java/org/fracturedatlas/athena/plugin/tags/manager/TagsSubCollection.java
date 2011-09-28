@@ -44,15 +44,12 @@ public class TagsSubCollection implements AthenaSubCollection {
     
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     
-    /*
-     * TODO: Pass along the query parameters to the apa search
-     */
     public Collection get(String parentType,
                              String subCollectionType,
                              MultivaluedMap<String, String> queryParams,
                              String username) {
         
-        AthenaSearch search = RecordManager.convert(queryParams);
+        AthenaSearch search = new AthenaSearch(queryParams);
         search.setType(parentType);
         Set<PTicket> tickets = apa.findTickets(search);
         Map<String, Tag> tagMap = new HashMap<String, Tag>();

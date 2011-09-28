@@ -19,11 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.helper.codes.web;
 
-import com.sun.jersey.api.NotFoundException;
+import org.fracturedatlas.athena.exception.AthenaException;
 import java.util.HashSet;
 import java.util.Set;
 import org.fracturedatlas.athena.apa.ApaAdapter;
-import org.fracturedatlas.athena.apa.exception.InvalidValueException;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
@@ -38,7 +37,6 @@ import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.util.date.DateUtil;
 import org.fracturedatlas.athena.web.exception.AthenaConflictException;
-import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.fracturedatlas.athena.web.manager.PropFieldManager;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.joda.time.DateTime;

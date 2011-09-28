@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.helper.ticketfactory.manager;
 
+import org.fracturedatlas.athena.exception.AthenaException;
 import org.fracturedatlas.athena.web.exception.ObjectNotFoundException;
 import java.util.List;
 import java.util.ArrayList;
@@ -30,14 +31,11 @@ import org.fracturedatlas.athena.helper.PTicketMatcher;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import org.fracturedatlas.athena.search.AthenaSearchConstraint;
 import org.fracturedatlas.athena.search.Operator;
-import org.fracturedatlas.athena.web.exception.AthenaException;
 import org.fracturedatlas.athena.web.manager.RecordManager;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import static org.mockito.Mockito.*;
 import static org.junit.Assert.*;
 
