@@ -24,10 +24,6 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 /**
- * This class maps itself to a HTTP BAD_REQUEST response.
- * It is meant to repond to a request where the ticket ID is
- * embedded in the JSON.
- *
  * Requests with the ID on the URL (/tickets/5.json) should NOT
  * throw this exception. they should throws HTTP 404 - NOT_FOUND instead
  *
