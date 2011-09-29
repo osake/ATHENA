@@ -20,22 +20,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.persistence.EntityManager;
-import org.fracturedatlas.athena.apa.exception.InvalidValueException;
-import org.fracturedatlas.athena.apa.impl.LongUserType;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.PropValue;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
 import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.client.PTicket;
 import org.fracturedatlas.athena.search.AthenaSearch;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Handy during development so you don't need to stub a bunch of methods.
- */
 public abstract class AbstractApaAdapter implements ApaAdapter {
+    
+    Logger logger = LoggerFactory.getLogger(this.getClass().getName());
     
     @Override
     public PTicket getRecord(String type, Object id) {
@@ -153,4 +151,29 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
         throw new UnsupportedOperationException("Unsupported operation");
     }
 
+    @Override
+    public Set<PTicket> loadRelationships(Set<PTicket> records, List<String> relationships) {
+        for(PTicket record : records) {
+            record = loadRelationships(record, relationships);
+        }
+            
+        return records;
+    }
+    
+    @Override
+    public PTicket loadRelationships(PTicket record, List<String> relationships) {
+        if(record == null) {
+            return record;
+        }
+        
+        for(String relationship : relationships) {
+            String id = record.get(relationship + "Id");
+            logger.debug("Looking for [{}] with id [{}]", relationship, id);
+            PTicket child = getRecord(relationship, id);
+            record.putRecord(relationship, child);
+        }
+        
+        return record;
+    }
+    
 }

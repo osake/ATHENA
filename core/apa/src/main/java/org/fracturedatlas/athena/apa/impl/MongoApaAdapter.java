@@ -323,7 +323,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
                 logger.error("ApaException when converting search result to record, skipping");
             }
         }
-        return tickets;
+        return loadRelationships(tickets, athenaSearch.getIncludes());
     }
     
     /**
@@ -399,11 +399,19 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
     @Override
     public PropField getPropField(Object idOrName) {
         
+        logger.debug("Looking for field [{}]", idOrName);
+        
         PropField field = cachedFields.get(idOrName);
         if(field != null) {
+            logger.debug("Found field in cache");
             return field;
         }
         
+        logger.debug("Not found in cache, searching DB");
+        return loadPropFieldFromDatabase(idOrName);
+    }
+    
+    private PropField loadPropFieldFromDatabase(Object idOrName) {        
         BasicDBObject query = new BasicDBObject();
 
         ObjectId objectId = ObjectId.massageToObjectId(idOrName);
@@ -419,9 +427,9 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
             return null;
         } else {
             PropField propField = toField(doc);
-            cachedFields.put(idOrName, propField);
             return propField;
         }
+        
     }
 
     @Override
@@ -450,15 +458,14 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
 
         if (propField.getStrict() && propField.getValueType().equals(ValueType.BOOLEAN)) {
             throw new ApaException("Boolean fields cannot be marked as strict");
-        }
-
+        }        
+        
         PropField existingField = getPropField(propField.getId());
 
         if(existingField == null) {
             propField.setId(new ObjectId());
             checkForDuplicatePropField(propField.getName());
         } else {
-            checkExists(existingField);
             checkImmutability(propField, existingField);
         }
 
@@ -482,9 +489,15 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
 
         doc.put("values", propValues);
         fields.save(doc);
-
+                
         //TODO: This is loading the prop field twice for each 1 save
-        return getPropField(propField.getId());
+        PropField createdField = loadPropFieldFromDatabase(propField.getId());
+        cacheField(createdField);
+        return propField;
+    }
+    
+    private void cacheField(PropField fieldToCache) {
+        cachedFields.put(fieldToCache.getId(), fieldToCache);
     }
 
     private TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException {
@@ -518,10 +531,19 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
 
     @Override
     public Boolean deletePropField(Object id) {
+        PropField field = getPropField(id);
+        
+        if(field == null) {
+            return true;
+        }
+        
         BasicDBObject query = new BasicDBObject();
         ObjectId oid = ObjectId.massageToObjectId(id);
         query.put("_id", oid);
         fields.remove(query);
+        
+        cachedFields.remove(field.getId());
+        cachedFields.remove(field.getName());
 
         return true;
     }
@@ -765,7 +787,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         }
     }
 
-    private void checkImmutability(PropField newPropField, PropField oldPropField) throws ImmutableObjectException {
+    private void checkImmutability(PropField newPropField, PropField oldPropField) throws ImmutableObjectException {        
         if (!newPropField.getStrict().equals(oldPropField.getStrict())) {
             throw new ImmutableObjectException("You cannot change the strictness of a field after is has been saved");
         } else if (!newPropField.getValueType().equals(oldPropField.getValueType())) {

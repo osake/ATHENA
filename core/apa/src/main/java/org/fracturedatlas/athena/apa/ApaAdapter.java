@@ -236,5 +236,20 @@ public interface ApaAdapter {
       * @return true if propValue is deleted. False if propValue does not exist
      */
     public void deletePropValue(Object propFieldId, Object propValueId);
+    
+    public Set<PTicket> loadRelationships(Set<PTicket> records, List<String> relationships);
 
+    /**
+     * By default, records returned by Apa are flat objects with no relationships.
+     * For example, an item may be returned with an "orderId" but not the actual order
+     * 
+     * This method will load relationships specified in relationships
+     * 
+     * The relationships should be singularized.
+     * 
+     * @param record the record onto which to load relationships
+     * @param relationships A list of strings to load
+     */
+    public PTicket loadRelationships(PTicket record, List<String> relationships);
+    
 }

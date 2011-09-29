@@ -525,7 +525,8 @@ public class JpaApaAdapter extends IndexingApaAdapter implements ApaAdapter {
             }
 
             logger.debug("Returning {} tickets", finishedTicketsSet.size());
-            return convert(finishedTicketsSet);
+            Set<PTicket> results = convert(finishedTicketsSet);
+            return loadRelationships(results, athenaSearch.getIncludes());
         } catch (ApaException ex) {
             
             

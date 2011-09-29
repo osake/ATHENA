@@ -25,7 +25,6 @@ import org.fracturedatlas.athena.search.Operator;
 import org.fracturedatlas.athena.search.AthenaSearch;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map.Entry;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
 import org.fracturedatlas.athena.client.PField;

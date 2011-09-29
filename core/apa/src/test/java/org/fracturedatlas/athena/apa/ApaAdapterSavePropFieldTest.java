@@ -20,24 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 
 package org.fracturedatlas.athena.apa;
 
-import java.text.ParseException;
-import java.util.ArrayList;
 import org.fracturedatlas.athena.apa.exception.ApaException;
 import org.fracturedatlas.athena.apa.exception.ImmutableObjectException;
-import org.fracturedatlas.athena.apa.exception.InvalidValueException;
-import org.fracturedatlas.athena.client.PTicket;
-import org.fracturedatlas.athena.apa.impl.jpa.DateTimeTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.IntegerTicketProp;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
 import org.fracturedatlas.athena.apa.impl.jpa.PropValue;
 import org.fracturedatlas.athena.apa.impl.jpa.StrictType;
-import org.fracturedatlas.athena.apa.impl.jpa.StringTicketProp;
-import org.fracturedatlas.athena.apa.impl.jpa.JpaRecord;
-import org.fracturedatlas.athena.apa.impl.jpa.TicketProp;
 import org.fracturedatlas.athena.apa.impl.jpa.ValueType;
-import org.fracturedatlas.athena.util.date.DateUtil;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -95,7 +84,7 @@ public class ApaAdapterSavePropFieldTest extends BaseApaAdapterTest {
 
         field = apa.savePropField(field);
         PropField savedField = apa.getPropField(field.getId());
-        assertEquals(field, savedField);
+        assertPropFieldsEqual(field, savedField);
     }
 
     @Test
@@ -113,7 +102,7 @@ public class ApaAdapterSavePropFieldTest extends BaseApaAdapterTest {
 
         field = apa.savePropField(field);
         PropField savedField = apa.getPropField(field.getId());
-        assertEquals(field, savedField);
+        assertPropFieldsEqual(field, savedField);
 
         PropValue dupe = new PropValue(field, "TEST1");
         field.addPropValue(dupe);

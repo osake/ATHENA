@@ -103,4 +103,15 @@ public abstract class BaseApaAdapterTest {
         ticketsToDelete.add(t);
         return t;
     }
+    
+    public void assertPropFieldsEqual(PropField expected, PropField actual) {
+        assertEquals(expected.getId(), actual.getId());
+        assertEquals(expected.getName(), actual.getName());
+        assertEquals(expected.getStrict(), actual.getStrict());
+        assertEquals(expected.getValueType(), actual.getValueType());
+        assertEquals(expected.getId(), actual.getId());
+        
+        //TODO: Stronger assertion
+        assertEquals(expected.getPropValues().size(), expected.getPropValues().size());
+    }
 }

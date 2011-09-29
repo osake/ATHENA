@@ -9,7 +9,7 @@
     <bean id="apa" class="org.fracturedatlas.athena.apa.impl.MongoApaAdapter" autowire="byType">
         <constructor-arg index="0" value="localhost"/>
         <constructor-arg type="java.lang.Integer" index="1" value="27017"/>
-        <constructor-arg index="2" value="test"/>
+        <constructor-arg index="2" value="athena-unit-test"/>
         <constructor-arg index="3" value="athena_fields"/>
     </bean>
 </beans>
