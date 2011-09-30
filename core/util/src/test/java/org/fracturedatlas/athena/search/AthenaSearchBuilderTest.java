@@ -26,7 +26,7 @@ import java.util.Map;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class ApaSearchBuilderTest {
+public class AthenaSearchBuilderTest {
 
     @Test
     public void testBuilderOneTerm() {

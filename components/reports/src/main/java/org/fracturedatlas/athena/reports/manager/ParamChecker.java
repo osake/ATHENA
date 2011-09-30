@@ -21,7 +21,7 @@ package org.fracturedatlas.athena.reports.manager;
 
 import java.util.List;
 import java.util.Map;
-import org.fracturedatlas.athena.web.exception.AthenaException;
+import org.fracturedatlas.athena.exception.AthenaException;
 
 public class ParamChecker {
     

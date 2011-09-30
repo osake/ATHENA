@@ -162,6 +162,8 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     
     @Override
     public PTicket loadRelationships(PTicket record, List<String> relationships) {
+        logger.debug("Relationships: [{}]", relationships);
+        
         if(record == null) {
             return record;
         }

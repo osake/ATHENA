@@ -28,7 +28,9 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.LongSerializationPolicy;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import java.util.List;
+import java.util.Map;
 import org.fracturedatlas.athena.client.PTicket;
+import org.fracturedatlas.athena.id.IdAdapter;
 import org.fracturedatlas.athena.util.date.DateTypeConverter;
 import org.fracturedatlas.athena.util.date.DateTimeTypeConverter;
 import org.fracturedatlas.athena.web.serialization.JsonTicketSerializer;
@@ -65,6 +67,19 @@ public class JsonUtil {
         }
 
         return gsonWithoutNulls;
+    }
+
+    public synchronized static JsonObject recordMapToJson(JsonObject jsonMap, Map<String, PTicket> map) {
+        for(String key : map.keySet()) {
+            PTicket record = map.get(key);
+            if(record == null) {
+                continue;
+            }
+            JsonObject recordJson = mapToJson(record.getProps());
+            recordJson.addProperty("id", IdAdapter.toString(record.getId()));
+            jsonMap.add(key, recordJson);
+        }
+        return jsonMap;
     }
 
     public synchronized static JsonObject mapToJson(MultivaluedMapImpl map) {

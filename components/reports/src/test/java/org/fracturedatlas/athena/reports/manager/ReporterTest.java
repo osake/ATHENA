@@ -19,10 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
  */
 package org.fracturedatlas.athena.reports.manager;
 
+import org.fracturedatlas.athena.exception.AthenaException;
 import java.util.List;
 import java.util.Map;
-import org.fracturedatlas.athena.web.exception.AthenaException;
-import static org.mockito.Mockito.*;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.fracturedatlas.athena.client.AthenaComponent;

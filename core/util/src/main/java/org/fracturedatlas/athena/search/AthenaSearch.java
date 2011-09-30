@@ -252,7 +252,11 @@ public class AthenaSearch {
                     throw new AthenaException("Found no values for search parameter ["+fieldName+"]");
                 }
                 if (fieldName.startsWith("_")) {
-                    this.setSearchModifier(fieldName, operatorPrefixedValue);
+                    if(INCLUDE.equals(fieldName)) {
+                        getIncludes().add(operatorPrefixedValue);
+                    } else {
+                        this.setSearchModifier(fieldName, operatorPrefixedValue);
+                    }
                 } else {
                     int start = 0;
 
