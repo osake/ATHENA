@@ -54,6 +54,7 @@ public class CreatePeopleRecordCallbackTest {
         AthenaSearch search = new AthenaSearch.Builder()
                                   .type("person")
                                   .and("email", Operator.EQUALS, "jim@example.com")
+                                  .and("organizationId", Operator.EQUALS, "1")
                                   .build();
         
         List<PTicket> noResults = new ArrayList<PTicket>();
@@ -62,6 +63,61 @@ public class CreatePeopleRecordCallbackTest {
         verify(mockPeople, times(0)).find("person", search);
         
         assertEquals(order.get("personId"), "95159");
+        assertNull(order.get("firstName"));
+        assertNull(order.get("lastName"));
+        assertNull(order.get("email"));
+    }
+    
+    @Test
+    public void saveOrderWithPeopleIdConsiderOrganization() {
+        PTicket order = new PTicket();
+        order.put("firstName", "Jim");
+        order.put("lastName", "Smith");
+        order.put("email", "jim@example.com");
+        order.put("organizationId", "1");
+        order.put("orderId", "349409409");
+        
+        AthenaSearch search = new AthenaSearch.Builder()
+                                  .type("person")
+                                  .and("email", Operator.EQUALS, "jim@example.com")
+                                  .and("organizationId", Operator.EQUALS, "1")
+                                  .build();
+        
+        List<PTicket> noResults = new ArrayList<PTicket>();
+        when(mockPeople.find("person", search)).thenReturn(noResults);
+        
+        order = callback.beforeSave("order", order);
+        
+        verify(mockPeople, times(1)).find("person", search);
+        verify(mockPeople, times(1)).save("person", inboundPerson);
+        assertEquals(order.get("personId"), "45");
+        assertNull(order.get("firstName"));
+        assertNull(order.get("lastName"));
+        assertNull(order.get("email"));
+    }
+    
+    @Test
+    public void saveOrderWithPeopleIdNoOrganization() {
+        PTicket order = new PTicket();
+        order.put("firstName", "Jim");
+        order.put("lastName", "Smith");
+        order.put("email", "jim@example.com");
+        order.put("orderId", "349409409");
+        
+        AthenaSearch search = new AthenaSearch.Builder()
+                                  .type("person")
+                                  .and("email", Operator.EQUALS, "jim@example.com")
+                                  .build();
+        
+        List<PTicket> results = new ArrayList<PTicket>();
+        results.add(savedPerson);
+        when(mockPeople.find("person", search)).thenReturn(results);
+        
+        order = callback.beforeSave("order", order);
+        
+        verify(mockPeople, times(1)).find("person", search);
+        verify(mockPeople, times(0)).save("person", inboundPerson);
+        assertEquals(order.get("personId"), "45");
         assertNull(order.get("firstName"));
         assertNull(order.get("lastName"));
         assertNull(order.get("email"));
@@ -78,6 +134,7 @@ public class CreatePeopleRecordCallbackTest {
         AthenaSearch search = new AthenaSearch.Builder()
                                   .type("person")
                                   .and("email", Operator.EQUALS, "")
+                                  .and("organizationId", Operator.EQUALS, "1")
                                   .build();
         
         verify(mockPeople, times(0)).find("person", search);
@@ -121,6 +178,7 @@ public class CreatePeopleRecordCallbackTest {
         AthenaSearch search = new AthenaSearch.Builder()
                                   .type("person")
                                   .and("email", Operator.EQUALS, "jim@example.com")
+                                  .and("organizationId", Operator.EQUALS, "1")
                                   .build();
         
         List<PTicket> noResults = new ArrayList<PTicket>();
@@ -146,6 +204,7 @@ public class CreatePeopleRecordCallbackTest {
         AthenaSearch search = new AthenaSearch.Builder()
                                   .type("person")
                                   .and("email", Operator.EQUALS, "jim@example.com")
+                                  .and("organizationId", Operator.EQUALS, "1")
                                   .build();
         
         List<PTicket> results = new ArrayList<PTicket>();
@@ -172,6 +231,7 @@ public class CreatePeopleRecordCallbackTest {
         AthenaSearch search = new AthenaSearch.Builder()
                                   .type("person")
                                   .and("email", Operator.EQUALS, "")
+                                  .and("organizationId", Operator.EQUALS, "1")
                                   .build();
         
         order = callback.beforeSave("order", order);

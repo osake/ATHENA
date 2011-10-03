@@ -46,7 +46,7 @@ public class CreatePeopleRecordCallback extends AbstractAthenaCallback {
         PTicket existingPerson = null;
         
         if(StringUtils.isNotBlank(record.get("email"))) {
-            existingPerson = findPerson(record.get("email"));
+            existingPerson = findPerson(record.get("email"), record.get("organizationId"));
         }
         
         if(existingPerson == null) { 
@@ -65,7 +65,7 @@ public class CreatePeopleRecordCallback extends AbstractAthenaCallback {
         return record;
     }
         
-    public PTicket findPerson(String email) {
+    public PTicket findPerson(String email, String organizationId) {
         
         if(email == null) {
             return null;
@@ -75,6 +75,11 @@ public class CreatePeopleRecordCallback extends AbstractAthenaCallback {
                                   .type("person")
                                   .and("email", Operator.EQUALS, email)
                                   .build();
+        
+        if(organizationId != null) {
+            search.addConstraint("organizationId", Operator.EQUALS, organizationId);
+        }
+        
         Collection<PTicket> people = athenaPeople.find("person", search);
         if(people.size() == 0) {
             return null;
