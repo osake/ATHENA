@@ -127,7 +127,7 @@ public class JsonTicketSerializer implements MessageBodyWriter<PTicket>,
                         } else if (el.isJsonObject()) {
                             pTicket.putRecord(entry.getKey(), deserialize(el, typeOfT, context));
                         } else {
-                            pTicket.put(entry.getKey(), val.getAsString());
+                            pTicket.getProps().add(entry.getKey(), el.getAsString());
                         }
                     }
                     

@@ -28,6 +28,7 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class JsonMappingExceptionMapper implements ExceptionMapper<JsonParseException> {
     public Response toResponse(JsonParseException ex) {
+        ex.printStackTrace();
         return Response.status(Response.Status.BAD_REQUEST).
                 entity("Could not understand JSON request").
                 type("text/plain").
