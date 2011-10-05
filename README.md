@@ -58,10 +58,11 @@ ATHENA components themselves don’t provide end-user interfaces, only web servi
 
 ## Reporting Problems
 
-We'd love to hear it!  Please feel free to repot problems to the mailing list (above) or on our [JIRA](http://jira.fracturedatlas.org)
+We'd love to hear it!  Please feel free to repot problems to the mailing list (above) or on our [Github issue tracker](https://github.com/fracturedatlas/ATHENA/issues)
 
 ## Contributors
 
+* [Justin Karr](https://github.com/justinlkarr)
 * [Gary Moore](https://github.com/gmoore)
 * [Fintan Donaghy](https://github.com/eeifdy)
 * [Micah Frost](https://github.com/mfrost)
