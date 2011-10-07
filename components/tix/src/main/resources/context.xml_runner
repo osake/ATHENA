@@ -62,6 +62,11 @@
 
     <bean id="apa" class="org.fracturedatlas.athena.apa.impl.jpa.JpaApaAdapter" autowire="byType">
         <property name="indexingDisabledString" value="${athena.index.disabled}"/>
+        <property name="excludedTypes">
+            <bean class="org.springframework.util.StringUtils" factory-method="commaDelimitedListToSet">
+                <constructor-arg type="java.lang.String" value="${athena.index.excludedTypes}"/>
+            </bean>
+        </property>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
