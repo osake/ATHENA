@@ -17,6 +17,14 @@ athena.index.directory=../index/ATHENA
 athena.index.disabled=false
 
 #
+# A comma delimited list of types that should not be indexes.  ATHENA optimizes the index on each
+# Insert, so high-throughput records (like tickets) that are added in huge chunks should not be indexed
+#
+# Specify the *singular* name of the type ("ticket" not "tickets")
+#
+athena.index.excludedTypes=ticket,system.indexes
+
+#
 # Proxool Connection Pooling
 #
 

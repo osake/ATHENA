@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/
 package org.fracturedatlas.athena.apa;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import org.fracturedatlas.athena.apa.impl.jpa.PropField;
@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractApaAdapter implements ApaAdapter {
     
     Logger logger = LoggerFactory.getLogger(this.getClass().getName());
+    
+    static HashMap<Object, PropField> cachedFields = new HashMap<Object, PropField>();
     
     @Override
     public PTicket getRecord(String type, Object id) {
@@ -176,6 +178,35 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
         }
         
         return record;
+    }
+    
+    protected void cacheFields() {
+        Collection<PropField> propFields = getPropFields();
+        for(PropField propField : propFields) {
+            logger.info("Caching [{}]", propField.getName());
+            cachedFields.put(propField.getId(), propField);
+            cachedFields.put(propField.getName(), propField);
+        }
+        logger.info("Cache size is [{}]", cachedFields.keySet().size());
+    }
+    
+    protected void cacheField(PropField propField) {
+        cachedFields.put(propField.getId(), propField);
+        cachedFields.put(propField.getName(), propField);
+        logger.info("Cache size is [{}]", cachedFields.keySet().size());
+    }
+    
+    protected void deleteFromCache(PropField propField) {
+        cachedFields.remove(propField.getId());
+        cachedFields.remove(propField.getName());
+    }
+    
+    protected PropField getCachedField(Object key) {
+        return cachedFields.get(key);
+    }
+
+    public static HashMap<Object, PropField> getCachedFields() {
+        return cachedFields;
     }
     
 }

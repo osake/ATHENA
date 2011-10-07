@@ -36,7 +36,6 @@ import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,8 +64,6 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
 
     //This is the mongo name for the props object within a record
     public static final String PROPS_STRING = "props";
-    
-    static HashMap<Object, PropField> cachedFields = new HashMap<Object, PropField>();
 
     public MongoApaAdapter(String host,
                            Integer port,
@@ -78,6 +75,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         fields = db.getCollection(fieldsCollectionName);
         
         initializeIndex();
+        cacheFields();
     }
 
     public MongoApaAdapter(String host,
@@ -93,6 +91,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         fields = db.getCollection(fieldsCollectionName);
         
         initializeIndex();
+        cacheFields();
     }
 
     public PTicket getRecord(String type, Object id) {
@@ -128,21 +127,21 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         BasicDBObject doc = new BasicDBObject();
 
         PTicket savedTicket = getRecord(t.getType(), t.getId());
-
+        
         if(savedTicket == null) {
             ObjectId oid = new ObjectId();
             t.setId(oid.toString());
         }
-
+        
         doc.put("_id", ObjectId.massageToObjectId(t.getId()));
         doc.put("type", t.getType());
-
+        
         BasicDBObject props = new BasicDBObject();
         for(String key : t.getProps().keySet()) {
             List<String> vals = t.getProps().get(key);
             typeAndLoadProps(props, t, key, vals);
         }
-
+        
         //TODO: Should use a system_props property instead of shoving them all in props
         for(String key : t.getSystemProps().keySet()) {
             for(String val : t.getSystemProps().get(key)) {
@@ -152,9 +151,9 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
 
         doc.put(PROPS_STRING, props);
 
+        
         db.getCollection(t.getType()).save(doc);
         addToIndex(t);
-
         return t;
     }
     
@@ -401,14 +400,16 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         
         logger.debug("Looking for field [{}]", idOrName);
         
-        PropField field = cachedFields.get(idOrName);
+        PropField field = getCachedField(idOrName);
         if(field != null) {
             logger.debug("Found field in cache");
             return field;
         }
         
         logger.debug("Not found in cache, searching DB");
-        return loadPropFieldFromDatabase(idOrName);
+        PropField dbField = loadPropFieldFromDatabase(idOrName);
+        cacheField(dbField);
+        return dbField;
     }
     
     private PropField loadPropFieldFromDatabase(Object idOrName) {        
@@ -495,10 +496,6 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         cacheField(createdField);
         return propField;
     }
-    
-    private void cacheField(PropField fieldToCache) {
-        cachedFields.put(fieldToCache.getId(), fieldToCache);
-    }
 
     private TicketProp saveTicketProp(TicketProp prop) throws InvalidValueException {
         enforceStrict(prop.getPropField(), prop.getValueAsString());
@@ -542,8 +539,7 @@ public class MongoApaAdapter extends IndexingApaAdapter implements ApaAdapter {
         query.put("_id", oid);
         fields.remove(query);
         
-        cachedFields.remove(field.getId());
-        cachedFields.remove(field.getName());
+        deleteFromCache(field);
 
         return true;
     }

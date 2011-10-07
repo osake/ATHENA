@@ -64,6 +64,8 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
     
     IndexWriterConfig config;
     
+    Set<String> excludedTypes = new HashSet<String>();
+    
     //do not use this directly, call getWriter() instead
     static IndexWriter writer;
     
@@ -117,6 +119,11 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         try{
             IndexWriter indexWriter = getWriter();
             for(PTicket record : records) {
+        
+                if(excludedTypes.contains(record.getType())) {
+                    continue;
+                }
+                
                 Document doc = new Document();
                 StringBuffer documentText = new StringBuffer();
                 doc.add(new Field("_id", record.getIdAsString(), Field.Store.YES, Field.Index.ANALYZED));
@@ -151,6 +158,13 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
         if(record == null || record.getId() == null || indexingDisabled) {
             return;
         }
+        
+        logger.debug("Checking to see if [{}] is excluded from the index", record.getType());
+        if(excludedTypes.contains(record.getType())) {
+            logger.debug("It is");
+            return;
+        }
+        logger.debug("It isn't");
         
         Document doc = new Document();
         StringBuilder documentText = new StringBuilder();
@@ -345,6 +359,10 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
             logger.info("Rebuilding index");
             Set<String> types = getTypes();
             for(String type : types) {
+                if(excludedTypes.contains(type)) {
+                    logger.info("Skipping [{}] because it is excluded", type);
+                    continue;
+                }
                 AthenaSearch search = new AthenaSearch.Builder().type(type).build();
                 Set<PTicket> records = findTickets(search);
                 logger.info("Indexing {} records of type {}", records.size(), type);
@@ -374,5 +392,14 @@ public abstract class IndexingApaAdapter extends AbstractApaAdapter {
      */
     public void setIndexingDisabledString(String indexingDisabled) {
         setIndexingDisabled(Boolean.parseBoolean(indexingDisabled));
+    }
+
+    public Set<String> getExcludedTypes() {
+        return excludedTypes;
+    }
+
+    public void setExcludedTypes(Set<String> excludedTypes) {
+        logger.info("Setting excluded types to {}", excludedTypes);
+        this.excludedTypes = excludedTypes;
     }
 }

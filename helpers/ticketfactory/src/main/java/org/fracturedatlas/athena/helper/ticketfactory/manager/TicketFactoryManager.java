@@ -37,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 @Component("createticketSubResource")
 public class TicketFactoryManager extends AbstractAthenaSubResource {
@@ -114,6 +115,9 @@ public class TicketFactoryManager extends AbstractAthenaSubResource {
         if(performance == null) {
             throw new AthenaException("Performance with id [" + performanceId + "] was not found");
         }
+        
+        StopWatch watch = new StopWatch();
+	watch.start("gathering info");
 
         String chartId = performance.get("chartId");
         String eventId = performance.get("eventId");
@@ -127,9 +131,11 @@ public class TicketFactoryManager extends AbstractAthenaSubResource {
         logger.debug("Found [{}] sections", sections.size());
 
         ArrayList<Ticket> ticketsToCreate = new ArrayList<Ticket>();
+        watch.stop();	
 
         //for each section
         for(PTicket section : sections) {
+            watch.start("section " + section.get("name"));
             Integer capacity = Integer.parseInt(section.get("capacity"));
             logger.debug("capacity of section [{}] is [{}]", section.getId(), capacity);
             for(int seatNum = 0; seatNum < capacity; seatNum++) {
@@ -137,9 +143,14 @@ public class TicketFactoryManager extends AbstractAthenaSubResource {
                 ticketsToCreate.add(ticket);
 
             }
+            watch.stop();
         }
 
-        return saveTickets(ticketsToCreate);
+        watch.start("creating tickets");
+        List<Ticket> tickets = saveTickets(ticketsToCreate);
+        watch.stop();
+        logger.debug("{}", watch.prettyPrint());
+        return tickets;
     }
     
     private List<Ticket> saveTickets(List<Ticket> ticketsToCreate) {
