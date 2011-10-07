@@ -183,16 +183,20 @@ public abstract class AbstractApaAdapter implements ApaAdapter {
     protected void cacheFields() {
         Collection<PropField> propFields = getPropFields();
         for(PropField propField : propFields) {
-            logger.info("Caching [{}]", propField.getName());
-            cachedFields.put(propField.getId(), propField);
-            cachedFields.put(propField.getName(), propField);
+            if(propField != null) {
+                logger.info("Caching [{}]", propField.getName());
+                cachedFields.put(propField.getId(), propField);
+                cachedFields.put(propField.getName(), propField);
+            }
         }
         logger.info("Cache size is [{}]", cachedFields.keySet().size());
     }
     
     protected void cacheField(PropField propField) {
-        cachedFields.put(propField.getId(), propField);
-        cachedFields.put(propField.getName(), propField);
+        if(propField != null) {
+            cachedFields.put(propField.getId(), propField);
+            cachedFields.put(propField.getName(), propField);
+        }
         logger.info("Cache size is [{}]", cachedFields.keySet().size());
     }
     
