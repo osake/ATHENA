@@ -143,8 +143,15 @@ public class Braintree implements PaymentProcessor {
         String transactionId = authroizationRequest.getTransactionId();
         AuthorizationResponse authorizationResponse = new AuthorizationResponse();
 
-        Result<Transaction> result = gateway.transaction().refund(authroizationRequest.getTransactionId());
-
+        Result<Transaction> result = null;
+        if(authroizationRequest.getAmount() == null) {
+            result = gateway.transaction().refund(authroizationRequest.getTransactionId());
+        } else {
+            result = gateway.transaction().refund(
+                                        authroizationRequest.getTransactionId(),
+                                        authroizationRequest.getAmount());
+        }
+        
         authorizationResponse.setSuccess(result.isSuccess());
         authorizationResponse.setMessage(result.getMessage());
         authorizationResponse.setTransactionId(transactionId);
