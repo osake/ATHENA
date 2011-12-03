@@ -5,11 +5,11 @@
     <artifactId>relationship-helper</artifactId>
     <name>relationship-helper</name>
     <packaging>jar</packaging>
-    <version>1.4.0</version>
+    <version>1.5.0-SNAPSHOT</version>
     <parent>
         <groupId>org.fracturedatlas.athena</groupId>
         <artifactId>helpers</artifactId>
-        <version>1.4.0</version>
+        <version>1.5.0-SNAPSHOT</version>
     </parent>
 
     <build>
